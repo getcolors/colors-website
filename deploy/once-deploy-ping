@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Forced command for the CI deploy key.
+#
+# Every repository that builds an image in this profile pings this script once
+# it has published a new :latest manifest. The ping carries no argument: this
+# script reconciles *every* application in the profile, so one image can back
+# several applications and no repository has to know which hosts it affects.
+#
+# Install: see deploy/README.md.
+
+set -euo pipefail
+
+# Must match applications[].host in colors.yml. Nothing cross-checks the two,
+# and this is now the only list of hosts anywhere in the deploy path - no
+# repository's cicd.yml names a host any more.
+HOSTS=(
+  www.getcolors.ai
+  getcolors.ai
+)
+
+ONCE=/usr/local/bin/once
+LOCK=/var/lock/once-deploy.lock
+LOCK_WAIT=900
+
+# The client chooses nothing. authorized_keys pins this script as the
+# ForceCommand, so whatever the client asked to run arrives in
+# SSH_ORIGINAL_COMMAND and is logged and dropped here rather than parsed. That
+# is the point of taking no argument: no client-controlled string ever reaches
+# a command line, so there is nothing to inject through.
+if [ -n "${SSH_ORIGINAL_COMMAND:-}" ]; then
+  printf 'ignoring client command: %s\n' "$SSH_ORIGINAL_COMMAND"
+fi
+
+printf 'deploy ping received %s\n' "$(date -Is)"
+
+# Block rather than fail. Two repositories finishing their builds in the same
+# minute is routine now that either ping reconciles everything, and GitHub
+# concurrency groups do not span repositories - this lock is the only thing
+# serializing them. The second ping waits for the first instead of erroring out
+# and leaving its freshly built image undeployed.
+exec 9>"$LOCK"
+if ! flock --wait "$LOCK_WAIT" 9; then
+  printf 'another deploy held %s for more than %ss\n' "$LOCK" "$LOCK_WAIT" >&2
+  exit 1
+fi
+
+# Carry on after a failure so one broken application still reports the state of
+# the others, then exit non-zero so the workflow that pinged goes red.
+rc=0
+for host in "${HOSTS[@]}"; do
+  printf '\n==> once update %s\n' "$host"
+  if ! sudo "$ONCE" update "$host"; then
+    printf 'once update %s FAILED\n' "$host" >&2
+    rc=1
+  fi
+done
+
+printf '\ndeploy ping finished with status %d\n' "$rc"
+exit "$rc"

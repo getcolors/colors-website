@@ -198,14 +198,46 @@ What ties to what:
 - `image:` is `ghcr.io/${{ github.repository }}:latest` as pushed by the
   `manifest` job, so this repo has to live at **`getcolors/colors-website`** for
   the tag to line up.
-- The deploy step is `sudo once update www.getcolors.ai` over SSH — the host
-  argument is the first `applications[].host`, hardcoded as `HOST` in `cicd.yml`.
+- The deploy step names **no host at all** — it opens an SSH connection and the
+  server decides what to reconcile. See "The deploy is a ping" below.
 - The apex `getcolors.ai` is a **separate application** serving a redirect image
   from its own repo. Nothing in this repo builds it; don't add apex handling to
-  `Caddyfile.prod`.
+  `Caddyfile.prod`. A deploy from this repo does, however, reconcile it too.
 - `compute-prevent-destroy: true` means the compute instance is protected — a
   `once destroy` will refuse. Flipping it to `false` is how you would tear the
   server down, so don't do it casually.
+
+### The deploy is a ping
+
+The `deploy` job's entire payload is:
+
+```sh
+ssh -T -n <user>@<server> deploy-ping
+```
+
+`deploy-ping` is ignored. The deploy key is pinned to a ForceCommand in the
+server's `authorized_keys`, so the server runs `/usr/local/bin/once-deploy-ping`
+instead, and that script reconciles **every** application in `colors.yml` —
+`www.getcolors.ai` and the apex redirect both — regardless of which repository
+pinged.
+
+The script, its `authorized_keys` line and its sudoers entry are checked in here
+under **`deploy/`**, with the reasoning and install steps in `deploy/README.md`.
+There is one copy for both repositories because there is one server.
+
+Consequences worth knowing before you change any of it:
+
+- **No host or image name appears in either repository's CI any more.** Adding an
+  application means editing `colors.yml` and `HOSTS` in `deploy/once-deploy-ping`
+  — no workflow file changes.
+- **A push to `colors-redirect` also reconciles this site, and vice versa.** A
+  failure in either turns the pinging repository's build red. Accepted cost.
+- **This assumes `once update` is idempotent** on an unchanged `:latest` digest.
+  If it unconditionally restarts, every push to one repo bounces the other's
+  container. Verify before adding a third application.
+- **Don't reintroduce a host argument** to make failures attributable. The
+  forced command takes no input precisely so it never has to parse
+  `SSH_ORIGINAL_COMMAND`.
 
 **The domain is spelled out in four places and they must agree.** `site` in
 `astro.config.mjs` is the source of truth for `canonical` and `og:image`; the
