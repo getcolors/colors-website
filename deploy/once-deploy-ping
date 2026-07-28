@@ -1,59 +1,128 @@
-#!/usr/bin/env bash
-# Forced command for the CI deploy key.
-#
-# Every repository that builds an image in this profile pings this script once
-# it has published a new :latest manifest. The ping carries no argument: this
-# script reconciles *every* application in the profile, so one image can back
-# several applications and no repository has to know which hosts it affects.
-#
-# Install: see deploy/README.md.
+#!/usr/bin/env bb
+;; Forced command for the CI deploy key.
+;;
+;; Every repository that builds an image in this profile pings this script once
+;; it has published a new :latest manifest. The ping carries no argument: the
+;; host list comes from colors.yml on this machine, and every application in it
+;; is reconciled. One image can therefore back several applications, and no
+;; repository has to know which hosts it affects.
+;;
+;; colors.yml is the single source of truth. Adding an application means editing
+;; it and nothing else -- no workflow file, and no host list in this script.
+;;
+;; Install: see deploy/README.md.
 
-set -euo pipefail
+(require '[babashka.fs :as fs]
+         '[babashka.process :as p]
+         '[clj-yaml.core :as yaml]
+         '[clojure.string :as str])
 
-# Must match applications[].host in colors.yml. Nothing cross-checks the two,
-# and this is now the only list of hosts anywhere in the deploy path - no
-# repository's cicd.yml names a host any more.
-HOSTS=(
-  www.getcolors.ai
-  getcolors.ai
-)
+(def colors-yml (or (System/getenv "COLORS_YML") "/opt/colors/colors.yml"))
+(def once-bin   (or (System/getenv "ONCE_BIN") "/usr/local/bin/once"))
+(def lock-file  (or (System/getenv "ONCE_DEPLOY_LOCK") "/var/lock/once-deploy.lock"))
+(def lock-wait  (or (System/getenv "ONCE_DEPLOY_LOCK_WAIT") "900"))
 
-ONCE=/usr/local/bin/once
-LOCK=/var/lock/once-deploy.lock
-LOCK_WAIT=900
+;; EX_TEMPFAIL. Distinguishes "could not get the lock" from a deploy that ran
+;; and failed, which would otherwise both surface as exit 1.
+(def lock-conflict-exit 75)
 
-# The client chooses nothing. authorized_keys pins this script as the
-# ForceCommand, so whatever the client asked to run arrives in
-# SSH_ORIGINAL_COMMAND and is logged and dropped here rather than parsed. That
-# is the point of taking no argument: no client-controlled string ever reaches
-# a command line, so there is nothing to inject through.
-if [ -n "${SSH_ORIGINAL_COMMAND:-}" ]; then
-  printf 'ignoring client command: %s\n' "$SSH_ORIGINAL_COMMAND"
-fi
+(defn out [fmt & args] (println (apply format fmt args)))
+(defn err [fmt & args] (binding [*out* *err*] (println (apply format fmt args))))
 
-printf 'deploy ping received %s\n' "$(date -Is)"
+(defn die [fmt & args]
+  (apply err fmt args)
+  (System/exit 1))
 
-# Block rather than fail. Two repositories finishing their builds in the same
-# minute is routine now that either ping reconciles everything, and GitHub
-# concurrency groups do not span repositories - this lock is the only thing
-# serializing them. The second ping waits for the first instead of erroring out
-# and leaving its freshly built image undeployed.
-exec 9>"$LOCK"
-if ! flock --wait "$LOCK_WAIT" 9; then
-  printf 'another deploy held %s for more than %ss\n' "$LOCK" "$LOCK_WAIT" >&2
-  exit 1
-fi
+;; Hosts are passed to `once` as argv elements, so no shell quoting is involved
+;; and metacharacters are inert -- but a value starting with "-" would still be
+;; read as a flag. Insist on something that actually looks like a hostname and
+;; refuse anything else rather than hand `once` a surprise.
+(def host-re
+  #"(?i)\A[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\z")
 
-# Carry on after a failure so one broken application still reports the state of
-# the others, then exit non-zero so the workflow that pinged goes red.
-rc=0
-for host in "${HOSTS[@]}"; do
-  printf '\n==> once update %s\n' "$host"
-  if ! sudo "$ONCE" update "$host"; then
-    printf 'once update %s FAILED\n' "$host" >&2
-    rc=1
-  fi
-done
+(defn hosts-from
+  "Read applications[].host out of colors.yml, or exit non-zero explaining why
+   it could not. Never returns an empty list: a profile with no applications is
+   a misconfiguration, not a no-op deploy."
+  [path]
+  (when-not (fs/readable? path)
+    (die "cannot read %s - set COLORS_YML if it lives elsewhere" path))
+  (let [parsed (try
+                 (yaml/parse-string (slurp path))
+                 (catch Exception e
+                   (die "%s is not valid YAML: %s" path (ex-message e))))
+        apps   (get-in parsed [:once :applications])
+        _      (when-not (sequential? apps)
+                 (die "%s has no once.applications list" path))
+        hosts  (->> apps (map :host) (filter string?) (remove str/blank?)
+                    (map str/trim) distinct vec)
+        bad    (remove #(re-matches host-re %) hosts)]
+    (when (seq bad)
+      (die "%s contains implausible host(s): %s" path (str/join ", " bad)))
+    (when (empty? hosts)
+      (die "%s lists no application hosts" path))
+    hosts))
 
-printf '\ndeploy ping finished with status %d\n' "$rc"
-exit "$rc"
+(defn reconcile!
+  "Update every host, carrying on past a failure so one broken application still
+   reports the state of the others. Returns the exit code to leave with."
+  [hosts]
+  (reduce (fn [rc host]
+            (out "%n==> once update %s" host)
+            (let [{:keys [exit]} (p/shell {:continue true} "sudo" once-bin "update" host)]
+              (if (zero? exit)
+                rc
+                (do (err "once update %s FAILED (exit %d)" host exit) 1))))
+          0
+          hosts))
+
+(let [args (vec *command-line-args*)]
+  (cond
+    ;; Operator convenience for checking this machine agrees with colors.yml.
+    ;; Not reachable over SSH: the forced command runs with no arguments no
+    ;; matter what the client asked for.
+    (= ["--list"] args)
+    (do (run! println (hosts-from colors-yml))
+        (System/exit 0))
+
+    ;; Second pass, re-executed by flock below and now holding the lock.
+    (System/getenv "ONCE_DEPLOY_PING_LOCKED")
+    (System/exit (reconcile! (hosts-from colors-yml)))
+
+    ;; First pass: report, validate, then take the lock and re-exec.
+    :else
+    (do
+      ;; The client chooses nothing. authorized_keys pins this script as the
+      ;; ForceCommand, so whatever the client asked to run arrives here in
+      ;; SSH_ORIGINAL_COMMAND and is logged and dropped rather than parsed.
+      ;; That is the point of taking no argument: no client-controlled string
+      ;; ever reaches a command line, so there is nothing to inject through.
+      (when-let [c (System/getenv "SSH_ORIGINAL_COMMAND")]
+        (out "ignoring client command: %s" c))
+      (out "deploy ping received %s" (str (java.time.Instant/now)))
+
+      ;; Parse before taking the lock, so a malformed colors.yml fails fast and
+      ;; without making a queued ping wait behind it.
+      (let [hosts (hosts-from colors-yml)]
+        (out "%s lists %d application(s): %s"
+             colors-yml (count hosts) (str/join ", " hosts)))
+
+      ;; Block rather than fail. Two repositories finishing their builds in the
+      ;; same minute is routine now that either ping reconciles everything, and
+      ;; GitHub concurrency groups do not span repositories -- this lock is the
+      ;; only thing serializing them. The second ping waits for the first
+      ;; instead of erroring out and leaving its fresh image undeployed.
+      ;;
+      ;; flock(1) rather than a FileLock: babashka's sandbox refuses
+      ;; FileLock.release, and re-exec under a battle-tested lock is clearer
+      ;; than a tryLock retry loop.
+      (let [{:keys [exit]} (p/shell {:continue true
+                                     :extra-env {"ONCE_DEPLOY_PING_LOCKED" "1"}}
+                                    "flock" "--wait" lock-wait
+                                    "--conflict-exit-code" (str lock-conflict-exit)
+                                    lock-file
+                                    "bb" *file*)]
+        (when (= exit lock-conflict-exit)
+          (die "another deploy held %s for more than %ss" lock-file lock-wait))
+        (out "%ndeploy ping finished with status %d" exit)
+        (System/exit exit)))))

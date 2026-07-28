@@ -217,19 +217,28 @@ ssh -T -n <user>@<server> deploy-ping
 
 `deploy-ping` is ignored. The deploy key is pinned to a ForceCommand in the
 server's `authorized_keys`, so the server runs `/usr/local/bin/once-deploy-ping`
-instead, and that script reconciles **every** application in `colors.yml` —
-`www.getcolors.ai` and the apex redirect both — regardless of which repository
-pinged.
+instead. That script reads `once.applications[].host` straight out of
+`colors.yml` and reconciles **every** application in it — `www.getcolors.ai` and
+the apex redirect both — regardless of which repository pinged.
 
-The script, its `authorized_keys` line and its sudoers entry are checked in here
-under **`deploy/`**, with the reasoning and install steps in `deploy/README.md`.
-There is one copy for both repositories because there is one server.
+The script is **babashka**, matching the green library's toolchain; `clj-yaml`
+and `babashka.fs` ship with `bb`, so there is no `deps.edn` and nothing to
+install but the binary. It, its `authorized_keys` line and its sudoers entry are
+checked in here under **`deploy/`**, with the reasoning and install steps in
+`deploy/README.md`. There is one copy for both repositories because there is one
+server.
+
+Run `once-deploy-ping --list` on the server to print the hosts it would
+reconcile without deploying anything — that is the quickest check that the
+machine agrees with `colors.yml`.
 
 Consequences worth knowing before you change any of it:
 
-- **No host or image name appears in either repository's CI any more.** Adding an
-  application means editing `colors.yml` and `HOSTS` in `deploy/once-deploy-ping`
-  — no workflow file changes.
+- **No host or image name appears in either repository's CI, or in the deploy
+  script.** `colors.yml` is the single source of truth; adding an application
+  means editing it and nothing else. The one exception is `/etc/sudoers.d`, and
+  only if you chose the enumerated grant over the wildcard — see
+  `deploy/README.md`.
 - **A push to `colors-redirect` also reconciles this site, and vice versa.** A
   failure in either turns the pinging repository's build red. Accepted cost.
 - **This assumes `once update` is idempotent** on an unchanged `:latest` digest.
