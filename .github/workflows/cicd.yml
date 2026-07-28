@@ -124,7 +124,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
-          HOST: www.bigconfig.ai
+          HOST: www.colors.ai
         run: |
           # Create the .ssh directory and start the agent
           mkdir -p ~/.ssh
