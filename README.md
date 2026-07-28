@@ -1,6 +1,6 @@
 # Colors Website
 
-Static Astro site for `https://www.bigconfig.ai`. One page.
+Static Astro site for `https://www.getcolors.ai`. One page.
 
 ## Commands
 

@@ -25,7 +25,7 @@ interface Props {
 // at a preview host, which is the only way to test an unfurl before deploying —
 // social scrapers fetch og:image as an absolute URL, so a preview build that
 // still advertises the production host shows whatever production has today.
-const SITE_URL = Astro.site?.toString() ?? "https://www.bigconfig.ai";
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
 const SITE_NAME = "Colors";
 const TWITTER_HANDLE = "@amiorin";
 // Renaming this file is how you bust the unfurl caches at Slack, WhatsApp and

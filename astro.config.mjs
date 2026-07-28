@@ -9,7 +9,7 @@ export default defineConfig({
   // SITE_URL exists so a preview build can advertise a preview host in
   // og:image and canonical. Production builds leave it unset — the Dockerfile
   // runs a bare `pnpm build`, so deploys always use the real domain.
-  site: process.env.SITE_URL || "https://www.bigconfig.ai",
+  site: process.env.SITE_URL || "https://www.getcolors.ai",
 
   server: {
     allowedHosts: true,

@@ -7,7 +7,7 @@ export async function GET() {
 <rss version="2.0">
 <channel>
   <title>Colors Blog</title>
-  <link>https://www.bigconfig.ai/</link>
+  <link>https://www.getcolors.ai/</link>
   <description>Articles about Agentic DevOps and Colors.</description>
 </channel>
 </rss>`;
