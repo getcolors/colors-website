@@ -6,7 +6,39 @@
 		respond `OK` 200
 	}
 
+	# Markdown for Agents. An agent that asks for markdown gets the markdown
+	# rendition of the landing page; browsers send `Accept: text/html` and curl
+	# sends `*/*`, so neither matches and HTML stays the default.
+	# The rewrite lives inside the `handle` so the matcher is evaluated once,
+	# before the path changes — a `header @markdown` placed after a top-level
+	# `rewrite @markdown` would re-test the matcher against /index.md and miss.
+	# Only `/` has a markdown twin; nothing else needs a rule.
+	@markdown {
+		path / /index.html
+		header Accept *text/markdown*
+	}
+	handle @markdown {
+		rewrite * /index.md
+		header Content-Type "text/markdown; charset=utf-8"
+		header Vary Accept
+		file_server
+	}
+
 	handle {
+		# RFC 8288 Link headers, homepage only. Agents that never parse the HTML
+		# still find the markdown alternate and the sitemap. The values are
+		# relative URI-references, resolved against the request URL — that keeps
+		# the domain out of this file, so it stays spelled out in four places
+		# and not five (see the table in CLAUDE.md).
+		@home path / /index.html
+		header @home +Link `</>; rel="canonical"`
+		header @home +Link `</index.md>; rel="alternate"; type="text/markdown"`
+		header @home +Link `</sitemap.xml>; rel="sitemap"; type="application/xml"`
+		header @home +Link `<https://github.com/getcolors>; rel="author"`
+		# The HTML and the markdown share a URL, so caches have to key on Accept
+		# or they will hand an agent's markdown response to a browser.
+		header @home Vary Accept
+
 		file_server
 	}
 

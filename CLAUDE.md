@@ -47,7 +47,10 @@ inline attributes, so nothing imported it. If a future page wants Tailwind, add
 │   └── pages/
 │       ├── blog/
 │       │   └── rss.xml.ts
-│       └── index.astro
+│       ├── index.astro
+│       ├── index.md.ts   # markdown twin of the landing page, served at /index.md
+│       ├── robots.txt.ts
+│       └── sitemap.xml.ts
 └── tsconfig.json
 ```
 
@@ -137,6 +140,61 @@ lets the browser fake it. If you ever add a real Sans 600 woff2, drop the
 valid, **empty** RSS 2.0 channel at `/blog/rss.xml` so existing subscribers keep
 the subscription rather than their reader dropping a 404 feed. It has no
 dependencies and no items.
+
+## Agent and crawler discovery
+
+Three routes exist for machine readers. All three are **generated endpoints**,
+not static files in `public/`, because each one embeds the site host and has to
+follow `SITE_URL` the same way `canonical` and `og:image` do. A static
+`public/robots.txt` would hardcode production into every preview build.
+
+| Route | Source | Notes |
+|---|---|---|
+| `/sitemap.xml` | `src/pages/sitemap.xml.ts` | one `<url>`, `/`. `lastmod` is the build time — there is no per-route publish date to use. |
+| `/robots.txt` | `src/pages/robots.txt.ts` | `Allow: /` plus the absolute `Sitemap:` line. |
+| `/index.md` | `src/pages/index.md.ts` | markdown rendition of the landing page. |
+
+`@astrojs/sitemap` would cover the first one, but it is a dependency for a
+single page; add the route to `PAGES` in `sitemap.xml.ts` when a second page
+appears, and reach for the integration when that list stops being trivial.
+
+**The markdown copy is duplicated by hand.** `index.md.ts` mirrors the prose in
+`index.astro`; there is no shared source, because the landing page is an
+inline-styled port of a design export and extracting its strings would mean
+rewriting it. Edit both together.
+
+Caddy does the content negotiation — Astro builds static files and cannot vary
+on a request header. The `@markdown` matcher in `Caddyfile.prod` catches
+`Accept: text/markdown` on `/` and rewrites to `/index.md`; browsers send
+`Accept: text/html` and curl sends `*/*`, so HTML stays the default. Both
+responses send `Vary: Accept` so a cache cannot serve one to the other.
+
+The same file adds RFC 8288 `Link` headers on the homepage only: `canonical`,
+the `alternate` markdown twin, the `sitemap`, and `author`. They are **relative
+URI-references** on purpose, resolved by the client against the request URL, so
+the domain is not spelled out a fifth time.
+
+After touching any of this, test it against a real Caddy — see the recipe under
+Redirects, then:
+
+```bash
+curl -sI -H 'Accept: text/markdown' localhost:4321/   # text/markdown + Vary
+curl -sI localhost:4321/ | grep -i '^link'            # four Link headers
+```
+
+### What is deliberately not published
+
+An agent-readiness scan will also ask for `/.well-known/api-catalog`,
+`/.well-known/oauth-authorization-server`, `/.well-known/oauth-protected-resource`,
+`/auth.md`, `/.well-known/mcp/server-card.json`, an agent-skills index, and
+WebMCP tools via `navigator.modelContext`. **This site has no API, no auth, no
+MCP server and no tools** — it is one marketing page. Those documents would have
+to be invented, and a catalog advertising endpoints that do not answer is worse
+for an agent than no catalog. Do not add them to make a scanner green. If Colors
+later ships a real API, the catalog goes in then.
+
+DNS-AID records (`_index._agents.getcolors.ai`) are DNS, not files: they live in
+Cloudflare with the rest of the zone, which this repo does not manage.
 
 ## Redirects
 
@@ -237,7 +295,8 @@ rename rule above still applies to changing the artwork at a fixed host.
 - The install command on the page is `npx skills use getcolors/once`. It appears
   **four times** in `index.astro` — the visible `<code>` and the `data-copy`
   attribute of each of the two copy blocks. Change all four together or the
-  button copies something the page does not show.
+  button copies something the page does not show. It appears **twice more** in
+  `src/pages/index.md.ts`, the markdown twin: six in total.
 - The three library links are `github.com/getcolors/red|green|blue`, and the
   footer links to the org root `github.com/getcolors`. These shipped from the
   design export as `bigconfig-ai/once` and `amiorin/red|green|blue`; they were
