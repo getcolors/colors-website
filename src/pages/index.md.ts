@@ -86,15 +86,19 @@ self-hosted alternative to Netlify or Vercel that an agent runs end to end.
    zones and mail domains.
 2. **Resolve secrets.** Env map points to \`COLORS_PAR_*\` variables, deferred
    until runtime.
-3. **Dry-run boundary.** Builds files under \`.once/\` and runs
+3. **Dry-run boundary.** Builds files under \`.colors/\` and runs
    \`create --dry-run\`, touching nothing live.
 4. **Provision & reconcile.** OpenTofu provisions compute/SMTP/DNS; Ansible
    configures local and remote hosts.
 
 The create/build DAG runs \`start\` → (\`tofu-compute\`, \`tofu-smtp\`) →
-\`tofu-dns\` → \`tofu-smtp-post\` → (\`ansible-local\`, \`ansible-remote\`).
-Delete runs cleanup, SMTP post, and DNS, then SMTP and compute in parallel.
-Step failures travel as namespaced exit codes, never uncaught exceptions.
+\`tofu-dns\` → \`tofu-smtp-post\` → (\`ansible-local\`, \`ansible-remote\`), and
+\`ansible-remote\` → \`github\`. Publishing follows the remote stage, not the
+local one: the deploy keys describe a configured host, so a workstation-side
+failure does not gate them. Delete reverses the graph — it withdraws the
+published credentials first, then cleanup, SMTP post and DNS, then SMTP and
+compute in parallel. Step failures travel as namespaced exit codes, never
+uncaught exceptions.
 
 ## Give your agent a new skill to create a personal PaaS
 

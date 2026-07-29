@@ -443,7 +443,14 @@ const description =
          sequence instead: the row turns into a column and each connector
          rotates from a 32x1 horizontal rule into a 1x20 vertical one. The
          stacked pairs (tofu-compute/tofu-smtp, ansible-local/ansible-remote)
-         stay stacked -- that is what marks them as running in parallel. */
+         stay stacked -- that is what marks them as running in parallel.
+
+         The ansible pair is a 2x2 grid rather than a plain column: github
+         follows ansible-remote alone, so it sits in a second grid column on
+         that row only, and the empty cell above it keeps the two ansible boxes
+         one width. Below 860px the grid collapses to one column, the empty
+         cell is dropped so it does not leave a gap, and the branch reads as a
+         straight continuation of the vertical sequence. */
       @media (max-width: 860px) {
         .dag {
           flex-direction: column !important;
@@ -461,6 +468,14 @@ const description =
         }
         .dag-group {
           width: 100%;
+          grid-template-columns: 1fr !important;
+        }
+        .dag-spacer {
+          display: none;
+        }
+        .dag-tail {
+          flex-direction: column !important;
+          align-items: stretch !important;
         }
         .dag-panel {
           padding: 24px 20px !important;
@@ -628,7 +643,7 @@ const description =
                 <div style="border:1px solid oklch(91% 0.005 260); border-radius:10px; padding:20px; height:100%; background:oklch(99% 0.002 90);">
                   <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:oklch(55% 0.01 260); margin-bottom:8px;">STEP 03</div>
                   <h4 style="font-size:15px; font-weight:600; margin:0 0 6px;">Dry-run boundary</h4>
-                  <p style="font-size:13px; color:oklch(45% 0.01 260); margin:0;">Builds files under .once/ and runs create --dry-run, touching nothing live.</p>
+                  <p style="font-size:13px; color:oklch(45% 0.01 260); margin:0;">Builds files under .colors/ and runs create --dry-run, touching nothing live.</p>
                 </div>
               </div>
 
@@ -657,12 +672,17 @@ const description =
               <div class="dag-edge" style="width:32px; height:1px; background:oklch(80% 0.005 260);"></div>
               <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">tofu-smtp-post</div>
               <div class="dag-edge" style="width:32px; height:1px; background:oklch(80% 0.005 260);"></div>
-              <div class="dag-group" style="display:flex; flex-direction:column; gap:8px;">
+              <div class="dag-group" style="display:grid; grid-template-columns:auto auto; gap:8px 0; align-items:center;">
                 <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">ansible-local</div>
+                <div class="dag-spacer"></div>
                 <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">ansible-remote</div>
+                <div class="dag-tail" style="display:flex; align-items:center;">
+                  <div class="dag-edge" style="width:32px; height:1px; background:oklch(80% 0.005 260);"></div>
+                  <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">github</div>
+                </div>
               </div>
             </div>
-            <p style="font-size:13px; color:oklch(45% 0.01 260); margin:20px 0 0;">Delete runs cleanup, SMTP post, and DNS, then SMTP and compute in parallel. Step failures travel as namespaced exit codes, never uncaught exceptions.</p>
+            <p style="font-size:13px; color:oklch(45% 0.01 260); margin:20px 0 0;">Publishing follows the remote stage, not the local one: the deploy keys describe a configured host, so a workstation-side failure does not gate them. Delete reverses the graph — it withdraws the published credentials first, then cleanup, SMTP post and DNS, then SMTP and compute in parallel. Step failures travel as namespaced exit codes, never uncaught exceptions.</p>
           </div>
         </div>
       </div>
