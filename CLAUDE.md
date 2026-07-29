@@ -93,6 +93,20 @@ Things to know before editing it:
   at the bottom of the page. There is no framework — the page needs no JS to
   render, only to copy.
 - Fonts are self-hosted from `public/fonts/`. Do not add a Google Fonts link.
+- The hero's `colors.yml` panel is the one exception to "inline styles only": it
+  is an `<astro:components>` `Code` block, highlighted by the Shiki that ships
+  inside Astro — no dependency was added for it. It renders the **real**
+  `colorsYml` that deploys this site, so it and the block under Deployment
+  below have to change together.
+- `yamlTheme` in the frontmatter is a hand-written Shiki theme, six scopes wide.
+  Bundled themes were rejected because each one imports a palette that fights
+  the page; this maps keys to blue, values to green and literals to red — the
+  three library accents, darkened for contrast at 13px. Shiki emits the theme
+  `name` as a class on the `<pre>`, hence `colors-yaml` rather than `colors`.
+  It accepts `oklch()` straight through; no hex fallback needed here.
+- Shiki's `<pre>`/`<code>` take the UA monospace family instead of inheriting
+  the panel's, so `.astro-code` restates IBM Plex Mono in the global block.
+  Remove that rule and the hero silently renders in Courier.
 
 ## Brand assets
 
@@ -228,7 +242,7 @@ repo**; it lives with the infrastructure. Reproduced here because several values
 in `.github/workflows/cicd.yml` only make sense against it:
 
 ```yaml
-profile: colors-website
+profile: once-colors
 workdir: .colors
 
 once:
@@ -236,9 +250,6 @@ once:
     - host: www.getcolors.ai
       image: ghcr.io/getcolors/colors-website:latest
       github: getcolors/colors-website
-    - host: getcolors.ai
-      image: ghcr.io/getcolors/colors-redirect:latest
-      github: getcolors/colors-redirect
 
 provider-compute: oci
 provider-smtp: resend
@@ -249,17 +260,25 @@ compute-prevent-destroy: true
 
 What ties to what:
 
-- `profile: colors-website` is the name of the **GitHub Environment** the deploy
-  job declares (`environment.name` in `cicd.yml`). Get it wrong and the
-  environment-scoped `SSH_PRIVATE_KEY` and the `SERVER_*` vars all resolve to
-  empty — the job does not fail loudly, it fails confusingly.
+- `profile: once-colors` is the name of the **GitHub Environment** the deploy
+  job declares (`environment.name` in `cicd.yml`, and the `deploy-once-colors`
+  concurrency group beside it). Get it wrong and the environment-scoped
+  `SSH_PRIVATE_KEY` and the `SERVER_*` vars all resolve to empty — the job does
+  not fail loudly, it fails confusingly. The profile was `colors-website` until
+  2026-07-28; that name was right for one repo and confusing in the other.
 - `image:` is `ghcr.io/${{ github.repository }}:latest` as pushed by the
   `manifest` job, so this repo has to live at **`getcolors/colors-website`** for
   the tag to line up.
-- The deploy step is `sudo once update www.getcolors.ai` over SSH — the host
-  argument is the first `applications[].host`, hardcoded as `HOST` in `cicd.yml`.
-- The apex `getcolors.ai` is a **separate application** serving a redirect image
-  from its own repo. Nothing in this repo builds it; don't add apex handling to
+- The deploy step names **no host at all** — it is a bare `ssh -T` ping. The
+  key's `authorized_keys` entry carries a forced command that updates every host
+  it owns, so adding an application here needs no change to `cicd.yml`. It
+  connects to `SERVER_IP`, not a hostname: ONCE pins `SSH_KNOWN_HOSTS` on the
+  address, and under `StrictHostKeyChecking=yes` a hostname finds no match.
+- The apex `getcolors.ai` is **no longer an application in this profile** — it
+  was a second entry serving a redirect image from `getcolors/colors-redirect`
+  until the config above dropped it. The apex still 301s to `www` (verified
+  2026-07-29), from the edge or from a deployment this repo has no part in
+  either way. Nothing here builds or serves it; don't add apex handling to
   `Caddyfile.prod`.
 - `compute-prevent-destroy: true` means the compute instance is protected — a
   `once destroy` will refuse. Flipping it to `false` is how you would tear the

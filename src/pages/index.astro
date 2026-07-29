@@ -1,9 +1,49 @@
 ---
+import { Code } from "astro:components";
 import SeoMeta from "~/components/SeoMeta.astro";
 
 const title = "Colors — An SDK for Package Skills";
 const description =
   "Colors is an SDK for building Package Skills. Three libraries — red, green and blue — give agents dry-run guarantees, secret indirection, and strict lifecycle control over real infrastructure.";
+
+// The colors.yml shown in the hero. This is the real config that deploys this
+// site — see the Deployment section of CLAUDE.md.
+const colorsYml = `profile: once-colors
+workdir: .colors
+
+once:
+  applications:
+    - host: www.getcolors.ai
+      image: ghcr.io/getcolors/colors-website:latest
+      github: getcolors/colors-website
+
+provider-compute: oci
+provider-smtp: resend
+provider-dns: cloudflare
+provider-backend: r2
+compute-prevent-destroy: true`;
+
+// Shiki ships with Astro, so highlighting costs no new dependency — but every
+// bundled theme drags in its own palette. This one maps YAML scopes onto the
+// page's own colours instead: keys blue, values green, literals red, the three
+// library accents. Darkened from the accents proper (55/65/60% lightness) for
+// contrast against the panel at 13px.
+const yamlTheme = {
+  // Shiki puts the theme name on the <pre> as a class; keep it namespaced.
+  name: "colors-yaml",
+  type: "light" as const,
+  settings: [
+    { settings: { foreground: "oklch(35% 0.01 260)" } },
+    {
+      scope: ["entity.name.tag", "support.type.property-name"],
+      settings: { foreground: "oklch(48% 0.16 260)" },
+    },
+    { scope: ["string"], settings: { foreground: "oklch(45% 0.13 145)" } },
+    { scope: ["constant", "keyword"], settings: { foreground: "oklch(50% 0.19 25)" } },
+    { scope: ["punctuation"], settings: { foreground: "oklch(65% 0.01 260)" } },
+    { scope: ["comment"], settings: { foreground: "oklch(60% 0.01 260)" } },
+  ],
+};
 ---
 
 <!doctype html>
@@ -412,6 +452,15 @@ const description =
       .h1:hover { background: oklch(35% 0.01 260); }
       .h2:hover { border-color: oklch(80% 0.01 260); }
 
+      /* Shiki emits <pre><code>, and both pick up the UA monospace family
+         rather than inheriting the panel's. Reapply it, or the hero's YAML
+         stops matching every other block of code on the page. */
+      .astro-code,
+      .astro-code code {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 13px;
+      }
+
       /* Responsive collapse. The export ships no media queries; these rules
          only take effect below 860px and leave the desktop design untouched.
          !important is required to override the inline styles. */
@@ -520,14 +569,12 @@ const description =
         </div>
         <div style="background:oklch(97% 0.005 260); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:28px; font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(35% 0.01 260);">
           <div style="color:oklch(55% 0.01 260); margin-bottom:14px; font-size:12px;"># colors.yml</div>
-          <div style="white-space:pre; line-height:1.7;">host: app.example.com
-    env:
-      site-database-url:
-        -&gt; COLORS_PAR_SITE_DATABASE_URL
-    dns: managed
-    smtp: managed
-    apps:
-      - once/site</div>
+          <Code
+            code={colorsYml}
+            lang="yaml"
+            theme={yamlTheme}
+            style="margin:0; background:transparent; line-height:1.7"
+          />
         </div>
       </div>
 
