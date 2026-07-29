@@ -29,18 +29,9 @@ inline attributes, so nothing imported it. If a future page wants Tailwind, add
 ```text
 .
 ├── astro.config.mjs
-├── Caddyfile.prod
 ├── package.json
 ├── pnpm-lock.yaml
-├── plans/
-│   └── colors-landing-page-export.html   # design reference, not built
-├── public/
-│   ├── fonts/            # 21 self-hosted IBM Plex woff2 files
-│   ├── favicon.svg       # the three-stripe mark
-│   ├── favicon.png       # raster fallback, currently unreferenced
-│   └── og-colors.png     # og:image, generated — see scripts/
-├── scripts/
-│   └── generate-og-image.py
+├── tsconfig.json
 ├── src/
 │   ├── components/
 │   │   └── SeoMeta.astro
@@ -51,13 +42,45 @@ inline attributes, so nothing imported it. If a future page wants Tailwind, add
 │       ├── index.md.ts   # markdown twin of the landing page, served at /index.md
 │       ├── robots.txt.ts
 │       └── sitemap.xml.ts
-└── tsconfig.json
+├── public/
+│   ├── fonts/            # 21 self-hosted IBM Plex woff2 files
+│   ├── favicon.svg       # the three-stripe mark
+│   ├── favicon.png       # raster fallback, currently unreferenced
+│   └── og-colors.png     # og:image, generated — see scripts/
+├── scripts/
+│   └── generate-og-image.py
+│
+│   # shipping the site — see Deployment
+├── Dockerfile            # two stages: node builds, caddy:2-alpine serves dist/
+├── Caddyfile.prod        # markdown negotiation, Link headers, 404 → / redirects
+├── .dockerignore
+├── .github/workflows/
+│   └── cicd.yml          # build both arches, stitch a manifest, ssh-ping the server
+│
+├── Procfile              # local dev only — not copied into the image
+├── .envrc                # devenv/direnv toolchain
+└── plans/                # design docs and drafts — reference only, never built
+    └── colors-landing-page-export.html   # the export index.astro was ported from
 ```
 
-That is every source file. `public/` is small on purpose — before adding to it,
-check the new file is actually referenced. `favicon.png` currently is not:
-`index.astro` links only `favicon.svg`, so the PNG ships to `dist/` and is
-served, but nothing points at it.
+The image is a two-stage build and carries **no process supervisor**: the
+builder stage runs `pnpm build`, and the final stage is stock `caddy:2-alpine`
+with `dist/` at `/srv` and `Caddyfile.prod` as its config, on the base image's
+own entrypoint. The `Procfile` here is a development convenience (`pnpm install
+&& pnpm dev`) and is never copied in — unlike `colors-redirect`, where the
+Procfile *is* the production supervisor. Do not add a runtime dependency to this
+image expecting hivemind to start it.
+
+`src/`, `public/`, and the four manifests above are the whole site — everything
+under `src/pages/` is a route and there are no others. `public/` is small on
+purpose: before adding to it, check the new file is actually referenced.
+`favicon.png` currently is not — `index.astro` links only `favicon.svg`, so the
+PNG ships to `dist/` and is served, but nothing points at it.
+
+`plans/` holds ~46 design documents and LinkedIn drafts accumulated over the
+project. None of it is a build input, and it is not maintained alongside the
+code — read it as history, not as a description of the current site. The one
+file with a live role is the landing-page export, kept as the visual reference.
 
 ## Commands
 
