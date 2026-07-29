@@ -476,6 +476,18 @@ const yamlTheme = {
         h1 {
           font-size: 38px !important;
         }
+        /* Once the hero is a single column, the yaml panel shares the track
+           with the copy block, and a grid item's automatic minimum size is its
+           min-content width -- here the longest unwrapped line of colors.yml.
+           That widens the track past the viewport and pushes every section's
+           right padding off screen. min-width:0 lets the panel shrink to the
+           track; the Shiki <pre> inside it already scrolls (overflow-x:auto,
+           tabindex=0), so the long image: line stays reachable. Scoped to the
+           collapsed layout: above 860px the two-column track sizing is
+           load-bearing for the panel's width and must not change. */
+        .yaml-panel {
+          min-width: 0;
+        }
       }
       @media (max-width: 520px) {
         .r-4 {
@@ -567,7 +579,7 @@ const yamlTheme = {
             <span style="font-size:13px; color:oklch(55% 0.01 260);">Run inside your coding agent — it grants <strong>Once</strong>, a skill to provision a VPS with a personal PaaS like Netlify or Vercel.</span>
           </div>
         </div>
-        <div style="background:oklch(97% 0.005 260); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:28px; font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(35% 0.01 260);">
+        <div class="yaml-panel" style="background:oklch(97% 0.005 260); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:28px; font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(35% 0.01 260);">
           <div style="color:oklch(55% 0.01 260); margin-bottom:14px; font-size:12px;"># colors.yml</div>
           <Code
             code={colorsYml}
