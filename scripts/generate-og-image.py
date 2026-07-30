@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate public/linkedin.png, the site's og:image.
+"""Regenerate the site's og:image (see OUT below for the current filename).
 
 All text is converted to vector outlines from the same IBM Plex woff2 files in
 public/fonts/ that the site serves, so the card matches the page's typography
@@ -26,7 +26,9 @@ FONTS = os.path.join(ROOT, "public", "fonts")
 # Keep this in sync with DEFAULT_IMAGE in src/components/SeoMeta.astro. If you
 # change the artwork, change the filename too — Slack, WhatsApp and LinkedIn
 # cache unfurls by image URL, so new bytes at an old path show the old card.
-OUT = os.path.join(ROOT, "public", "og-colors.png")
+# og-colors.png was retired on 2026-07-30: it was generated before the rebrand
+# landed in CMD below and shipped a card reading "bigconfig-ai/once".
+OUT = os.path.join(ROOT, "public", "og-colors-v2.png")
 
 try:
     from fontTools.ttLib import TTFont
@@ -154,7 +156,7 @@ for i, (name, colour, stack) in enumerate(libraries):
     o.append(draw(MONO5, stack, 19, STACK_X, y, MUTED)[0])
 
 # Install command, in the same dark pill the page uses.
-CMD = "npx skills use bigconfig-ai/once"
+CMD = "npx skills use getcolors/once"
 cmd_w = text(MONO5, CMD, 24)[1]
 PILL_Y, PILL_H, PAD = 516, 60, 26
 o.append(f'<rect x="{MARGIN}" y="{PILL_Y}" width="{cmd_w + 2 * PAD:.1f}" height="{PILL_H}" rx="10" fill="{INK}"/>')

@@ -12,17 +12,22 @@ reintroduce them without being asked.
 
 | Layer | Tool | Version |
 |---|---|---|
-| Site generator | Astro | ^6.3.1 |
-| Image tooling | sharp | ^0.34.2 |
+| Site generator | Astro | ^7.1.6 |
+| Image tooling | sharp | ^0.35.3 |
 | Package manager | pnpm | v10.33.2 |
+| Typechecker | `@astrojs/check` + typescript | ^0.9.10 / ^6 (dev only) |
 | TypeScript | strict Astro config | via `astro/tsconfigs/strict` |
 
 That is the whole dependency list. MDX (`@astrojs/mdx`), D2 diagrams
 (`astro-d2`), and the mdast/micromark packages were dependencies of the blog and
-were removed with it. **Tailwind is also gone** — the landing page is styled with
-inline attributes, so nothing imported it. If a future page wants Tailwind, add
-`tailwindcss` + `@tailwindcss/vite` back, restore the vite plugin in
-`astro.config.mjs`, and recreate `src/styles/global.css`.
+were removed with it. **Tailwind is also gone** — the landing page is styled by
+one stylesheet in `index.astro`, so nothing imported it. If a future page wants
+Tailwind, add `tailwindcss` + `@tailwindcss/vite` back, restore the vite plugin
+in `astro.config.mjs`, and recreate `src/styles/global.css`.
+
+TypeScript is pinned to **^6** even though 7 is released: `@astrojs/check`
+declares a `^5 || ^6` peer range, and installing 7 leaves it unmet. Bump it when
+that package widens the range, not before.
 
 ## Repository Structure
 
@@ -35,6 +40,8 @@ inline attributes, so nothing imported it. If a future page wants Tailwind, add
 ├── src/
 │   ├── components/
 │   │   └── SeoMeta.astro
+│   ├── data/
+│   │   └── landing.ts    # every string on the landing page — see The landing page
 │   └── pages/
 │       ├── blog/
 │       │   └── rss.xml.ts
@@ -46,7 +53,7 @@ inline attributes, so nothing imported it. If a future page wants Tailwind, add
 │   ├── fonts/            # 21 self-hosted IBM Plex woff2 files
 │   ├── favicon.svg       # the three-stripe mark
 │   ├── favicon.png       # raster fallback, currently unreferenced
-│   └── og-colors.png     # og:image, generated — see scripts/
+│   └── og-colors-v2.png  # og:image, generated — see scripts/
 ├── scripts/
 │   └── generate-og-image.py
 │
@@ -55,7 +62,7 @@ inline attributes, so nothing imported it. If a future page wants Tailwind, add
 ├── Caddyfile.prod        # markdown negotiation, Link headers, 404 → / redirects
 ├── .dockerignore
 ├── .github/workflows/
-│   └── cicd.yml          # build both arches, stitch a manifest, ssh-ping the server
+│   └── cicd.yml          # typecheck, build both arches, stitch a manifest, ssh-ping the server
 │
 ├── Procfile              # local dev only — not copied into the image
 ├── .envrc                # devenv/direnv toolchain
@@ -88,6 +95,7 @@ file with a live role is the landing-page export, kept as the visual reference.
 pnpm dev
 pnpm build
 pnpm preview
+pnpm typecheck   # astro check — the gate CI runs before it builds an image
 pnpm astro
 ```
 
@@ -100,27 +108,58 @@ design export, which is kept at `plans/colors-landing-page-export.html` as the
 visual reference — that file is **not** built and must stay out of `src/pages/`
 (it would publish as a route, and its filename contains spaces).
 
+**Copy lives in `src/data/landing.ts`, markup and style in `index.astro`.**
+Nothing on the page is a literal in the template: headings, ledes, card text,
+the DAG node names and the install command are all imported. Both this page and
+the `/index.md` twin render that one module, which is what stops them drifting.
+
 Things to know before editing it:
 
-- The design is expressed as **inline `style` attributes**, not Tailwind classes.
-  Match that when adding sections; don't mix idioms mid-page.
-- The colour system is `oklch()` throughout. The three library accents are
-  red `oklch(60% 0.19 25)`, green `oklch(65% 0.17 145)`, blue `oklch(55% 0.18 260)`.
+- The design was **inline `style` attributes** when it landed, ported that way
+  from the export. It is now one `<style is:global>` block of classes; the two
+  remaining `style=` attributes are genuinely per-instance (the Shiki `Code`
+  prop, and each library card's accent swatch). Add rules to the stylesheet
+  rather than reaching for an attribute.
+- Repeated blocks are rendered from arrays — three library cards, three
+  bundles, four steps, the DAG. Adding a library means adding an object to
+  `libraries.items`, not copying markup.
+- The colour system is `oklch()` throughout, declared once as custom properties
+  on `:root`. The three library accents are `--red oklch(60% 0.19 25)`,
+  `--green oklch(65% 0.17 145)`, `--blue oklch(55% 0.18 260)`.
 - The three libraries are **red = TypeScript/Bun, green = Clojure/Babashka,
   blue = Python/uv**.
 - The export shipped **no media queries**. The `@media` blocks at the end of the
-  `<style is:global>` are additions, and they need `!important` to beat the
-  inline styles. Classes `r-hero`, `r-2`, `r-3`, `r-4` mark the fixed grids.
-- Hover states from the export became the `.h1` / `.h2` classes.
+  stylesheet are additions. They used to need `!important` to beat the inline
+  styles and **no longer do** — ordinary cascade order settles it, so they have
+  to stay last in the block. Classes `hero`, `grid-2`, `grid-3`, `grid-4` mark
+  the fixed grids (formerly `r-hero`, `r-2`, `r-3`, `r-4`).
+- `.yml { min-width: 0 }` inside the 860px block is load-bearing, not tidying.
+  Once the hero collapses to one column the panel's automatic minimum size is
+  the longest unwrapped line of `colors.yml`, which widens the whole document
+  and pushes every section's right padding off screen. The panel was
+  `.yaml-panel` when that fix landed in `aa84d3d`; renaming a class here means
+  checking the media queries, since a stale selector fails silently.
+- One media rule is written as `.install-row code, .astro-code, .astro-code code`
+  rather than a bare `code`. A bare `code` selector loses to `.install-row code`
+  on specificity now that the 14px is a class rule; the old `code { ... }`
+  worked only because it carried `!important`.
+- Hover states from the export are `.copy:hover` and `.lib:hover` (formerly the
+  `.h1` / `.h2` classes).
+- Section labels ("STEP 01", "BROWSER SKILL") are stored **title-case** in
+  `landing.ts` and uppercased with `text-transform`, so the markdown twin reads
+  as prose rather than shouting.
 - The two "Copy" buttons are driven by `data-copy` and one small inline script
   at the bottom of the page. There is no framework — the page needs no JS to
   render, only to copy.
 - Fonts are self-hosted from `public/fonts/`. Do not add a Google Fonts link.
-- The hero's `colors.yml` panel is the one exception to "inline styles only": it
-  is an `<astro:components>` `Code` block, highlighted by the Shiki that ships
-  inside Astro — no dependency was added for it. It renders the **real**
-  `colorsYml` that deploys this site, so it and the block under Deployment
-  below have to change together.
+  The 39 `@font-face` rules are the bulk of the file; Astro extracts the whole
+  `<style is:global>` to a hashed stylesheet at build time, so its size costs a
+  request either way.
+- The hero's `colors.yml` panel is an `<astro:components>` `Code` block,
+  highlighted by the Shiki that ships inside Astro — no dependency was added
+  for it. It renders the **real** `colorsYml` that deploys this site, so it and
+  the block under Deployment below have to change together. The twin fences the
+  same constant, so that is now one edit rather than three.
 - `yamlTheme` in the frontmatter is a hand-written Shiki theme, six scopes wide.
   Bundled themes were rejected because each one imports a palette that fights
   the page; this maps keys to blue, values to green and literals to red — the
@@ -138,7 +177,7 @@ the nav logo in `index.astro`. It uses hex rather than `oklch()` because not
 every favicon rasteriser parses modern CSS colour — the oklch originals are in a
 comment in the file.
 
-`public/og-colors.png` is the og:image and is **generated**, not hand-drawn. Run
+`public/og-colors-v2.png` is the og:image and is **generated**, not hand-drawn. Run
 `scripts/generate-og-image.py` to rebuild it after any copy or brand change; the
 setup block at the top of that script explains the one-off venv. It converts
 text to outlines straight from `public/fonts/`, so the card's type matches the
@@ -149,7 +188,10 @@ the safe margin.
 LinkedIn cache unfurls keyed on the image URL and hold them for days, so new
 bytes at an old path keep showing the old card. Bump the name in both
 `scripts/generate-og-image.py` (`OUT`) and `SeoMeta.astro` (`DEFAULT_IMAGE`).
-The file was called `linkedin.png` under BigConfig; that name is retired.
+The file was called `linkedin.png` under BigConfig; that name is retired. So is
+`og-colors.png`, removed on 2026-07-30 — it was generated from the pre-rebrand
+`CMD` and showed `npx skills use bigconfig-ai/once` on every unfurl for three
+days while the page itself said `getcolors/once`.
 
 ## Testing a link unfurl before deploying
 
@@ -195,10 +237,27 @@ follow `SITE_URL` the same way `canonical` and `og:image` do. A static
 single page; add the route to `PAGES` in `sitemap.xml.ts` when a second page
 appears, and reach for the integration when that list stops being trivial.
 
-**The markdown copy is duplicated by hand.** `index.md.ts` mirrors the prose in
-`index.astro`; there is no shared source, because the landing page is an
-inline-styled port of a design export and extracting its strings would mean
-rewriting it. Edit both together.
+**The markdown copy is generated, not duplicated.** `index.md.ts` and
+`index.astro` both render `src/data/landing.ts`, so a wording change reaches
+both by construction. Edit the data module; neither route holds prose of its
+own.
+
+It was two hand-maintained copies until 2026-07-30, on the reasoning that the
+page was an inline-styled port and extracting its strings meant rewriting it.
+That was true, and the rewrite happened — but only after the copies had drifted
+twice. `b761193` put the real `colors.yml` in the hero and left the twin
+documenting a `host:`/`apps:` schema the product does not accept, which is a
+worse failure than a stale sentence: agents read the twin *as the reference*.
+
+Two consequences worth knowing:
+
+- Prose in `landing.ts` is authored in **markdown**, because the twin consumes
+  it verbatim. `index.astro` calls `html()` from that module, which strips code
+  ticks and turns `**bold**` into `<strong>`. It is two regexes, not a markdown
+  parser — don't reach for syntax it doesn't handle.
+- The twin hard-wraps at 78 columns through a `wrap()` helper that treats a
+  `` `code span` `` as unbreakable. Fences and the library table are never
+  wrapped, where a break would change meaning.
 
 Caddy does the content negotiation — Astro builds static files and cannot vary
 on a request header. The `@markdown` matcher in `Caddyfile.prod` catches
@@ -283,6 +342,11 @@ compute-prevent-destroy: true
 
 What ties to what:
 
+- The `check` job runs `pnpm typecheck` and **`build` needs it**, so a type
+  error costs one job rather than two image builds, a manifest push and an SSH
+  deploy. It is the only gate in the pipeline: there are no tests, no linter and
+  no formatter, and `pnpm build` does not typecheck on its own. Added
+  2026-07-30 — before that a push went to production uninspected.
 - `profile: once-colors` is the name of the **GitHub Environment** the deploy
   job declares (`environment.name` in `cicd.yml`, and the `deploy-once-colors`
   concurrency group beside it). Get it wrong and the environment-scoped
@@ -334,11 +398,18 @@ rename rule above still applies to changing the artwork at a fixed host.
 - Google Analytics ID: `G-4VKP1WY4QJ`.
 - Site URL: `https://www.getcolors.ai`, matching the deploy host. It is written
   in four files — see the table under Deployment; change them together.
-- The install command on the page is `npx skills use getcolors/once`. It appears
-  **four times** in `index.astro` — the visible `<code>` and the `data-copy`
-  attribute of each of the two copy blocks. Change all four together or the
-  button copies something the page does not show. It appears **twice more** in
-  `src/pages/index.md.ts`, the markdown twin: six in total.
+- The install command is `npx skills use getcolors/once`. It is written **twice**
+  in the repository: `installCmd` in `src/data/landing.ts`, which every on-page
+  occurrence and the markdown twin resolve to, and `CMD` in
+  `scripts/generate-og-image.py`, which bakes it into the og:image. It was six
+  hand-kept copies until 2026-07-30.
+
+  The second one is the one that bites. It is not on any page, so it does not
+  show up when you grep the rendered site, no build step reads it, and a wrong
+  value there ships a social card contradicting the page — which is exactly what
+  happened between 2026-07-27 and 2026-07-30, when every unfurl advertised
+  `bigconfig-ai/once`. Changing the command means changing both, regenerating
+  the card, and renaming it.
 - The three library links are `github.com/getcolors/red|green|blue`, and the
   footer links to the org root `github.com/getcolors`. These shipped from the
   design export as `bigconfig-ai/once` and `amiorin/red|green|blue`; they were

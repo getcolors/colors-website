@@ -2,116 +2,118 @@
 // carries `Accept: text/markdown` — see the @markdown handle in Caddyfile.prod.
 // Browsers send Accept: text/html and keep getting index.astro.
 //
-// The copy here MIRRORS src/pages/index.astro by hand. There is no shared
-// source: the landing page was ported from a design export as inline-styled
-// HTML, and extracting its strings would mean rewriting the whole page. Edit
-// both when the copy changes. In particular `npx skills use getcolors/once`
-// now appears five times in the repo, not four.
+// The copy is NOT duplicated here. Both this route and index.astro render
+// src/data/landing.ts, so a wording change lands in both by construction.
+// They used to be two hand-maintained copies and drifted twice: b761193 put
+// the real colors.yml in the hero and left this file describing a schema the
+// product does not accept, and the same class of miss shipped a stale org name
+// on the og:image.
+//
+// The prose in landing.ts is authored in markdown, so this file interpolates
+// it verbatim; index.astro is the one that has to convert.
 
 import type { APIContext } from "astro";
+import {
+  bundles,
+  colorsYml,
+  cta,
+  footer,
+  hero,
+  installCmd,
+  libraries,
+  meta,
+  once,
+  primitive,
+} from "~/data/landing";
+
+const fence = (lang: string, body: string) => `\`\`\`${lang}\n${body}\n\`\`\``;
+
+/** Hard-wrap prose at 78 columns, indenting continuation lines. Markdown does
+ *  not care, but the twin is read as a raw file often enough to be worth
+ *  keeping tidy — the hand-written version it replaced wrapped the same way.
+ *  Never applied to fences or tables, where a line break would change meaning. */
+const wrap = (text: string, indent = "", width = 78) => {
+  const lines: string[] = [];
+  let line = "";
+  // A token is a run of non-space characters, except that a `code span` counts
+  // as one character class of its own so an inner space cannot become a line
+  // break. CommonMark would still read `create --dry-run` correctly split
+  // across lines, but the raw file is meant to be legible too.
+  for (const word of text.match(/(?:`[^`]*`|\S)+/g) ?? []) {
+    const prefix = lines.length ? indent : "";
+    if (line && `${prefix}${line} ${word}`.length > width) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = line ? `${line} ${word}` : word;
+    }
+  }
+  if (line) lines.push(line);
+  return lines.map((l, i) => (i ? indent + l : l)).join("\n");
+};
+
+const quote = (text: string) =>
+  wrap(text, "", 76)
+    .split("\n")
+    .map((l) => `> ${l}`)
+    .join("\n");
 
 export async function GET({ site }: APIContext) {
   // No fallback literal — see the comment in sitemap.xml.ts.
   if (!site) throw new Error("`site` is unset in astro.config.mjs");
   const canonical = new URL("/", site).toString();
 
-  const body = `# Colors — An SDK for Package Skills
+  const body = `# ${meta.title}
 
-> Colors is an SDK for building Package Skills. Three libraries — red, green
-> and blue — give agents dry-run guarantees, secret indirection, and strict
-> lifecycle control over real infrastructure.
+${quote(meta.description)}
 
 Canonical HTML: ${canonical}
 
 ## Install
 
-Run inside your coding agent — it grants **Once**, a skill to provision a VPS
-with a personal PaaS like Netlify or Vercel.
+${wrap(hero.installNote)}
 
-\`\`\`sh
-npx skills use getcolors/once
-\`\`\`
+${fence("sh", installCmd)}
 
-A Package Skill is configured with a \`colors.yml\`:
+${wrap("A Package Skill is configured with a `colors.yml` — this is the one that deploys this site:")}
 
-\`\`\`yaml
-host: app.example.com
-env:
-  site-database-url:
-    -> COLORS_PAR_SITE_DATABASE_URL
-dns: managed
-smtp: managed
-apps:
-  - once/site
-\`\`\`
+${fence("yaml", colorsYml)}
 
-## A different primitive for a different job
+## ${primitive.heading}
 
-Web automation and infrastructure automation demand different guarantees.
+${wrap(primitive.lede)}
 
-- **Browser Skill — eyes and hands on the web.** Navigates DOM elements, fills
-  forms, scrapes content — bridges natural language intent with web interaction.
-- **Package Skill — determinism and lifecycle control.** Provisions platforms,
-  infrastructures, and containers — with dry-run boundaries and strict
-  credential handling instead of raw shell access.
+${primitive.cards.map((c) => wrap(`- **${c.label} — ${c.title}.** ${c.body}`, "  ")).join("\n")}
 
-## What a Package Skill bundles
+## ${bundles.heading}
 
-- **Non-secret desired state.** \`colors.yml\` declares hostnames, DNS zones, and
-  mail domains directly — no separate settings to keep in sync.
-- **Deterministic runtimes & launchers.** Colors' three pinned runtimes — Bun,
-  Babashka, or uv — not ad-hoc shell scripts.
-- **Environment & credential boundaries.** Secrets stay in \`COLORS_PAR_*\` env
-  vars, referenced by name and never rendered into files.
+${bundles.cards.map((c) => wrap(`- **${c.title}.** ${c.body}`, "  ")).join("\n")}
 
-## Three libraries. One SDK.
+## ${libraries.heading}
 
-Colors is an SDK made of three interchangeable libraries for building Package
-Skills. Pick the runtime your team already uses — the guarantees don't change:
-dry-run boundaries, secret indirection, identical desired-state semantics.
+${wrap(libraries.lede)}
 
 | Library | Runtime | Repository |
 |---|---|---|
-| red | TypeScript / Bun | https://github.com/getcolors/red |
-| green | Clojure / Babashka | https://github.com/getcolors/green |
-| blue | Python / uv | https://github.com/getcolors/blue |
+${libraries.items.map((l) => `| ${l.name} | ${l.stack} | ${l.url} |`).join("\n")}
 
-## Once: a personal PaaS, built with Colors
+## ${once.heading}
 
-Once is a Package Skill built with Colors. It provisions a VPS, configures DNS
-and outgoing mail, installs Docker, and reconciles declared applications — a
-self-hosted alternative to Netlify or Vercel that an agent runs end to end.
+${wrap(once.lede)}
 
-1. **Read desired state.** Agent reads \`colors.yml\`. Hostnames determine DNS
-   zones and mail domains.
-2. **Resolve secrets.** Env map points to \`COLORS_PAR_*\` variables, deferred
-   until runtime.
-3. **Dry-run boundary.** Builds files under \`.colors/\` and runs
-   \`create --dry-run\`, touching nothing live.
-4. **Provision & reconcile.** OpenTofu provisions compute/SMTP/DNS; Ansible
-   configures local and remote hosts.
+${once.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
-The create/build DAG runs \`start\` → (\`tofu-compute\`, \`tofu-smtp\`) →
-\`tofu-dns\` → \`tofu-smtp-post\` → (\`ansible-local\`, \`ansible-remote\`), and
-\`ansible-remote\` → \`github\`. Publishing follows the remote stage, not the
-local one: the deploy keys describe a configured host, so a workstation-side
-failure does not gate them. Delete reverses the graph — it withdraws the
-published credentials first, then cleanup, SMTP post and DNS, then SMTP and
-compute in parallel. Step failures travel as namespaced exit codes, never
-uncaught exceptions.
+${wrap(`${once.dagSummary} ${once.dagNote}`)}
 
-## Give your agent a new skill to create a personal PaaS
+## ${cta.heading.replace(/\.$/, "")}
 
-Dry-run first. Approve. Then provision — with Once, built with Colors. Paste
-this into your coding agent:
+${wrap(cta.lede)}
 
-\`\`\`sh
-npx skills use getcolors/once
-\`\`\`
+${fence("sh", installCmd)}
 
 ---
 
-Colors — https://github.com/getcolors
+${footer.name} — ${footer.href}
 `;
 
   return new Response(body, {

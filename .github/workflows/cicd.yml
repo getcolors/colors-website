@@ -11,6 +11,38 @@ permissions:
   packages: write
 
 jobs:
+  # The only gate between a push and www.getcolors.ai. `astro check` is what
+  # finally uses the strict tsconfig.json, which shipped from the start and
+  # until now was read by nothing in CI — the Dockerfile runs a bare
+  # `pnpm build`, and Astro's build does not typecheck.
+  #
+  # It covers the .astro files and the four generated endpoints under
+  # src/pages/, which are real TypeScript and the easiest thing here to break
+  # silently: a bad sitemap or robots.txt still builds and still deploys.
+  #
+  # build depends on this, so a type error costs one job instead of two image
+  # builds, a manifest and an SSH deploy.
+  check:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
   # Each architecture pushes by digest under no tag at all. The mutable :arm
   # and :amd tags this replaced were shared across runs, so two pushes landing
   # close together could interleave and leave :latest with its arm64 half from
@@ -28,6 +60,8 @@ jobs:
             platform: linux/amd64
             runner: ubuntu-24.04
     runs-on: ${{ matrix.runner }}
+    needs:
+      - check
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5

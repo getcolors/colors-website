@@ -1,33 +1,32 @@
 ---
 import { Code } from "astro:components";
 import SeoMeta from "~/components/SeoMeta.astro";
+import {
+  bundles,
+  colorsYml,
+  cta,
+  footer,
+  hero,
+  html,
+  installCmd,
+  libraries,
+  meta,
+  nav,
+  once,
+  primitive,
+} from "~/data/landing";
 
-const title = "Colors — An SDK for Package Skills";
-const description =
-  "Colors is an SDK for building Package Skills. Three libraries — red, green and blue — give agents dry-run guarantees, secret indirection, and strict lifecycle control over real infrastructure.";
-
-// The colors.yml shown in the hero. This is the real config that deploys this
-// site — see the Deployment section of CLAUDE.md.
-const colorsYml = `profile: once-colors
-workdir: .colors
-
-once:
-  applications:
-    - host: www.getcolors.ai
-      image: ghcr.io/getcolors/colors-website:latest
-      github: getcolors/colors-website
-
-provider-compute: oci
-provider-smtp: resend
-provider-dns: cloudflare
-provider-backend: r2
-compute-prevent-destroy: true`;
+const { title, description } = meta;
 
 // Shiki ships with Astro, so highlighting costs no new dependency — but every
 // bundled theme drags in its own palette. This one maps YAML scopes onto the
 // page's own colours instead: keys blue, values green, literals red, the three
 // library accents. Darkened from the accents proper (55/65/60% lightness) for
 // contrast against the panel at 13px.
+//
+// Literal oklch() rather than the var(--red|green|blue) the stylesheet uses:
+// Shiki resolves these at build time into inline style attributes on the
+// spans, with no stylesheet in scope to resolve a custom property against.
 const yamlTheme = {
   // Shiki puts the theme name on the <pre> as a class; keep it namespaced.
   name: "colors-yaml",
@@ -44,6 +43,8 @@ const yamlTheme = {
     { scope: ["comment"], settings: { foreground: "oklch(60% 0.01 260)" } },
   ],
 };
+
+const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
 
 <!doctype html>
@@ -444,37 +445,239 @@ const yamlTheme = {
         unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
       }
 
-      body { margin: 0; background: oklch(99% 0.002 90); font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif; }
-        a { color: oklch(55% 0.18 260); text-decoration: none; }
-        a:hover { color: oklch(45% 0.18 260); }
-        * { box-sizing: border-box; }
+      /* The palette the design export expressed as a literal oklch() on every
+         element it touched. Named here once so a hue change is one edit, and
+         so the three library accents are declared next to each other rather
+         than inferred from repetition. */
+      :root {
+        --ink: oklch(20% 0.01 260);
+        --code-ink: oklch(35% 0.01 260);
+        --muted: oklch(45% 0.01 260);
+        --soft: oklch(55% 0.01 260);
+        --line: oklch(91% 0.005 260);
+        --rule: oklch(92% 0.005 260);
+        --page: oklch(99% 0.002 90);
+        --surface: oklch(97.5% 0.003 260);
+        --panel: oklch(97% 0.005 260);
+        --on-dark: oklch(96% 0.005 260);
+        --red: oklch(60% 0.19 25);
+        --green: oklch(65% 0.17 145);
+        --blue: oklch(55% 0.18 260);
+        --mono: 'IBM Plex Mono', monospace;
+      }
 
-      .h1:hover { background: oklch(35% 0.01 260); }
-      .h2:hover { border-color: oklch(80% 0.01 260); }
+      body { margin: 0; background: var(--page); font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif; }
+      a { color: var(--blue); text-decoration: none; }
+      a:hover { color: oklch(45% 0.18 260); }
+      * { box-sizing: border-box; }
+
+      .page { color: var(--ink); line-height: 1.5; }
+      .wrap { max-width: 1120px; margin: 0 auto; }
+
+      /* Section labels. The copy is stored title-case in src/data/landing.ts
+         so the markdown twin reads naturally; the caps are presentational. */
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--soft);
+        margin-bottom: 10px;
+        text-transform: uppercase;
+      }
+      .eyebrow-blue { color: var(--blue); }
+
+      /* NAV */
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 28px 24px;
+      }
+      .brand { display: flex; align-items: center; gap: 10px; }
+      .mark { width: 20px; height: 20px; border-radius: 4px; overflow: hidden; display: flex; }
+      .mark > div { flex: 1; }
+      .mark > div:nth-child(1) { background: var(--red); }
+      .mark > div:nth-child(2) { background: var(--green); }
+      .mark > div:nth-child(3) { background: var(--blue); }
+      .brand-name { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+      .nav-links { display: flex; align-items: center; gap: 28px; font-size: 14px; color: var(--muted); }
+      .nav-links a { color: var(--muted); }
+
+      /* HERO */
+      .hero {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 64px 24px 88px;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 56px;
+        align-items: center;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--blue);
+        background: oklch(96% 0.03 260);
+        border: 1px solid oklch(90% 0.05 260);
+        padding: 6px 12px;
+        border-radius: 100px;
+        margin-bottom: 24px;
+        text-transform: uppercase;
+      }
+      h1 { font-size: 52px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 600; margin: 0 0 20px; }
+      .hero-lede { font-size: 18px; color: var(--muted); margin: 0 0 32px; max-width: 520px; }
+
+      .install { display: flex; flex-direction: column; gap: 12px; max-width: 480px; }
+      .install-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--ink);
+        border-radius: 8px;
+        padding: 14px 16px;
+      }
+      /* The CTA repeat shrink-wraps its content instead of filling a column. */
+      .install-row-inline {
+        display: inline-flex;
+        justify-content: flex-start;
+        gap: 10px;
+        padding: 14px 20px;
+        margin: 0 auto;
+      }
+      .install-row code { font-family: var(--mono); font-size: 14px; color: var(--on-dark); }
+      .copy {
+        background: oklch(30% 0.01 260);
+        color: var(--on-dark);
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-family: var(--mono);
+        cursor: pointer;
+      }
+      .copy:hover { background: oklch(35% 0.01 260); }
+      .install-note { font-size: 13px; color: var(--soft); }
+
+      .yml {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 28px;
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--code-ink);
+      }
+      .yml-caption { color: var(--soft); margin-bottom: 14px; font-size: 12px; }
+
+      /* SECTIONS */
+      .sec { border-top: 1px solid var(--rule); padding: 72px 24px; }
+      .sec-alt { background: var(--surface); }
+      .sec h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 12px; }
+      /* A heading with no lede under it carries the lede's bottom margin. */
+      .sec h2.solo { margin-bottom: 40px; }
+      .sec-lede { font-size: 16px; color: var(--muted); margin: 0 0 40px; max-width: 640px; }
+      .sec-lede-wide { max-width: 680px; }
+
+      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+      .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+      .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
+
+      /* Cards — the browser/package pair. */
+      .card { border: 1px solid var(--line); border-radius: 12px; padding: 28px; }
+      .card h3 { font-size: 19px; font-weight: 600; margin: 0 0 10px; }
+      .card p { font-size: 15px; color: var(--muted); margin: 0; }
+      .card-accent { border-color: oklch(85% 0.06 260); background: oklch(97% 0.02 260); }
+      .card-accent p { color: oklch(40% 0.01 260); }
+
+      /* Cards — what a Package Skill bundles. */
+      .bundle { background: var(--page); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
+      .bundle .eyebrow { margin-bottom: 12px; }
+      .bundle h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+      .bundle p { font-size: 14px; color: var(--muted); margin: 0; }
+
+      /* Cards — the three libraries. */
+      .lib {
+        display: block;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 24px;
+        color: inherit;
+      }
+      .lib:hover { border-color: oklch(80% 0.01 260); }
+      .lib-swatch { width: 32px; height: 32px; border-radius: 8px; margin-bottom: 16px; }
+      .lib h3 { font-size: 17px; font-weight: 600; margin: 0 0 4px; font-family: var(--mono); }
+      .lib-stack { font-size: 13px; color: var(--soft); margin-bottom: 12px; }
+      .lib p { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
+      .lib-cta { font-size: 13px; color: var(--blue); font-family: var(--mono); }
+
+      /* Cards — the four Once steps. */
+      .step { border: 1px solid var(--line); border-radius: 10px; padding: 20px; background: var(--page); }
+      .step .eyebrow { font-size: 11px; margin-bottom: 8px; }
+      .step h4 { font-size: 15px; font-weight: 600; margin: 0 0 6px; }
+      .step p { font-size: 13px; color: var(--muted); margin: 0; }
+
+      /* DAG */
+      .dag-panel { border: 1px solid var(--line); border-radius: 12px; padding: 36px; background: var(--page); }
+      .dag-caption { font-family: var(--mono); font-size: 12px; color: var(--soft); margin-bottom: 24px; }
+      .dag { display: flex; align-items: center; gap: 0; flex-wrap: wrap; font-family: var(--mono); font-size: 13px; }
+      .dag-node { background: white; border: 1px solid oklch(85% 0.005 260); padding: 10px 16px; border-radius: 8px; }
+      /* No border, matching the export — it sits 2px shorter than its
+         neighbours and align-items:center absorbs the difference. */
+      .dag-start { background: var(--ink); color: white; border: none; }
+      .dag-edge { width: 32px; height: 1px; background: oklch(80% 0.005 260); }
+      .dag-group { display: flex; flex-direction: column; gap: 8px; }
+      .dag-branch { display: grid; grid-template-columns: auto auto; gap: 8px 0; align-items: center; }
+      .dag-tail { display: flex; align-items: center; }
+      .dag-note { font-size: 13px; color: var(--muted); margin: 20px 0 0; }
+
+      /* CTA */
+      .cta { border-top: 1px solid var(--rule); padding: 80px 24px; text-align: center; }
+      .cta-inner { max-width: 640px; margin: 0 auto; }
+      .cta h2 { font-size: 30px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 16px; }
+      .cta p { font-size: 16px; color: var(--muted); margin: 0 0 32px; }
+
+      /* FOOTER */
+      .foot { border-top: 1px solid var(--rule); padding: 28px 24px; }
+      .foot-inner {
+        max-width: 1120px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: var(--soft);
+      }
+      .foot a { color: var(--soft); }
 
       /* Shiki emits <pre><code>, and both pick up the UA monospace family
          rather than inheriting the panel's. Reapply it, or the hero's YAML
          stops matching every other block of code on the page. */
       .astro-code,
       .astro-code code {
-        font-family: 'IBM Plex Mono', monospace;
+        font-family: var(--mono);
         font-size: 13px;
       }
 
       /* Responsive collapse. The export ships no media queries; these rules
          only take effect below 860px and leave the desktop design untouched.
-         !important is required to override the inline styles. */
+         They no longer need !important — the declarations they override are
+         now in this stylesheet rather than in style attributes, so ordinary
+         cascade order settles it. Keep these blocks last. */
       @media (max-width: 860px) {
-        .r-hero,
-        .r-2,
-        .r-3 {
-          grid-template-columns: 1fr !important;
+        .hero,
+        .grid-2,
+        .grid-3 {
+          grid-template-columns: 1fr;
         }
-        .r-4 {
-          grid-template-columns: repeat(2, 1fr) !important;
+        .grid-4 {
+          grid-template-columns: repeat(2, 1fr);
         }
         h1 {
-          font-size: 38px !important;
+          font-size: 38px;
         }
         /* Once the hero is a single column, the yaml panel shares the track
            with the copy block, and a grid item's automatic minimum size is its
@@ -485,16 +688,20 @@ const yamlTheme = {
            tabindex=0), so the long image: line stays reachable. Scoped to the
            collapsed layout: above 860px the two-column track sizing is
            load-bearing for the panel's width and must not change. */
-        .yaml-panel {
+        .yml {
           min-width: 0;
         }
       }
       @media (max-width: 520px) {
-        .r-4 {
-          grid-template-columns: 1fr !important;
+        .grid-4 {
+          grid-template-columns: 1fr;
         }
-        code {
-          font-size: 12px !important;
+        /* Matches the specificity of the rules above rather than relying on
+           `code { ... !important }`, which is what this replaced. */
+        .install-row code,
+        .astro-code,
+        .astro-code code {
+          font-size: 12px;
         }
       }
 
@@ -514,73 +721,67 @@ const yamlTheme = {
          straight continuation of the vertical sequence. */
       @media (max-width: 860px) {
         .dag {
-          flex-direction: column !important;
-          align-items: stretch !important;
-          flex-wrap: nowrap !important;
+          flex-direction: column;
+          align-items: stretch;
+          flex-wrap: nowrap;
         }
         .dag > div {
           text-align: center;
         }
         .dag-edge {
-          width: 1px !important;
-          height: 20px !important;
-          margin: 0 auto !important;
-          flex: none !important;
+          width: 1px;
+          height: 20px;
+          margin: 0 auto;
+          flex: none;
         }
-        .dag-group {
+        .dag-group,
+        .dag-branch {
           width: 100%;
-          grid-template-columns: 1fr !important;
+          grid-template-columns: 1fr;
         }
         .dag-spacer {
           display: none;
         }
         .dag-tail {
-          flex-direction: column !important;
-          align-items: stretch !important;
+          flex-direction: column;
+          align-items: stretch;
         }
         .dag-panel {
-          padding: 24px 20px !important;
+          padding: 24px 20px;
         }
       }
     </style>
   </head>
   <body>
-    <div style="color: oklch(20% 0.01 260); line-height: 1.5;">
+    <div class="page">
 
       <!-- NAV -->
-      <div style="display:flex; align-items:center; justify-content:space-between; max-width:1120px; margin:0 auto; padding:28px 24px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div style="width:20px; height:20px; border-radius:4px; overflow:hidden; display:flex;">
-            <div style="flex:1; background:oklch(60% 0.19 25);"></div>
-            <div style="flex:1; background:oklch(65% 0.17 145);"></div>
-            <div style="flex:1; background:oklch(55% 0.18 260);"></div>
-          </div>
-          <span style="font-weight:600; font-size:15px; letter-spacing:-0.01em;">Colors</span>
+      <div class="nav">
+        <div class="brand">
+          <div class="mark"><div></div><div></div><div></div></div>
+          <span class="brand-name">Colors</span>
         </div>
-        <div style="display:flex; align-items:center; gap:28px; font-size:14px; color:oklch(45% 0.01 260);">
-          <a href="#libraries" style="color:oklch(45% 0.01 260);">Libraries</a>
-          <a href="#once" style="color:oklch(45% 0.01 260);">Once</a>
+        <div class="nav-links">
+          {nav.map((l) => <a href={l.href}>{l.label}</a>)}
         </div>
       </div>
 
       <!-- HERO -->
-      <div style="max-width:1120px; margin:0 auto; padding:64px 24px 88px; display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center;" class="r-hero">
+      <div class="hero">
         <div>
-          <div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(55% 0.18 260); background:oklch(96% 0.03 260); border:1px solid oklch(90% 0.05 260); padding:6px 12px; border-radius:100px; margin-bottom:24px;">
-            <span>AN SDK FOR PACKAGE SKILLS</span>
-          </div>
-          <h1 style="font-size:52px; line-height:1.08; letter-spacing:-0.02em; font-weight:600; margin:0 0 20px;">Colors is an SDK for building Package Skills.</h1>
-          <p style="font-size:18px; color:oklch(45% 0.01 260); margin:0 0 32px; max-width:520px;">Three libraries — red, green, and blue — give agents dry-run guarantees, secret indirection, and strict lifecycle control over real infrastructure, in the runtime your team already uses.</p>
-          <div style="display:flex; flex-direction:column; gap:12px; max-width:480px;">
-            <div style="display:flex; align-items:center; justify-content:space-between; background:oklch(20% 0.01 260); border-radius:8px; padding:14px 16px;">
-              <code style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(96% 0.005 260);">npx skills use getcolors/once</code>
-              <button data-copy="npx skills use getcolors/once" style="background:oklch(30% 0.01 260); color:oklch(96% 0.005 260); border:none; border-radius:6px; padding:6px 12px; font-size:12px; font-family:'IBM Plex Mono',monospace; cursor:pointer;" class="h1">Copy</button>
+          <div class="pill"><span>{hero.eyebrow}</span></div>
+          <h1>{hero.headline}</h1>
+          <p class="hero-lede">{hero.lede}</p>
+          <div class="install">
+            <div class="install-row">
+              <code>{installCmd}</code>
+              <button class="copy" data-copy={installCmd}>Copy</button>
             </div>
-            <span style="font-size:13px; color:oklch(55% 0.01 260);">Run inside your coding agent — it grants <strong>Once</strong>, a skill to provision a VPS with a personal PaaS like Netlify or Vercel.</span>
+            <span class="install-note" set:html={html(hero.installNote)} />
           </div>
         </div>
-        <div class="yaml-panel" style="background:oklch(97% 0.005 260); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:28px; font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(35% 0.01 260);">
-          <div style="color:oklch(55% 0.01 260); margin-bottom:14px; font-size:12px;"># colors.yml</div>
+        <div class="yml">
+          <div class="yml-caption">{hero.ymlCaption}</div>
           <Code
             code={colorsYml}
             lang="yaml"
@@ -591,178 +792,125 @@ const yamlTheme = {
       </div>
 
       <!-- BROWSER VS PACKAGE -->
-      <div style="border-top:1px solid oklch(92% 0.005 260); padding:72px 24px;">
-        <div style="max-width:1120px; margin:0 auto;">
-          <h2 style="font-size:28px; font-weight:600; letter-spacing:-0.01em; margin:0 0 12px;">A different primitive for a different job</h2>
-          <p style="font-size:16px; color:oklch(45% 0.01 260); margin:0 0 40px; max-width:640px;">Web automation and infrastructure automation demand different guarantees.</p>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;" class="r-2">
-            <div style="border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:28px;">
-              <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(55% 0.01 260); margin-bottom:10px;">BROWSER SKILL</div>
-              <h3 style="font-size:19px; font-weight:600; margin:0 0 10px;">Eyes and hands on the web</h3>
-              <p style="font-size:15px; color:oklch(45% 0.01 260); margin:0;">Navigates DOM elements, fills forms, scrapes content — bridges natural language intent with web interaction.</p>
-            </div>
-            <div style="border:1px solid oklch(85% 0.06 260); background:oklch(97% 0.02 260); border-radius:12px; padding:28px;">
-              <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(55% 0.18 260); margin-bottom:10px;">PACKAGE SKILL</div>
-              <h3 style="font-size:19px; font-weight:600; margin:0 0 10px;">Determinism and lifecycle control</h3>
-              <p style="font-size:15px; color:oklch(40% 0.01 260); margin:0;">Provisions platforms, infrastructures, and containers — with dry-run boundaries and strict credential handling instead of raw shell access.</p>
-            </div>
+      <div class="sec">
+        <div class="wrap">
+          <h2>{primitive.heading}</h2>
+          <p class="sec-lede">{primitive.lede}</p>
+          <div class="grid-2">
+            {primitive.cards.map((c) => (
+              <div class:list={["card", c.accent && "card-accent"]}>
+                <div class:list={["eyebrow", c.accent && "eyebrow-blue"]}>{c.label}</div>
+                <h3>{c.title}</h3>
+                <p set:html={html(c.body)} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       <!-- WHAT'S INSIDE -->
-      <div style="border-top:1px solid oklch(92% 0.005 260); padding:72px 24px; background:oklch(97.5% 0.003 260);">
-        <div style="max-width:1120px; margin:0 auto;">
-          <h2 style="font-size:28px; font-weight:600; letter-spacing:-0.01em; margin:0 0 40px;">What a Package Skill bundles</h2>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;" class="r-3">
-
-              <div style="background:oklch(99% 0.002 90); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:24px;">
-                <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(55% 0.18 260); margin-bottom:12px;">DESIRED STATE</div>
-                <h3 style="font-size:17px; font-weight:600; margin:0 0 8px;">Non-secret desired state</h3>
-                <p style="font-size:14px; color:oklch(45% 0.01 260); margin:0;">colors.yml declares hostnames, DNS zones, and mail domains directly — no separate settings to keep in sync.</p>
+      <div class="sec sec-alt">
+        <div class="wrap">
+          <h2 class="solo">{bundles.heading}</h2>
+          <div class="grid-3">
+            {bundles.cards.map((c) => (
+              <div class="bundle">
+                <div class="eyebrow eyebrow-blue">{c.label}</div>
+                <h3>{c.title}</h3>
+                <p set:html={html(c.body)} />
               </div>
-
-              <div style="background:oklch(99% 0.002 90); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:24px;">
-                <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(55% 0.18 260); margin-bottom:12px;">RUNTIMES</div>
-                <h3 style="font-size:17px; font-weight:600; margin:0 0 8px;">Deterministic runtimes & launchers</h3>
-                <p style="font-size:14px; color:oklch(45% 0.01 260); margin:0;">Colors’ three pinned runtimes — Bun, Babashka, or uv — not ad-hoc shell scripts.</p>
-              </div>
-
-              <div style="background:oklch(99% 0.002 90); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:24px;">
-                <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(55% 0.18 260); margin-bottom:12px;">CREDENTIALS</div>
-                <h3 style="font-size:17px; font-weight:600; margin:0 0 8px;">Environment & credential boundaries</h3>
-                <p style="font-size:14px; color:oklch(45% 0.01 260); margin:0;">Secrets stay in COLORS_PAR_* env vars, referenced by name and never rendered into files.</p>
-              </div>
-
+            ))}
           </div>
         </div>
       </div>
 
       <!-- THREE LIBRARIES -->
-      <div id="libraries" style="border-top:1px solid oklch(92% 0.005 260); padding:72px 24px;">
-        <div style="max-width:1120px; margin:0 auto;">
-          <h2 style="font-size:28px; font-weight:600; letter-spacing:-0.01em; margin:0 0 12px;">Three libraries. One SDK.</h2>
-          <p style="font-size:16px; color:oklch(45% 0.01 260); margin:0 0 40px; max-width:640px;">Colors is an SDK made of three interchangeable libraries for building Package Skills. Pick the runtime your team already uses — the guarantees don't change: dry-run boundaries, secret indirection, identical desired-state semantics.</p>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;" class="r-3">
-
-              <a href="https://github.com/getcolors/red" style="display:block; background:oklch(97.5% 0.003 260); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:24px; color:inherit;" class="h2">
-                <div style="width:32px; height:32px; border-radius:8px; background:oklch(60% 0.19 25); margin-bottom:16px;"></div>
-                <h3 style="font-size:17px; font-weight:600; margin:0 0 4px; font-family:'IBM Plex Mono',monospace;">red</h3>
-                <div style="font-size:13px; color:oklch(55% 0.01 260); margin-bottom:12px;">TypeScript / Bun</div>
-                <p style="font-size:14px; color:oklch(45% 0.01 260); margin:0 0 12px;">Build Package Skills with a fast TypeScript/Bun runtime.</p>
-                <span style="font-size:13px; color:oklch(55% 0.18 260); font-family:'IBM Plex Mono',monospace;">View repo →</span>
+      <div class="sec" id="libraries">
+        <div class="wrap">
+          <h2>{libraries.heading}</h2>
+          <p class="sec-lede">{libraries.lede}</p>
+          <div class="grid-3">
+            {libraries.items.map((l) => (
+              <a class="lib" href={l.url}>
+                <div class="lib-swatch" style={`background:${l.accent}`}></div>
+                <h3>{l.name}</h3>
+                <div class="lib-stack">{l.stack}</div>
+                <p>{l.blurb}</p>
+                <span class="lib-cta">View repo →</span>
               </a>
-
-              <a href="https://github.com/getcolors/green" style="display:block; background:oklch(97.5% 0.003 260); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:24px; color:inherit;" class="h2">
-                <div style="width:32px; height:32px; border-radius:8px; background:oklch(65% 0.17 145); margin-bottom:16px;"></div>
-                <h3 style="font-size:17px; font-weight:600; margin:0 0 4px; font-family:'IBM Plex Mono',monospace;">green</h3>
-                <div style="font-size:13px; color:oklch(55% 0.01 260); margin-bottom:12px;">Clojure / Babashka</div>
-                <p style="font-size:14px; color:oklch(45% 0.01 260); margin:0 0 12px;">Build Package Skills with Clojure over Babashka.</p>
-                <span style="font-size:13px; color:oklch(55% 0.18 260); font-family:'IBM Plex Mono',monospace;">View repo →</span>
-              </a>
-
-              <a href="https://github.com/getcolors/blue" style="display:block; background:oklch(97.5% 0.003 260); border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:24px; color:inherit;" class="h2">
-                <div style="width:32px; height:32px; border-radius:8px; background:oklch(55% 0.18 260); margin-bottom:16px;"></div>
-                <h3 style="font-size:17px; font-weight:600; margin:0 0 4px; font-family:'IBM Plex Mono',monospace;">blue</h3>
-                <div style="font-size:13px; color:oklch(55% 0.01 260); margin-bottom:12px;">Python / uv</div>
-                <p style="font-size:14px; color:oklch(45% 0.01 260); margin:0 0 12px;">Build Package Skills with Python, managed by uv.</p>
-                <span style="font-size:13px; color:oklch(55% 0.18 260); font-family:'IBM Plex Mono',monospace;">View repo →</span>
-              </a>
-
+            ))}
           </div>
         </div>
       </div>
 
       <!-- ONCE: EXAMPLE PACKAGE -->
-      <div id="once" style="border-top:1px solid oklch(92% 0.005 260); padding:72px 24px; background:oklch(97.5% 0.003 260);">
-        <div style="max-width:1120px; margin:0 auto;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(55% 0.18 260); margin-bottom:12px;">EXAMPLE PACKAGE SKILL</div>
-          <h2 style="font-size:28px; font-weight:600; letter-spacing:-0.01em; margin:0 0 12px;">Once: a personal PaaS, built with Colors</h2>
-          <p style="font-size:16px; color:oklch(45% 0.01 260); margin:0 0 40px; max-width:680px;">Once is a Package Skill built with Colors. It provisions a VPS, configures DNS and outgoing mail, installs Docker, and reconciles declared applications — a self-hosted alternative to Netlify or Vercel that an agent runs end to end.</p>
+      <div class="sec sec-alt" id="once">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{once.eyebrow}</div>
+          <h2>{once.heading}</h2>
+          <p class="sec-lede sec-lede-wide">{once.lede}</p>
 
-          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:48px;" class="r-4">
-
-              <div style="position:relative;">
-                <div style="border:1px solid oklch(91% 0.005 260); border-radius:10px; padding:20px; height:100%; background:oklch(99% 0.002 90);">
-                  <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:oklch(55% 0.01 260); margin-bottom:8px;">STEP 01</div>
-                  <h4 style="font-size:15px; font-weight:600; margin:0 0 6px;">Read desired state</h4>
-                  <p style="font-size:13px; color:oklch(45% 0.01 260); margin:0;">Agent reads colors.yml. Hostnames determine DNS zones and mail domains.</p>
-                </div>
+          <div class="grid-4">
+            {once.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
               </div>
-
-              <div style="position:relative;">
-                <div style="border:1px solid oklch(91% 0.005 260); border-radius:10px; padding:20px; height:100%; background:oklch(99% 0.002 90);">
-                  <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:oklch(55% 0.01 260); margin-bottom:8px;">STEP 02</div>
-                  <h4 style="font-size:15px; font-weight:600; margin:0 0 6px;">Resolve secrets</h4>
-                  <p style="font-size:13px; color:oklch(45% 0.01 260); margin:0;">Env map points to COLORS_PAR_* variables, deferred until runtime.</p>
-                </div>
-              </div>
-
-              <div style="position:relative;">
-                <div style="border:1px solid oklch(91% 0.005 260); border-radius:10px; padding:20px; height:100%; background:oklch(99% 0.002 90);">
-                  <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:oklch(55% 0.01 260); margin-bottom:8px;">STEP 03</div>
-                  <h4 style="font-size:15px; font-weight:600; margin:0 0 6px;">Dry-run boundary</h4>
-                  <p style="font-size:13px; color:oklch(45% 0.01 260); margin:0;">Builds files under .colors/ and runs create --dry-run, touching nothing live.</p>
-                </div>
-              </div>
-
-              <div style="position:relative;">
-                <div style="border:1px solid oklch(91% 0.005 260); border-radius:10px; padding:20px; height:100%; background:oklch(99% 0.002 90);">
-                  <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:oklch(55% 0.01 260); margin-bottom:8px;">STEP 04</div>
-                  <h4 style="font-size:15px; font-weight:600; margin:0 0 6px;">Provision & reconcile</h4>
-                  <p style="font-size:13px; color:oklch(45% 0.01 260); margin:0;">OpenTofu provisions compute/SMTP/DNS; Ansible configures local and remote hosts.</p>
-                </div>
-              </div>
-
+            ))}
           </div>
 
           <!-- DAG diagram -->
-          <div class="dag-panel" style="border:1px solid oklch(91% 0.005 260); border-radius:12px; padding:36px; background:oklch(99% 0.002 90);">
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(55% 0.01 260); margin-bottom:24px;">Once — CREATE / BUILD DAG</div>
-            <div class="dag" style="display:flex; align-items:center; gap:0; flex-wrap:wrap; font-family:'IBM Plex Mono',monospace; font-size:13px;">
-              <div style="background:oklch(20% 0.01 260); color:white; padding:10px 16px; border-radius:8px;">start</div>
-              <div class="dag-edge" style="width:32px; height:1px; background:oklch(80% 0.005 260);"></div>
-              <div class="dag-group" style="display:flex; flex-direction:column; gap:8px;">
-                <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">tofu-compute</div>
-                <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">tofu-smtp</div>
-              </div>
-              <div class="dag-edge" style="width:32px; height:1px; background:oklch(80% 0.005 260);"></div>
-              <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">tofu-dns</div>
-              <div class="dag-edge" style="width:32px; height:1px; background:oklch(80% 0.005 260);"></div>
-              <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">tofu-smtp-post</div>
-              <div class="dag-edge" style="width:32px; height:1px; background:oklch(80% 0.005 260);"></div>
-              <div class="dag-group" style="display:grid; grid-template-columns:auto auto; gap:8px 0; align-items:center;">
-                <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">ansible-local</div>
-                <div class="dag-spacer"></div>
-                <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">ansible-remote</div>
-                <div class="dag-tail" style="display:flex; align-items:center;">
-                  <div class="dag-edge" style="width:32px; height:1px; background:oklch(80% 0.005 260);"></div>
-                  <div style="background:white; border:1px solid oklch(85% 0.005 260); padding:10px 16px; border-radius:8px;">github</div>
-                </div>
-              </div>
+          <div class="dag-panel">
+            <div class="dag-caption">{once.dagCaption}</div>
+            <div class="dag">
+              {once.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "node")
+                  return (
+                    <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                  );
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class="dag-branch">
+                    <div class="dag-node">{item.nodes[0]}</div>
+                    <div class="dag-spacer"></div>
+                    <div class="dag-node">{item.nodes[1]}</div>
+                    <div class="dag-tail">
+                      <div class="dag-edge"></div>
+                      <div class="dag-node">{item.tail}</div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <p style="font-size:13px; color:oklch(45% 0.01 260); margin:20px 0 0;">Publishing follows the remote stage, not the local one: the deploy keys describe a configured host, so a workstation-side failure does not gate them. Delete reverses the graph — it withdraws the published credentials first, then cleanup, SMTP post and DNS, then SMTP and compute in parallel. Step failures travel as namespaced exit codes, never uncaught exceptions.</p>
+            <p class="dag-note">{once.dagNote}</p>
           </div>
         </div>
       </div>
 
       <!-- FINAL CTA -->
-      <div style="border-top:1px solid oklch(92% 0.005 260); padding:80px 24px; text-align:center;">
-        <div style="max-width:640px; margin:0 auto;">
-          <h2 style="font-size:30px; font-weight:600; letter-spacing:-0.01em; margin:0 0 16px;">Give your agent a new skill to create a personal PaaS.</h2>
-          <p style="font-size:16px; color:oklch(45% 0.01 260); margin:0 0 32px;">Dry-run first. Approve. Then provision — with Once, built with Colors. Paste this into your coding agent.</p>
-          <div style="display:inline-flex; align-items:center; gap:10px; background:oklch(20% 0.01 260); border-radius:8px; padding:14px 20px; margin:0 auto;">
-            <code style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(96% 0.005 260);">npx skills use getcolors/once</code>
-            <button data-copy="npx skills use getcolors/once" style="background:oklch(30% 0.01 260); color:oklch(96% 0.005 260); border:none; border-radius:6px; padding:6px 12px; font-size:12px; font-family:'IBM Plex Mono',monospace; cursor:pointer;" class="h1">Copy</button>
+      <div class="cta">
+        <div class="cta-inner">
+          <h2>{cta.heading}</h2>
+          <p>{cta.lede}</p>
+          <div class="install-row install-row-inline">
+            <code>{installCmd}</code>
+            <button class="copy" data-copy={installCmd}>Copy</button>
           </div>
         </div>
       </div>
 
       <!-- FOOTER -->
-      <div style="border-top:1px solid oklch(92% 0.005 260); padding:28px 24px;">
-        <div style="max-width:1120px; margin:0 auto; display:flex; justify-content:space-between; font-size:13px; color:oklch(55% 0.01 260);">
-          <span>Colors</span>
-          <a href="https://github.com/getcolors" style="color:oklch(55% 0.01 260);">GitHub</a>
+      <div class="foot">
+        <div class="foot-inner">
+          <span>{footer.name}</span>
+          <a href={footer.href}>{footer.label}</a>
         </div>
       </div>
 

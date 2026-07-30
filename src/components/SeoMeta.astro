@@ -9,7 +9,7 @@ interface Props {
   description: string;
   /** Path relative to the site root. The site is one page, so this is "/". */
   path?: string;
-  /** Absolute path under public/, e.g. "/og-colors.png". */
+  /** Absolute path under public/, e.g. "/og-colors-v2.png". */
   image?: string;
   /** Alt text for og:image. */
   imageAlt?: string;
@@ -31,7 +31,7 @@ const TWITTER_HANDLE = "@amiorin";
 // Renaming this file is how you bust the unfurl caches at Slack, WhatsApp and
 // LinkedIn — they key on the image URL and hold it for days. New artwork at the
 // same path will keep showing the old card.
-const DEFAULT_IMAGE = "/og-colors.png";
+const DEFAULT_IMAGE = "/og-colors-v2.png";
 const DEFAULT_IMAGE_ALT = "Colors — An SDK for Package Skills";
 
 const {
