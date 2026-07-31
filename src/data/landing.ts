@@ -224,8 +224,15 @@ export const walter = {
       body: "Builds files under `.colors/` and runs `create --dry-run`, touching nothing live.",
     },
     {
-      title: "Provision, then power",
-      body: "OpenTofu provisions the machine; Ansible writes the ssh alias and confirms it answers. `stop` and `start` take it from there.",
+      title: "Provision",
+      body: "OpenTofu provisions the machine; Ansible writes the ssh alias and confirms it answers.",
+    },
+    // Sits after provisioning and before the power verbs because that is the
+    // order it happens in: the toolchain is installed over the same Ansible
+    // connection, and only then is there a machine worth stopping.
+    {
+      title: "Install, then power",
+      body: "The same `colors.yml` names nix packages, a login shell and asdf runtimes. `stop` and `start` take it from there.",
     },
   ],
   dags: [

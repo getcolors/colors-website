@@ -589,6 +589,11 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
       .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
       .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
+      /* Walter's steps, which are five. Its own class rather than a wider
+         .grid-4, because .grid-4 also lays out the four Once steps directly
+         above and they must keep their width. Five tracks in the same 1120px
+         wrap give a narrower card, so keep these bodies short. */
+      .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 48px; }
 
       /* Cards — the browser/package pair. */
       .card { border: 1px solid var(--line); border-radius: 12px; padding: 28px; }
@@ -683,7 +688,8 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         .grid-3 {
           grid-template-columns: 1fr;
         }
-        .grid-4 {
+        .grid-4,
+        .grid-5 {
           grid-template-columns: repeat(2, 1fr);
         }
         h1 {
@@ -703,7 +709,8 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         }
       }
       @media (max-width: 520px) {
-        .grid-4 {
+        .grid-4,
+        .grid-5 {
           grid-template-columns: 1fr;
         }
         /* Matches the specificity of the rules above rather than relying on
@@ -927,7 +934,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             <span class="install-note" set:html={html(walter.runtimeNote)} />
           </div>
 
-          <div class="grid-4">
+          <div class="grid-5">
             {walter.steps.map((s, i) => (
               <div class="step">
                 <div class="eyebrow">{step(i)}</div>
