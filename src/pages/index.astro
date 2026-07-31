@@ -14,6 +14,8 @@ import {
   nav,
   once,
   primitive,
+  walter,
+  walterInstallCmd,
 } from "~/data/landing";
 
 const { title, description } = meta;
@@ -484,6 +486,8 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         text-transform: uppercase;
       }
       .eyebrow-blue { color: var(--blue); }
+      /* Walter ships in green alone, so its section is keyed to that accent. */
+      .eyebrow-green { color: var(--green); }
 
       /* NAV */
       .nav {
@@ -634,6 +638,12 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       .dag-branch { display: grid; grid-template-columns: auto auto; gap: 8px 0; align-items: center; }
       .dag-tail { display: flex; align-items: center; }
       .dag-note { font-size: 13px; color: var(--muted); margin: 20px 0 0; }
+      /* Walter shows two panels — create/build, then the power pair — and the
+         power panel holds two graphs under one caption. */
+      .dag-panel + .dag-panel { margin-top: 20px; }
+      .dag + .dag { margin-top: 16px; }
+      .sec-install { margin: 0 0 40px; }
+      .sec-install .install-note { display: block; margin: 10px 0 0; }
 
       /* CTA */
       .cta { border-top: 1px solid var(--rule); padding: 80px 24px; text-align: center; }
@@ -850,6 +860,14 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <h2>{once.heading}</h2>
           <p class="sec-lede sec-lede-wide">{once.lede}</p>
 
+          <div class="sec-install">
+            <div class="install-row install-row-inline">
+              <code>{installCmd}</code>
+              <button class="copy" data-copy={installCmd}>Copy</button>
+            </div>
+            <span class="install-note" set:html={html(once.runtimeNote)} />
+          </div>
+
           <div class="grid-4">
             {once.steps.map((s, i) => (
               <div class="step">
@@ -891,6 +909,59 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             </div>
             <p class="dag-note">{once.dagNote}</p>
           </div>
+        </div>
+      </div>
+
+      <!-- WALTER -->
+      <div class="sec" id="walter">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-green">{walter.eyebrow}</div>
+          <h2>{walter.heading}</h2>
+          <p class="sec-lede sec-lede-wide" set:html={html(walter.lede)} />
+
+          <div class="sec-install">
+            <div class="install-row install-row-inline">
+              <code>{walterInstallCmd}</code>
+              <button class="copy" data-copy={walterInstallCmd}>Copy</button>
+            </div>
+            <span class="install-note" set:html={html(walter.runtimeNote)} />
+          </div>
+
+          <div class="grid-4">
+            {walter.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <!-- DAG diagrams: create/build, then the power pair -->
+          {walter.dags.map((panel) => (
+            <div class="dag-panel">
+              <div class="dag-caption">{panel.caption}</div>
+              {panel.graphs.map((items) => (
+                <div class="dag">
+                  {items.map((item) => {
+                    if (item.kind === "edge") return <div class="dag-edge"></div>;
+                    if (item.kind === "group")
+                      return (
+                        <div class="dag-group">
+                          {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                        </div>
+                      );
+                    if (item.kind === "node")
+                      return (
+                        <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                      );
+                    return null;
+                  })}
+                </div>
+              ))}
+            </div>
+          ))}
+          <p class="dag-note">{walter.dagNote}</p>
         </div>
       </div>
 

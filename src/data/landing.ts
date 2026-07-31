@@ -54,6 +54,7 @@ compute-prevent-destroy: true`;
 export const nav = [
   { label: "Libraries", href: "#libraries" },
   { label: "Once", href: "#once" },
+  { label: "Walter", href: "#walter" },
 ];
 
 export const hero = {
@@ -142,10 +143,21 @@ export type DagItem =
   | { kind: "group"; nodes: string[] }
   | { kind: "branch"; nodes: string[]; tail: string };
 
+// A panel may hold more than one graph. Once needs a single one; Walter's power
+// verbs are two separate graphs that belong under one caption, because `stop`
+// and `start` are the pair that distinguishes it.
+export type DagPanel = { caption: string; graphs: DagItem[][] };
+
 export const once = {
   eyebrow: "Example Package Skill",
   heading: "Once: a personal PaaS, built with Colors",
   lede: "Once is a Package Skill built with Colors. It provisions a VPS, configures DNS and outgoing mail, installs Docker, and reconciles declared applications — a self-hosted alternative to Netlify or Vercel that an agent runs end to end.",
+  // The counterpart to walter.runtimeNote. Together they make the three-library
+  // claim concrete: Once uses all three, Walter uses one, and the SDK is fine
+  // with both — otherwise Walter's green-only line reads as a caveat rather
+  // than half of a contrast.
+  runtimeNote:
+    "Once ships in all three colours — **red**, **green** and **blue** are interchangeable managers of the same OpenTofu state, from one `colors.yml`.",
   steps: [
     {
       title: "Read desired state",
@@ -182,6 +194,77 @@ export const once = {
     "The create/build DAG runs `start` → (`tofu-compute`, `tofu-smtp`) → `tofu-dns` → `tofu-smtp-post` → (`ansible-local`, `ansible-remote`), and `ansible-remote` → `github`.",
   dagNote:
     "Publishing follows the remote stage, not the local one: the deploy keys describe a configured host, so a workstation-side failure does not gate them. Delete reverses the graph — it withdraws the published credentials first, then cleanup, SMTP post and DNS, then SMTP and compute in parallel. Step failures travel as namespaced exit codes, never uncaught exceptions.",
+};
+
+// Walter's own install line. Deliberately not the `installCmd` constant: that
+// one is the page's primary call to action and is baked into the og:image by
+// scripts/generate-og-image.py, which no build step can reach. Once stays the
+// headline skill; this command appears only inside Walter's own section.
+export const walterInstallCmd = "npx skills use getcolors/walter";
+
+export const walter = {
+  eyebrow: "Example Package Skill",
+  heading: "Walter: a remote dev machine, built with Colors",
+  lede: "Walter is a second Package Skill built with Colors. It provisions one development machine, records it in `~/.ssh/config` so `ssh <profile>` reaches it, and powers it off and on — so the machine you code on costs nothing while you sleep.",
+  // The three-library pitch is about choice, not obligation, and saying so
+  // plainly is better than letting a reader assume Walter ships in all three.
+  runtimeNote:
+    "Walter ships in **green** alone. A Package Skill picks the runtime that suits it — the SDK offers three, it does not demand all three.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. `profile` names the work directory, the state keys, and the `~/.ssh/config` alias.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "State-backend keys come from `COLORS_PAR_*`. OCI authenticates from `~/.oci/config`, so no token is written anywhere.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds files under `.colors/` and runs `create --dry-run`, touching nothing live.",
+    },
+    {
+      title: "Provision, then power",
+      body: "OpenTofu provisions the machine; Ansible writes the ssh alias and confirms it answers. `stop` and `start` take it from there.",
+    },
+  ],
+  dags: [
+    {
+      caption: "Walter — CREATE / BUILD DAG",
+      graphs: [
+        [
+          { kind: "node", label: "start", dark: true },
+          { kind: "edge" },
+          { kind: "node", label: "compute" },
+          { kind: "edge" },
+          { kind: "group", nodes: ["ansible-local", "ansible-remote"] },
+        ],
+      ],
+    },
+    {
+      caption: "Walter — STOP / START",
+      graphs: [
+        [
+          { kind: "node", label: "start", dark: true },
+          { kind: "edge" },
+          { kind: "node", label: "power-off" },
+        ],
+        [
+          { kind: "node", label: "start", dark: true },
+          { kind: "edge" },
+          { kind: "node", label: "power-on" },
+          { kind: "edge" },
+          { kind: "node", label: "ansible-local" },
+        ],
+      ],
+    },
+  ] satisfies DagPanel[],
+  // Prose form of the graphs above, for the markdown twin. `start` is both a
+  // step name and a command name, so the commands are named explicitly.
+  dagSummary:
+    "The create/build DAG runs `start` → `compute` → (`ansible-local`, `ansible-remote`). The `stop` command runs `start` → `power-off`; the `start` command runs `start` → `power-on` → `ansible-local`.",
+  dagNote:
+    "Stop and start never reach OpenTofu. No template declares a power state, so powering the machine down out of band causes no drift — there is nothing to reconcile, because power was never managed. Starting reads the address back from the provider rather than from stored state, which a power cycle does not refresh. Delete reverses the create graph, dropping the managed ssh alias before anything is destroyed.",
 };
 
 export const cta = {

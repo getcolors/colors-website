@@ -24,6 +24,8 @@ import {
   meta,
   once,
   primitive,
+  walter,
+  walterInstallCmd,
 } from "~/data/landing";
 
 const fence = (lang: string, body: string) => `\`\`\`${lang}\n${body}\n\`\`\``;
@@ -101,9 +103,25 @@ ${libraries.items.map((l) => `| ${l.name} | ${l.stack} | ${l.url} |`).join("\n")
 
 ${wrap(once.lede)}
 
+${wrap(once.runtimeNote)}
+
+${fence("sh", installCmd)}
+
 ${once.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
 ${wrap(`${once.dagSummary} ${once.dagNote}`)}
+
+## ${walter.heading}
+
+${wrap(walter.lede)}
+
+${wrap(walter.runtimeNote)}
+
+${fence("sh", walterInstallCmd)}
+
+${walter.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
+
+${wrap(`${walter.dagSummary} ${walter.dagNote}`)}
 
 ## ${cta.heading.replace(/\.$/, "")}
 
