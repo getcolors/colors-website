@@ -53,6 +53,7 @@ compute-prevent-destroy: true`;
 
 export const nav = [
   { label: "Libraries", href: "#libraries" },
+  { label: "K3s", href: "#k3s" },
   { label: "Once", href: "#once" },
   { label: "Walter", href: "#walter" },
 ];
@@ -143,19 +144,62 @@ export type DagItem =
   | { kind: "group"; nodes: string[] }
   | { kind: "branch"; nodes: string[]; tail: string };
 
-// A panel may hold more than one graph. Once needs a single one; Walter's power
-// verbs are two separate graphs that belong under one caption, because `stop`
-// and `start` are the pair that distinguishes it.
+// A panel may hold more than one graph. K3s and Once each need a single one;
+// Walter's power verbs are two separate graphs that belong under one caption,
+// because `stop` and `start` are the pair that distinguishes it.
 export type DagPanel = { caption: string; graphs: DagItem[][] };
+
+export const k3sInstallCmd = "npx skills use getcolors/k3s";
+
+export const k3s = {
+  eyebrow: "Example Package Skill",
+  heading: "K3s: a GitOps Kubernetes server, built with Colors",
+  lede: "K3s is a Package Skill built with Colors. It provisions one Hetzner Cloud VPS behind a default-deny firewall, installs pinned K3s and Flux releases, and continuously reconciles a public Git repository without exposing the Kubernetes API.",
+  runtimeNote:
+    "K3s ships in **green** alone. Its launcher, desired state, dry-run boundary, and lifecycle graph use the same Colors SDK contracts as a three-colour package.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins the server shape, K3s and Flux versions, state backend, and public GitOps repository.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "Hetzner, R2, and optional Cloudflare credentials arrive through `COLORS_PAR_*`; none are rendered under `.colors/`.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds OpenTofu and Ansible files, then runs `create --dry-run` before any provider or host is contacted.",
+    },
+    {
+      title: "Provision securely",
+      body: "OpenTofu creates the VPS and firewall; Ansible installs K3s and keeps API port `6443` private behind SSH.",
+    },
+    {
+      title: "Reconcile GitOps",
+      body: "Flux pulls applications and add-ons from Git. ExternalDNS and cert-manager can converge wildcard DNS and TLS without a kubeconfig in CI.",
+    },
+  ],
+  dagCaption: "K3s — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "k3s-compute" },
+    { kind: "edge" },
+    { kind: "group", nodes: ["k3s-ansible-local", "k3s-ansible-remote"] },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `k3s-compute` → (`k3s-ansible-local`, `k3s-ansible-remote`).",
+  dagNote:
+    "The remote branch installs K3s and Flux and waits for the GitOps repository; the local branch writes the SSH alias. `./k3s kubectl` then crosses an SSH tunnel instead of publishing port 6443. Delete removes the alias before destroying the firewall and server, and the committed guard refuses accidental destruction.",
+};
 
 export const once = {
   eyebrow: "Example Package Skill",
   heading: "Once: a personal PaaS, built with Colors",
   lede: "Once is a Package Skill built with Colors. It provisions a VPS, configures DNS and outgoing mail, installs Docker, and reconciles declared applications — a self-hosted alternative to Netlify or Vercel that an agent runs end to end.",
-  // The counterpart to walter.runtimeNote. Together they make the three-library
-  // claim concrete: Once uses all three, Walter uses one, and the SDK is fine
-  // with both — otherwise Walter's green-only line reads as a caveat rather
-  // than half of a contrast.
+  // The counterpart to the green-only K3s and Walter runtime notes. Together
+  // they make the three-library claim concrete: Once uses all three while a
+  // Package Skill remains free to choose one.
   runtimeNote:
     "Once ships in all three colours — **red**, **green** and **blue** are interchangeable managers of the same OpenTofu state, from one `colors.yml`.",
   steps: [
@@ -205,7 +249,7 @@ export const walterInstallCmd = "npx skills use getcolors/walter";
 export const walter = {
   eyebrow: "Example Package Skill",
   heading: "Walter: a remote dev machine, built with Colors",
-  lede: "Walter is a second Package Skill built with Colors. It provisions one development machine, records it in `~/.ssh/config` so `ssh <profile>` reaches it, and powers it off and on — so the machine you code on costs nothing while you sleep.",
+  lede: "Walter is another Package Skill built with Colors. It provisions one development machine, records it in `~/.ssh/config` so `ssh <profile>` reaches it, and powers it off and on — so the machine you code on costs nothing while you sleep.",
   // The three-library pitch is about choice, not obligation, and saying so
   // plainly is better than letting a reader assume Walter ships in all three.
   runtimeNote:

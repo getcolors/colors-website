@@ -20,6 +20,8 @@ import {
   footer,
   hero,
   installCmd,
+  k3s,
+  k3sInstallCmd,
   libraries,
   meta,
   once,
@@ -98,6 +100,18 @@ ${wrap(libraries.lede)}
 | Library | Runtime | Repository |
 |---|---|---|
 ${libraries.items.map((l) => `| ${l.name} | ${l.stack} | ${l.url} |`).join("\n")}
+
+## ${k3s.heading}
+
+${wrap(k3s.lede)}
+
+${wrap(k3s.runtimeNote)}
+
+${fence("sh", k3sInstallCmd)}
+
+${k3s.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
+
+${wrap(`${k3s.dagSummary} ${k3s.dagNote}`)}
 
 ## ${once.heading}
 

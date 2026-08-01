@@ -9,6 +9,8 @@ import {
   hero,
   html,
   installCmd,
+  k3s,
+  k3sInstallCmd,
   libraries,
   meta,
   nav,
@@ -486,7 +488,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         text-transform: uppercase;
       }
       .eyebrow-blue { color: var(--blue); }
-      /* Walter ships in green alone, so its section is keyed to that accent. */
+      /* Green-only Package Skills key their section labels to that accent. */
       .eyebrow-green { color: var(--green); }
 
       /* NAV */
@@ -589,10 +591,10 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
       .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
       .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
-      /* Walter's steps, which are five. Its own class rather than a wider
-         .grid-4, because .grid-4 also lays out the four Once steps directly
-         above and they must keep their width. Five tracks in the same 1120px
-         wrap give a narrower card, so keep these bodies short. */
+      /* K3s and Walter each have five steps. Their own class rather than a
+         wider .grid-4, because .grid-4 lays out the four Once steps and they
+         must keep their width. Five tracks in the same 1120px wrap give a
+         narrower card, so keep these bodies short. */
       .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 48px; }
 
       /* Cards — the browser/package pair. */
@@ -860,8 +862,54 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         </div>
       </div>
 
+      <!-- K3S: FIRST EXAMPLE PACKAGE -->
+      <div class="sec sec-alt" id="k3s">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-green">{k3s.eyebrow}</div>
+          <h2>{k3s.heading}</h2>
+          <p class="sec-lede sec-lede-wide">{k3s.lede}</p>
+
+          <div class="sec-install">
+            <div class="install-row install-row-inline">
+              <code>{k3sInstallCmd}</code>
+              <button class="copy" data-copy={k3sInstallCmd}>Copy</button>
+            </div>
+            <span class="install-note" set:html={html(k3s.runtimeNote)} />
+          </div>
+
+          <div class="grid-5">
+            {k3s.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{k3s.dagCaption}</div>
+            <div class="dag">
+              {k3s.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{k3s.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- ONCE: EXAMPLE PACKAGE -->
-      <div class="sec sec-alt" id="once">
+      <div class="sec" id="once">
         <div class="wrap">
           <div class="eyebrow eyebrow-blue">{once.eyebrow}</div>
           <h2>{once.heading}</h2>
@@ -920,7 +968,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- WALTER -->
-      <div class="sec" id="walter">
+      <div class="sec sec-alt" id="walter">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{walter.eyebrow}</div>
           <h2>{walter.heading}</h2>

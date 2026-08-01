@@ -121,7 +121,8 @@ Things to know before editing it:
   prop, and each library card's accent swatch). Add rules to the stylesheet
   rather than reaching for an attribute.
 - Repeated blocks are rendered from arrays — three library cards, three
-  bundles, four steps, the DAG. Adding a library means adding an object to
+  bundles, each Package Skill's steps, and its DAG. K3s is the first example,
+  followed by Once and Walter. Adding a library means adding an object to
   `libraries.items`, not copying markup.
 - The colour system is `oklch()` throughout, declared once as custom properties
   on `:root`. The three library accents are `--red oklch(60% 0.19 25)`,
@@ -148,8 +149,8 @@ Things to know before editing it:
 - Section labels ("STEP 01", "BROWSER SKILL") are stored **title-case** in
   `landing.ts` and uppercased with `text-transform`, so the markdown twin reads
   as prose rather than shouting.
-- The two "Copy" buttons are driven by `data-copy` and one small inline script
-  at the bottom of the page. There is no framework — the page needs no JS to
+- Every "Copy" button is driven by `data-copy` and one small inline script at
+  the bottom of the page. There is no framework — the page needs no JS to
   render, only to copy.
 - Fonts are self-hosted from `public/fonts/`. Do not add a Google Fonts link.
   The 39 `@font-face` rules are the bulk of the file; Astro extracts the whole
