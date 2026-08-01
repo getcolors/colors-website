@@ -190,7 +190,7 @@ export const k3s = {
   dagSummary:
     "The create/build DAG runs `start` → `k3s-compute` → (`k3s-ansible-local`, `k3s-ansible-remote`).",
   dagNote:
-    "The remote branch installs K3s and Flux and waits for the GitOps repository; the local branch writes the SSH alias. `./k3s kubectl` then crosses an SSH tunnel instead of publishing port 6443. Delete removes the alias before destroying the firewall and server, and the committed guard refuses accidental destruction.",
+    "The remote branch installs K3s and Flux and waits for the GitOps repository; the local branch writes the SSH alias. `./green kubectl` then crosses an SSH tunnel instead of publishing port 6443. Delete removes the alias before destroying the firewall and server, and the committed guard refuses accidental destruction.",
 };
 
 export const once = {
