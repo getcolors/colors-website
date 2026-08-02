@@ -470,6 +470,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         --mono: 'IBM Plex Mono', monospace;
       }
 
+      html { scroll-behavior: smooth; }
       body { margin: 0; background: var(--page); font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif; }
       a { color: var(--blue); text-decoration: none; }
       a:hover { color: oklch(45% 0.18 260); }
@@ -492,6 +493,25 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       .eyebrow-green { color: var(--green); }
 
       /* NAV */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid transparent;
+        background: oklch(99% 0.002 90 / 0%);
+        transition:
+          background-color 240ms ease,
+          border-color 240ms ease,
+          box-shadow 240ms ease,
+          backdrop-filter 240ms ease;
+      }
+      .site-header.is-scrolled {
+        border-color: oklch(91% 0.005 260 / 75%);
+        background: oklch(99% 0.002 90 / 82%);
+        box-shadow: 0 10px 30px oklch(20% 0.01 260 / 7%);
+        backdrop-filter: blur(18px) saturate(140%);
+        -webkit-backdrop-filter: blur(18px) saturate(140%);
+      }
       .nav {
         display: flex;
         align-items: center;
@@ -499,8 +519,11 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         max-width: 1120px;
         margin: 0 auto;
         padding: 28px 24px;
+        transition: padding 240ms ease;
       }
-      .brand { display: flex; align-items: center; gap: 10px; }
+      .site-header.is-scrolled .nav { padding-block: 14px; }
+      .brand { display: flex; align-items: center; gap: 10px; color: black; }
+      .brand:hover { color: black; }
       .mark { width: 20px; height: 20px; border-radius: 4px; overflow: hidden; display: flex; }
       .mark > div { flex: 1; }
       .mark > div:nth-child(1) { background: var(--red); }
@@ -612,7 +635,8 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 
       /* Cards — the three libraries. */
       .lib {
-        display: block;
+        display: flex;
+        flex-direction: column;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 12px;
@@ -624,7 +648,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       .lib h3 { font-size: 17px; font-weight: 600; margin: 0 0 4px; font-family: var(--mono); }
       .lib-stack { font-size: 13px; color: var(--soft); margin-bottom: 12px; }
       .lib p { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
-      .lib-cta { font-size: 13px; color: var(--blue); font-family: var(--mono); }
+      .lib-cta { margin-top: auto; font-size: 13px; color: var(--blue); font-family: var(--mono); }
 
       /* Cards — the four Once steps. */
       .step { border: 1px solid var(--line); border-radius: 10px; padding: 20px; background: var(--page); }
@@ -723,6 +747,13 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           font-size: 12px;
         }
       }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .site-header,
+        .nav {
+          transition: none;
+        }
+      }
 
       /* The DAG is a horizontal flex row with flex-wrap on desktop. Left to
          wrap on a narrow screen it breaks mid-flow and strands the connector
@@ -772,18 +803,20 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
     </style>
   </head>
   <body>
-    <div class="page">
+    <div class="page" id="top">
 
       <!-- NAV -->
-      <div class="nav">
-        <div class="brand">
-          <div class="mark"><div></div><div></div><div></div></div>
-          <span class="brand-name">Colors</span>
+      <header class="site-header" data-site-header>
+        <div class="nav">
+          <a class="brand" href="#top" aria-label="Colors — back to top">
+            <div class="mark"><div></div><div></div><div></div></div>
+            <span class="brand-name">Colors</span>
+          </a>
+          <div class="nav-links">
+            {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+          </div>
         </div>
-        <div class="nav-links">
-          {nav.map((l) => <a href={l.href}>{l.label}</a>)}
-        </div>
-      </div>
+      </header>
 
       <!-- HERO -->
       <div class="hero">
@@ -850,7 +883,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede">{libraries.lede}</p>
           <div class="grid-3">
             {libraries.items.map((l) => (
-              <a class="lib" href={l.url}>
+              <a class="lib" href={l.url} target="_blank" rel="noopener noreferrer">
                 <div class="lib-swatch" style={`background:${l.accent}`}></div>
                 <h3>{l.name}</h3>
                 <div class="lib-stack">{l.stack}</div>
@@ -1035,14 +1068,29 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       <!-- FOOTER -->
       <div class="foot">
         <div class="foot-inner">
-          <span>{footer.name}</span>
-          <a href={footer.href}>{footer.label}</a>
+          <a href="#top" aria-label="Colors — back to top">{footer.name}</a>
+          <a href={footer.href} target="_blank" rel="noopener noreferrer">{footer.label}</a>
         </div>
       </div>
 
     </div>
 
     <script is:inline>
+      const header = document.querySelector("[data-site-header]");
+      let headerUpdatePending = false;
+
+      const updateHeader = () => {
+        header?.classList.toggle("is-scrolled", window.scrollY > 24);
+        headerUpdatePending = false;
+      };
+
+      updateHeader();
+      window.addEventListener("scroll", () => {
+        if (headerUpdatePending) return;
+        headerUpdatePending = true;
+        requestAnimationFrame(updateHeader);
+      }, { passive: true });
+
       document.querySelectorAll("[data-copy]").forEach((button) => {
         button.addEventListener("click", () => {
           navigator.clipboard?.writeText(button.dataset.copy);
