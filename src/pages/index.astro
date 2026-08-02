@@ -989,6 +989,12 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             >
               {clickhouse.dag.map((item) => {
                 if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
                 return (
                   <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
                 );

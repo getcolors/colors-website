@@ -210,7 +210,7 @@ export const clickhouse = {
     },
     {
       title: "Resolve secrets",
-      body: "Hetzner, Cloudflare, R2, ClickHouse, and Metabase credentials arrive through `COLORS_PAR_*`; WireGuard private keys are generated and retained on their own hosts.",
+      body: "Hetzner, Cloudflare, R2, ClickHouse, and Metabase credentials arrive through `COLORS_PAR_*`; deployment SSH and WireGuard private keys are generated and retained outside remote state.",
     },
     {
       title: "Dry-run boundary",
@@ -218,11 +218,11 @@ export const clickhouse = {
     },
     {
       title: "Provision privately",
-      body: "OpenTofu creates the network, four servers, a default-deny firewall, and DNS-only Cloudflare records; Ansible configures Keeper, ClickHouse, Metabase, PostgreSQL, and WireGuard.",
+      body: "OpenTofu creates all four servers in parallel behind a default-deny firewall; split Ansible stages then configure ClickHouse and Metabase concurrently after WireGuard is ready.",
     },
     {
       title: "Prove the data path",
-      body: "Local dbt seeds, builds, and tests replicated sample tables across all three nodes, then registers ClickHouse in Metabase.",
+      body: "Local dbt tests replicated tables, acceptance queries them through Metabase and checks public-port isolation, then zero-change OpenTofu plans prove convergence.",
     },
   ],
   dagCaption: "ClickHouse — CREATE / BUILD DAG",
@@ -231,26 +231,30 @@ export const clickhouse = {
     { kind: "edge" },
     { kind: "node", label: "network" },
     { kind: "edge" },
-    { kind: "node", label: "node-1" },
+    { kind: "node", label: "access" },
     { kind: "edge" },
-    { kind: "node", label: "node-2" },
-    { kind: "edge" },
-    { kind: "node", label: "node-3" },
-    { kind: "edge" },
-    { kind: "node", label: "metabase" },
+    { kind: "group", nodes: ["node-1", "node-2", "node-3", "metabase"] },
     { kind: "edge" },
     { kind: "node", label: "firewall" },
     { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
-    { kind: "node", label: "ansible" },
+    { kind: "node", label: "ansible-render" },
+    { kind: "edge" },
+    { kind: "node", label: "wireguard" },
+    { kind: "edge" },
+    { kind: "group", nodes: ["clickhouse-config", "metabase-config"] },
     { kind: "edge" },
     { kind: "node", label: "dbt" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+    { kind: "edge" },
+    { kind: "node", label: "drift" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `network` → `node-1` → `node-2` → `node-3` → `metabase` → `firewall` → `dns` → `ansible` → `dbt`.",
+    "The create/build DAG runs `start` → `network` → `access` → (`node-1`, `node-2`, `node-3`, `metabase`) → `firewall` → `dns` → `ansible-render` → `wireguard` → (`clickhouse-config`, `metabase-config`) → `dbt` → `acceptance` → `drift`.",
   dagNote:
-    "The shared firewall exposes only SSH, ICMP, and WireGuard UDP. Cloudflare records point to VPN addresses with proxying disabled. The final dbt stage crosses the tunnel, validates replicated models, and configures Metabase; destroy protection refuses accidental teardown.",
+    "The shared firewall exposes only SSH, ICMP, and WireGuard UDP. Acceptance verifies Keeper, replicas, dbt, Metabase, DNS, VPN reachability, and public-port isolation; the drift stage requires every OpenTofu plan to be empty. Delete reverses the graph with parallel DNS/firewall and server teardown, while destroy protection refuses accidents.",
 };
 
 export const airflowInstallCmd = "npx skills use getcolors/airflow";
