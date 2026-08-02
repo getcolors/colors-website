@@ -14,6 +14,8 @@
 
 import type { APIContext } from "astro";
 import {
+  airflow,
+  airflowInstallCmd,
   bundles,
   colorsYml,
   cta,
@@ -112,6 +114,18 @@ ${fence("sh", k3sInstallCmd)}
 ${k3s.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
 ${wrap(`${k3s.dagSummary} ${k3s.dagNote}`)}
+
+## ${airflow.heading}
+
+${wrap(airflow.lede)}
+
+${wrap(airflow.runtimeNote)}
+
+${fence("sh", airflowInstallCmd)}
+
+${airflow.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
+
+${wrap(`${airflow.dagSummary} ${airflow.dagNote}`)}
 
 ## ${once.heading}
 

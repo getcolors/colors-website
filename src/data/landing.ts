@@ -54,6 +54,7 @@ compute-prevent-destroy: true`;
 export const nav = [
   { label: "Libraries", href: "#libraries" },
   { label: "K3s", href: "#k3s" },
+  { label: "Airflow", href: "#airflow" },
   { label: "Once", href: "#once" },
   { label: "Walter", href: "#walter" },
 ];
@@ -144,8 +145,8 @@ export type DagItem =
   | { kind: "group"; nodes: string[] }
   | { kind: "branch"; nodes: string[]; tail: string };
 
-// A panel may hold more than one graph. K3s and Once each need a single one;
-// Walter's power verbs are two separate graphs that belong under one caption,
+// A panel may hold more than one graph. K3s, Airflow and Once each need a single
+// one; Walter's power verbs are two separate graphs that belong under one caption,
 // because `stop` and `start` are the pair that distinguishes it.
 export type DagPanel = { caption: string; graphs: DagItem[][] };
 
@@ -191,6 +192,60 @@ export const k3s = {
     "The create/build DAG runs `start` → `k3s-compute` → (`k3s-ansible-local`, `k3s-ansible-remote`).",
   dagNote:
     "The remote branch installs K3s and Flux and waits for the GitOps repository; the local branch writes the SSH alias. `./green kubectl` then crosses an SSH tunnel instead of publishing port 6443. Delete removes the alias before destroying the firewall and server, and the committed guard refuses accidental destruction.",
+};
+
+export const airflowInstallCmd = "npx skills use getcolors/airflow";
+
+export const airflow = {
+  eyebrow: "Example Package Skill",
+  heading: "Airflow: a production scheduler, built with Colors",
+  lede: "Airflow is a Package Skill built with Colors. It provisions one VPS running Apache Airflow with LocalExecutor, host Postgres, continuous WAL-G backups, Caddy authentication and TLS, and a private GitHub repository that deploys DAGs over a confined rsync key.",
+  runtimeNote:
+    "Airflow ships in **green** alone. Its launcher, desired state, dry-run boundary, and lifecycle graph use the same Colors SDK contracts as the other Package Skills.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins the server, Airflow and Postgres versions, hostname, DAG repository, and backup policy.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "Provider, database, Airflow, backup, and GitHub credentials arrive through `COLORS_PAR_*`; none are rendered under `.colors/`.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds OpenTofu, Ansible, and repository seed files, then runs `create --dry-run` before contacting a provider or host.",
+    },
+    {
+      title: "Provision safely",
+      body: "OpenTofu creates compute, SMTP, and DNS; Ansible installs Docker, Postgres, WAL-G, Airflow, Caddy, and the deploy account.",
+    },
+    {
+      title: "Deploy DAGs",
+      body: "A private repository pushes DAGs over `rrsync`; its write-only key is confined to one directory and has no shell or sudo access.",
+    },
+  ],
+  dagCaption: "Airflow — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "airflow-compute" },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-smtp" },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-dns" },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-smtp-post" },
+    { kind: "edge" },
+    {
+      kind: "branch",
+      nodes: ["airflow-ansible-local", "airflow-ansible-remote"],
+      tail: "airflow-github",
+    },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `airflow-compute` → `tofu-smtp` → `tofu-dns` → `tofu-smtp-post` → (`airflow-ansible-local`, `airflow-ansible-remote`), and `airflow-ansible-remote` → `airflow-github`.",
+  dagNote:
+    "GitHub follows the remote stage because seeding the repository immediately triggers its deploy workflow, so the matching public key must already be installed. Delete revokes the credential first, removes the local SSH alias, then tears down SMTP, DNS, and compute; it deliberately keeps the DAG repository and the WAL-G archive.",
 };
 
 export const once = {
