@@ -54,6 +54,7 @@ compute-prevent-destroy: true`;
 export const nav = [
   { label: "Libraries", href: "#libraries" },
   { label: "K3s", href: "#k3s" },
+  { label: "ClickHouse", href: "#clickhouse" },
   { label: "Airflow", href: "#airflow" },
   { label: "Once", href: "#once" },
   { label: "Walter", href: "#walter" },
@@ -145,8 +146,8 @@ export type DagItem =
   | { kind: "group"; nodes: string[] }
   | { kind: "branch"; nodes: string[]; tail: string };
 
-// A panel may hold more than one graph. K3s, Airflow and Once each need a single
-// one; Walter's power verbs are two separate graphs that belong under one caption,
+// A panel may hold more than one graph. K3s, ClickHouse, Airflow and Once each
+// need a single one; Walter's power verbs are two separate graphs under one caption,
 // because `stop` and `start` are the pair that distinguishes it.
 export type DagPanel = { caption: string; graphs: DagItem[][] };
 
@@ -192,6 +193,64 @@ export const k3s = {
     "The create/build DAG runs `start` → `k3s-compute` → (`k3s-ansible-local`, `k3s-ansible-remote`).",
   dagNote:
     "The remote branch installs K3s and Flux and waits for the GitOps repository; the local branch writes the SSH alias. `./green kubectl` then crosses an SSH tunnel instead of publishing port 6443. Delete removes the alias before destroying the firewall and server, and the committed guard refuses accidental destruction.",
+};
+
+export const clickhouseInstallCmd = "npx skills use getcolors/clickhouse";
+
+export const clickhouse = {
+  eyebrow: "Example Package Skill",
+  heading: "ClickHouse: a private analytics stack, built with Colors",
+  lede: "ClickHouse is a Package Skill built with Colors. It provisions a three-node replicated ClickHouse cluster with a three-member Keeper quorum, plus a separate Metabase and PostgreSQL server, on Hetzner Cloud.",
+  runtimeNote:
+    "ClickHouse ships in **green** alone. ClickHouse, Keeper, and Metabase stay closed to the public internet; local dbt and browser traffic cross WireGuard.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins four server shapes, ClickHouse, Metabase, PostgreSQL and dbt versions, private networks, DNS, and the state backend.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "Hetzner, Cloudflare, R2, ClickHouse, and Metabase credentials arrive through `COLORS_PAR_*`; WireGuard private keys are generated and retained on their own hosts.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds OpenTofu, Ansible, WireGuard, and dbt files, then runs `create --dry-run` before contacting any provider or server.",
+    },
+    {
+      title: "Provision privately",
+      body: "OpenTofu creates the network, four servers, a default-deny firewall, and DNS-only Cloudflare records; Ansible configures Keeper, ClickHouse, Metabase, PostgreSQL, and WireGuard.",
+    },
+    {
+      title: "Prove the data path",
+      body: "Local dbt seeds, builds, and tests replicated sample tables across all three nodes, then registers ClickHouse in Metabase.",
+    },
+  ],
+  dagCaption: "ClickHouse — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "network" },
+    { kind: "edge" },
+    { kind: "node", label: "node-1" },
+    { kind: "edge" },
+    { kind: "node", label: "node-2" },
+    { kind: "edge" },
+    { kind: "node", label: "node-3" },
+    { kind: "edge" },
+    { kind: "node", label: "metabase" },
+    { kind: "edge" },
+    { kind: "node", label: "firewall" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "dbt" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `network` → `node-1` → `node-2` → `node-3` → `metabase` → `firewall` → `dns` → `ansible` → `dbt`.",
+  dagNote:
+    "The shared firewall exposes only SSH, ICMP, and WireGuard UDP. Cloudflare records point to VPN addresses with proxying disabled. The final dbt stage crosses the tunnel, validates replicated models, and configures Metabase; destroy protection refuses accidental teardown.",
 };
 
 export const airflowInstallCmd = "npx skills use getcolors/airflow";

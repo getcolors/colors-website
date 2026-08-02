@@ -17,6 +17,8 @@ import {
   airflow,
   airflowInstallCmd,
   bundles,
+  clickhouse,
+  clickhouseInstallCmd,
   colorsYml,
   cta,
   footer,
@@ -114,6 +116,18 @@ ${fence("sh", k3sInstallCmd)}
 ${k3s.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
 ${wrap(`${k3s.dagSummary} ${k3s.dagNote}`)}
+
+## ${clickhouse.heading}
+
+${wrap(clickhouse.lede)}
+
+${wrap(clickhouse.runtimeNote)}
+
+${fence("sh", clickhouseInstallCmd)}
+
+${clickhouse.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
+
+${wrap(`${clickhouse.dagSummary} ${clickhouse.dagNote}`)}
 
 ## ${airflow.heading}
 

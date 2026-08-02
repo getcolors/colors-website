@@ -6,6 +6,8 @@ import {
   airflowInstallCmd,
   bundles,
   colorsYml,
+  clickhouse,
+  clickhouseInstallCmd,
   cta,
   footer,
   hero,
@@ -671,15 +673,15 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       .dag-branch { display: grid; grid-template-columns: auto auto; gap: 8px 0; align-items: center; }
       .dag-tail { display: flex; align-items: center; }
       .dag-note { font-size: 13px; color: var(--muted); margin: 20px 0 0; }
-      /* Airflow's graph is longer than the other create/build graphs. Keep its
-         desktop flow on one line and scroll only the diagram, not the panel. */
+      /* Long graphs keep their desktop flow on one line and scroll only the
+         diagram, not the panel. */
       @media (min-width: 861px) {
-        .airflow-dag {
+        .wide-dag {
           flex-wrap: nowrap;
           overflow-x: auto;
           padding-bottom: 8px;
         }
-        .airflow-dag > * { flex: none; }
+        .wide-dag > * { flex: none; }
       }
       /* Walter shows two panels — create/build, then the power pair — and the
          power panel holds two graphs under one caption. */
@@ -953,8 +955,52 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         </div>
       </div>
 
-      <!-- AIRFLOW: SECOND EXAMPLE PACKAGE -->
-      <div class="sec" id="airflow">
+      <!-- CLICKHOUSE: SECOND EXAMPLE PACKAGE -->
+      <div class="sec" id="clickhouse">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-green">{clickhouse.eyebrow}</div>
+          <h2>{clickhouse.heading}</h2>
+          <p class="sec-lede sec-lede-wide">{clickhouse.lede}</p>
+
+          <div class="sec-install">
+            <div class="install-row install-row-inline">
+              <code>{clickhouseInstallCmd}</code>
+              <button class="copy" data-copy={clickhouseInstallCmd}>Copy</button>
+            </div>
+            <span class="install-note" set:html={html(clickhouse.runtimeNote)} />
+          </div>
+
+          <div class="grid-5">
+            {clickhouse.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{clickhouse.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="ClickHouse create and build workflow diagram"
+            >
+              {clickhouse.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{clickhouse.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AIRFLOW: THIRD EXAMPLE PACKAGE -->
+      <div class="sec sec-alt" id="airflow">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{airflow.eyebrow}</div>
           <h2>{airflow.heading}</h2>
@@ -981,7 +1027,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <div class="dag-panel">
             <div class="dag-caption">{airflow.dagCaption}</div>
             <div
-              class="dag airflow-dag"
+              class="dag wide-dag"
               tabindex="0"
               aria-label="Airflow create and build workflow diagram"
             >
@@ -1010,7 +1056,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- ONCE: EXAMPLE PACKAGE -->
-      <div class="sec sec-alt" id="once">
+      <div class="sec" id="once">
         <div class="wrap">
           <div class="eyebrow eyebrow-blue">{once.eyebrow}</div>
           <h2>{once.heading}</h2>
@@ -1069,7 +1115,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- WALTER -->
-      <div class="sec" id="walter">
+      <div class="sec sec-alt" id="walter">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{walter.eyebrow}</div>
           <h2>{walter.heading}</h2>
