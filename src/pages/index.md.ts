@@ -20,6 +20,8 @@ import {
   clickhouse,
   clickhouseInstallCmd,
   colorsYml,
+  createPackageSkill,
+  createPackageSkillCmd,
   cta,
   footer,
   hero,
@@ -104,6 +106,16 @@ ${wrap(libraries.lede)}
 | Library | Runtime | Repository |
 |---|---|---|
 ${libraries.items.map((l) => `| ${l.name} | ${l.stack} | ${l.url} |`).join("\n")}
+
+## ${createPackageSkill.heading}
+
+${wrap(createPackageSkill.lede)}
+
+${wrap(createPackageSkill.useNote)}
+
+${fence("sh", createPackageSkillCmd)}
+
+${createPackageSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
 
 ## ${k3s.heading}
 

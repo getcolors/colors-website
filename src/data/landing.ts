@@ -53,6 +53,7 @@ compute-prevent-destroy: true`;
 
 export const nav = [
   { label: "Libraries", href: "#libraries" },
+  { label: "Create a skill", href: "#create-package-skill" },
   { label: "K3s", href: "#k3s" },
   { label: "ClickHouse", href: "#clickhouse" },
   { label: "Airflow", href: "#airflow" },
@@ -133,6 +134,31 @@ export const libraries = {
       blurb: "Build Package Skills with Python, managed by uv.",
       url: "https://github.com/getcolors/blue",
       accent: "var(--blue)",
+    },
+  ],
+};
+
+export const createPackageSkillCmd =
+  "npx skills use getcolors/skills@create-package-skill";
+
+export const createPackageSkill = {
+  eyebrow: "Agent Skill",
+  heading: "Create Package Skill: build a new Package Skill with your agent",
+  lede: "Create Package Skill gives a coding agent the workflow for building a new Colors Package Skill and a deployment that uses it — from requirements and credential boundaries through implementation, safe dry runs, and an authorized production deployment.",
+  useNote:
+    "This is an **Agent Skill**, not a Package Skill. `npx skills use` gives it to your agent for the next request without installing it into a project.",
+  phases: [
+    {
+      title: "Define",
+      body: "Agree on names, behavior, acceptance criteria, deployment target, credentials, cost, and authorization before touching files.",
+    },
+    {
+      title: "Scaffold safely",
+      body: "Create only non-secret desired state and credential placeholders, then stop for review. Secrets never enter chat or tracked files.",
+    },
+    {
+      title: "Build and deploy",
+      body: "Implement autonomously, test every layer, use real SHA pins, preserve safety guards, and deploy only within explicit authorization.",
     },
   ],
 };

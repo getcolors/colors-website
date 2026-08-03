@@ -121,8 +121,9 @@ Things to know before editing it:
   prop, and each library card's accent swatch). Add rules to the stylesheet
   rather than reaching for an attribute.
 - Repeated blocks are rendered from arrays — three library cards, three
-  bundles, each Package Skill's steps, and its DAG. The examples are K3s,
-  ClickHouse, Airflow, Once, and Walter. Adding a library means adding an object
+  bundles, each skill's steps, and each Package Skill's DAG. The Package Skill
+  examples are K3s, ClickHouse, Airflow, Once, and Walter; the separate Agent
+  Skill example is Create Package Skill. Adding a library means adding an object
   to `libraries.items`, not copying markup.
 - The colour system is `oklch()` throughout, declared once as custom properties
   on `:root`. The three library accents are `--red oklch(60% 0.19 25)`,
@@ -399,13 +400,18 @@ rename rule above still applies to changing the artwork at a fixed host.
 - Google Analytics ID: `G-4VKP1WY4QJ`.
 - Site URL: `https://www.getcolors.ai`, matching the deploy host. It is written
   in four files — see the table under Deployment; change them together.
-- The install command is `npx skills use getcolors/once`. It is written **twice**
+- The main Once command is `npx skills use getcolors/once`. It is written **twice**
   in the repository: `installCmd` in `src/data/landing.ts`, which every on-page
   occurrence and the markdown twin resolve to, and `CMD` in
   `scripts/generate-og-image.py`, which bakes it into the og:image. It was six
   hand-kept copies until 2026-07-30.
 
-  The second one is the one that bites. It is not on any page, so it does not
+  Create Package Skill has its own command,
+  `npx skills use getcolors/skills@create-package-skill`, in `landing.ts`. It is
+  an Agent Skill fetched for the agent's next request, not a Package Skill
+  installed into a deployment.
+
+  The second Once copy is the one that bites. It is not on any page, so it does not
   show up when you grep the rendered site, no build step reads it, and a wrong
   value there ships a social card contradicting the page — which is exactly what
   happened between 2026-07-27 and 2026-07-30, when every unfurl advertised

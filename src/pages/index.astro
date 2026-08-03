@@ -8,6 +8,8 @@ import {
   colorsYml,
   clickhouse,
   clickhouseInstallCmd,
+  createPackageSkill,
+  createPackageSkillCmd,
   cta,
   footer,
   hero,
@@ -493,6 +495,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         text-transform: uppercase;
       }
       .eyebrow-blue { color: var(--blue); }
+      .eyebrow-red { color: var(--red); }
       /* Green-only Package Skills key their section labels to that accent. */
       .eyebrow-green { color: var(--green); }
 
@@ -517,6 +520,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         -webkit-backdrop-filter: blur(18px) saturate(140%);
       }
       .nav {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -536,6 +540,33 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       .brand-name { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
       .nav-links { display: flex; align-items: center; gap: 28px; font-size: 14px; color: var(--muted); }
       .nav-links a { color: var(--muted); }
+      .menu-toggle {
+        display: none;
+        width: 40px;
+        height: 40px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--page);
+        color: var(--ink);
+        cursor: pointer;
+      }
+      .menu-toggle span {
+        display: block;
+        width: 18px;
+        height: 1px;
+        margin: 4px auto;
+        background: currentColor;
+        transition: transform 180ms ease, opacity 180ms ease;
+      }
+      .menu-toggle:focus-visible,
+      .nav-links a:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 3px;
+      }
+      .site-header.menu-open .menu-toggle span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+      .site-header.menu-open .menu-toggle span:nth-child(2) { opacity: 0; }
+      .site-header.menu-open .menu-toggle span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
 
       /* HERO */
       .hero {
@@ -723,6 +754,31 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
          now in this stylesheet rather than in style attributes, so ordinary
          cascade order settles it. Keep these blocks last. */
       @media (max-width: 860px) {
+        .menu-toggle { display: block; }
+        .nav-links {
+          position: absolute;
+          top: calc(100% - 8px);
+          right: 24px;
+          left: 24px;
+          display: none;
+          align-items: stretch;
+          gap: 0;
+          padding: 8px;
+          border: 1px solid var(--line);
+          border-radius: 12px;
+          background: var(--page);
+          box-shadow: 0 16px 40px oklch(20% 0.01 260 / 12%);
+        }
+        .site-header.menu-open {
+          border-color: oklch(91% 0.005 260 / 75%);
+          background: var(--page);
+        }
+        .site-header.menu-open .nav-links { display: flex; flex-direction: column; }
+        .nav-links a {
+          padding: 11px 12px;
+          border-radius: 7px;
+        }
+        .nav-links a:hover { background: var(--surface); }
         .hero,
         .grid-2,
         .grid-3 {
@@ -826,9 +882,19 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             <div class="mark"><div></div><div></div><div></div></div>
             <span class="brand-name">Colors</span>
           </a>
-          <div class="nav-links">
+          <button
+            class="menu-toggle"
+            type="button"
+            aria-label="Open navigation menu"
+            aria-expanded="false"
+            aria-controls="site-navigation"
+            data-menu-toggle
+          >
+            <span></span><span></span><span></span>
+          </button>
+          <nav class="nav-links" id="site-navigation" aria-label="Main navigation">
             {nav.map((l) => <a href={l.href}>{l.label}</a>)}
-          </div>
+          </nav>
         </div>
       </header>
 
@@ -909,8 +975,35 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         </div>
       </div>
 
+      <!-- AGENT SKILL: CREATE A PACKAGE SKILL -->
+      <div class="sec sec-alt" id="create-package-skill">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-red">{createPackageSkill.eyebrow}</div>
+          <h2>{createPackageSkill.heading}</h2>
+          <p class="sec-lede sec-lede-wide">{createPackageSkill.lede}</p>
+
+          <div class="sec-install">
+            <div class="install-row install-row-inline">
+              <code>{createPackageSkillCmd}</code>
+              <button class="copy" data-copy={createPackageSkillCmd}>Copy</button>
+            </div>
+            <span class="install-note" set:html={html(createPackageSkill.useNote)} />
+          </div>
+
+          <div class="grid-3">
+            {createPackageSkill.phases.map((phase, i) => (
+              <div class="step">
+                <div class="eyebrow">{`Phase ${i + 1}`}</div>
+                <h4>{phase.title}</h4>
+                <p set:html={html(phase.body)} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <!-- K3S: FIRST EXAMPLE PACKAGE -->
-      <div class="sec sec-alt" id="k3s">
+      <div class="sec" id="k3s">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{k3s.eyebrow}</div>
           <h2>{k3s.heading}</h2>
@@ -956,7 +1049,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- CLICKHOUSE: SECOND EXAMPLE PACKAGE -->
-      <div class="sec" id="clickhouse">
+      <div class="sec sec-alt" id="clickhouse">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{clickhouse.eyebrow}</div>
           <h2>{clickhouse.heading}</h2>
@@ -1006,7 +1099,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- AIRFLOW: THIRD EXAMPLE PACKAGE -->
-      <div class="sec sec-alt" id="airflow">
+      <div class="sec" id="airflow">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{airflow.eyebrow}</div>
           <h2>{airflow.heading}</h2>
@@ -1062,7 +1155,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- ONCE: EXAMPLE PACKAGE -->
-      <div class="sec" id="once">
+      <div class="sec sec-alt" id="once">
         <div class="wrap">
           <div class="eyebrow eyebrow-blue">{once.eyebrow}</div>
           <h2>{once.heading}</h2>
@@ -1121,7 +1214,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- WALTER -->
-      <div class="sec sec-alt" id="walter">
+      <div class="sec" id="walter">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{walter.eyebrow}</div>
           <h2>{walter.heading}</h2>
@@ -1197,7 +1290,35 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 
     <script is:inline>
       const header = document.querySelector("[data-site-header]");
+      const menuToggle = document.querySelector("[data-menu-toggle]");
       let headerUpdatePending = false;
+
+      const setMenuOpen = (open) => {
+        header?.classList.toggle("menu-open", open);
+        menuToggle?.setAttribute("aria-expanded", String(open));
+        menuToggle?.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
+      };
+
+      menuToggle?.addEventListener("click", () => {
+        setMenuOpen(!header?.classList.contains("menu-open"));
+      });
+      header?.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", () => setMenuOpen(false));
+      });
+      document.addEventListener("click", (event) => {
+        if (header?.classList.contains("menu-open") && !header.contains(event.target)) {
+          setMenuOpen(false);
+        }
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && header?.classList.contains("menu-open")) {
+          setMenuOpen(false);
+          menuToggle?.focus();
+        }
+      });
+      window.matchMedia("(min-width: 861px)").addEventListener("change", (event) => {
+        if (event.matches) setMenuOpen(false);
+      });
 
       const updateHeader = () => {
         header?.classList.toggle("is-scrolled", window.scrollY > 24);
