@@ -56,6 +56,8 @@ that package widens the range, not before.
 │   └── og-colors-v2.png  # og:image, generated — see scripts/
 ├── scripts/
 │   └── generate-og-image.py
+├── index.html            # GitHub Pages repository landing page; not an Astro input
+├── .nojekyll             # lets GitHub Pages publish that root landing page verbatim
 │
 │   # shipping the site — see Deployment
 ├── Dockerfile            # two stages: node builds, caddy:2-alpine serves dist/
@@ -78,11 +80,14 @@ own entrypoint. The `Procfile` here is a development convenience (`pnpm install
 Procfile *is* the production supervisor. Do not add a runtime dependency to this
 image expecting hivemind to start it.
 
-`src/`, `public/`, and the four manifests above are the whole site — everything
-under `src/pages/` is a route and there are no others. `public/` is small on
-purpose: before adding to it, check the new file is actually referenced.
-`favicon.png` currently is not — `index.astro` links only `favicon.svg`, so the
-PNG ships to `dist/` and is served, but nothing points at it.
+`src/`, `public/`, and the four manifests above are the whole production site —
+everything under `src/pages/` is a route and there are no others. The root
+`index.html` and `.nojekyll` belong only to the GitHub Pages repository landing
+page: they are not Astro inputs, do not enter `dist/`, and must not duplicate the
+production homepage. `public/` is small on purpose: before adding to it, check
+the new file is actually referenced. `favicon.png` currently is not —
+`index.astro` links only `favicon.svg`, so the PNG ships to `dist/` and is
+served, but nothing points at it.
 
 `plans/` holds ~46 design documents and LinkedIn drafts accumulated over the
 project. None of it is a build input, and it is not maintained alongside the
