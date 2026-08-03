@@ -54,6 +54,7 @@ compute-prevent-destroy: true`;
 export const nav = [
   { label: "Libraries", href: "#libraries" },
   { label: "Create a skill", href: "#create-package-skill" },
+  { label: "K8s", href: "#k8s" },
   { label: "K3s", href: "#k3s" },
   { label: "ClickHouse", href: "#clickhouse" },
   { label: "Airflow", href: "#airflow" },
@@ -172,10 +173,58 @@ export type DagItem =
   | { kind: "group"; nodes: string[] }
   | { kind: "branch"; nodes: string[]; tail: string };
 
-// A panel may hold more than one graph. K3s, ClickHouse, Airflow and Once each
-// need a single one; Walter's power verbs are two separate graphs under one caption,
-// because `stop` and `start` are the pair that distinguishes it.
+// A panel may hold more than one graph. K8s, K3s, ClickHouse, Airflow and Once
+// each need a single one; Walter's power verbs are two separate graphs under one
+// caption, because `stop` and `start` are the pair that distinguishes it.
 export type DagPanel = { caption: string; graphs: DagItem[][] };
+
+export const k8sInstallCmd = "npx skills use getcolors/k8s";
+
+export const k8s = {
+  eyebrow: "Example Package Skill",
+  heading: "K8s: a kubeadm cluster on DigitalOcean, built with Colors",
+  lede: "K8s is a Package Skill built with Colors. It provisions a two-node kubeadm cluster in a deployment-owned DigitalOcean VPC, installs pinned Flannel, DigitalOcean cloud-controller and Flux releases, and reconciles applications from a public Git repository.",
+  runtimeNote:
+    "K8s ships in **green** alone. Its launcher, desired state, validation, dry-run boundary, lifecycle graph, and guarded deletion use the same Colors SDK contracts as the other Package Skills.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins the control-plane and worker shapes, Kubernetes and component versions, network CIDRs, state backend, and GitOps repository.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "DigitalOcean, Cloudflare, and remote-state credentials arrive through `COLORS_PAR_*`; tokens and kubeconfig never enter tracked or generated files.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu and Ansible files, then runs `create --dry-run` before any provider, node, DNS record, or load balancer is contacted.",
+    },
+    {
+      title: "Bootstrap kubeadm",
+      body: "OpenTofu creates the VPC, firewalls, control plane, and worker. Ansible installs containerd and kubeadm, joins the nodes, and keeps administrative access CIDR-restricted.",
+    },
+    {
+      title: "Reconcile and verify",
+      body: "Flux deploys controllers and applications from Git; the workflow waits for both nodes, DNS, TLS, the DigitalOcean load balancer, and the HTTPS health endpoint.",
+    },
+  ],
+  dagCaption: "K8s — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "k8s-infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "k8s-ansible-local" },
+    { kind: "edge" },
+    { kind: "node", label: "k8s-ansible-remote" },
+    { kind: "edge" },
+    { kind: "node", label: "k8s-acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `k8s-infrastructure` → `k8s-ansible-local` → `k8s-ansible-remote` → `k8s-acceptance`.",
+  dagNote:
+    "Infrastructure is converged before kubeadm touches either node, and acceptance proves the GitOps application over valid HTTPS. Delete first reloads node addresses from remote state, asks Kubernetes to remove its DigitalOcean load balancer, drops the managed SSH alias, and only then reaches guarded infrastructure destruction.",
+};
 
 export const k3sInstallCmd = "npx skills use getcolors/k3s";
 

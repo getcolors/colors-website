@@ -15,6 +15,8 @@ import {
   hero,
   html,
   installCmd,
+  k8s,
+  k8sInstallCmd,
   k3s,
   k3sInstallCmd,
   libraries,
@@ -1002,8 +1004,48 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         </div>
       </div>
 
-      <!-- K3S: FIRST EXAMPLE PACKAGE -->
-      <div class="sec" id="k3s">
+      <!-- K8S: FIRST EXAMPLE PACKAGE -->
+      <div class="sec" id="k8s">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-green">{k8s.eyebrow}</div>
+          <h2>{k8s.heading}</h2>
+          <p class="sec-lede sec-lede-wide">{k8s.lede}</p>
+
+          <div class="sec-install">
+            <div class="install-row install-row-inline">
+              <code>{k8sInstallCmd}</code>
+              <button class="copy" data-copy={k8sInstallCmd}>Copy</button>
+            </div>
+            <span class="install-note" set:html={html(k8s.runtimeNote)} />
+          </div>
+
+          <div class="grid-5">
+            {k8s.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{k8s.dagCaption}</div>
+            <div class="dag">
+              {k8s.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{k8s.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- K3S: SECOND EXAMPLE PACKAGE -->
+      <div class="sec sec-alt" id="k3s">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{k3s.eyebrow}</div>
           <h2>{k3s.heading}</h2>
@@ -1048,8 +1090,8 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         </div>
       </div>
 
-      <!-- CLICKHOUSE: SECOND EXAMPLE PACKAGE -->
-      <div class="sec sec-alt" id="clickhouse">
+      <!-- CLICKHOUSE: THIRD EXAMPLE PACKAGE -->
+      <div class="sec" id="clickhouse">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{clickhouse.eyebrow}</div>
           <h2>{clickhouse.heading}</h2>
@@ -1098,8 +1140,8 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         </div>
       </div>
 
-      <!-- AIRFLOW: THIRD EXAMPLE PACKAGE -->
-      <div class="sec" id="airflow">
+      <!-- AIRFLOW: FOURTH EXAMPLE PACKAGE -->
+      <div class="sec sec-alt" id="airflow">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{airflow.eyebrow}</div>
           <h2>{airflow.heading}</h2>
@@ -1155,7 +1197,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- ONCE: EXAMPLE PACKAGE -->
-      <div class="sec sec-alt" id="once">
+      <div class="sec" id="once">
         <div class="wrap">
           <div class="eyebrow eyebrow-blue">{once.eyebrow}</div>
           <h2>{once.heading}</h2>
@@ -1214,7 +1256,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- WALTER -->
-      <div class="sec" id="walter">
+      <div class="sec sec-alt" id="walter">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{walter.eyebrow}</div>
           <h2>{walter.heading}</h2>

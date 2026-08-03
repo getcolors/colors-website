@@ -26,6 +26,8 @@ import {
   footer,
   hero,
   installCmd,
+  k8s,
+  k8sInstallCmd,
   k3s,
   k3sInstallCmd,
   libraries,
@@ -116,6 +118,18 @@ ${wrap(createPackageSkill.useNote)}
 ${fence("sh", createPackageSkillCmd)}
 
 ${createPackageSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
+
+## ${k8s.heading}
+
+${wrap(k8s.lede)}
+
+${wrap(k8s.runtimeNote)}
+
+${fence("sh", k8sInstallCmd)}
+
+${k8s.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
+
+${wrap(`${k8s.dagSummary} ${k8s.dagNote}`)}
 
 ## ${k3s.heading}
 
