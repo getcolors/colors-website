@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "create-package-skill",
+      "type": "skill-md",
+      "description": "Use when asked to create a getcolors Package Skill and a deployment that uses it, including desired-state configuration, provider credentials, GitHub repositories, provisioning, or end-to-end deployment.",
+      "url": "/.well-known/agent-skills/create-package-skill-1ab5312d970dc01942a3559efd36dc141e9b9cc07a760564e3673ce45f82d19c/SKILL.md",
+      "digest": "sha256:1ab5312d970dc01942a3559efd36dc141e9b9cc07a760564e3673ce45f82d19c"
+    },
+    {
+      "name": "package-airflow-blue",
+      "type": "archive",
+      "description": "Creates and operates a single-node Apache Airflow server with Blue, OpenTofu and Ansible — Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
+      "url": "/.well-known/agent-skills/package-airflow-blue-fd9d09184584b92113170ff3ab66bf188aa885b7ed0db8db0a0de0d9f56113f1.tar.gz",
+      "digest": "sha256:fd9d09184584b92113170ff3ab66bf188aa885b7ed0db8db0a0de0d9f56113f1"
+    },
+    {
+      "name": "package-airflow-green",
+      "type": "archive",
+      "description": "Creates and operates a single-node Apache Airflow server with Green, OpenTofu and Ansible — Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
+      "url": "/.well-known/agent-skills/package-airflow-green-b5e91dacfe0f5ea9c81e6ea4f4d4deddd9d5f6996762d8c2054c625c2abfbb8c.tar.gz",
+      "digest": "sha256:b5e91dacfe0f5ea9c81e6ea4f4d4deddd9d5f6996762d8c2054c625c2abfbb8c"
+    },
+    {
+      "name": "package-airflow-red",
+      "type": "archive",
+      "description": "Creates and operates a single-node Apache Airflow server with Red, OpenTofu and Ansible — Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
+      "url": "/.well-known/agent-skills/package-airflow-red-493a7cbf59ad29317358add99c9d993f94f042cfe51531cf75f70fde21831151.tar.gz",
+      "digest": "sha256:493a7cbf59ad29317358add99c9d993f94f042cfe51531cf75f70fde21831151"
+    },
+    {
+      "name": "package-clickhouse-green",
+      "type": "archive",
+      "description": "Provision and operate a private replicated ClickHouse cluster, Metabase, WireGuard, Cloudflare DNS, and local dbt on Hetzner with Green.",
+      "url": "/.well-known/agent-skills/package-clickhouse-green-bf56a205a0a8f37863d1696c19d57c8a25ed3da1e80415e86f3a6c27959049de.tar.gz",
+      "digest": "sha256:bf56a205a0a8f37863d1696c19d57c8a25ed3da1e80415e86f3a6c27959049de"
+    },
+    {
+      "name": "package-k3s-green",
+      "type": "archive",
+      "description": "Creates and operates a secure single-node K3s server on Hetzner Cloud with Green, OpenTofu, Ansible, Flux CD, and a public Git deployment repository. Use when initializing a K3s project, writing colors.yml, building or dry-running infrastructure, provisioning or destroying the server, configuring Flux, or invoking kubectl.",
+      "url": "/.well-known/agent-skills/package-k3s-green-812febdfc722d4af628febfce0c9e0ca0956cd1483b42625bd26ec05dc6345ea.tar.gz",
+      "digest": "sha256:812febdfc722d4af628febfce0c9e0ca0956cd1483b42625bd26ec05dc6345ea"
+    },
+    {
+      "name": "package-k8s-green",
+      "type": "archive",
+      "description": "Build and operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Green, Flannel, DigitalOcean CCM, Flux, ExternalDNS, cert-manager, and acceptance.",
+      "url": "/.well-known/agent-skills/package-k8s-green-3e9ef05e34c55dddb3ea0b0821542cd2e74607282729d86a004483eb2d79865e.tar.gz",
+      "digest": "sha256:3e9ef05e34c55dddb3ea0b0821542cd2e74607282729d86a004483eb2d79865e"
+    },
+    {
+      "name": "package-once-blue",
+      "type": "archive",
+      "description": "Creates and operates production single-server Basecamp ONCE deployments with Blue, uv, OpenTofu, and Ansible. Use for colors.yml setup, safe builds and dry-runs, provisioning, deletion, or status reports.",
+      "url": "/.well-known/agent-skills/package-once-blue-e089bef121623027157f4df19f3e320941fde31737bf168394744afc50375c3e.tar.gz",
+      "digest": "sha256:e089bef121623027157f4df19f3e320941fde31737bf168394744afc50375c3e"
+    },
+    {
+      "name": "package-once-green",
+      "type": "archive",
+      "description": "Creates and operates production single-server Basecamp ONCE deployments with Green, OpenTofu, and Ansible. Use when initializing an ONCE project, generating colors.yml, selecting cloud/SMTP/DNS/state providers, building or dry-running configuration, provisioning, deleting, or describing an ONCE server.",
+      "url": "/.well-known/agent-skills/package-once-green-335118f3f781bb56447cbcb1c2440b94d015a2212fb444095e90bb9cd833ec2b.tar.gz",
+      "digest": "sha256:335118f3f781bb56447cbcb1c2440b94d015a2212fb444095e90bb9cd833ec2b"
+    },
+    {
+      "name": "package-once-red",
+      "type": "archive",
+      "description": "Creates and operates production single-server Basecamp ONCE deployments with Red, Bun, OpenTofu, and Ansible. Use for colors.yml setup, safe builds and dry-runs, provisioning, deletion, or status reports.",
+      "url": "/.well-known/agent-skills/package-once-red-ca381465c644b781895efc8aab02b8b4561cdcaac0498f49cad0d6e6a32ff168.tar.gz",
+      "digest": "sha256:ca381465c644b781895efc8aab02b8b4561cdcaac0498f49cad0d6e6a32ff168"
+    },
+    {
+      "name": "package-walter-green",
+      "type": "archive",
+      "description": "Creates and operates a remote development machine with Green, OpenTofu and Ansible, and powers it off and on to stop paying for it while you sleep. Use when initializing a walter project, generating colors.yml, selecting a compute or state provider, building or dry-running configuration, provisioning or destroying the machine, or stopping and starting it.",
+      "url": "/.well-known/agent-skills/package-walter-green-7aae29a8baa1d3978b7ea8718be9dddfcbfe02116e047fc93007d197bb462ca9.tar.gz",
+      "digest": "sha256:7aae29a8baa1d3978b7ea8718be9dddfcbfe02116e047fc93007d197bb462ca9"
+    }
+  ]
+}

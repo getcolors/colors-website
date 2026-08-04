@@ -1,0 +1,89 @@
+{
+  "repositories": {
+    "airflow": {
+      "ref": "main",
+      "sha": "85d442cfeb78ba16be3bd65eb4b3c43e465f13e0"
+    },
+    "clickhouse": {
+      "ref": "main",
+      "sha": "7fa80ec35f51d3006ce17e3ee2a0f9e7b0a90ec1"
+    },
+    "k3s": {
+      "ref": "main",
+      "sha": "ce96aef56b323be7841eb044644db14ca8b29484"
+    },
+    "k8s": {
+      "ref": "main",
+      "sha": "395f83d47d345e90774b25dfbbaa013d2817eaae"
+    },
+    "once": {
+      "ref": "main",
+      "sha": "031b89ce31117d6c786123dc352d8b8fb27669e4"
+    },
+    "skills": {
+      "ref": "main",
+      "sha": "7f1bc8e89854786250ae2102f3497222a48efba6"
+    },
+    "walter": {
+      "ref": "main",
+      "sha": "dfc371bf40b49873764ae66a77218d9f5caa3adc"
+    }
+  },
+  "skills": [
+    {
+      "repository": "airflow",
+      "path": "skills/package-airflow-blue",
+      "type": "archive"
+    },
+    {
+      "repository": "airflow",
+      "path": "skills/package-airflow-green",
+      "type": "archive"
+    },
+    {
+      "repository": "airflow",
+      "path": "skills/package-airflow-red",
+      "type": "archive"
+    },
+    {
+      "repository": "clickhouse",
+      "path": "skills/package-clickhouse-green",
+      "type": "archive"
+    },
+    {
+      "repository": "k3s",
+      "path": "skills/package-k3s-green",
+      "type": "archive"
+    },
+    {
+      "repository": "k8s",
+      "path": "skills/package-k8s-green",
+      "type": "archive"
+    },
+    {
+      "repository": "once",
+      "path": "skills/package-once-blue",
+      "type": "archive"
+    },
+    {
+      "repository": "once",
+      "path": "skills/package-once-green",
+      "type": "archive"
+    },
+    {
+      "repository": "once",
+      "path": "skills/package-once-red",
+      "type": "archive"
+    },
+    {
+      "repository": "walter",
+      "path": "skills/package-walter-green",
+      "type": "archive"
+    },
+    {
+      "repository": "skills",
+      "path": "create-package-skill",
+      "type": "skill-md"
+    }
+  ]
+}

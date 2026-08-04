@@ -43,13 +43,26 @@
 	}
 
 	handle_errors {
+		# Missing machine-discovery documents must remain honest 404s. Redirecting
+		# them makes scanners follow the homepage and misreport HTML as malformed
+		# API, authentication, or other discovery metadata.
+		@missingDiscovery {
+			path /.well-known/* /auth.md
+			expression `{err.status_code} == 404`
+		}
+		respond @missingDiscovery `404 Not Found` 404
+
 		# The site is a single landing page. Everything that used to live here —
 		# the blog, /manual, /once, /walter, the talks — 301s to it, so old
-		# inbound links and search results keep working.
+		# inbound links and search results keep working. Discovery paths are
+		# excluded so the respond rule above can preserve their 404 status.
 		# The matcher must sit on `redir` itself. Wrapping it as
 		# `handle @notFound { redir / 301 }` passes `caddy validate` but emits a
 		# bare 404 with no Location header at runtime.
-		@notFound expression `{err.status_code} == 404`
+		@notFound {
+			not path /.well-known/* /auth.md
+			expression `{err.status_code} == 404`
+		}
 		redir @notFound / 301
 
 		@other expression `{err.status_code} != 404`

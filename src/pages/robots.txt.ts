@@ -10,6 +10,7 @@ export async function GET({ site }: APIContext) {
 
   const body = `User-agent: *
 Allow: /
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
 
 Sitemap: ${sitemap}
 `;

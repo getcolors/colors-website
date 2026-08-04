@@ -9,7 +9,9 @@ pnpm install
 pnpm dev
 pnpm build
 pnpm preview
-pnpm typecheck   # astro check — CI runs this before it builds an image
+pnpm typecheck        # astro check — CI runs this before it builds an image
+pnpm skills:generate  # rebuild pinned agent-skill artifacts and discovery index
+pnpm skills:update    # update upstream pins, then rebuild the artifacts and index
 ```
 
 ## Structure
@@ -23,6 +25,9 @@ pnpm typecheck   # astro check — CI runs this before it builds an image
 - `public/og-colors-v2.png` is the og:image; regenerate it with
   `scripts/generate-og-image.py` rather than editing it by hand. Change the
   filename whenever the artwork changes — social unfurl caches key on the URL.
+- `public/.well-known/agent-skills/` contains generated, content-addressed skill
+  artifacts and their discovery index. Source pins live in
+  `scripts/agent-skills.json`; regenerate the directory rather than editing it.
 
 To check a link preview before deploying, build against the preview host so
 `og:image` is not still pointing at production:

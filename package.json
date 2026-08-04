@@ -10,6 +10,8 @@
         "build": "astro build",
         "preview": "astro preview",
         "typecheck": "astro check",
+        "skills:generate": "node scripts/generate-agent-skills.mjs",
+        "skills:update": "node scripts/generate-agent-skills.mjs --update",
         "astro": "astro"
     },
     "pnpm": {

@@ -53,8 +53,12 @@ that package widens the range, not before.
 │   ├── fonts/            # 21 self-hosted IBM Plex woff2 files
 │   ├── favicon.svg       # the three-stripe mark
 │   ├── favicon.png       # raster fallback, currently unreferenced
-│   └── og-colors-v2.png  # og:image, generated — see scripts/
+│   ├── og-colors-v2.png  # og:image, generated — see scripts/
+│   └── .well-known/
+│       └── agent-skills/ # generated discovery index and skill artifacts
 ├── scripts/
+│   ├── agent-skills.json # upstream repositories, SHA pins, and skill paths
+│   ├── generate-agent-skills.mjs
 │   └── generate-og-image.py
 ├── index.html            # GitHub Pages repository landing page; not an Astro input
 ├── .nojekyll             # lets GitHub Pages publish that root landing page verbatim
@@ -64,7 +68,8 @@ that package widens the range, not before.
 ├── Caddyfile.prod        # markdown negotiation, Link headers, 404 → / redirects
 ├── .dockerignore
 ├── .github/workflows/
-│   └── cicd.yml          # typecheck, build both arches, stitch a manifest, ssh-ping the server
+│   ├── cicd.yml          # typecheck, build both arches, stitch a manifest, ssh-ping the server
+│   └── update-agent-skills.yml # weekly grouped skill-update PR
 │
 ├── Procfile              # local dev only — not copied into the image
 ├── .envrc                # devenv/direnv toolchain
@@ -100,7 +105,9 @@ file with a live role is the landing-page export, kept as the visual reference.
 pnpm dev
 pnpm build
 pnpm preview
-pnpm typecheck   # astro check — the gate CI runs before it builds an image
+pnpm typecheck        # astro check — the gate CI runs before it builds an image
+pnpm skills:generate  # rebuild artifacts and index from the committed SHA pins
+pnpm skills:update    # move pins to upstream main, then rebuild artifacts and index
 pnpm astro
 ```
 
@@ -289,12 +296,24 @@ curl -sI localhost:4321/ | grep -i '^link'            # four Link headers
 
 An agent-readiness scan will also ask for `/.well-known/api-catalog`,
 `/.well-known/oauth-authorization-server`, `/.well-known/oauth-protected-resource`,
-`/auth.md`, `/.well-known/mcp/server-card.json`, an agent-skills index, and
-WebMCP tools via `navigator.modelContext`. **This site has no API, no auth, no
-MCP server and no tools** — it is one marketing page. Those documents would have
-to be invented, and a catalog advertising endpoints that do not answer is worse
-for an agent than no catalog. Do not add them to make a scanner green. If Colors
-later ships a real API, the catalog goes in then.
+`/auth.md`, `/.well-known/mcp/server-card.json`, and WebMCP tools via
+`navigator.modelContext`. **This site has no API, no auth, no MCP server and no
+tools** — it is one marketing page. Those documents would have to be invented,
+and a catalog advertising endpoints that do not answer is worse for an agent
+than no catalog. Do not add them to make a scanner green. If Colors later ships
+a real API, the catalog goes in then.
+
+The exception is `/.well-known/agent-skills/index.json`: the landing page lists
+real Agent Skills, including Package Skills that reconcile infrastructure to
+desired state. `scripts/generate-agent-skills.mjs` fetches their source
+repositories at the explicit SHAs in `scripts/agent-skills.json`, extracts name
+and description from each `SKILL.md`, and emits the v0.2.0 discovery index.
+Package Skills include supporting files and launchers, so they are deterministic
+`.tar.gz` archives; the self-contained Create Package Skill is a `skill-md`.
+Every URL is content-addressed and every entry carries its SHA-256 digest. Never
+edit `public/.well-known/agent-skills/` directly. A Monday workflow checks
+upstream `main` branches and opens one grouped PR containing pin and artifact
+updates.
 
 DNS-AID records (`_index._agents.getcolors.ai`) are DNS, not files: they live in
 Cloudflare with the rest of the zone, which this repo does not manage.

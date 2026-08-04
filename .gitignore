@@ -3,6 +3,8 @@
 !.nojekyll
 !.envrc
 !.github
+!public/.well-known/
+!public/.well-known/**
 
 # build output
 dist/
