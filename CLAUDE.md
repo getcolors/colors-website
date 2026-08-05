@@ -134,7 +134,7 @@ Things to know before editing it:
   rather than reaching for an attribute.
 - Repeated blocks are rendered from arrays — three library cards, three
   bundles, each skill's steps, and each Package Skill's DAG. The Package Skill
-  examples are K8s, K3s, ClickHouse, Airflow, Once, and Walter; the separate
+  examples are K8s, K3s, ClickHouse, Airflow, Rama, Once, and Walter; the separate
   Agent Skill example is Create Package Skill. Adding a library means adding an
   object to `libraries.items`, not copying markup.
 - The colour system is `oklch()` throughout, declared once as custom properties

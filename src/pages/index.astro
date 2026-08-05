@@ -24,6 +24,8 @@ import {
   nav,
   once,
   primitive,
+  rama,
+  ramaInstallCmd,
   walter,
   walterInstallCmd,
 } from "~/data/landing";
@@ -1196,8 +1198,52 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         </div>
       </div>
 
+      <!-- RAMA: FIFTH EXAMPLE PACKAGE -->
+      <div class="sec" id="rama">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-green">{rama.eyebrow}</div>
+          <h2>{rama.heading}</h2>
+          <p class="sec-lede sec-lede-wide">{rama.lede}</p>
+
+          <div class="sec-install">
+            <div class="install-row install-row-inline">
+              <code>{ramaInstallCmd}</code>
+              <button class="copy" data-copy={ramaInstallCmd}>Copy</button>
+            </div>
+            <span class="install-note" set:html={html(rama.runtimeNote)} />
+          </div>
+
+          <div class="grid-5">
+            {rama.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{rama.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="Rama create and build workflow diagram"
+            >
+              {rama.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{rama.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- ONCE: EXAMPLE PACKAGE -->
-      <div class="sec" id="once">
+      <div class="sec sec-alt" id="once">
         <div class="wrap">
           <div class="eyebrow eyebrow-blue">{once.eyebrow}</div>
           <h2>{once.heading}</h2>
@@ -1256,7 +1302,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       </div>
 
       <!-- WALTER -->
-      <div class="sec sec-alt" id="walter">
+      <div class="sec" id="walter">
         <div class="wrap">
           <div class="eyebrow eyebrow-green">{walter.eyebrow}</div>
           <h2>{walter.heading}</h2>

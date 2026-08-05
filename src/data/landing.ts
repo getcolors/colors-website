@@ -58,6 +58,7 @@ export const nav = [
   { label: "K3s", href: "#k3s" },
   { label: "ClickHouse", href: "#clickhouse" },
   { label: "Airflow", href: "#airflow" },
+  { label: "Rama", href: "#rama" },
   { label: "Once", href: "#once" },
   { label: "Walter", href: "#walter" },
 ];
@@ -173,8 +174,8 @@ export type DagItem =
   | { kind: "group"; nodes: string[] }
   | { kind: "branch"; nodes: string[]; tail: string };
 
-// A panel may hold more than one graph. K8s, K3s, ClickHouse, Airflow and Once
-// each need a single one; Walter's power verbs are two separate graphs under one
+// A panel may hold more than one graph. K8s, K3s, ClickHouse, Airflow, Rama and
+// Once each need a single one; Walter's power verbs are two separate graphs under one
 // caption, because `stop` and `start` are the pair that distinguishes it.
 export type DagPanel = { caption: string; graphs: DagItem[][] };
 
@@ -384,6 +385,58 @@ export const airflow = {
     "The create/build DAG runs `start` → `airflow-compute` → `tofu-smtp` → `tofu-dns` → `tofu-smtp-post` → (`airflow-ansible-local`, `airflow-ansible-remote`), and `airflow-ansible-remote` → `airflow-github`.",
   dagNote:
     "GitHub follows the remote stage because seeding the repository immediately triggers its deploy workflow, so the matching public key must already be installed. Delete revokes the credential first, removes the local SSH alias, then tears down SMTP, DNS, and compute; it deliberately keeps the DAG repository and the WAL-G archive.",
+};
+
+export const ramaInstallCmd = "npx skills use getcolors/rama";
+
+export const rama = {
+  eyebrow: "Example Package Skill",
+  heading: "Rama: a private distributed computing cluster, built with Colors",
+  lede: "Rama is a Package Skill built with Colors. It provisions a private single-node Rama cluster on DigitalOcean with ZooKeeper, a Conductor and Supervisor, WireGuard access, and optional Cloudflare DNS and Resend mail.",
+  runtimeNote:
+    "Rama ships in **green** alone. Its launcher keeps Rama service ports off the public internet and configures the local Rama CLI to reach the cluster through WireGuard.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins the Droplet shape, Rama, ZooKeeper and Java versions, VPN network, optional hostname and mail domain, and state backend.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "DigitalOcean, R2, optional Cloudflare and Resend credentials arrive through `COLORS_PAR_*`; the Rama license and generated WireGuard client remain outside tracked files and remote state.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu and Ansible files, then runs `create --dry-run` before any provider, server, DNS record, or mail domain is contacted.",
+    },
+    {
+      title: "Provision privately",
+      body: "OpenTofu creates the Droplet and default-deny firewall; Ansible installs WireGuard, ZooKeeper, Rama Conductor and Supervisor, exposing only SSH and the VPN publicly.",
+    },
+    {
+      title: "Verify the cluster",
+      body: "Acceptance checks every service, runs `conductorReady` and `numSupervisors` through the local Rama CLI, and proves Rama ports are unreachable from the public internet.",
+    },
+  ],
+  dagCaption: "Rama — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "smtp" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "smtp-post" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `smtp` → `dns` → `smtp-post` → `ansible` → `acceptance`.",
+  dagNote:
+    "DNS and mail stages become no-ops when their providers are disabled. Delete reverses the graph, removing local and remote WireGuard configuration before infrastructure; the committed destroy guard refuses accidental deletion.",
 };
 
 export const once = {

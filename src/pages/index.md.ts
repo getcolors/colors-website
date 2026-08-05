@@ -34,6 +34,8 @@ import {
   meta,
   once,
   primitive,
+  rama,
+  ramaInstallCmd,
   walter,
   walterInstallCmd,
 } from "~/data/landing";
@@ -166,6 +168,18 @@ ${fence("sh", airflowInstallCmd)}
 ${airflow.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
 ${wrap(`${airflow.dagSummary} ${airflow.dagNote}`)}
+
+## ${rama.heading}
+
+${wrap(rama.lede)}
+
+${wrap(rama.runtimeNote)}
+
+${fence("sh", ramaInstallCmd)}
+
+${rama.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
+
+${wrap(`${rama.dagSummary} ${rama.dagNote}`)}
 
 ## ${once.heading}
 
