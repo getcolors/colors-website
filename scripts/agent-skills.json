@@ -20,6 +20,10 @@
       "ref": "main",
       "sha": "031b89ce31117d6c786123dc352d8b8fb27669e4"
     },
+    "rama": {
+      "ref": "main",
+      "sha": "471fc48ddb244e9a8456838330e52a70a4b2aa0b"
+    },
     "skills": {
       "ref": "main",
       "sha": "7f1bc8e89854786250ae2102f3497222a48efba6"
@@ -73,6 +77,11 @@
     {
       "repository": "once",
       "path": "skills/package-once-red",
+      "type": "archive"
+    },
+    {
+      "repository": "rama",
+      "path": "skills/package-rama-green",
       "type": "archive"
     },
     {

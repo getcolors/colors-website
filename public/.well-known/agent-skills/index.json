@@ -72,6 +72,13 @@
       "digest": "sha256:ca381465c644b781895efc8aab02b8b4561cdcaac0498f49cad0d6e6a32ff168"
     },
     {
+      "name": "package-rama-green",
+      "type": "archive",
+      "description": "Provision and operate a private single-node Rama cluster on DigitalOcean using Green.",
+      "url": "/.well-known/agent-skills/package-rama-green-48991e5f9ecbc0ceba5857cb3aa78bd444cebc01699dada033319306df2d8ba1.tar.gz",
+      "digest": "sha256:48991e5f9ecbc0ceba5857cb3aa78bd444cebc01699dada033319306df2d8ba1"
+    },
+    {
       "name": "package-walter-green",
       "type": "archive",
       "description": "Creates and operates a remote development machine with Green, OpenTofu and Ansible, and powers it off and on to stop paying for it while you sleep. Use when initializing a walter project, generating colors.yml, selecting a compute or state provider, building or dry-running configuration, provisioning or destroying the machine, or stopping and starting it.",
