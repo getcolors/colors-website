@@ -17,16 +17,6 @@ const isCurrent = (href: string) =>
       <img class="mark" src="/favicon.svg" width="20" height="20" alt="" />
       <span class="brand-name">Colors</span>
     </a>
-    <button
-      class="menu-toggle"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded="false"
-      aria-controls="site-navigation"
-      data-menu-toggle
-    >
-      <span></span><span></span><span></span>
-    </button>
     <nav class="nav-links" id="site-navigation" aria-label="Main navigation">
       {nav.map((item) => <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>)}
     </nav>
@@ -35,29 +25,7 @@ const isCurrent = (href: string) =>
 
 <script>
   const header = document.querySelector<HTMLElement>("[data-site-header]");
-  const menuToggle = header?.querySelector<HTMLButtonElement>("[data-menu-toggle]");
   let headerUpdatePending = false;
-
-  const setMenuOpen = (open: boolean) => {
-    header?.classList.toggle("menu-open", open);
-    menuToggle?.setAttribute("aria-expanded", String(open));
-    menuToggle?.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
-  };
-
-  menuToggle?.addEventListener("click", () => setMenuOpen(!header?.classList.contains("menu-open")));
-  header?.querySelectorAll(".nav-links a").forEach((link) => link.addEventListener("click", () => setMenuOpen(false)));
-  document.addEventListener("click", (event) => {
-    if (header?.classList.contains("menu-open") && event.target instanceof Node && !header.contains(event.target)) setMenuOpen(false);
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && header?.classList.contains("menu-open")) {
-      setMenuOpen(false);
-      menuToggle?.focus();
-    }
-  });
-  window.matchMedia("(min-width: 861px)").addEventListener("change", (event) => {
-    if (event.matches) setMenuOpen(false);
-  });
 
   const updateHeader = () => {
     header?.classList.toggle("is-scrolled", window.scrollY > 24);
@@ -106,42 +74,11 @@ const isCurrent = (href: string) =>
   .nav-links a { position: relative; color: var(--muted); text-decoration: none; }
   .nav-links a:hover { color: var(--blue); }
   .nav-links a[aria-current="page"] { color: var(--blue); font-weight: 400; }
-  .menu-toggle {
-    display: none;
-    width: 40px;
-    height: 40px;
-    padding: 10px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: var(--page);
-    color: var(--ink);
-    cursor: pointer;
-  }
-  .menu-toggle span { display: block; width: 18px; height: 1px; margin: 4px auto; background: currentColor; transition: transform 180ms ease, opacity 180ms ease; }
-  .menu-toggle:focus-visible, .nav-links a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
-  .site-header.menu-open .menu-toggle span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
-  .site-header.menu-open .menu-toggle span:nth-child(2) { opacity: 0; }
-  .site-header.menu-open .menu-toggle span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+  .nav-links a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
   @media (max-width: 860px) {
-    .menu-toggle { display: block; }
-    .nav-links {
-      position: absolute;
-      top: calc(100% - 8px);
-      right: 24px;
-      left: 24px;
-      display: none;
-      align-items: stretch;
-      gap: 0;
-      padding: 8px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: var(--page);
-      box-shadow: 0 16px 40px oklch(20% 0.01 260 / 12%);
-    }
-    .site-header.menu-open { border-color: oklch(91% 0.005 260 / 75%); background: var(--page); }
-    .site-header.menu-open .nav-links { display: flex; flex-direction: column; }
-    .nav-links a { padding: 11px 12px; border-radius: 7px; }
-    .nav-links a:hover { background: var(--surface); }
+    .nav { gap: 20px; padding-block: 20px; }
+    .site-header.is-scrolled .nav { padding-block: 12px; }
+    .nav-links { gap: 16px; font-size: 13px; }
   }
   @media (prefers-reduced-motion: reduce) { .site-header, .nav { transition: none; } }
 </style>
