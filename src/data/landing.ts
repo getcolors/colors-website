@@ -52,15 +52,8 @@ provider-backend: r2
 compute-prevent-destroy: true`;
 
 export const nav = [
-  { label: "Libraries", href: "#libraries" },
-  { label: "Create a skill", href: "#create-package-skill" },
-  { label: "K8s", href: "#k8s" },
-  { label: "K3s", href: "#k3s" },
-  { label: "ClickHouse", href: "#clickhouse" },
-  { label: "Airflow", href: "#airflow" },
-  { label: "Rama", href: "#rama" },
-  { label: "Once", href: "#once" },
-  { label: "Walter", href: "#walter" },
+  { label: "Featured", href: "/featured" },
+  { label: "Catalog", href: "/skills" },
 ];
 
 export const hero = {
@@ -71,6 +64,9 @@ export const hero = {
     "Run inside your coding agent — it grants **Once**, a skill to provision a VPS with a personal PaaS like Netlify or Vercel.",
   ymlCaption: "# colors.yml",
 };
+
+export const packageSkillDefinition =
+  "A Package Skill is a deterministic infrastructure and platform automation module built for AI coding agents using the Colors SDK (available in TypeScript/Bun, Clojure/Babashka, or Python/uv). It provisions and manages production resources—such as Kubernetes clusters, databases, dev machines, or personal PaaS environments—by reading a non-secret desired state file (`colors.yml`), enforcing mandatory dry-run boundaries before contacting live providers, maintaining strict credential indirection through environment variables (`COLORS_PAR_*`), and managing resource lifecycles through execution graphs (DAGs).";
 
 export const primitive = {
   heading: "A different primitive for a different job",
@@ -170,6 +166,33 @@ export const createPackageSkill = {
   ],
 };
 
+export const submitPackageSkillCmd =
+  "npx skills add getcolors/skills@submit-package-skill";
+
+export const submitPackageSkill = {
+  eyebrow: "Agent Skill",
+  docsUrl: "https://github.com/getcolors/skills/blob/main/submit-package-skill/SKILL.md",
+  repoUrl: "https://github.com/getcolors/skills",
+  heading: "Submit Package Skill: add an existing Package Skill to the Catalog",
+  lede: "Submit Package Skill gives a coding agent the workflow for validating an existing Colors Package Skill, adding its catalog recipe, and opening an authorized pull request for curated discovery on getcolors.ai.",
+  useNote:
+    "This is an **Agent Skill**, not a Package Skill. The Catalog adds discoverability only: GitHub remains the source, and `npx skills` remains the installer.",
+  phases: [
+    {
+      title: "Validate",
+      body: "Inspect every SKILL.md and verify the Colors runtime, desired state, dry-run boundary, credential indirection, and lifecycle DAGs.",
+    },
+    {
+      title: "Add the recipe",
+      body: "Create one validated recipe for the product, grouping interchangeable runtime variants and infrastructure-oriented search keywords.",
+    },
+    {
+      title: "Open the PR",
+      body: "Run catalog validation and the site build, then create a branch, commit, push, fork, or pull request only with explicit authorization.",
+    },
+  ],
+};
+
 // The create/build DAG, in render order. `group` stacks its nodes to mark them
 // as running in parallel; `branch` is the ansible pair, where github follows
 // ansible-remote alone and so needs a second grid column on that row only.
@@ -187,7 +210,7 @@ export type DagPanel = { caption: string; graphs: DagItem[][] };
 export const k8sInstallCmd = "npx skills use getcolors/k8s";
 
 export const k8s = {
-  eyebrow: "Example Package Skill",
+  eyebrow: "Package Skill",
   docsUrl: "https://getcolors.github.io/k8s/",
   repoUrl: "https://github.com/getcolors/k8s",
   heading: "K8s: a kubeadm cluster on DigitalOcean, built with Colors",
@@ -237,7 +260,7 @@ export const k8s = {
 export const k3sInstallCmd = "npx skills use getcolors/k3s";
 
 export const k3s = {
-  eyebrow: "Example Package Skill",
+  eyebrow: "Package Skill",
   docsUrl: "https://getcolors.github.io/k3s/",
   repoUrl: "https://github.com/getcolors/k3s",
   heading: "K3s: a GitOps Kubernetes server, built with Colors",
@@ -283,7 +306,7 @@ export const k3s = {
 export const clickhouseInstallCmd = "npx skills use getcolors/clickhouse";
 
 export const clickhouse = {
-  eyebrow: "Example Package Skill",
+  eyebrow: "Package Skill",
   docsUrl: "https://getcolors.github.io/clickhouse/",
   repoUrl: "https://github.com/getcolors/clickhouse",
   heading: "ClickHouse: a private analytics stack, built with Colors",
@@ -347,7 +370,7 @@ export const clickhouse = {
 export const airflowInstallCmd = "npx skills use getcolors/airflow";
 
 export const airflow = {
-  eyebrow: "Example Package Skill",
+  eyebrow: "Package Skill",
   docsUrl: "https://getcolors.github.io/airflow/",
   repoUrl: "https://github.com/getcolors/airflow",
   heading: "Airflow: a production scheduler, built with Colors",
@@ -403,7 +426,7 @@ export const airflow = {
 export const ramaInstallCmd = "npx skills use getcolors/rama";
 
 export const rama = {
-  eyebrow: "Example Package Skill",
+  eyebrow: "Package Skill",
   docsUrl: "https://getcolors.github.io/rama/",
   repoUrl: "https://github.com/getcolors/rama",
   heading: "Rama: a private distributed computing cluster, built with Colors",
@@ -455,7 +478,7 @@ export const rama = {
 };
 
 export const once = {
-  eyebrow: "Example Package Skill",
+  eyebrow: "Package Skill",
   docsUrl: "https://getcolors.github.io/once/",
   repoUrl: "https://github.com/getcolors/once",
   heading: "Once: a personal PaaS, built with Colors",
@@ -510,7 +533,7 @@ export const once = {
 export const walterInstallCmd = "npx skills use getcolors/walter";
 
 export const walter = {
-  eyebrow: "Example Package Skill",
+  eyebrow: "Package Skill",
   docsUrl: "https://getcolors.github.io/walter/",
   repoUrl: "https://github.com/getcolors/walter",
   heading: "Walter: a remote dev machine, built with Colors",

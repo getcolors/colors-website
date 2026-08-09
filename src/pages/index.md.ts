@@ -14,30 +14,19 @@
 
 import type { APIContext } from "astro";
 import {
-  airflow,
-  airflowInstallCmd,
   bundles,
-  clickhouse,
-  clickhouseInstallCmd,
   colorsYml,
   createPackageSkill,
   createPackageSkillCmd,
-  cta,
   footer,
   hero,
   installCmd,
-  k8s,
-  k8sInstallCmd,
-  k3s,
-  k3sInstallCmd,
   libraries,
   meta,
-  once,
+  packageSkillDefinition,
   primitive,
-  rama,
-  ramaInstallCmd,
-  walter,
-  walterInstallCmd,
+  submitPackageSkill,
+  submitPackageSkillCmd,
 } from "~/data/landing";
 
 const fence = (lang: string, body: string) => `\`\`\`${lang}\n${body}\n\`\`\``;
@@ -99,6 +88,10 @@ ${wrap(primitive.lede)}
 
 ${primitive.cards.map((c) => wrap(`- **${c.label} — ${c.title}.** ${c.body}`, "  ")).join("\n")}
 
+## What is a Package Skill?
+
+${wrap(packageSkillDefinition)}
+
 ## ${bundles.heading}
 
 ${bundles.cards.map((c) => wrap(`- **${c.title}.** ${c.body}`, "  ")).join("\n")}
@@ -124,116 +117,23 @@ Repository: ${createPackageSkill.repoUrl}
 
 ${createPackageSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
 
-## ${k8s.heading}
+## ${submitPackageSkill.heading}
 
-${wrap(k8s.lede)}
+${wrap(submitPackageSkill.lede)}
 
-${wrap(k8s.runtimeNote)}
+${wrap(submitPackageSkill.useNote)}
 
-${fence("sh", k8sInstallCmd)}
+${fence("sh", submitPackageSkillCmd)}
 
-Documentation: ${k8s.docsUrl}
-Repository: ${k8s.repoUrl}
+Documentation: ${submitPackageSkill.docsUrl}
+Repository: ${submitPackageSkill.repoUrl}
 
-${k8s.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
+${submitPackageSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
 
-${wrap(`${k8s.dagSummary} ${k8s.dagNote}`)}
+## Find infrastructure your agent can operate
 
-## ${k3s.heading}
-
-${wrap(k3s.lede)}
-
-${wrap(k3s.runtimeNote)}
-
-${fence("sh", k3sInstallCmd)}
-
-Documentation: ${k3s.docsUrl}
-Repository: ${k3s.repoUrl}
-
-${k3s.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
-
-${wrap(`${k3s.dagSummary} ${k3s.dagNote}`)}
-
-## ${clickhouse.heading}
-
-${wrap(clickhouse.lede)}
-
-${wrap(clickhouse.runtimeNote)}
-
-${fence("sh", clickhouseInstallCmd)}
-
-Documentation: ${clickhouse.docsUrl}
-Repository: ${clickhouse.repoUrl}
-
-${clickhouse.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
-
-${wrap(`${clickhouse.dagSummary} ${clickhouse.dagNote}`)}
-
-## ${airflow.heading}
-
-${wrap(airflow.lede)}
-
-${wrap(airflow.runtimeNote)}
-
-${fence("sh", airflowInstallCmd)}
-
-Documentation: ${airflow.docsUrl}
-Repository: ${airflow.repoUrl}
-
-${airflow.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
-
-${wrap(`${airflow.dagSummary} ${airflow.dagNote}`)}
-
-## ${rama.heading}
-
-${wrap(rama.lede)}
-
-${wrap(rama.runtimeNote)}
-
-${fence("sh", ramaInstallCmd)}
-
-Documentation: ${rama.docsUrl}
-Repository: ${rama.repoUrl}
-
-${rama.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
-
-${wrap(`${rama.dagSummary} ${rama.dagNote}`)}
-
-## ${once.heading}
-
-${wrap(once.lede)}
-
-${wrap(once.runtimeNote)}
-
-${fence("sh", installCmd)}
-
-Documentation: ${once.docsUrl}
-Repository: ${once.repoUrl}
-
-${once.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
-
-${wrap(`${once.dagSummary} ${once.dagNote}`)}
-
-## ${walter.heading}
-
-${wrap(walter.lede)}
-
-${wrap(walter.runtimeNote)}
-
-${fence("sh", walterInstallCmd)}
-
-Documentation: ${walter.docsUrl}
-Repository: ${walter.repoUrl}
-
-${walter.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
-
-${wrap(`${walter.dagSummary} ${walter.dagNote}`)}
-
-## ${cta.heading.replace(/\.$/, "")}
-
-${wrap(cta.lede)}
-
-${fence("sh", installCmd)}
+Browse the PR-curated Package Skills Catalog by platform, provider, or runtime:
+${new URL("/skills", site).toString()}
 
 ---
 

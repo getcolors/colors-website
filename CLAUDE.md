@@ -3,10 +3,10 @@
 ## Project Overview
 
 This is the static website for Colors, an SDK for building Package Skills. The
-product was previously called BigConfig; the rebrand landed on 2026-07-27 and
-reduced the site to **a single landing page**. The blog, the manual, the talk
-decks, and the per-package pages were all removed at that point — do not
-reintroduce them without being asked.
+product was previously called BigConfig. `/` remains the landing page;
+`/featured` is the editorial showcase and `/skills` plus the generated
+owner/source/Package Skill routes form the PR-curated Package Skills Catalog.
+The old blog, manual and talk decks remain retired.
 
 ## Tech Stack
 
@@ -18,10 +18,10 @@ reintroduce them without being asked.
 | Typechecker | `@astrojs/check` + typescript | ^0.9.10 / ^6 (dev only) |
 | TypeScript | strict Astro config | via `astro/tsconfigs/strict` |
 
-That is the whole dependency list. MDX (`@astrojs/mdx`), D2 diagrams
-(`astro-d2`), and the mdast/micromark packages were dependencies of the blog and
-were removed with it. **Tailwind is also gone** — the landing page is styled by
-one stylesheet in `index.astro`, so nothing imported it. If a future page wants
+The catalog also uses `yaml` for PR-submitted recipes and `marked` to render
+the referenced public `SKILL.md` bodies. MDX (`@astrojs/mdx`) and D2 diagrams
+(`astro-d2`) remain removed with the blog. **Tailwind is also gone** — routes
+use local Astro styles and the catalog shares `CatalogLayout.astro`. If a future page wants
 Tailwind, add `tailwindcss` + `@tailwindcss/vite` back, restore the vite plugin
 in `astro.config.mjs`, and recreate `src/styles/global.css`.
 
@@ -37,16 +37,21 @@ that package widens the range, not before.
 ├── package.json
 ├── pnpm-lock.yaml
 ├── tsconfig.json
+├── recipes/              # one PR-curated YAML recipe per Package Skill product
+│   └── *.yml
 ├── src/
-│   ├── components/
-│   │   └── SeoMeta.astro
+│   ├── components/       # shared header, SEO, breadcrumbs, install box and catalog lists
 │   ├── data/
-│   │   └── landing.ts    # every string on the landing page — see The landing page
+│   │   ├── landing.ts    # every string on the landing page
+│   │   └── catalog.ts    # recipes, source metadata, skills.sh counts
+│   ├── layouts/
+│   │   └── CatalogLayout.astro
 │   └── pages/
-│       ├── blog/
-│       │   └── rss.xml.ts
+│       ├── [owner]/      # generated owner/source/Package Skill routes
+│       ├── package-skills/index.astro
+│       ├── skills/index.astro
 │       ├── index.astro
-│       ├── index.md.ts   # markdown twin of the landing page, served at /index.md
+│       ├── index.md.ts
 │       ├── robots.txt.ts
 │       └── sitemap.xml.ts
 ├── public/
@@ -85,9 +90,9 @@ own entrypoint. The `Procfile` here is a development convenience (`pnpm install
 Procfile *is* the production supervisor. Do not add a runtime dependency to this
 image expecting hivemind to start it.
 
-`src/`, `public/`, and the four manifests above are the whole production site —
-everything under `src/pages/` is a route and there are no others. The root
-`index.html` and `.nojekyll` belong only to the GitHub Pages repository landing
+`src/`, `recipes/`, `public/`, and the manifests above are the whole production
+site. Everything under `src/pages/` is a route. The root `index.html` and
+`.nojekyll` belong only to the GitHub Pages repository landing
 page: they are not Astro inputs, do not enter `dist/`, and must not duplicate the
 production homepage. `public/` is small on purpose: before adding to it, check
 the new file is actually referenced. `favicon.png` currently is not —
@@ -115,15 +120,15 @@ Always use `pnpm`.
 
 ## The landing page
 
-`src/pages/index.astro` is the whole site. It was ported by hand from a bundled
-design export, which is kept at `plans/colors-landing-page-export.html` as the
+`src/pages/index.astro` is the SDK landing page. It was ported by hand from a
+bundled design export, which is kept at `plans/colors-landing-page-export.html` as the
 visual reference — that file is **not** built and must stay out of `src/pages/`
 (it would publish as a route, and its filename contains spaces).
 
-**Copy lives in `src/data/landing.ts`, markup and style in `index.astro`.**
-Nothing on the page is a literal in the template: headings, ledes, card text,
-the DAG node names and the install command are all imported. Both this page and
-the `/index.md` twin render that one module, which is what stops them drifting.
+**Shared landing copy lives in `src/data/landing.ts`, markup and style in
+`index.astro`.** Both the HTML page and `/index.md` twin consume its product
+copy and canonical Package Skill definition. Keep their final Catalog CTA in
+sync when changing it.
 
 Things to know before editing it:
 
@@ -133,10 +138,10 @@ Things to know before editing it:
   prop, and each library card's accent swatch). Add rules to the stylesheet
   rather than reaching for an attribute.
 - Repeated blocks are rendered from arrays — three library cards, three
-  bundles, each skill's steps, and each Package Skill's DAG. The Package Skill
-  examples are K8s, K3s, ClickHouse, Airflow, Rama, Once, and Walter; the separate
-  Agent Skill example is Create Package Skill. Adding a library means adding an
-  object to `libraries.items`, not copying markup.
+  bundles, and the Create/Submit Package Skill phases. Featured Package Skills no
+  longer appear on `/`; they live on `/featured` and in the Catalog.
+  Adding a library means adding an object to `libraries.items`, not copying
+  markup.
 - The colour system is `oklch()` throughout, declared once as custom properties
   on `:root`. The three library accents are `--red oklch(60% 0.19 25)`,
   `--green oklch(65% 0.17 145)`, `--blue oklch(55% 0.18 260)`.
@@ -184,19 +189,45 @@ Things to know before editing it:
   the panel's, so `.astro-code` restates IBM Plex Mono in the global block.
   Remove that rule and the hero silently renders in Courier.
 
+## Package Skills Catalog
+
+`recipes/*.yml` is the admission boundary. A community PR adds one product
+recipe and groups its red/green/blue variants under `package-skills`; merging
+adds discoverability only. GitHub remains the source and `npx skills` remains
+the installer. Do not add artifact building or hosting.
+
+`src/data/catalog.ts` validates recipes, fetches each public `SKILL.md`, renders
+its body with raw HTML escaped, and fetches only the installation count from the
+matching skills.sh URL. A missing skills.sh page means zero installs and must
+not fail a build; a missing or mismatched `SKILL.md` must fail it. Catalog
+copy never comes from skills.sh.
+
+The generated hierarchy is `/skills`, `/{owner}`,
+`/{owner}/{repository}`, and `/{owner}/{repository}/{package-skill}`. The
+editorial `/featured` showcase is separate. Catalog recipes may link to
+a showcase anchor through maintainer-controlled `featured` metadata; catalog
+pages and the showcase link to each other. `sitemap.xml.ts` enumerates all of
+these routes from `loadCatalog()`.
+
 ## Brand assets
 
-`public/favicon.svg` is the three-stripe mark: a 20×20 rounded square matching
-the nav logo in `index.astro`. It uses hex rather than `oklch()` because not
+`public/favicon.svg` is the three-stripe mark: a 20×20 rounded square used by
+both the browser favicon and the shared `SiteHeader.astro` on every HTML page.
+The shared header imports the one `nav` array from `landing.ts`; never fork its
+markup or navigation links in a page or layout. The SVG uses hex rather than
+`oklch()` because not
 every favicon rasteriser parses modern CSS colour — the oklch originals are in a
 comment in the file.
 
-`public/og-colors-v2.png` is the og:image and is **generated**, not hand-drawn. Run
-`scripts/generate-og-image.py` to rebuild it after any copy or brand change; the
-setup block at the top of that script explains the one-off venv. It converts
-text to outlines straight from `public/fonts/`, so the card's type matches the
-page and no system fonts are needed, and it warns on stderr if a line overflows
-the safe margin.
+The files under `public/og-*.png` are generated, not hand-drawn. Run
+`scripts/generate-og-image.py` to rebuild them after any copy, recipe, or brand
+change; the setup block at the top of that script explains the one-off Python
+environment. In addition to the landing card, the script creates blue cards for
+`/featured`, `/skills`, and every owner, source, and Package Skill route from
+the recipes. `catalogOgImage()` in `src/data/catalog.ts` must keep the same
+filename convention. The generator converts text to outlines straight from
+`public/fonts/`, so the cards match the site's typography without system fonts,
+and warns on stderr if a line overflows the safe margin.
 
 **Changing the artwork means changing the filename.** Slack, WhatsApp and
 LinkedIn cache unfurls keyed on the image URL and hold them for days, so new
@@ -243,13 +274,12 @@ follow `SITE_URL` the same way `canonical` and `og:image` do. A static
 
 | Route | Source | Notes |
 |---|---|---|
-| `/sitemap.xml` | `src/pages/sitemap.xml.ts` | one `<url>`, `/`. `lastmod` is the build time — there is no per-route publish date to use. |
+| `/sitemap.xml` | `src/pages/sitemap.xml.ts` | landing, showcase and every generated catalog route. `lastmod` is the build time. |
 | `/robots.txt` | `src/pages/robots.txt.ts` | `Allow: /` plus the absolute `Sitemap:` line. |
 | `/index.md` | `src/pages/index.md.ts` | markdown rendition of the landing page. |
 
-`@astrojs/sitemap` would cover the first one, but it is a dependency for a
-single page; add the route to `PAGES` in `sitemap.xml.ts` when a second page
-appears, and reach for the integration when that list stops being trivial.
+`sitemap.xml.ts` reads the same catalog module as the pages, so a merged
+recipe automatically adds its owner, source and Package Skill URLs.
 
 **The markdown copy is generated, not duplicated.** `index.md.ts` and
 `index.astro` both render `src/data/landing.ts`, so a wording change reaches

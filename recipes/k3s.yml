@@ -1,0 +1,15 @@
+name: K3s
+repository: getcolors/k3s
+summary: Operate a secure single-node K3s server on Hetzner Cloud, continuously reconciled from Git with Flux.
+keywords:
+  - Kubernetes
+  - K3s
+  - GitOps
+  - Flux
+  - Hetzner
+  - containers
+featured: /featured#k3s
+package-skills:
+  - name: package-k3s-green
+    path: skills/package-k3s-green/SKILL.md
+    runtime: green

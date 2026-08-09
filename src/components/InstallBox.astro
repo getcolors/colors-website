@@ -1,12 +1,14 @@
 ---
 interface Props {
   command: string;
-  id: string;
+  id?: string;
+  prompt?: string;
 }
 
-const { command, id } = Astro.props;
+const { command, id: providedId, prompt: providedPrompt } = Astro.props;
+const id = providedId ?? `install-${command.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}`;
 const installCommand = command.replace(/^npx skills use\b/, "npx skills add");
-const prompt = `Run \`${command}\` and follow the generated skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary. Resolve relative paths from the supporting-files directory it provides.`;
+const prompt = providedPrompt ?? `Run \`${command}\` and follow the generated skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary. Resolve relative paths from the supporting-files directory it provides.`;
 const panelId = `${id}-panel`;
 ---
 
@@ -60,6 +62,49 @@ const panelId = `${id}-panel`;
     </button>
   </div>
 </div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-install-box]:not([data-install-ready])").forEach((box) => {
+    box.dataset.installReady = "true";
+    const content = box.querySelector<HTMLElement>("[data-install-content]");
+    const shell = box.querySelector<HTMLElement>("[data-install-shell]");
+    const copyButton = box.querySelector<HTMLButtonElement>("[data-copy]");
+
+    box.querySelectorAll<HTMLButtonElement>("[data-install-tab]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const mode = button.dataset.installTab;
+        if (!content || !shell || !copyButton || !mode) return;
+        box.querySelectorAll("[data-install-tab]").forEach((tab) => {
+          tab.setAttribute("aria-selected", String(tab === button));
+        });
+        const text = mode === "prompt"
+          ? content.dataset.installPrompt
+          : content.dataset.installCommand;
+        content.textContent = text ?? "";
+        content.setAttribute("aria-labelledby", button.id);
+        shell.dataset.mode = mode;
+        copyButton.dataset.copy = text ?? "";
+        copyButton.setAttribute(
+          "aria-label",
+          mode === "prompt" ? "Copy agent prompt" : "Copy installation command",
+        );
+      });
+    });
+
+    copyButton?.addEventListener("click", async () => {
+      const text = copyButton.dataset.copy;
+      if (!text) return;
+      await navigator.clipboard?.writeText(text);
+      copyButton.dataset.copied = "true";
+      const status = copyButton.querySelector("[data-copy-status]");
+      if (status) status.textContent = "Copied";
+      setTimeout(() => {
+        delete copyButton.dataset.copied;
+        if (status) status.textContent = "Copy";
+      }, 1500);
+    });
+  });
+</script>
 
 <style>
   .install-box {

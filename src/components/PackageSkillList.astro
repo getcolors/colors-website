@@ -1,0 +1,31 @@
+---
+import { formatInstalls, runtimeLabels, type PackageSkill } from "~/data/catalog";
+interface Props { packageSkills: PackageSkill[]; }
+const { packageSkills } = Astro.props;
+---
+<div class="package-skill-list panel">
+  <div class="list-head"><span>Package Skill</span><span>Runtime</span><span>Installs</span></div>
+  {packageSkills.map((item) => (
+    <a class="package-skill-row" href={item.url}>
+      <strong>{item.name}</strong>
+      <span class:list={["runtime", `runtime-${item.runtime}`]} title={runtimeLabels[item.runtime]}>{item.runtime}</span>
+      <span class="mono installs">{formatInstalls(item.installs)}</span>
+    </a>
+  ))}
+</div>
+<style>
+  .list-head, .package-skill-row { display: grid; grid-template-columns: minmax(0, 1fr) 150px 90px; gap: 18px; align-items: center; padding: 14px 18px; }
+  .list-head { color: var(--faint); font: 11px var(--mono); text-transform: uppercase; }
+  .list-head span:last-child { text-align: right; }
+  .package-skill-row { border-top: 1px solid var(--line); }
+  .package-skill-row:hover { background: var(--surface); }
+  strong { overflow: hidden; color: var(--ink); text-overflow: ellipsis; font: 400 17px var(--sans); }
+  .runtime { width: fit-content; }
+  .installs { text-align: right; color: var(--muted); font-size: 13px; }
+  @media (max-width: 600px) {
+    .list-head { display: none; }
+    .package-skill-row { grid-template-columns: 1fr auto; }
+    .runtime { grid-row: 2; }
+    .installs { grid-column: 2; grid-row: 1 / span 2; }
+  }
+</style>

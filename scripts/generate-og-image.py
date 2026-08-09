@@ -15,8 +15,10 @@ venv rather than adding Python to the site's toolchain):
 Rasterisation shells out to node + sharp, which is already a dependency.
 The script prints a warning if any text run overflows the safe margin.
 """
+import glob
 import math
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -185,6 +187,105 @@ try:
     )
 finally:
     os.unlink(svg_path)
+
+
+def slug(value):
+    return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+
+
+def wrapped(value, size, max_width, max_lines=2, tracking=0.0):
+    words, lines, index = value.split(), [], 0
+    while index < len(words) and len(lines) < max_lines:
+        current = ""
+        while index < len(words):
+            candidate = f"{current} {words[index]}".strip()
+            if current and text(SANS, candidate, size, tracking)[1] > max_width:
+                break
+            current = candidate
+            index += 1
+        if len(lines) == max_lines - 1 and index < len(words):
+            candidate = " ".join([current, *words[index:]]).strip().rstrip(".,;:")
+            while text(SANS, candidate + "...", size, tracking)[1] > max_width and " " in candidate:
+                candidate = candidate.rsplit(" ", 1)[0].rstrip(".,;:")
+            current = candidate + "..."
+            index = len(words)
+        lines.append(current)
+    return lines
+
+
+def render_blue_card(filename, kicker, title, subtitle, route):
+    card = [f'<rect width="{W}" height="{H}" fill="{BG}"/>']
+    card.append(f'<rect x="0" y="0" width="18" height="{H}" fill="{BLUE}"/>')
+
+    card.append(f'<clipPath id="mark"><rect x="{MARGIN}" y="64" width="{MARK}" height="{MARK}" rx="{MARK * 0.2}"/></clipPath>')
+    card.append('<g clip-path="url(#mark)">')
+    card.append(f'<rect x="{MARGIN}" y="64" width="{MARK}" height="{MARK}" fill="{GREEN}"/>')
+    card.append(f'<rect x="{MARGIN}" y="64" width="{MARK / 3:.3f}" height="{MARK}" fill="{RED}"/>')
+    card.append(f'<rect x="{MARGIN + 2 * MARK / 3:.3f}" y="64" width="{MARK / 3:.3f}" height="{MARK}" fill="{BLUE}"/>')
+    card.append('</g>')
+    card.append(draw(SANS, "Colors", 38, MARGIN + MARK + 20, 107, INK, -0.01, 0.022)[0])
+
+    kicker_path, kicker_width = draw(MONO6, kicker.upper(), 17, MARGIN + 18, 187, BLUE, 0.03)
+    card.append(f'<rect x="{MARGIN}" y="153" width="{kicker_width + 36:.1f}" height="48" rx="24" fill="{oklch(0.96, 0.03, 260)}" stroke="{oklch(0.90, 0.05, 260)}"/>')
+    card.append(kicker_path)
+
+    title_lines = wrapped(title, 68, W - 2 * MARGIN, tracking=-0.02)
+    title_y = 294
+    for index, line in enumerate(title_lines):
+        card.append(draw(SANS, line, 68, MARGIN, title_y + index * 74, INK, -0.02, 0.023)[0])
+
+    subtitle_y = title_y + len(title_lines) * 74 + 22
+    for index, line in enumerate(wrapped(subtitle, 26, W - 2 * MARGIN, 2)):
+        card.append(draw(SANS, line, 26, MARGIN, subtitle_y + index * 36, MUTED)[0])
+
+    card.append(draw(MONO5, route, 18, MARGIN, 570, BLUE)[0])
+    card.append(f'<rect x="0" y="{H - 16}" width="{W}" height="16" fill="{BLUE}"/>')
+    card_svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}">{"".join(card)}</svg>'
+    output = os.path.join(ROOT, "public", filename)
+    with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False) as handle:
+        handle.write(card_svg)
+        source = handle.name
+    try:
+        subprocess.run(
+            ["node", "-e", f"require('sharp')({source!r},{{density:144}}).resize({W},{H}).png({{compressionLevel:9}}).toFile({output!r})"],
+            cwd=ROOT,
+            check=True,
+        )
+    finally:
+        os.unlink(source)
+    print(output)
+
+
+def recipes():
+    parsed = []
+    for path in sorted(glob.glob(os.path.join(ROOT, "recipes", "*.yml"))):
+        raw = open(path, encoding="utf-8").read()
+        product = re.search(r"^name:\s*(.+)$", raw, re.M).group(1).strip()
+        repository = re.search(r"^repository:\s*(.+)$", raw, re.M).group(1).strip()
+        summary = re.search(r"^summary:\s*(.+)$", raw, re.M).group(1).strip()
+        entries = []
+        for match in re.finditer(r"^\s+- name:\s*(\S+)\s*$.*?^\s+runtime:\s*(red|green|blue)\s*$", raw, re.M | re.S):
+            entries.append((match.group(1), match.group(2)))
+        parsed.append((product, repository, summary, entries))
+    return parsed
+
+
+catalog_recipes = recipes()
+all_skills = sum(len(recipe[3]) for recipe in catalog_recipes)
+render_blue_card("og-catalog-blue-v1.png", "Catalog", "Package Skills Catalog", f"{len(catalog_recipes)} curated sources and {all_skills} Package Skills for production infrastructure.", "/skills")
+render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills", "Production examples of deterministic, agent-operated infrastructure built with Colors.", "/featured")
+
+owners = {}
+for product, repository, summary, entries in catalog_recipes:
+    owner, repo = repository.split("/", 1)
+    owners.setdefault(owner, [0, 0])
+    owners[owner][0] += 1
+    owners[owner][1] += len(entries)
+    render_blue_card(f"og-source-{slug(owner)}-{slug(repo)}-blue-v1.png", "Package Skill source", product, summary, f"/{owner}/{repo}")
+    for skill_name, runtime in entries:
+        render_blue_card(f"og-skill-{slug(owner)}-{slug(repo)}-{slug(skill_name)}-blue-v1.png", f"Package Skill - {runtime}", skill_name, summary, f"/{owner}/{repo}/{skill_name}")
+for owner, (source_count, skill_count) in owners.items():
+    render_blue_card(f"og-owner-{slug(owner)}-blue-v1.png", "Package Skill owner", owner, f"{source_count} curated sources and {skill_count} Package Skills.", f"/{owner}")
 
 for w in dict.fromkeys(_warnings):
     print("warning:", w, file=sys.stderr)

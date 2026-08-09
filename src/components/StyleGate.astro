@@ -1,0 +1,20 @@
+<style is:inline>
+  html.styles-loading body { visibility: hidden; }
+</style>
+<script is:inline>
+  document.documentElement.classList.add("styles-loading");
+  const revealPage = () => document.documentElement.classList.remove("styles-loading");
+  const revealWhenReady = async () => {
+    try {
+      await document.fonts?.ready;
+    } finally {
+      revealPage();
+    }
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", revealWhenReady, { once: true });
+  } else {
+    revealWhenReady();
+  }
+  window.setTimeout(revealPage, 3000);
+</script>

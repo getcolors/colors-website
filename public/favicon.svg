@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
   <!--
-    The Colors mark: the same three-stripe swatch as the nav logo in
-    src/pages/index.astro. Colours are the sRGB equivalents of the page's
+    The Colors mark: reused directly by the shared SiteHeader navigation.
+    Colours are the sRGB equivalents of the page's
     oklch() accents, written as hex so every favicon rasteriser agrees:
       red   oklch(60% 0.19 25)  -> #db4241
       green oklch(65% 0.17 145) -> #3ba946

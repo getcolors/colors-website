@@ -1,0 +1,24 @@
+name: Airflow
+repository: getcolors/airflow
+summary: Operate a production Apache Airflow server with Postgres, backups, authenticated TLS, and GitHub-based DAG delivery.
+keywords:
+  - Apache Airflow
+  - scheduler
+  - data pipelines
+  - PostgreSQL
+  - WAL-G
+  - VPS
+  - Docker
+  - DNS
+  - SMTP
+featured: /featured#airflow
+package-skills:
+  - name: package-airflow-red
+    path: skills/package-airflow-red/SKILL.md
+    runtime: red
+  - name: package-airflow-green
+    path: skills/package-airflow-green/SKILL.md
+    runtime: green
+  - name: package-airflow-blue
+    path: skills/package-airflow-blue/SKILL.md
+    runtime: blue

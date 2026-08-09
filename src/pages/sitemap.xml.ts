@@ -3,14 +3,15 @@
 // og:image. A preview build (SITE_URL=...) therefore advertises the preview
 // host instead of production.
 //
-// @astrojs/sitemap would do this too, but it is a dependency for one page.
-// The site is a single landing page; when a second route appears, add it here.
+// @astrojs/sitemap would do this too, but the route list is small and the
+// catalog already owns the data needed to enumerate its generated pages.
 
 import type { APIContext } from "astro";
+import { loadCatalog } from "~/data/catalog";
 
-// Routes worth crawling. /blog/rss.xml is a feed and /index.md is a
-// content-negotiated alternate of `/`, so neither belongs in a sitemap.
-const PAGES = ["/"];
+// /blog/rss.xml is a feed and /index.md is a content-negotiated alternate of
+// `/`, so neither belongs in the sitemap.
+const STATIC_PAGES = ["/", "/featured", "/skills"];
 
 export async function GET({ site }: APIContext) {
   // No fallback literal on purpose. `site` is set unconditionally in
@@ -24,8 +25,15 @@ export async function GET({ site }: APIContext) {
   // The page has no per-route publish date to draw on, so lastmod is the build
   // time. Deploys are the only way content changes, which keeps it honest.
   const lastmod = new Date().toISOString();
+  const catalog = await loadCatalog();
+  const pages = [
+    ...STATIC_PAGES,
+    ...catalog.owners.map((owner) => owner.url),
+    ...catalog.sources.map((source) => source.url),
+    ...catalog.packageSkills.map((packageSkill) => packageSkill.url),
+  ];
 
-  const urls = PAGES.map(
+  const urls = pages.map(
     (path) => `  <url>
     <loc>${new URL(path, base).toString()}</loc>
     <lastmod>${lastmod}</lastmod>

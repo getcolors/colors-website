@@ -1,0 +1,16 @@
+name: K8s
+repository: getcolors/k8s
+summary: Operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Flux, DNS, TLS, and acceptance checks.
+keywords:
+  - Kubernetes
+  - kubeadm
+  - GitOps
+  - Flux
+  - DigitalOcean
+  - Flannel
+  - cert-manager
+featured: /featured#k8s
+package-skills:
+  - name: package-k8s-green
+    path: skills/package-k8s-green/SKILL.md
+    runtime: green

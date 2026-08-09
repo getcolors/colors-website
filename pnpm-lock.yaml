@@ -11,9 +11,15 @@ importers:
       astro:
         specifier: ^7.1.6
         version: 7.1.6(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.3.0)(jiti@2.5.1)(rollup@4.48.1)(yaml@2.9.0)
+      marked:
+        specifier: ^18.0.9
+        version: 18.0.9
       sharp:
         specifier: ^0.35.3
         version: 0.35.3(@types/node@24.3.0)
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
     devDependencies:
       '@astrojs/check':
         specifier: ^0.9.10
@@ -1440,6 +1446,11 @@ packages:
 
   magicast@0.5.2:
     resolution: {integrity: sha512-E3ZJh4J3S9KfwdjZhe2afj6R9lGIN5Pher1pF39UGrXRqq/VDaGVIGN13BjHd2u8B61hArAGOnso7nBOouW3TQ==}
+
+  marked@18.0.9:
+    resolution: {integrity: sha512-/Sa4qiiHZxf0/FQdBBowr9q4r10krCwMvpK48FUBdXdUXScDxiQGR9zCPrFgRVR5LU3iySOiIjy09ZQvADir1w==}
+    engines: {node: '>= 20'}
+    hasBin: true
 
   mdast-util-to-hast@13.2.0:
     resolution: {integrity: sha512-QGYKEuUsYT9ykKBCMOEDLsU5JRObWQusAolFMeko/tYPufNkRffBAQjIE+99jbA87xv6FgmjLtwjh9wBWajwAA==}
@@ -3295,6 +3306,8 @@ snapshots:
       '@babel/parser': 7.29.3
       '@babel/types': 7.29.0
       source-map-js: 1.2.1
+
+  marked@18.0.9: {}
 
   mdast-util-to-hast@13.2.0:
     dependencies:

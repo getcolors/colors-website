@@ -1,0 +1,96 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import InstallBox from "~/components/InstallBox.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { catalogOgImage, formatInstalls, loadCatalog, runtimeLabels, type PackageSkill } from "~/data/catalog";
+
+export async function getStaticPaths() {
+  const catalog = await loadCatalog();
+  return catalog.packageSkills.map((packageSkill) => ({
+    params: { owner: packageSkill.owner, repository: packageSkill.repositoryName, packageSkill: packageSkill.name },
+    props: { packageSkill },
+  }));
+}
+interface Props { packageSkill: PackageSkill; }
+const { packageSkill } = Astro.props;
+const title = `${packageSkill.name} Package Skill — Colors`;
+const description = packageSkill.description;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: packageSkill.name,
+  description,
+  url: new URL(packageSkill.url, Astro.site).toString(),
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Cross-platform",
+  isAccessibleForFree: true,
+  codeRepository: `https://github.com/${packageSkill.repository}`,
+  interactionStatistic: { "@type": "InteractionCounter", interactionType: "https://schema.org/InstallAction", userInteractionCount: packageSkill.installs },
+};
+---
+<CatalogLayout {title} {description} path={packageSkill.url} image={catalogOgImage("skill", packageSkill.owner, packageSkill.repositoryName, packageSkill.name)} imageAlt={`${packageSkill.name} Package Skill on Colors`}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <section class="package-skill-page wrap">
+    <Breadcrumbs items={[{ label: "Package Skills", href: "/skills" }, { label: packageSkill.owner, href: `/${packageSkill.owner}` }, { label: packageSkill.repositoryName, href: `/${packageSkill.owner}/${packageSkill.repositoryName}` }, { label: packageSkill.name }]} />
+    <h1>{packageSkill.name}</h1>
+    <div class="runtime-line"><span class:list={["runtime", `runtime-${packageSkill.runtime}`]}>{runtimeLabels[packageSkill.runtime]}</span></div>
+    <p class="lede description">{packageSkill.description}</p>
+    <div class="detail-grid">
+      <article>
+        <section aria-label="Installation">
+          <InstallBox command={packageSkill.installCommand} prompt={packageSkill.prompt} />
+        </section>
+        <section class="instructions" aria-labelledby="instructions-heading">
+          <div class="instructions-head"><p class="section-label" id="instructions-heading">SKILL.md</p></div>
+          <div class="markdown" set:html={packageSkill.html} />
+        </section>
+      </article>
+      <aside>
+        <div><p class="section-label">Installs</p><strong>{formatInstalls(packageSkill.installs)}</strong></div>
+        <div><p class="section-label">Repository</p><a href={`https://github.com/${packageSkill.repository}`} target="_blank" rel="noopener noreferrer">{packageSkill.repository} ↗</a></div>
+        {packageSkill.license && <div><p class="section-label">License</p><span>{packageSkill.license}</span></div>}
+        {packageSkill.featured && (
+          <div>
+            <a class="featured-link" href={packageSkill.featured}>
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2.75 5.57 6.15.9-4.45 4.33 1.05 6.12L12 17.03l-5.5 2.89 1.05-6.12L3.1 9.47l6.15-.9L12 3Z"/></svg>
+              <span>Featured</span>
+            </a>
+          </div>
+        )}
+      </aside>
+    </div>
+  </section>
+</CatalogLayout>
+<style is:global>
+  .package-skill-page { padding-top: 62px; }
+  .package-skill-page h1 { overflow-wrap: anywhere; }
+  .runtime-line { margin-top: 18px; }
+  .description { max-width: 900px; margin-top: 28px; }
+  .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 70px; margin-top: 70px; }
+  .instructions { margin-top: 48px; }
+  .instructions-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .instructions-head .section-label { margin: 0; color: var(--ink); }
+  .markdown { padding-top: 20px; color: var(--muted); font-size: 15px; }
+  .markdown h1, .markdown h2, .markdown h3 { scroll-margin-top: 90px; color: var(--ink); }
+  .markdown h1 { margin-top: 35px; font-size: 32px; }
+  .markdown h2 { margin-top: 38px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 24px; }
+  .markdown h3 { margin-top: 28px; font-size: 19px; }
+  .markdown code { padding: 2px 5px; border-radius: 4px; background: var(--surface); color: var(--ink); font: 13px var(--mono); }
+  .markdown pre { max-width: 100%; overflow-x: auto; padding: 17px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
+  .markdown pre code { padding: 0; background: transparent; }
+  .markdown blockquote { margin-inline: 0; padding-left: 18px; border-left: 3px solid var(--blue); }
+  .markdown table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+  .markdown th, .markdown td { padding: 8px 10px; border: 1px solid var(--line); text-align: left; }
+  .markdown a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+  .markdown img { max-width: 100%; }
+  aside { border-left: 1px solid var(--line); }
+  aside > div { padding: 0 0 28px 25px; margin-bottom: 28px; border-bottom: 1px solid var(--line); }
+  aside strong { display: block; font: 600 28px var(--mono); }
+  aside a, aside span { display: block; overflow-wrap: anywhere; color: var(--muted); font: 12px/1.6 var(--mono); }
+  aside strong + a { margin-top: 6px; }
+  aside .featured-link { display: inline-flex; align-items: center; gap: 7px; color: var(--blue); }
+  aside .featured-link span { color: inherit; }
+  aside .featured-link svg { width: 15px; height: 15px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linejoin: round; }
+  @media (max-width: 820px) { .detail-grid { grid-template-columns: 1fr; gap: 45px; } aside { display: grid; grid-template-columns: repeat(2, 1fr); border-left: 0; border-top: 1px solid var(--line); } aside > div { padding: 25px 20px 10px 0; } }
+  @media (max-width: 520px) { aside { grid-template-columns: 1fr; } }
+</style>

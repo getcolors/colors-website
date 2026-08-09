@@ -1,0 +1,23 @@
+name: Once
+repository: getcolors/once
+summary: Operate a personal PaaS on one VPS with Docker application hosting, DNS, outgoing mail, TLS, and GitHub deployments.
+keywords:
+  - personal PaaS
+  - VPS
+  - Docker
+  - application hosting
+  - DNS
+  - SMTP
+  - Netlify
+  - Vercel
+featured: /featured#once
+package-skills:
+  - name: package-once-red
+    path: skills/package-once-red/SKILL.md
+    runtime: red
+  - name: package-once-green
+    path: skills/package-once-green/SKILL.md
+    runtime: green
+  - name: package-once-blue
+    path: skills/package-once-blue/SKILL.md
+    runtime: blue

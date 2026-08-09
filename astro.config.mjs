@@ -1,8 +1,8 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-// Old routes are not listed here. The site is a single page, and Caddy issues a
-// 301 to / for anything that 404s — see the handle_errors block in Caddyfile.prod.
+// Old routes are not listed here. Caddy issues a 301 to / for retired URLs that
+// still 404 — see the handle_errors block in Caddyfile.prod.
 
 // https://astro.build/config
 export default defineConfig({

@@ -2,10 +2,11 @@
 interface Props {
   docsUrl: string;
   repoUrl: string;
+  catalogUrl?: string;
   card?: boolean;
 }
 
-const { docsUrl, repoUrl, card = false } = Astro.props;
+const { docsUrl, repoUrl, catalogUrl, card = false } = Astro.props;
 ---
 
 <div class:list={["resource-links", card && "resource-links-card"]}>
@@ -22,6 +23,12 @@ const { docsUrl, repoUrl, card = false } = Astro.props;
     </svg>
     <span>View on GitHub</span>
   </a>
+  {catalogUrl && (
+    <a href={catalogUrl}>
+      <svg class="docs-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m8 5 7 7-7 7" /></svg>
+      <span>View in Catalog</span>
+    </a>
+  )}
 </div>
 
 <style>

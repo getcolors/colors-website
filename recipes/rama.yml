@@ -1,0 +1,15 @@
+name: Rama
+repository: getcolors/rama
+summary: Operate a private Rama distributed computing cluster with ZooKeeper, WireGuard, optional DNS, and mail.
+keywords:
+  - Rama
+  - distributed computing
+  - data platform
+  - ZooKeeper
+  - WireGuard
+  - DigitalOcean
+featured: /featured#rama
+package-skills:
+  - name: package-rama-green
+    path: skills/package-rama-green/SKILL.md
+    runtime: green

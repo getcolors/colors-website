@@ -1,0 +1,32 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  headingClass?: string;
+  centered?: boolean;
+}
+
+const { id, title, headingClass, centered = false } = Astro.props;
+---
+
+<div class:list={["heading-row", centered && "centered"]}>
+  <h2 class={headingClass}><a href={`#${id}`}>{title}</a></h2>
+  <a class="heading-anchor" href={`#${id}`} aria-label={`Link to ${title}`} title={`Link to ${title}`}>
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  </a>
+</div>
+
+<style>
+  .heading-row { display: flex; align-items: baseline; gap: 10px; }
+  .heading-row.centered { justify-content: center; }
+  h2 a { color: inherit; }
+  .heading-anchor { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 5px; color: var(--soft); opacity: 0; transition: opacity 150ms ease, background-color 150ms ease, color 150ms ease; }
+  .heading-anchor svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .heading-row:hover .heading-anchor,
+  .heading-row:focus-within .heading-anchor { opacity: 1; }
+  .heading-anchor:hover { background: var(--surface); color: var(--blue); }
+  .heading-anchor:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+</style>

@@ -1,0 +1,15 @@
+name: Walter
+repository: getcolors/walter
+summary: Operate a remote development machine that configures SSH access and powers off while you sleep.
+keywords:
+  - development machine
+  - remote development
+  - SSH
+  - workstation
+  - OCI
+  - cloud computer
+featured: /featured#walter
+package-skills:
+  - name: package-walter-green
+    path: skills/package-walter-green/SKILL.md
+    runtime: green

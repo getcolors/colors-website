@@ -1,0 +1,125 @@
+---
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { formatInstalls, loadCatalog, runtimeLabels } from "~/data/catalog";
+
+const catalog = await loadCatalog();
+const title = "Package Skills Catalog — Colors";
+const description = "Find deterministic Package Skills for infrastructure and platform automation with the Colors SDK.";
+---
+<CatalogLayout {title} {description} path="/skills" image="/og-catalog-blue-v1.png" imageAlt="Colors Package Skills Catalog">
+  <section class="catalog-hero wrap">
+    <div class="pill"><span>The Package Skills Catalog</span></div>
+    <h1>What should your agent operate?</h1>
+    <p class="lede">Search deterministic infrastructure automation by platform, provider, runtime, or the production resource you need to manage.</p>
+    <label class="search">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 5 5"></path></svg>
+      <span class="sr-only">Search Package Skills</span>
+      <input id="catalog-search" type="search" placeholder="Search Kubernetes, databases, PaaS, Hetzner, Python…" autocomplete="off" />
+      <kbd>/</kbd>
+    </label>
+    <p id="result-count" class="result-count">{catalog.sources.length} sources · {catalog.packageSkills.length} Package Skills</p>
+  </section>
+
+  <section class="results wrap" aria-labelledby="results-heading">
+    <div class="results-head">
+      <div>
+        <h2 id="results-heading">Package Skills</h2>
+      </div>
+      <a class="button-link" href="/#submit-package-skill">Submit a Package Skill</a>
+    </div>
+    <div id="catalog-results" class="cards">
+      {catalog.sources.map((source) => (
+        <article class="package-card panel" data-search={[source.name, source.repository, source.summary, ...source.keywords, ...source.packageSkills.flatMap((item) => [item.name, item.runtime, runtimeLabels[item.runtime]])].join(" ").toLowerCase()}>
+          <div class="card-top">
+            <div>
+              <p class="keywords">{source.keywords.slice(0, 5).join(" · ")}</p>
+              <h3><a class="card-link" href={source.url}>{source.name}</a></h3>
+            </div>
+            <span class="installs"><strong>{formatInstalls(source.installs)}</strong> installs</span>
+          </div>
+          <p class="summary">{source.summary}</p>
+          <div class="runtimes">
+            {source.packageSkills.map((item) => <a class:list={["runtime", `runtime-${item.runtime}`]} href={`${source.url}/${item.name}`} title={`View ${item.name} (${runtimeLabels[item.runtime]})`}>{item.runtime}</a>)}
+          </div>
+          <div class="card-footer">
+            {source.featured && (
+              <a class="featured" href={source.featured}>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2.75 5.57 6.15.9-4.45 4.33 1.05 6.12L12 17.03l-5.5 2.89 1.05-6.12L3.1 9.47l6.15-.9L12 3Z"/></svg>
+                <span>Featured</span>
+              </a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+    <p id="empty-results" class="empty" hidden>No Package Skills match that infrastructure request.</p>
+  </section>
+
+  <script>
+    const input = document.querySelector<HTMLInputElement>("#catalog-search");
+    const cards = [...document.querySelectorAll<HTMLElement>("[data-search]")];
+    const count = document.querySelector<HTMLElement>("#result-count");
+    const empty = document.querySelector<HTMLElement>("#empty-results");
+    const filter = () => {
+      const terms = (input?.value ?? "").toLowerCase().trim().split(/\s+/).filter(Boolean);
+      let sources = 0;
+      let packageSkills = 0;
+      for (const card of cards) {
+        const visible = terms.every((term) => card.dataset.search?.includes(term));
+        card.hidden = !visible;
+        if (visible) {
+          sources += 1;
+          packageSkills += card.querySelectorAll(".runtime").length;
+        }
+      }
+      if (count) count.textContent = `${sources} source${sources === 1 ? "" : "s"} · ${packageSkills} Package Skill${packageSkills === 1 ? "" : "s"}`;
+      if (empty) empty.hidden = sources !== 0;
+    };
+    input?.addEventListener("input", filter);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "/" && document.activeElement !== input) {
+        event.preventDefault();
+        input?.focus();
+      }
+    });
+  </script>
+</CatalogLayout>
+
+<style>
+  .catalog-hero { padding-block: 64px 0; }
+  .catalog-hero h1 { max-width: 700px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 24px; padding: 6px 12px; border: 1px solid oklch(90% 0.05 260); border-radius: 100px; background: oklch(96% 0.03 260); color: var(--blue); font-family: var(--mono); font-size: 12px; font-weight: 400; line-height: 1.5; text-transform: uppercase; }
+  .search { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; max-width: 850px; margin-top: 38px; padding: 17px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+  .search:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px oklch(55% .18 260 / .12); }
+  .search svg { width: 21px; fill: none; stroke: var(--muted); stroke-width: 1.7; }
+  .search input { min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 16px; }
+  .search kbd { padding: 2px 7px; border: 1px solid var(--line); border-radius: 5px; color: var(--faint); font: 12px var(--mono); }
+  .result-count { color: var(--muted); font: 13px var(--sans); }
+  .results { padding-block: 0 80px; }
+  .results-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+  .results-head h2 { margin: 0; }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .package-card { position: relative; display: flex; flex-direction: column; min-height: 310px; padding: 28px; transition: border-color 150ms ease, background-color 150ms ease; }
+  .package-card:hover { border-color: oklch(80% 0.01 260); background: var(--surface); }
+  .package-card[hidden] { display: none; }
+  .card-link::after { content: ""; position: absolute; inset: 0; border-radius: 12px; }
+  .card-link:focus-visible::after { outline: 2px solid var(--blue); outline-offset: 3px; }
+  .card-top { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+  .keywords { margin: 0 0 7px; color: var(--blue); font: 10px var(--mono); text-transform: uppercase; }
+  h3 { margin: 0; font-size: 19px; }
+  h3 a { color: var(--ink); }
+  .installs { flex: none; color: var(--faint); font: 11px var(--mono); text-align: right; }
+  .installs strong { display: block; color: var(--ink); font-size: 15px; }
+  .summary { color: var(--muted); }
+  .runtimes { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 7px; margin-block: 7px 24px; }
+  .runtimes a { transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease; }
+  .runtimes a:hover { border-color: oklch(80% 0.04 260); background: oklch(97% 0.015 260); color: oklch(45% 0.18 260); }
+  .card-footer { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px 18px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); font: 12px var(--mono); }
+  .card-footer a { display: inline-flex; align-items: center; min-height: 34px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 7px; background: var(--page); color: var(--blue); transition: border-color 150ms ease, background-color 150ms ease; }
+  .card-footer a:hover { border-color: oklch(80% 0.04 260); background: oklch(97% 0.015 260); color: oklch(45% 0.18 260); }
+  .card-footer .featured { color: var(--blue); }
+  .card-footer .featured svg { width: 15px; height: 15px; margin-right: 7px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linejoin: round; }
+  .empty { padding: 60px 0; color: var(--muted); text-align: center; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  @media (max-width: 760px) { .cards { grid-template-columns: 1fr; } .results-head { align-items: flex-start; flex-direction: column; } }
+</style>

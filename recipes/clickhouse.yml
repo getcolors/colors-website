@@ -1,0 +1,18 @@
+name: ClickHouse
+repository: getcolors/clickhouse
+summary: Operate a private replicated ClickHouse cluster with Keeper, Metabase, PostgreSQL, WireGuard, and dbt.
+keywords:
+  - ClickHouse
+  - analytics
+  - database
+  - Metabase
+  - PostgreSQL
+  - Keeper
+  - WireGuard
+  - dbt
+  - Hetzner
+featured: /featured#clickhouse
+package-skills:
+  - name: package-clickhouse-green
+    path: skills/package-clickhouse-green/SKILL.md
+    runtime: green

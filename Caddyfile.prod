@@ -39,6 +39,11 @@
 		# or they will hand an agent's markdown response to a browser.
 		header @home Vary Accept
 
+		# Astro emits catalog routes as <path>/index.html. Prefer that file
+		# before handing the request to file_server so skills.sh-shaped canonical
+		# URLs such as /getcolors/once/package-once-green stay slashless instead
+		# of receiving file_server's automatic directory redirect.
+		try_files {path}/index.html {path}
 		file_server
 	}
 
@@ -52,8 +57,8 @@
 		}
 		respond @missingDiscovery `404 Not Found` 404
 
-		# The site is a single landing page. Everything that used to live here —
-		# the blog, /manual, /once, /walter, the talks — 301s to it, so old
+		# Everything retired from the old site — the blog, /manual, the old
+		# top-level package routes and talks — 301s to the landing page, so old
 		# inbound links and search results keep working. Discovery paths are
 		# excluded so the respond rule above can preserve their 404 status.
 		# The matcher must sit on `redir` itself. Wrapping it as

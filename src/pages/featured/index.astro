@@ -1,5 +1,4 @@
 ---
-import { Code } from "astro:components";
 import InstallBox from "~/components/InstallBox.astro";
 import ResourceLinks from "~/components/ResourceLinks.astro";
 import SectionHeading from "~/components/SectionHeading.astro";
@@ -8,48 +7,35 @@ import StyleGate from "~/components/StyleGate.astro";
 import SiteFooter from "~/components/SiteFooter.astro";
 import SiteHeader from "~/components/SiteHeader.astro";
 import {
-  bundles,
-  colorsYml,
-  createPackageSkill,
-  createPackageSkillCmd,
-  hero,
+  airflow,
+  airflowInstallCmd,
+  clickhouse,
+  clickhouseInstallCmd,
   html,
   installCmd,
-  libraries,
-  meta,
-  packageSkillDefinition,
-  primitive,
-  submitPackageSkill,
-  submitPackageSkillCmd,
+  k8s,
+  k8sInstallCmd,
+  k3s,
+  k3sInstallCmd,
+  once,
+  rama,
+  ramaInstallCmd,
+  walter,
+  walterInstallCmd,
 } from "~/data/landing";
 
-const { title, description } = meta;
-
-// Shiki ships with Astro, so highlighting costs no new dependency — but every
-// bundled theme drags in its own palette. This one maps YAML scopes onto the
-// page's own colours instead: keys blue, values green, literals red, the three
-// library accents. Darkened from the accents proper (55/65/60% lightness) for
-// contrast against the panel at 13px.
-//
-// Literal oklch() rather than the var(--red|green|blue) the stylesheet uses:
-// Shiki resolves these at build time into inline style attributes on the
-// spans, with no stylesheet in scope to resolve a custom property against.
-const yamlTheme = {
-  // Shiki puts the theme name on the <pre> as a class; keep it namespaced.
-  name: "colors-yaml",
-  type: "light" as const,
-  settings: [
-    { settings: { foreground: "oklch(35% 0.01 260)" } },
-    {
-      scope: ["entity.name.tag", "support.type.property-name"],
-      settings: { foreground: "oklch(48% 0.16 260)" },
-    },
-    { scope: ["string"], settings: { foreground: "oklch(45% 0.13 145)" } },
-    { scope: ["constant", "keyword"], settings: { foreground: "oklch(50% 0.19 25)" } },
-    { scope: ["punctuation"], settings: { foreground: "oklch(65% 0.01 260)" } },
-    { scope: ["comment"], settings: { foreground: "oklch(60% 0.01 260)" } },
-  ],
-};
+const title = "Featured — Colors";
+const description = "A curated showcase of production infrastructure and platform automation built with the Colors SDK.";
+const featuredPackageSkills = [
+  { label: "K8s", href: "#k8s" },
+  { label: "K3s", href: "#k3s" },
+  { label: "ClickHouse", href: "#clickhouse" },
+  { label: "Airflow", href: "#airflow" },
+  { label: "Rama", href: "#rama" },
+  { label: "Once", href: "#once" },
+  { label: "Walter", href: "#walter" },
+];
+const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
 
 <!doctype html>
@@ -59,7 +45,7 @@ const yamlTheme = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <SeoMeta title={title} description={description} path="/" />
+    <SeoMeta title={title} description={description} path="/featured" image="/og-featured-blue-v1.png" imageAlt="Featured Package Skills built with Colors" />
     <StyleGate />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script
@@ -522,7 +508,35 @@ const yamlTheme = {
       h1 { font-size: 52px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 600; margin: 0 0 20px; }
       .hero-lede { font-size: 18px; color: var(--muted); margin: 0 0 32px; max-width: 520px; }
 
-      .install { display: flex; flex-direction: column; gap: 12px; width: 100%; min-width: 0; max-width: 520px; }
+      .install { display: flex; flex-direction: column; gap: 12px; max-width: 480px; }
+      .install-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--ink);
+        border-radius: 8px;
+        padding: 14px 16px;
+      }
+      /* The CTA repeat shrink-wraps its content instead of filling a column. */
+      .install-row-inline {
+        display: inline-flex;
+        justify-content: flex-start;
+        gap: 10px;
+        padding: 14px 20px;
+        margin: 0 auto;
+      }
+      .install-row code { font-family: var(--mono); font-size: 14px; color: var(--on-dark); }
+      .copy {
+        background: oklch(30% 0.01 260);
+        color: var(--on-dark);
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-family: var(--mono);
+        cursor: pointer;
+      }
+      .copy:hover { background: oklch(35% 0.01 260); }
       .install-note { font-size: 13px; color: var(--soft); }
 
       .yml {
@@ -538,6 +552,18 @@ const yamlTheme = {
 
       /* SECTIONS */
       .sec { border-top: 1px solid var(--rule); padding: 72px 24px; }
+      .featured-intro { padding-top: 64px; border-top: 0; }
+      .featured-intro > .wrap { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 56px; align-items: start; }
+      .featured-intro-copy .sec-lede { margin-bottom: 0; }
+      .featured-toc { padding: 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+      .featured-toc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
+      .featured-toc-title { margin: 0; color: var(--ink); font-size: 15px; font-weight: 600; }
+      .featured-toc-count { color: var(--soft); font-size: 13px; }
+      .featured-toc-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .featured-toc a { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 9px; min-width: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--page); color: var(--ink); font-size: 14px; transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease; }
+      .featured-toc a:hover { border-color: oklch(80% 0.04 260); background: oklch(97% 0.015 260); color: var(--blue); }
+      .featured-toc-index { color: var(--soft); font: 11px var(--mono); }
+      .featured-toc-arrow { color: var(--blue); }
       .sec-alt { background: var(--surface); }
       .sec h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 12px; }
       /* A heading with no lede under it carries the lede's bottom margin. */
@@ -644,14 +670,13 @@ const yamlTheme = {
          now in this stylesheet rather than in style attributes, so ordinary
          cascade order settles it. Keep these blocks last. */
       @media (max-width: 860px) {
+        .featured-intro > .wrap { grid-template-columns: 1fr; gap: 38px; }
+        .featured-toc-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .hero,
         .grid-2,
         .grid-3 {
           grid-template-columns: 1fr;
         }
-        /* The no-wrap command/prompt panel must not become the hero track's
-           automatic minimum width on narrow screens. */
-        .hero > div:first-child { min-width: 0; }
         .grid-4,
         .grid-5 {
           grid-template-columns: repeat(2, 1fr);
@@ -673,10 +698,16 @@ const yamlTheme = {
         }
       }
       @media (max-width: 520px) {
+        .featured-toc { padding: 18px; }
+        .featured-toc-head { align-items: flex-start; flex-direction: column; gap: 3px; }
+        .featured-toc-links { grid-template-columns: 1fr; }
         .grid-4,
         .grid-5 {
           grid-template-columns: 1fr;
         }
+        /* Matches the specificity of the rules above rather than relying on
+           `code { ... !important }`, which is what this replaced. */
+        .install-row code,
         .astro-code,
         .astro-code code {
           font-size: 12px;
@@ -737,148 +768,374 @@ const yamlTheme = {
     <div class="page" id="top">
 
       <!-- NAV -->
-      <SiteHeader />
+      <SiteHeader active="featured" />
 
-      <!-- HERO -->
-      <div class="hero">
-        <div>
-          <div class="pill"><span>{hero.eyebrow}</span></div>
-          <h1>{hero.headline}</h1>
-          <p class="hero-lede">{hero.lede}</p>
-          <div class="install">
-            <InstallBox command={installCmd} id="hero-install" />
-            <span class="install-note" set:html={html(hero.installNote)} />
-          </div>
-        </div>
-        <div class="yml">
-          <div class="yml-caption">{hero.ymlCaption}</div>
-          <Code
-            code={colorsYml}
-            lang="yaml"
-            theme={yamlTheme}
-            style="margin:0; background:transparent; line-height:1.7"
-          />
-        </div>
-      </div>
-
-      <!-- BROWSER VS PACKAGE -->
-      <div class="sec" id="browser-vs-package-skill">
+      <!-- FEATURED PACKAGE SKILLS -->
+      <div class="sec featured-intro">
         <div class="wrap">
-          <SectionHeading id="browser-vs-package-skill" title={primitive.heading} />
-          <p class="sec-lede">{primitive.lede}</p>
-          <div class="grid-2">
-            {primitive.cards.map((c) => (
-              <div class:list={["card", c.accent && "card-accent"]}>
-                <div class:list={["eyebrow", c.accent && "eyebrow-blue"]}>{c.label}</div>
-                <h3>{c.title}</h3>
-                <p set:html={html(c.body)} />
-              </div>
-            ))}
+          <div class="featured-intro-copy">
+            <div class="pill"><span>Curated by Colors</span></div>
+            <h1>Featured</h1>
+            <p class="sec-lede sec-lede-wide">Production examples that show what deterministic, agent-operated infrastructure looks like—from Kubernetes and data platforms to application hosting and remote development.</p>
           </div>
+          <nav class="featured-toc" aria-label="Featured Package Skills on this page">
+            <div class="featured-toc-head">
+              <p class="featured-toc-title">On this page</p>
+              <span class="featured-toc-count">{featuredPackageSkills.length} Package Skills</span>
+            </div>
+            <div class="featured-toc-links">
+              {featuredPackageSkills.map((item, index) => (
+                <a href={item.href}>
+                  <span class="featured-toc-index">{String(index + 1).padStart(2, "0")}</span>
+                  <span>{item.label}</span>
+                  <span class="featured-toc-arrow" aria-hidden="true">↓</span>
+                </a>
+              ))}
+            </div>
+          </nav>
         </div>
       </div>
 
-      <!-- PACKAGE SKILL DEFINITION -->
-      <div class="sec sec-alt" id="package-skill-definition">
-        <div class="wrap definition">
-          <div class="eyebrow eyebrow-blue">Package Skill</div>
-          <SectionHeading id="package-skill-definition" title="What is a Package Skill?" />
-          <p set:html={html(packageSkillDefinition)} />
-        </div>
-      </div>
-
-      <!-- WHAT'S INSIDE -->
-      <div class="sec sec-alt" id="inside-package-skill">
+      <!-- K8S: FIRST EXAMPLE PACKAGE -->
+      <div class="sec" id="k8s">
         <div class="wrap">
-          <SectionHeading id="inside-package-skill" title={bundles.heading} headingClass="solo" />
-          <div class="grid-3">
-            {bundles.cards.map((c) => (
-              <div class="bundle">
-                <div class="eyebrow eyebrow-blue">{c.label}</div>
-                <h3>{c.title}</h3>
-                <p set:html={html(c.body)} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <!-- THREE LIBRARIES -->
-      <div class="sec" id="libraries">
-        <div class="wrap">
-          <SectionHeading id="libraries" title={libraries.heading} />
-          <p class="sec-lede">{libraries.lede}</p>
-          <div class="grid-3">
-            {libraries.items.map((l) => (
-              <div class="lib">
-                <div class="lib-swatch" style={`background:${l.accent}`}></div>
-                <h3>{l.name}</h3>
-                <div class="lib-stack">{l.stack}</div>
-                <p>{l.blurb}</p>
-                <ResourceLinks docsUrl={l.docsUrl} repoUrl={l.repoUrl} card />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <!-- AGENT SKILL: CREATE A PACKAGE SKILL -->
-      <div class="sec sec-alt" id="create-package-skill">
-        <div class="wrap">
-          <div class="eyebrow eyebrow-red">{createPackageSkill.eyebrow}</div>
-          <SectionHeading id="create-package-skill" title={createPackageSkill.heading} />
-          <p class="sec-lede sec-lede-wide">{createPackageSkill.lede}</p>
+          <div class="eyebrow eyebrow-blue">{k8s.eyebrow}</div>
+          <SectionHeading id="k8s" title={k8s.heading} />
+          <p class="sec-lede sec-lede-wide">{k8s.lede}</p>
 
           <div class="sec-install">
-            <InstallBox command={createPackageSkillCmd} id="create-package-skill-install" />
-            <span class="install-note" set:html={html(createPackageSkill.useNote)} />
-            <ResourceLinks docsUrl={createPackageSkill.docsUrl} repoUrl={createPackageSkill.repoUrl} />
+            <InstallBox command={k8sInstallCmd} id="featured-k8s-install" />
+            <span class="install-note" set:html={html(k8s.runtimeNote)} />
+            <ResourceLinks docsUrl={k8s.docsUrl} repoUrl={k8s.repoUrl} catalogUrl="/getcolors/k8s" />
           </div>
 
-          <div class="grid-3">
-            {createPackageSkill.phases.map((phase, i) => (
+          <div class="grid-5">
+            {k8s.steps.map((s, i) => (
               <div class="step">
-                <div class="eyebrow">{`Phase ${i + 1}`}</div>
-                <h4>{phase.title}</h4>
-                <p set:html={html(phase.body)} />
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
               </div>
             ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{k8s.dagCaption}</div>
+            <div class="dag">
+              {k8s.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{k8s.dagNote}</p>
           </div>
         </div>
       </div>
 
-      <!-- AGENT SKILL: SUBMIT A PACKAGE SKILL -->
-      <div class="sec" id="submit-package-skill">
+      <!-- K3S: SECOND EXAMPLE PACKAGE -->
+      <div class="sec sec-alt" id="k3s">
         <div class="wrap">
-          <div class="eyebrow eyebrow-red">{submitPackageSkill.eyebrow}</div>
-          <SectionHeading id="submit-package-skill" title={submitPackageSkill.heading} />
-          <p class="sec-lede sec-lede-wide">{submitPackageSkill.lede}</p>
+          <div class="eyebrow eyebrow-blue">{k3s.eyebrow}</div>
+          <SectionHeading id="k3s" title={k3s.heading} />
+          <p class="sec-lede sec-lede-wide">{k3s.lede}</p>
 
           <div class="sec-install">
-            <InstallBox command={submitPackageSkillCmd} id="submit-package-skill-install" />
-            <span class="install-note" set:html={html(submitPackageSkill.useNote)} />
-            <ResourceLinks docsUrl={submitPackageSkill.docsUrl} repoUrl={submitPackageSkill.repoUrl} />
+            <InstallBox command={k3sInstallCmd} id="featured-k3s-install" />
+            <span class="install-note" set:html={html(k3s.runtimeNote)} />
+            <ResourceLinks docsUrl={k3s.docsUrl} repoUrl={k3s.repoUrl} catalogUrl="/getcolors/k3s" />
           </div>
 
-          <div class="grid-3">
-            {submitPackageSkill.phases.map((phase, i) => (
+          <div class="grid-5">
+            {k3s.steps.map((s, i) => (
               <div class="step">
-                <div class="eyebrow">{`Phase ${i + 1}`}</div>
-                <h4>{phase.title}</h4>
-                <p set:html={html(phase.body)} />
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
               </div>
             ))}
           </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{k3s.dagCaption}</div>
+            <div class="dag">
+              {k3s.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{k3s.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLICKHOUSE: THIRD EXAMPLE PACKAGE -->
+      <div class="sec" id="clickhouse">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{clickhouse.eyebrow}</div>
+          <SectionHeading id="clickhouse" title={clickhouse.heading} />
+          <p class="sec-lede sec-lede-wide">{clickhouse.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={clickhouseInstallCmd} id="featured-clickhouse-install" />
+            <span class="install-note" set:html={html(clickhouse.runtimeNote)} />
+            <ResourceLinks docsUrl={clickhouse.docsUrl} repoUrl={clickhouse.repoUrl} catalogUrl="/getcolors/clickhouse" />
+          </div>
+
+          <div class="grid-5">
+            {clickhouse.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{clickhouse.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="ClickHouse create and build workflow diagram"
+            >
+              {clickhouse.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{clickhouse.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AIRFLOW: FOURTH EXAMPLE PACKAGE -->
+      <div class="sec sec-alt" id="airflow">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{airflow.eyebrow}</div>
+          <SectionHeading id="airflow" title={airflow.heading} />
+          <p class="sec-lede sec-lede-wide">{airflow.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={airflowInstallCmd} id="featured-airflow-install" />
+            <span class="install-note" set:html={html(airflow.runtimeNote)} />
+            <ResourceLinks docsUrl={airflow.docsUrl} repoUrl={airflow.repoUrl} catalogUrl="/getcolors/airflow" />
+          </div>
+
+          <div class="grid-5">
+            {airflow.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{airflow.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="Airflow create and build workflow diagram"
+            >
+              {airflow.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "node")
+                  return (
+                    <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                  );
+                return (
+                  <div class="dag-branch">
+                    <div class="dag-node">{item.nodes[0]}</div>
+                    <div class="dag-spacer"></div>
+                    <div class="dag-node">{item.nodes[1]}</div>
+                    <div class="dag-tail">
+                      <div class="dag-edge"></div>
+                      <div class="dag-node">{item.tail}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{airflow.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RAMA: FIFTH EXAMPLE PACKAGE -->
+      <div class="sec" id="rama">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{rama.eyebrow}</div>
+          <SectionHeading id="rama" title={rama.heading} />
+          <p class="sec-lede sec-lede-wide">{rama.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={ramaInstallCmd} id="featured-rama-install" />
+            <span class="install-note" set:html={html(rama.runtimeNote)} />
+            <ResourceLinks docsUrl={rama.docsUrl} repoUrl={rama.repoUrl} catalogUrl="/getcolors/rama" />
+          </div>
+
+          <div class="grid-5">
+            {rama.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{rama.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="Rama create and build workflow diagram"
+            >
+              {rama.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{rama.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ONCE: EXAMPLE PACKAGE -->
+      <div class="sec sec-alt" id="once">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{once.eyebrow}</div>
+          <SectionHeading id="once" title={once.heading} />
+          <p class="sec-lede sec-lede-wide">{once.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={installCmd} id="featured-once-install" />
+            <span class="install-note" set:html={html(once.runtimeNote)} />
+            <ResourceLinks docsUrl={once.docsUrl} repoUrl={once.repoUrl} catalogUrl="/getcolors/once" />
+          </div>
+
+          <div class="grid-4">
+            {once.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <!-- DAG diagram -->
+          <div class="dag-panel">
+            <div class="dag-caption">{once.dagCaption}</div>
+            <div class="dag">
+              {once.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "node")
+                  return (
+                    <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                  );
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class="dag-branch">
+                    <div class="dag-node">{item.nodes[0]}</div>
+                    <div class="dag-spacer"></div>
+                    <div class="dag-node">{item.nodes[1]}</div>
+                    <div class="dag-tail">
+                      <div class="dag-edge"></div>
+                      <div class="dag-node">{item.tail}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{once.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- WALTER -->
+      <div class="sec" id="walter">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{walter.eyebrow}</div>
+          <SectionHeading id="walter" title={walter.heading} />
+          <p class="sec-lede sec-lede-wide" set:html={html(walter.lede)} />
+
+          <div class="sec-install">
+            <InstallBox command={walterInstallCmd} id="featured-walter-install" />
+            <span class="install-note" set:html={html(walter.runtimeNote)} />
+            <ResourceLinks docsUrl={walter.docsUrl} repoUrl={walter.repoUrl} catalogUrl="/getcolors/walter" />
+          </div>
+
+          <div class="grid-5">
+            {walter.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <!-- DAG diagrams: create/build, then the power pair -->
+          {walter.dags.map((panel) => (
+            <div class="dag-panel">
+              <div class="dag-caption">{panel.caption}</div>
+              {panel.graphs.map((items) => (
+                <div class="dag">
+                  {items.map((item) => {
+                    if (item.kind === "edge") return <div class="dag-edge"></div>;
+                    if (item.kind === "group")
+                      return (
+                        <div class="dag-group">
+                          {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                        </div>
+                      );
+                    if (item.kind === "node")
+                      return (
+                        <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                      );
+                    return null;
+                  })}
+                </div>
+              ))}
+            </div>
+          ))}
+          <p class="dag-note">{walter.dagNote}</p>
         </div>
       </div>
 
       <!-- FINAL CTA -->
-      <div class="cta" id="catalog">
+      <div class="cta">
         <div class="cta-inner">
-          <SectionHeading id="catalog" title="Find infrastructure your agent can operate." centered />
+          <h2>Find infrastructure your agent can operate.</h2>
           <p>Browse the PR-curated Package Skills Catalog by platform, provider, or runtime.</p>
           <a class="catalog-link" href="/skills"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" /></svg><span>View the Catalog</span></a>
-
         </div>
       </div>
 
@@ -887,5 +1144,14 @@ const yamlTheme = {
 
     </div>
 
+    <script is:inline>
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", () => {
+          navigator.clipboard?.writeText(button.dataset.copy);
+          button.textContent = "Copied";
+          setTimeout(() => (button.textContent = "Copy"), 1500);
+        });
+      });
+    </script>
   </body>
 </html>
