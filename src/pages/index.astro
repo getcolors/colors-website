@@ -1,5 +1,6 @@
 ---
 import { Code } from "astro:components";
+import InstallBox from "~/components/InstallBox.astro";
 import ResourceLinks from "~/components/ResourceLinks.astro";
 import SeoMeta from "~/components/SeoMeta.astro";
 import {
@@ -600,35 +601,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       h1 { font-size: 52px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 600; margin: 0 0 20px; }
       .hero-lede { font-size: 18px; color: var(--muted); margin: 0 0 32px; max-width: 520px; }
 
-      .install { display: flex; flex-direction: column; gap: 12px; max-width: 480px; }
-      .install-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: var(--ink);
-        border-radius: 8px;
-        padding: 14px 16px;
-      }
-      /* The CTA repeat shrink-wraps its content instead of filling a column. */
-      .install-row-inline {
-        display: inline-flex;
-        justify-content: flex-start;
-        gap: 10px;
-        padding: 14px 20px;
-        margin: 0 auto;
-      }
-      .install-row code { font-family: var(--mono); font-size: 14px; color: var(--on-dark); }
-      .copy {
-        background: oklch(30% 0.01 260);
-        color: var(--on-dark);
-        border: none;
-        border-radius: 6px;
-        padding: 6px 12px;
-        font-size: 12px;
-        font-family: var(--mono);
-        cursor: pointer;
-      }
-      .copy:hover { background: oklch(35% 0.01 260); }
+      .install { display: flex; flex-direction: column; gap: 12px; width: 100%; min-width: 0; max-width: 520px; }
       .install-note { font-size: 13px; color: var(--soft); }
 
       .yml {
@@ -788,6 +761,9 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         .grid-3 {
           grid-template-columns: 1fr;
         }
+        /* The no-wrap command/prompt panel must not become the hero track's
+           automatic minimum width on narrow screens. */
+        .hero > div:first-child { min-width: 0; }
         .grid-4,
         .grid-5 {
           grid-template-columns: repeat(2, 1fr);
@@ -813,9 +789,6 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         .grid-5 {
           grid-template-columns: 1fr;
         }
-        /* Matches the specificity of the rules above rather than relying on
-           `code { ... !important }`, which is what this replaced. */
-        .install-row code,
         .astro-code,
         .astro-code code {
           font-size: 12px;
@@ -909,10 +882,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <h1>{hero.headline}</h1>
           <p class="hero-lede">{hero.lede}</p>
           <div class="install">
-            <div class="install-row">
-              <code>{installCmd}</code>
-              <button class="copy" data-copy={installCmd}>Copy</button>
-            </div>
+            <InstallBox command={installCmd} id="hero-install" />
             <span class="install-note" set:html={html(hero.installNote)} />
           </div>
         </div>
@@ -987,10 +957,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede sec-lede-wide">{createPackageSkill.lede}</p>
 
           <div class="sec-install">
-            <div class="install-row install-row-inline">
-              <code>{createPackageSkillCmd}</code>
-              <button class="copy" data-copy={createPackageSkillCmd}>Copy</button>
-            </div>
+            <InstallBox command={createPackageSkillCmd} id="create-package-skill-install" />
             <span class="install-note" set:html={html(createPackageSkill.useNote)} />
             <ResourceLinks docsUrl={createPackageSkill.docsUrl} repoUrl={createPackageSkill.repoUrl} />
           </div>
@@ -1015,10 +982,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede sec-lede-wide">{k8s.lede}</p>
 
           <div class="sec-install">
-            <div class="install-row install-row-inline">
-              <code>{k8sInstallCmd}</code>
-              <button class="copy" data-copy={k8sInstallCmd}>Copy</button>
-            </div>
+            <InstallBox command={k8sInstallCmd} id="k8s-install" />
             <span class="install-note" set:html={html(k8s.runtimeNote)} />
             <ResourceLinks docsUrl={k8s.docsUrl} repoUrl={k8s.repoUrl} />
           </div>
@@ -1056,10 +1020,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede sec-lede-wide">{k3s.lede}</p>
 
           <div class="sec-install">
-            <div class="install-row install-row-inline">
-              <code>{k3sInstallCmd}</code>
-              <button class="copy" data-copy={k3sInstallCmd}>Copy</button>
-            </div>
+            <InstallBox command={k3sInstallCmd} id="k3s-install" />
             <span class="install-note" set:html={html(k3s.runtimeNote)} />
             <ResourceLinks docsUrl={k3s.docsUrl} repoUrl={k3s.repoUrl} />
           </div>
@@ -1103,10 +1064,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede sec-lede-wide">{clickhouse.lede}</p>
 
           <div class="sec-install">
-            <div class="install-row install-row-inline">
-              <code>{clickhouseInstallCmd}</code>
-              <button class="copy" data-copy={clickhouseInstallCmd}>Copy</button>
-            </div>
+            <InstallBox command={clickhouseInstallCmd} id="clickhouse-install" />
             <span class="install-note" set:html={html(clickhouse.runtimeNote)} />
             <ResourceLinks docsUrl={clickhouse.docsUrl} repoUrl={clickhouse.repoUrl} />
           </div>
@@ -1154,10 +1112,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede sec-lede-wide">{airflow.lede}</p>
 
           <div class="sec-install">
-            <div class="install-row install-row-inline">
-              <code>{airflowInstallCmd}</code>
-              <button class="copy" data-copy={airflowInstallCmd}>Copy</button>
-            </div>
+            <InstallBox command={airflowInstallCmd} id="airflow-install" />
             <span class="install-note" set:html={html(airflow.runtimeNote)} />
             <ResourceLinks docsUrl={airflow.docsUrl} repoUrl={airflow.repoUrl} />
           </div>
@@ -1211,10 +1166,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede sec-lede-wide">{rama.lede}</p>
 
           <div class="sec-install">
-            <div class="install-row install-row-inline">
-              <code>{ramaInstallCmd}</code>
-              <button class="copy" data-copy={ramaInstallCmd}>Copy</button>
-            </div>
+            <InstallBox command={ramaInstallCmd} id="rama-install" />
             <span class="install-note" set:html={html(rama.runtimeNote)} />
             <ResourceLinks docsUrl={rama.docsUrl} repoUrl={rama.repoUrl} />
           </div>
@@ -1256,10 +1208,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede sec-lede-wide">{once.lede}</p>
 
           <div class="sec-install">
-            <div class="install-row install-row-inline">
-              <code>{installCmd}</code>
-              <button class="copy" data-copy={installCmd}>Copy</button>
-            </div>
+            <InstallBox command={installCmd} id="once-install" />
             <span class="install-note" set:html={html(once.runtimeNote)} />
             <ResourceLinks docsUrl={once.docsUrl} repoUrl={once.repoUrl} />
           </div>
@@ -1316,10 +1265,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede sec-lede-wide" set:html={html(walter.lede)} />
 
           <div class="sec-install">
-            <div class="install-row install-row-inline">
-              <code>{walterInstallCmd}</code>
-              <button class="copy" data-copy={walterInstallCmd}>Copy</button>
-            </div>
+            <InstallBox command={walterInstallCmd} id="walter-install" />
             <span class="install-note" set:html={html(walter.runtimeNote)} />
             <ResourceLinks docsUrl={walter.docsUrl} repoUrl={walter.repoUrl} />
           </div>
@@ -1367,10 +1313,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         <div class="cta-inner">
           <h2>{cta.heading}</h2>
           <p>{cta.lede}</p>
-          <div class="install-row install-row-inline">
-            <code>{installCmd}</code>
-            <button class="copy" data-copy={installCmd}>Copy</button>
-          </div>
+          <InstallBox command={installCmd} id="cta-install" />
         </div>
       </div>
 
@@ -1428,11 +1371,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         requestAnimationFrame(updateHeader);
       }, { passive: true });
 
-      document.querySelectorAll("[data-copy]").forEach((button) => {
+      document.querySelectorAll("[data-install-tab]").forEach((button) => {
         button.addEventListener("click", () => {
-          navigator.clipboard?.writeText(button.dataset.copy);
-          button.textContent = "Copied";
-          setTimeout(() => (button.textContent = "Copy"), 1500);
+          const box = button.closest("[data-install-box]");
+          const content = box?.querySelector("[data-install-content]");
+          const shell = box?.querySelector("[data-install-shell]");
+          const copyButton = box?.querySelector("[data-copy]");
+          const mode = button.dataset.installTab;
+          if (!box || !content || !shell || !copyButton || !mode) return;
+
+          box.querySelectorAll("[data-install-tab]").forEach((tab) => {
+            tab.setAttribute("aria-selected", String(tab === button));
+          });
+          const text = mode === "prompt"
+            ? content.dataset.installPrompt
+            : content.dataset.installCommand;
+          content.textContent = text;
+          content.setAttribute("aria-labelledby", button.id);
+          shell.dataset.mode = mode;
+          copyButton.dataset.copy = text;
+          copyButton.setAttribute(
+            "aria-label",
+            mode === "prompt" ? "Copy agent prompt" : "Copy installation command",
+          );
+        });
+      });
+
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const text = button.dataset.copy;
+          if (!text) return;
+          await navigator.clipboard?.writeText(text);
+          button.dataset.copied = "true";
+          const status = button.querySelector("[data-copy-status]");
+          if (status) status.textContent = "Copied";
+          setTimeout(() => {
+            delete button.dataset.copied;
+            if (status) status.textContent = "Copy";
+          }, 1500);
         });
       });
     </script>

@@ -1,0 +1,199 @@
+---
+interface Props {
+  command: string;
+  id: string;
+}
+
+const { command, id } = Astro.props;
+const installCommand = command.replace(/^npx skills use\b/, "npx skills add");
+const prompt = `Run \`${command}\` and follow the generated skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary. Resolve relative paths from the supporting-files directory it provides.`;
+const panelId = `${id}-panel`;
+---
+
+<div class="install-box" data-install-box>
+  <div class="install-header">
+    <span class="install-label">Installation</span>
+    <div class="install-tabs" role="tablist" aria-label="Installation format">
+      <button
+        id={`${id}-command-tab`}
+        type="button"
+        role="tab"
+        aria-selected="true"
+        aria-controls={panelId}
+        data-install-tab="command"
+      >Command</button>
+      <button
+        id={`${id}-prompt-tab`}
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls={panelId}
+        data-install-tab="prompt"
+      ><span class="spark" aria-hidden="true">✦</span> Prompt</button>
+    </div>
+  </div>
+
+  <div class="command-shell" data-install-shell data-mode="command">
+    <span class="shell-prompt" aria-hidden="true">$</span>
+    <code
+      id={panelId}
+      role="tabpanel"
+      aria-labelledby={`${id}-command-tab`}
+      data-install-content
+      data-install-command={installCommand}
+      data-install-prompt={prompt}
+    >{installCommand}</code>
+    <button
+      class="copy-command"
+      type="button"
+      aria-label="Copy installation command"
+      data-copy={installCommand}
+    >
+      <svg class="copy-icon" aria-hidden="true" viewBox="0 0 24 24">
+        <rect x="8" y="8" width="11" height="12" rx="1.5"></rect>
+        <path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-10A1.5 1.5 0 0 0 3 5.5v11A1.5 1.5 0 0 0 4.5 18H8"></path>
+      </svg>
+      <svg class="check-icon" aria-hidden="true" viewBox="0 0 24 24">
+        <path d="m5 12.5 4.2 4.2L19 7"></path>
+      </svg>
+      <span class="sr-only" data-copy-status>Copy</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .install-box {
+    width: 100%;
+    min-width: 0;
+    font-family: var(--mono);
+  }
+  .install-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 46px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .install-label {
+    color: var(--ink);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .install-tabs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .install-tabs button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 7px 11px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--soft);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .install-tabs button[aria-selected="true"] {
+    background: var(--ink);
+    color: var(--on-dark);
+  }
+  .install-tabs button:hover:not([aria-selected="true"]) {
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .install-tabs button:focus-visible,
+  .copy-command:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+  .spark {
+    font-size: 15px;
+    line-height: 1;
+  }
+  .command-shell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    min-height: 58px;
+    padding: 11px 12px 11px 16px;
+    border-radius: 9px;
+    background: var(--ink);
+    color: var(--on-dark);
+  }
+  .shell-prompt {
+    flex: none;
+    color: oklch(58% 0.01 260);
+    font-size: 14px;
+  }
+  .command-shell[data-mode="prompt"] .shell-prompt { display: none; }
+  code {
+    display: block;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    color: var(--on-dark);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .copy-command {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: oklch(70% 0.01 260);
+    cursor: pointer;
+  }
+  .copy-command:hover {
+    background: oklch(30% 0.01 260);
+    color: var(--on-dark);
+  }
+  .copy-command svg {
+    grid-area: 1 / 1;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+  .check-icon { display: none; }
+  .copy-command[data-copied="true"] .copy-icon { display: none; }
+  .copy-command[data-copied="true"] .check-icon { display: block; }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  @media (max-width: 520px) {
+    .install-header { gap: 8px; }
+    .install-tabs button { padding-inline: 9px; }
+    .command-shell { padding-left: 14px; }
+    code { font-size: 12px; }
+  }
+</style>
