@@ -1,5 +1,6 @@
 ---
 import { Code } from "astro:components";
+import ResourceLinks from "~/components/ResourceLinks.astro";
 import SeoMeta from "~/components/SeoMeta.astro";
 import {
   airflow,
@@ -687,7 +688,6 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       .lib h3 { font-size: 17px; font-weight: 600; margin: 0 0 4px; font-family: var(--mono); }
       .lib-stack { font-size: 13px; color: var(--soft); margin-bottom: 12px; }
       .lib p { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
-      .lib-cta { margin-top: auto; font-size: 13px; color: var(--blue); font-family: var(--mono); }
 
       /* Cards — the four Once steps. */
       .step { border: 1px solid var(--line); border-radius: 10px; padding: 20px; background: var(--page); }
@@ -967,13 +967,13 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede">{libraries.lede}</p>
           <div class="grid-3">
             {libraries.items.map((l) => (
-              <a class="lib" href={l.url} target="_blank" rel="noopener noreferrer">
+              <div class="lib">
                 <div class="lib-swatch" style={`background:${l.accent}`}></div>
                 <h3>{l.name}</h3>
                 <div class="lib-stack">{l.stack}</div>
                 <p>{l.blurb}</p>
-                <span class="lib-cta">View repo →</span>
-              </a>
+                <ResourceLinks docsUrl={l.docsUrl} repoUrl={l.repoUrl} card />
+              </div>
             ))}
           </div>
         </div>
@@ -992,6 +992,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               <button class="copy" data-copy={createPackageSkillCmd}>Copy</button>
             </div>
             <span class="install-note" set:html={html(createPackageSkill.useNote)} />
+            <ResourceLinks docsUrl={createPackageSkill.docsUrl} repoUrl={createPackageSkill.repoUrl} />
           </div>
 
           <div class="grid-3">
@@ -1019,6 +1020,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               <button class="copy" data-copy={k8sInstallCmd}>Copy</button>
             </div>
             <span class="install-note" set:html={html(k8s.runtimeNote)} />
+            <ResourceLinks docsUrl={k8s.docsUrl} repoUrl={k8s.repoUrl} />
           </div>
 
           <div class="grid-5">
@@ -1059,6 +1061,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               <button class="copy" data-copy={k3sInstallCmd}>Copy</button>
             </div>
             <span class="install-note" set:html={html(k3s.runtimeNote)} />
+            <ResourceLinks docsUrl={k3s.docsUrl} repoUrl={k3s.repoUrl} />
           </div>
 
           <div class="grid-5">
@@ -1105,6 +1108,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               <button class="copy" data-copy={clickhouseInstallCmd}>Copy</button>
             </div>
             <span class="install-note" set:html={html(clickhouse.runtimeNote)} />
+            <ResourceLinks docsUrl={clickhouse.docsUrl} repoUrl={clickhouse.repoUrl} />
           </div>
 
           <div class="grid-5">
@@ -1155,6 +1159,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               <button class="copy" data-copy={airflowInstallCmd}>Copy</button>
             </div>
             <span class="install-note" set:html={html(airflow.runtimeNote)} />
+            <ResourceLinks docsUrl={airflow.docsUrl} repoUrl={airflow.repoUrl} />
           </div>
 
           <div class="grid-5">
@@ -1211,6 +1216,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               <button class="copy" data-copy={ramaInstallCmd}>Copy</button>
             </div>
             <span class="install-note" set:html={html(rama.runtimeNote)} />
+            <ResourceLinks docsUrl={rama.docsUrl} repoUrl={rama.repoUrl} />
           </div>
 
           <div class="grid-5">
@@ -1255,6 +1261,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               <button class="copy" data-copy={installCmd}>Copy</button>
             </div>
             <span class="install-note" set:html={html(once.runtimeNote)} />
+            <ResourceLinks docsUrl={once.docsUrl} repoUrl={once.repoUrl} />
           </div>
 
           <div class="grid-4">
@@ -1314,6 +1321,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               <button class="copy" data-copy={walterInstallCmd}>Copy</button>
             </div>
             <span class="install-note" set:html={html(walter.runtimeNote)} />
+            <ResourceLinks docsUrl={walter.docsUrl} repoUrl={walter.repoUrl} />
           </div>
 
           <div class="grid-5">

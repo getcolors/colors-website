@@ -107,9 +107,9 @@ ${bundles.cards.map((c) => wrap(`- **${c.title}.** ${c.body}`, "  ")).join("\n")
 
 ${wrap(libraries.lede)}
 
-| Library | Runtime | Repository |
-|---|---|---|
-${libraries.items.map((l) => `| ${l.name} | ${l.stack} | ${l.url} |`).join("\n")}
+| Library | Runtime | Documentation | Repository |
+|---|---|---|---|
+${libraries.items.map((l) => `| ${l.name} | ${l.stack} | ${l.docsUrl} | ${l.repoUrl} |`).join("\n")}
 
 ## ${createPackageSkill.heading}
 
@@ -118,6 +118,9 @@ ${wrap(createPackageSkill.lede)}
 ${wrap(createPackageSkill.useNote)}
 
 ${fence("sh", createPackageSkillCmd)}
+
+Documentation: ${createPackageSkill.docsUrl}
+Repository: ${createPackageSkill.repoUrl}
 
 ${createPackageSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
 
@@ -128,6 +131,9 @@ ${wrap(k8s.lede)}
 ${wrap(k8s.runtimeNote)}
 
 ${fence("sh", k8sInstallCmd)}
+
+Documentation: ${k8s.docsUrl}
+Repository: ${k8s.repoUrl}
 
 ${k8s.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
@@ -141,6 +147,9 @@ ${wrap(k3s.runtimeNote)}
 
 ${fence("sh", k3sInstallCmd)}
 
+Documentation: ${k3s.docsUrl}
+Repository: ${k3s.repoUrl}
+
 ${k3s.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
 ${wrap(`${k3s.dagSummary} ${k3s.dagNote}`)}
@@ -152,6 +161,9 @@ ${wrap(clickhouse.lede)}
 ${wrap(clickhouse.runtimeNote)}
 
 ${fence("sh", clickhouseInstallCmd)}
+
+Documentation: ${clickhouse.docsUrl}
+Repository: ${clickhouse.repoUrl}
 
 ${clickhouse.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
@@ -165,6 +177,9 @@ ${wrap(airflow.runtimeNote)}
 
 ${fence("sh", airflowInstallCmd)}
 
+Documentation: ${airflow.docsUrl}
+Repository: ${airflow.repoUrl}
+
 ${airflow.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
 ${wrap(`${airflow.dagSummary} ${airflow.dagNote}`)}
@@ -176,6 +191,9 @@ ${wrap(rama.lede)}
 ${wrap(rama.runtimeNote)}
 
 ${fence("sh", ramaInstallCmd)}
+
+Documentation: ${rama.docsUrl}
+Repository: ${rama.repoUrl}
 
 ${rama.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
@@ -189,6 +207,9 @@ ${wrap(once.runtimeNote)}
 
 ${fence("sh", installCmd)}
 
+Documentation: ${once.docsUrl}
+Repository: ${once.repoUrl}
+
 ${once.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
 ${wrap(`${once.dagSummary} ${once.dagNote}`)}
@@ -200,6 +221,9 @@ ${wrap(walter.lede)}
 ${wrap(walter.runtimeNote)}
 
 ${fence("sh", walterInstallCmd)}
+
+Documentation: ${walter.docsUrl}
+Repository: ${walter.repoUrl}
 
 ${walter.steps.map((s, i) => wrap(`${i + 1}. **${s.title}.** ${s.body}`, "   ")).join("\n")}
 
