@@ -167,7 +167,7 @@ export const createPackageSkill = {
 };
 
 export const submitPackageSkillCmd =
-  "npx skills add getcolors/skills@submit-package-skill";
+  "npx skills use getcolors/skills@submit-package-skill";
 
 export const submitPackageSkill = {
   eyebrow: "Agent Skill",
