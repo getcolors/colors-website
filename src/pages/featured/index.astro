@@ -22,6 +22,8 @@ import {
   once,
   rama,
   ramaInstallCmd,
+  restate,
+  restateInstallCmd,
   vaultwarden,
   vaultwardenInstallCmd,
   walter,
@@ -40,6 +42,7 @@ const featuredPackageSkills = [
   { label: "Vaultwarden", href: "#vaultwarden" },
   { label: "DBOS", href: "#dbos" },
   { label: "Walter", href: "#walter" },
+  { label: "Restate", href: "#restate" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1223,6 +1226,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             </div>
           ))}
           <p class="dag-note">{walter.dagNote}</p>
+        </div>
+      </div>
+
+      <!-- RESTATE -->
+      <div class="sec sec-alt" id="restate">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{restate.eyebrow}</div>
+          <SectionHeading id="restate" title={restate.heading} />
+          <p class="sec-lede sec-lede-wide">{restate.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={restateInstallCmd} id="featured-restate-install" />
+            <span class="install-note" set:html={html(restate.runtimeNote)} />
+            <ResourceLinks docsUrl={restate.docsUrl} repoUrl={restate.repoUrl} catalogUrl="/getcolors/restate" />
+          </div>
+
+          <div class="grid-5">
+            {restate.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{restate.dagCaption}</div>
+            <div class="dag">
+              {restate.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{restate.dagNote}</p>
+          </div>
         </div>
       </div>
 

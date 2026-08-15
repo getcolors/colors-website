@@ -520,6 +520,56 @@ export const rama = {
     "DNS and mail stages become no-ops when their providers are disabled. Delete reverses the graph, removing local and remote WireGuard configuration before infrastructure; the committed destroy guard refuses accidental deletion.",
 };
 
+export const restateInstallCmd = "npx skills use getcolors/restate";
+
+export const restate = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/restate/",
+  repoUrl: "https://github.com/getcolors/restate",
+  heading: "Restate: durable workflows on one server, built with Colors",
+  lede: "Restate is a Package Skill built with Colors. It provisions a production-oriented single-node Restate server and TypeScript reference application on DigitalOcean, with private service ports, public TLS, durable workflow recovery, and off-server backups.",
+  runtimeNote:
+    "Restate ships in **green** alone. Its acceptance workflow deliberately retries an activity and reboots the complete Droplet during a durable delay before verifying the final result.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins Restate, the TypeScript SDK, Caddy, Droplet sizing, backup policy, hostname, region, and state backend.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "DigitalOcean, Cloudflare, remote-state, and backup credentials arrive through `COLORS_PAR_*`; no credential or generated `.colors/` content enters source control.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose, Caddy, and application files, then runs `create --dry-run` before contacting providers or the server.",
+    },
+    {
+      title: "Provision privately",
+      body: "OpenTofu discovers the regional default VPC, creates the Droplet, firewall, and apex DNS record; Ansible converges Restate, the application, Caddy, and scheduled R2 backups.",
+    },
+    {
+      title: "Prove durability",
+      body: "Acceptance checks HTTPS and duplicate IDs, starts a durable delay, reboots the Droplet, and verifies recovery, two failed activity attempts, attempt-three success, status, and deterministic result.",
+    },
+  ],
+  dagCaption: "Restate — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`.",
+  dagNote:
+    "Restate ingress, administration, fabric, metrics, and SDK ports remain private. Delete reverses Ansible, DNS, and infrastructure while the committed destroy guard refuses accidents; external backup archives remain available for manual recovery.",
+};
+
 export const once = {
   eyebrow: "Package Skill",
   docsUrl: "https://getcolors.github.io/once/",
