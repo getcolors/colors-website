@@ -20,6 +20,8 @@ import {
   once,
   rama,
   ramaInstallCmd,
+  vaultwarden,
+  vaultwardenInstallCmd,
   walter,
   walterInstallCmd,
 } from "~/data/landing";
@@ -33,6 +35,7 @@ const featuredPackageSkills = [
   { label: "Airflow", href: "#airflow" },
   { label: "Rama", href: "#rama" },
   { label: "Once", href: "#once" },
+  { label: "Vaultwarden", href: "#vaultwarden" },
   { label: "Walter", href: "#walter" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
@@ -1079,8 +1082,64 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         </div>
       </div>
 
+      <!-- VAULTWARDEN -->
+      <div class="sec" id="vaultwarden">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{vaultwarden.eyebrow}</div>
+          <SectionHeading id="vaultwarden" title={vaultwarden.heading} />
+          <p class="sec-lede sec-lede-wide">{vaultwarden.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={vaultwardenInstallCmd} id="featured-vaultwarden-install" />
+            <span class="install-note" set:html={html(vaultwarden.runtimeNote)} />
+            <ResourceLinks docsUrl={vaultwarden.docsUrl} repoUrl={vaultwarden.repoUrl} catalogUrl="/getcolors/vaultwarden" />
+          </div>
+
+          <div class="grid-5">
+            {vaultwarden.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{vaultwarden.dagCaption}</div>
+            <div class="dag">
+              {vaultwarden.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "node")
+                  return (
+                    <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                  );
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class="dag-branch">
+                    <div class="dag-node">{item.nodes[0]}</div>
+                    <div class="dag-spacer"></div>
+                    <div class="dag-node">{item.nodes[1]}</div>
+                    <div class="dag-tail">
+                      <div class="dag-edge"></div>
+                      <div class="dag-node">{item.tail}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{vaultwarden.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- WALTER -->
-      <div class="sec" id="walter">
+      <div class="sec sec-alt" id="walter">
         <div class="wrap">
           <div class="eyebrow eyebrow-blue">{walter.eyebrow}</div>
           <SectionHeading id="walter" title={walter.heading} />

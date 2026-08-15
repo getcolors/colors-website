@@ -1,6 +1,7 @@
 name: Vaultwarden
 repository: getcolors/vaultwarden
 summary: Operate Vaultwarden on a personal PaaS with email, off-server SQLite replication, and recovery checks.
+featured: /featured#vaultwarden
 keywords:
   - Vaultwarden
   - password manager

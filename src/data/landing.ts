@@ -202,8 +202,8 @@ export type DagItem =
   | { kind: "group"; nodes: string[] }
   | { kind: "branch"; nodes: string[]; tail: string };
 
-// A panel may hold more than one graph. K8s, K3s, ClickHouse, Airflow, Rama and
-// Once each need a single one; Walter's power verbs are two separate graphs under one
+// A panel may hold more than one graph. K8s, K3s, ClickHouse, Airflow, Rama,
+// Once and Vaultwarden each need a single one; Walter's power verbs are two separate graphs under one
 // caption, because `stop` and `start` are the pair that distinguishes it.
 export type DagPanel = { caption: string; graphs: DagItem[][] };
 
@@ -524,6 +524,56 @@ export const once = {
     "The create/build DAG runs `start` → (`tofu-compute`, `tofu-smtp`) → `tofu-dns` → `tofu-smtp-post` → (`ansible-local`, `ansible-remote`), and `ansible-remote` → `github`.",
   dagNote:
     "Publishing follows the remote stage, not the local one: the deploy keys describe a configured host, so a workstation-side failure does not gate them. Delete reverses the graph — it withdraws the published credentials first, then cleanup, SMTP post and DNS, then SMTP and compute in parallel. Step failures travel as namespaced exit codes, never uncaught exceptions.",
+};
+
+export const vaultwardenInstallCmd = "npx skills use getcolors/vaultwarden";
+
+export const vaultwarden = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/vaultwarden/",
+  repoUrl: "https://github.com/getcolors/vaultwarden",
+  heading: "Vaultwarden: a recoverable password manager, built with Colors",
+  lede: "Vaultwarden is a Package Skill built with Colors. It deploys a pinned Vaultwarden image on a Basecamp ONCE server, sends the initial owner invitation, and continuously replicates SQLite to Cloudflare R2 for automatic recovery.",
+  runtimeNote:
+    "Vaultwarden ships in **green** alone. Public signup and the steady-state admin endpoint stay disabled; a loopback-only bootstrap endpoint sends the first invitation and then disappears.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins the hostname and image, owner email, provider choices, R2 replica, retention, snapshot cadence, and weekly restore-check schedule.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "Compute, DNS, SMTP, remote-state, Litestream R2, and bootstrap credentials arrive through `COLORS_PAR_*`; none enter desired state or generated files.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu and Ansible files, then runs `create --dry-run` before contacting any provider, server, DNS record, mail domain, or repository.",
+    },
+    {
+      title: "Provision and invite",
+      body: "ONCE provisions the server, DNS, mail, HTTPS, and deploy key. The container uses its temporary loopback admin endpoint to invite the owner, then removes the token and endpoint from steady state.",
+    },
+    {
+      title: "Replicate and recover",
+      body: "Litestream continuously copies SQLite to R2, restores automatically when local data is absent, and verifies a separate replica restore with SQLite integrity checking every week.",
+    },
+  ],
+  dagCaption: "Vaultwarden — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "group", nodes: ["tofu-compute", "tofu-smtp"] },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-dns" },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-smtp-post" },
+    { kind: "edge" },
+    { kind: "branch", nodes: ["ansible-local", "ansible-remote"], tail: "github" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → (`tofu-compute`, `tofu-smtp`) → `tofu-dns` → `tofu-smtp-post` → (`ansible-local`, `ansible-remote`), and `ansible-remote` → `github`.",
+  dagNote:
+    "Vaultwarden deliberately reuses ONCE's complete infrastructure and deployment graph. Delete revokes the GitHub deploy key first, cleans up the host and local SSH alias, then removes SMTP, DNS, and compute in reverse order; the external R2 replica remains available for recovery and the committed destroy guard refuses accidents.",
 };
 
 // Walter's own install line. Deliberately not the `installCmd` constant: that
