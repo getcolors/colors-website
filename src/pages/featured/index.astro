@@ -22,6 +22,8 @@ import {
   once,
   rama,
   ramaInstallCmd,
+  temporal,
+  temporalInstallCmd,
   restate,
   restateInstallCmd,
   vaultwarden,
@@ -43,6 +45,7 @@ const featuredPackageSkills = [
   { label: "DBOS", href: "#dbos" },
   { label: "Walter", href: "#walter" },
   { label: "Restate", href: "#restate" },
+  { label: "Temporal", href: "#temporal" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1263,6 +1266,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{restate.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMPORAL -->
+      <div class="sec" id="temporal">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{temporal.eyebrow}</div>
+          <SectionHeading id="temporal" title={temporal.heading} />
+          <p class="sec-lede sec-lede-wide">{temporal.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={temporalInstallCmd} id="featured-temporal-install" />
+            <span class="install-note" set:html={html(temporal.runtimeNote)} />
+            <ResourceLinks docsUrl={temporal.docsUrl} repoUrl={temporal.repoUrl} catalogUrl="/getcolors/temporal" />
+          </div>
+
+          <div class="grid-5">
+            {temporal.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{temporal.dagCaption}</div>
+            <div class="dag">
+              {temporal.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{temporal.dagNote}</p>
           </div>
         </div>
       </div>

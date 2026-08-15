@@ -619,6 +619,56 @@ export const once = {
     "Publishing follows the remote stage, not the local one: the deploy keys describe a configured host, so a workstation-side failure does not gate them. Delete reverses the graph — it withdraws the published credentials first, then cleanup, SMTP post and DNS, then SMTP and compute in parallel. Step failures travel as namespaced exit codes, never uncaught exceptions.",
 };
 
+export const temporalInstallCmd = "npx skills use getcolors/temporal";
+
+export const temporal = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/temporal/",
+  repoUrl: "https://github.com/getcolors/temporal",
+  heading: "Temporal: durable workflows on one production server, built with Colors",
+  lede: "Temporal is a Package Skill built with Colors. It provisions one DigitalOcean Droplet running PostgreSQL, all four Temporal Server roles, a TypeScript reference API and worker, and Caddy with public TLS.",
+  runtimeNote:
+    "Temporal ships in **green** alone. The reference workflow uses a durable timer, retries an activity twice, rejects duplicate IDs, and returns a deterministic result after service or whole-Droplet restarts.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins Temporal Server and TypeScript SDK releases, PostgreSQL, Droplet shape, namespace, workflow delay, retry policy, DNS, TLS, backups, and state backend.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "DigitalOcean, Cloudflare, and remote-state credentials arrive through `COLORS_PAR_*`; PostgreSQL credentials are generated and retained on the server rather than rendered under `.colors/`.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Docker Compose, and TypeScript application files, then runs `create --dry-run` before contacting a provider, host, or DNS zone.",
+    },
+    {
+      title: "Provision privately",
+      body: "OpenTofu discovers the Amsterdam region's existing default VPC, creates the guarded Droplet and firewall, and publishes apex DNS; PostgreSQL, Temporal, and administrative ports remain private.",
+    },
+    {
+      title: "Prove durability",
+      body: "Acceptance verifies HTTPS, workflow completion, intentional activity retries, duplicate rejection, deterministic status/results, and recovery when Docker or the entire Droplet restarts during the durable delay.",
+    },
+  ],
+  dagCaption: "Temporal — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`.",
+  dagNote:
+    "The infrastructure stage discovers rather than creates the regional default VPC. Ansible initializes both Temporal PostgreSQL schemas before starting all server roles, the API and Caddy. Delete stops the stack, removes DNS, then reaches guarded infrastructure destruction; acceptance can separately reboot the whole Droplet mid-workflow.",
+};
+
 export const vaultwardenInstallCmd = "npx skills use getcolors/vaultwarden";
 
 export const vaultwarden = {

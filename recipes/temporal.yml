@@ -12,6 +12,7 @@ keywords:
   - Cloudflare
   - backup
   - self-hosted
+featured: /featured#temporal
 package-skills:
   - name: package-temporal-green
     path: skills/package-temporal-green/SKILL.md
