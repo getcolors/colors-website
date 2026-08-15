@@ -1,0 +1,17 @@
+name: DBOS
+repository: getcolors/dbos
+summary: Operate a single-machine DBOS durable-workflow service with private PostgreSQL, Cloudflare HTTPS, and R2 backups on DigitalOcean.
+keywords:
+  - DBOS
+  - durable execution
+  - workflow orchestration
+  - TypeScript
+  - PostgreSQL
+  - DigitalOcean
+  - Cloudflare
+  - Cloudflare R2
+  - self-hosted
+package-skills:
+  - name: package-dbos-green
+    path: skills/package-dbos-green/SKILL.md
+    runtime: green
