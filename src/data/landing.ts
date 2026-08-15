@@ -619,6 +619,54 @@ export const vaultwarden = {
     "This diagram shows the public-image path, which omits the inherited GitHub stage. Setting `vaultwarden-repo` adds credential publication after `ansible-remote`; delete revokes those credentials first. The external R2 replica remains available for recovery and the committed destroy guard refuses accidents.",
 };
 
+export const dbosInstallCmd = "npx skills use getcolors/dbos";
+
+export const dbos = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/dbos/",
+  repoUrl: "https://github.com/getcolors/dbos",
+  heading: "DBOS: durable TypeScript workflows on one production server",
+  lede: "DBOS is a Package Skill built with Colors. It provisions a production-oriented DigitalOcean server, embeds the pinned DBOS TypeScript SDK in a reference HTTP API, keeps PostgreSQL private, publishes Cloudflare HTTPS, and writes PostgreSQL backups to Cloudflare R2.",
+  runtimeNote:
+    "DBOS ships in **green**. Its reference workflow durably sleeps, intentionally retries an activity, safely deduplicates caller-supplied workflow IDs, and resumes after the entire Droplet restarts.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins DBOS and the application image, Amsterdam region, Droplet size, apex hostname, retry policy, retention, PostgreSQL, and backup settings.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "DigitalOcean, Cloudflare, R2, PostgreSQL, and backup credentials arrive only through `COLORS_PAR_*`; `COLORS_PAR_PROFILE` is explicitly rejected.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Build renders deterministic OpenTofu and Ansible files, and `create --dry-run` walks the graph without contacting providers or requiring credentials.",
+    },
+    {
+      title: "Provision and deploy",
+      body: "OpenTofu discovers the configured region's default VPC instead of creating one, then provisions the guarded Droplet and DNS before ONCE deploys private PostgreSQL and the DBOS API behind HTTPS.",
+    },
+    {
+      title: "Prove recovery",
+      body: "Acceptance checks HTTPS, completion, activity retry, duplicate IDs, deterministic results, R2 backup upload, and recovery after rebooting the Droplet during a durable delay.",
+    },
+  ],
+  dagCaption: "DBOS — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-compute" },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-dns" },
+    { kind: "edge" },
+    { kind: "group", nodes: ["ansible-local", "ansible-remote"] },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `tofu-compute` → `tofu-dns` → (`ansible-local`, `ansible-remote`).",
+  dagNote:
+    "Delete removes the managed host configuration and DNS before destroying compute, while preserving the pre-existing default VPC, SSH key, R2 state bucket, and backup objects. The committed prevent-destroy guard requires a separately authorized one-run override.",
+};
+
 // Walter's own install line. Deliberately not the `installCmd` constant: that
 // one is the page's primary call to action and is baked into the og:image by
 // scripts/generate-og-image.py, which no build step can reach. Once stays the
