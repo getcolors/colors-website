@@ -1,0 +1,17 @@
+name: Restate
+repository: getcolors/restate
+summary: Operate a production-oriented single-node Restate durable execution platform on DigitalOcean.
+keywords:
+  - Restate
+  - durable execution
+  - workflows
+  - workflow engine
+  - DigitalOcean
+  - Cloudflare
+  - TypeScript
+  - backup
+  - self-hosted
+package-skills:
+  - name: package-restate-green
+    path: skills/package-restate-green/SKILL.md
+    runtime: green
