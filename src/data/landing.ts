@@ -573,7 +573,7 @@ export const vaultwarden = {
   dagSummary:
     "The public-image create/build DAG runs `start` → (`tofu-compute`, `tofu-smtp`) → `tofu-dns` → `tofu-smtp-post` → (`ansible-local`, `ansible-remote`).",
   dagNote:
-    "This diagram shows the public-image path, which makes the inherited GitHub stage a no-op. Setting `vaultwarden-repo` publishes deployment credentials after `ansible-remote`; delete revokes them first. The external R2 replica remains available for recovery and the committed destroy guard refuses accidents.",
+    "This diagram shows the public-image path, which omits the inherited GitHub stage. Setting `vaultwarden-repo` adds credential publication after `ansible-remote`; delete revokes those credentials first. The external R2 replica remains available for recovery and the committed destroy guard refuses accidents.",
 };
 
 // Walter's own install line. Deliberately not the `installCmd` constant: that
