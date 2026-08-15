@@ -1,0 +1,17 @@
+name: Vaultwarden
+repository: getcolors/vaultwarden
+summary: Operate Vaultwarden on a personal PaaS with email, off-server SQLite replication, and recovery checks.
+keywords:
+  - Vaultwarden
+  - password manager
+  - Bitwarden
+  - SQLite
+  - Litestream
+  - Cloudflare R2
+  - DigitalOcean
+  - backup
+  - self-hosted
+package-skills:
+  - name: package-vaultwarden-green
+    path: skills/package-vaultwarden-green/SKILL.md
+    runtime: green
