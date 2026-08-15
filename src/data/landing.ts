@@ -24,9 +24,9 @@ export const html = (s: string) =>
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
 
 export const meta = {
-  title: "Colors — An SDK for Package Skills",
+  title: "Colors — Reproducible self-hosted deployments",
   description:
-    "Colors is an SDK for building Package Skills. Three libraries — red, green and blue — give agents dry-run guarantees, secret indirection, and strict lifecycle control over real infrastructure.",
+    "Colors turns a small desired-state file into an inspectable OpenTofu and Ansible deployment. Build and dry-run locally, then provision infrastructure in your own cloud account.",
 };
 
 // The one string CLAUDE.md tracks across the repo. Every on-page occurrence now
@@ -57,53 +57,96 @@ export const nav = [
 ];
 
 export const hero = {
-  eyebrow: "An SDK for Package Skills",
-  headline: "Colors is an SDK for building Package Skills.",
-  lede: "Three libraries — red, green, and blue — give agents dry-run guarantees, secret indirection, and strict lifecycle control over real infrastructure, in the runtime your team already uses.",
+  eyebrow: "Open-source deployment packages",
+  headline: "From colors.yml to a running server.",
+  lede: "Colors packages OpenTofu and Ansible into reproducible deployments you can inspect before they run. Your infrastructure stays in your cloud account, and your credentials stay local.",
   installNote:
-    "Run inside your coding agent — it grants **Once**, a skill to provision a VPS with a personal PaaS like Netlify or Vercel.",
-  ymlCaption: "# colors.yml",
+    "Try **Once**: provision a VPS, DNS, outgoing mail, Docker, HTTPS, and declared applications from one desired-state file.",
+  ymlCaption: "# The real colors.yml that deploys this site",
 };
 
 export const packageSkillDefinition =
   "A Package Skill is a deterministic infrastructure and platform automation module built for AI coding agents using the Colors SDK (available in TypeScript/Bun, Clojure/Babashka, or Python/uv). It provisions and manages production resources—such as Kubernetes clusters, databases, dev machines, or personal PaaS environments—by reading a non-secret desired state file (`colors.yml`), enforcing mandatory dry-run boundaries before contacting live providers, maintaining strict credential indirection through environment variables (`COLORS_PAR_*`), and managing resource lifecycles through execution graphs (DAGs).";
 
-export const primitive = {
-  heading: "A different primitive for a different job",
-  lede: "Web automation and infrastructure automation demand different guarantees.",
-  cards: [
+export const workflow = {
+  heading: "See exactly what happens before anything happens",
+  lede: "Every deployment uses the same explicit lifecycle. The first two commands are safe on a fresh checkout with no provider credentials.",
+  steps: [
     {
-      label: "Browser Skill",
-      title: "Eyes and hands on the web",
-      body: "Navigates DOM elements, fills forms, scrapes content — bridges natural language intent with web interaction.",
-      accent: false,
+      command: "./green build",
+      title: "Render locally",
+      body: "Validate `colors.yml` and generate the OpenTofu, Ansible, and supporting files under `.colors/`.",
     },
     {
-      label: "Package Skill",
-      title: "Determinism and lifecycle control",
-      body: "Provisions platforms, infrastructures, and containers — with dry-run boundaries and strict credential handling instead of raw shell access.",
-      accent: true,
+      command: "./green create --dry-run",
+      title: "Walk the complete plan",
+      body: "Traverse the deployment graph while skipping every provider call and remote side effect.",
+    },
+    {
+      command: "./green create",
+      title: "Provision and verify",
+      body: "Converge the declared infrastructure, configure the hosts, and run the package’s acceptance checks.",
     },
   ],
 };
 
-export const bundles = {
-  heading: "What a Package Skill bundles",
+export const realExample = {
+  eyebrow: "Real-life example",
+  heading: "Deploy an application on your own VPS with Basecamp ONCE",
+  lede: "The configuration shown above is not a mock-up: it deploys this website with the Once Package Skill, an implementation of Basecamp’s production single-server ONCE workflow. Starting with an OCI account and a domain, it creates the server and connects every layer needed to serve the application.",
+  results: [
+    "Provisions the VPS with OpenTofu",
+    "Configures Docker and the host with Ansible",
+    "Creates Cloudflare DNS and Resend mail settings",
+    "Serves the declared container over HTTPS",
+  ],
+  note: "There is no Colors dashboard or long-running Colors control plane on the server. Once the workflow finishes, the VPS and provider resources remain yours.",
+};
+
+export const difference = {
+  heading: "Why not use the existing tools directly?",
+  lede: "You can. Colors is useful when you want a tested, opinionated path through them rather than assembling and maintaining every layer yourself.",
   cards: [
     {
-      label: "Desired state",
-      title: "Non-secret desired state",
-      body: "`colors.yml` declares hostnames, DNS zones, and mail domains directly — no separate settings to keep in sync.",
+      label: "Versus an install script",
+      title: "Desired state, not curl-to-shell",
+      body: "Inputs are validated, generated infrastructure is inspectable, repeated runs converge, and deletion follows an explicit guarded graph.",
     },
     {
-      label: "Runtimes",
-      title: "Deterministic runtimes & launchers",
-      body: "Colors’ three pinned runtimes — Bun, Babashka, or uv — not ad-hoc shell scripts.",
+      label: "Versus raw IaC",
+      title: "A packaged operational path",
+      body: "A Package Skill bundles provider resources, host configuration, credential boundaries, ordering, and acceptance checks behind one lifecycle.",
     },
     {
-      label: "Credentials",
-      title: "Environment & credential boundaries",
-      body: "Secrets stay in `COLORS_PAR_*` env vars, referenced by name and never rendered into files.",
+      label: "Versus a self-hosted PaaS",
+      title: "No permanent control panel",
+      body: "Colors provisions the infrastructure and exits. It can deploy a personal PaaS such as Once; it does not manage applications through a web dashboard.",
+    },
+  ],
+};
+
+export const trust = {
+  heading: "Inspect it. Keep it. Leave it.",
+  cards: [
+    {
+      label: "Visible automation",
+      title: "OpenTofu and Ansible stay inspectable",
+      body: "`build` renders the files locally before `create` is allowed to contact a provider or host.",
+    },
+    {
+      label: "Local credentials",
+      title: "Secrets never belong in `colors.yml`",
+      body: "Credentials arrive through local `COLORS_PAR_*` environment variables and are not rendered into generated files.",
+    },
+    {
+      label: "Deterministic execution",
+      title: "No model provisions your server",
+      body: "A coding agent can install and operate a Package Skill, but the launcher itself is ordinary deterministic code and makes no LLM calls.",
+    },
+    {
+      label: "Honest fit",
+      title: "Not for every self-hoster",
+      body: "If you want a dashboard for an existing homelab, or already prefer maintaining all your IaC directly, Colors may add no value.",
     },
   ],
 };

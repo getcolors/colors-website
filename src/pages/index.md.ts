@@ -14,19 +14,20 @@
 
 import type { APIContext } from "astro";
 import {
-  bundles,
   colorsYml,
   createPackageSkill,
   createPackageSkillCmd,
+  difference,
   footer,
   hero,
   installCmd,
   libraries,
   meta,
-  packageSkillDefinition,
-  primitive,
+  realExample,
   submitPackageSkill,
   submitPackageSkillCmd,
+  trust,
+  workflow,
 } from "~/data/landing";
 
 const fence = (lang: string, body: string) => `\`\`\`${lang}\n${body}\n\`\`\``;
@@ -82,19 +83,32 @@ ${wrap("A Package Skill is configured with a `colors.yml` — this is the one th
 
 ${fence("yaml", colorsYml)}
 
-## ${primitive.heading}
+## ${realExample.heading}
 
-${wrap(primitive.lede)}
+${wrap(realExample.lede)}
 
-${primitive.cards.map((c) => wrap(`- **${c.label} — ${c.title}.** ${c.body}`, "  ")).join("\n")}
+${realExample.results.map((result) => `- ${result}`).join("\n")}
 
-## What is a Package Skill?
+${wrap(realExample.note)}
 
-${wrap(packageSkillDefinition)}
+Documentation: https://getcolors.github.io/once/
+Repository: https://github.com/getcolors/once
 
-## ${bundles.heading}
+## ${workflow.heading}
 
-${bundles.cards.map((c) => wrap(`- **${c.title}.** ${c.body}`, "  ")).join("\n")}
+${wrap(workflow.lede)}
+
+${workflow.steps.map((step, i) => wrap(`${i + 1}. **${step.title} — \`${step.command}\`.** ${step.body}`, "   ")).join("\n")}
+
+## ${difference.heading}
+
+${wrap(difference.lede)}
+
+${difference.cards.map((c) => wrap(`- **${c.label} — ${c.title}.** ${c.body}`, "  ")).join("\n")}
+
+## ${trust.heading}
+
+${trust.cards.map((c) => wrap(`- **${c.title}.** ${c.body}`, "  ")).join("\n")}
 
 ## ${libraries.heading}
 

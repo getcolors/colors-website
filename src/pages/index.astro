@@ -8,19 +8,20 @@ import StyleGate from "~/components/StyleGate.astro";
 import SiteFooter from "~/components/SiteFooter.astro";
 import SiteHeader from "~/components/SiteHeader.astro";
 import {
-  bundles,
   colorsYml,
   createPackageSkill,
   createPackageSkillCmd,
+  difference,
   hero,
   html,
   installCmd,
   libraries,
   meta,
-  packageSkillDefinition,
-  primitive,
+  realExample,
   submitPackageSkill,
   submitPackageSkillCmd,
+  trust,
+  workflow,
 } from "~/data/landing";
 
 const { title, description } = meta;
@@ -562,11 +563,21 @@ const yamlTheme = {
       .card-accent { border-color: oklch(85% 0.06 260); background: oklch(97% 0.02 260); }
       .card-accent p { color: oklch(40% 0.01 260); }
 
-      /* Cards — what a Package Skill bundles. */
-      .bundle { background: var(--page); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
-      .bundle .eyebrow { margin-bottom: 12px; }
-      .bundle h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
-      .bundle p { font-size: 14px; color: var(--muted); margin: 0; }
+      /* Outcome-first landing sections. */
+      .example-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: start; }
+      .result-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: 12px; background: var(--page); }
+      .result-list li { position: relative; padding: 17px 20px 17px 52px; border-bottom: 1px solid var(--line); font-size: 14px; }
+      .result-list li:last-child { border-bottom: 0; }
+      .result-list li::before { content: "✓"; position: absolute; left: 20px; color: var(--green); font: 600 14px var(--mono); }
+      .example-note { margin: 20px 0 0; color: var(--muted); font-size: 14px; }
+      .workflow-card { background: var(--page); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
+      .workflow-command { display: inline-block; margin-bottom: 18px; padding: 7px 10px; border-radius: 6px; background: var(--ink); color: var(--on-dark); font: 12px var(--mono); }
+      .workflow-card h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+      .workflow-card p { font-size: 14px; color: var(--muted); margin: 0; }
+      .trust-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+      .trust-card { border: 1px solid var(--line); border-radius: 10px; padding: 22px; background: var(--page); }
+      .trust-card h3 { font-size: 16px; font-weight: 600; margin: 0 0 7px; }
+      .trust-card p { font-size: 14px; color: var(--muted); margin: 0; }
 
       /* Cards — the three libraries. */
       .lib {
@@ -646,7 +657,9 @@ const yamlTheme = {
       @media (max-width: 860px) {
         .hero,
         .grid-2,
-        .grid-3 {
+        .grid-3,
+        .example-grid,
+        .trust-grid {
           grid-template-columns: 1fr;
         }
         /* The no-wrap command/prompt panel must not become the hero track's
@@ -761,15 +774,50 @@ const yamlTheme = {
         </div>
       </div>
 
-      <!-- BROWSER VS PACKAGE -->
-      <div class="sec" id="browser-vs-package-skill">
+      <!-- REAL-LIFE EXAMPLE -->
+      <div class="sec" id="once-example">
+        <div class="wrap example-grid">
+          <div>
+            <div class="eyebrow eyebrow-green">{realExample.eyebrow}</div>
+            <SectionHeading id="once-example" title={realExample.heading} />
+            <p class="sec-lede">{realExample.lede}</p>
+            <ResourceLinks docsUrl="https://getcolors.github.io/once/" repoUrl="https://github.com/getcolors/once" catalogUrl="/getcolors/once" />
+          </div>
+          <div>
+            <ul class="result-list">
+              {realExample.results.map((result) => <li>{result}</li>)}
+            </ul>
+            <p class="example-note">{realExample.note}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAFE LOCAL WORKFLOW -->
+      <div class="sec sec-alt" id="workflow">
         <div class="wrap">
-          <SectionHeading id="browser-vs-package-skill" title={primitive.heading} />
-          <p class="sec-lede">{primitive.lede}</p>
-          <div class="grid-2">
-            {primitive.cards.map((c) => (
-              <div class:list={["card", c.accent && "card-accent"]}>
-                <div class:list={["eyebrow", c.accent && "eyebrow-blue"]}>{c.label}</div>
+          <SectionHeading id="workflow" title={workflow.heading} />
+          <p class="sec-lede sec-lede-wide">{workflow.lede}</p>
+          <div class="grid-3">
+            {workflow.steps.map((step) => (
+              <div class="workflow-card">
+                <code class="workflow-command">{step.command}</code>
+                <h3>{step.title}</h3>
+                <p set:html={html(step.body)} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- WHY ANOTHER LAYER -->
+      <div class="sec" id="why-colors">
+        <div class="wrap">
+          <SectionHeading id="why-colors" title={difference.heading} />
+          <p class="sec-lede sec-lede-wide">{difference.lede}</p>
+          <div class="grid-3">
+            {difference.cards.map((c) => (
+              <div class="card">
+                <div class="eyebrow eyebrow-blue">{c.label}</div>
                 <h3>{c.title}</h3>
                 <p set:html={html(c.body)} />
               </div>
@@ -778,23 +826,14 @@ const yamlTheme = {
         </div>
       </div>
 
-      <!-- PACKAGE SKILL DEFINITION -->
-      <div class="sec sec-alt" id="package-skill-definition">
-        <div class="wrap definition">
-          <div class="eyebrow eyebrow-blue">Package Skill</div>
-          <SectionHeading id="package-skill-definition" title="What is a Package Skill?" />
-          <p set:html={html(packageSkillDefinition)} />
-        </div>
-      </div>
-
-      <!-- WHAT'S INSIDE -->
-      <div class="sec sec-alt" id="inside-package-skill">
+      <!-- TRUST AND FIT -->
+      <div class="sec sec-alt" id="trust">
         <div class="wrap">
-          <SectionHeading id="inside-package-skill" title={bundles.heading} headingClass="solo" />
-          <div class="grid-3">
-            {bundles.cards.map((c) => (
-              <div class="bundle">
-                <div class="eyebrow eyebrow-blue">{c.label}</div>
+          <SectionHeading id="trust" title={trust.heading} headingClass="solo" />
+          <div class="trust-grid">
+            {trust.cards.map((c) => (
+              <div class="trust-card">
+                <div class="eyebrow eyebrow-green">{c.label}</div>
                 <h3>{c.title}</h3>
                 <p set:html={html(c.body)} />
               </div>
