@@ -199,6 +199,18 @@ const escapeHtml = (value: string) =>
     .replace(/'/g, "&#39;");
 
 const renderMarkdown = (markdown: string, sourceDirectory: string) => {
+  const headingIds = new Map<string, number>();
+  const headingId = (text: string) => {
+    const base = text
+      .toLowerCase()
+      .replace(/<[^>]*>/g, "")
+      .replace(/[^\p{L}\p{N}\s-]/gu, "")
+      .trim()
+      .replace(/\s+/g, "-") || "section";
+    const seen = headingIds.get(base) ?? 0;
+    headingIds.set(base, seen + 1);
+    return seen === 0 ? base : `${base}-${seen}`;
+  };
   const absolute = (href: string, raw = false) => {
     if (/^(?:https?:|mailto:|#)/i.test(href)) return href;
     const clean = href.replace(/^\.\//, "");
@@ -221,6 +233,13 @@ const renderMarkdown = (markdown: string, sourceDirectory: string) => {
       image({ href, title, text }) {
         const safeTitle = title ? ` title="${escapeHtml(title)}"` : "";
         return `<img src="${escapeHtml(absolute(href, true))}" alt="${escapeHtml(text)}"${safeTitle} loading="lazy">`;
+      },
+      heading({ tokens, depth }) {
+        const label = this.parser.parseInline(tokens);
+        const text = tokens.map((token) => "text" in token ? String(token.text) : token.raw).join("");
+        const id = headingId(text);
+        const level = Math.min(depth + 1, 6);
+        return `<h${level} id="${escapeHtml(id)}">${label}</h${level}>`;
       },
     },
   });
