@@ -1,0 +1,635 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+
+const title = "Benchmarking Claude Opus 5 on Autonomous Distributed Infrastructure — Colors";
+const description = "An empirical, end-to-end evaluation of Claude Opus 5 building and deploying PostgreSQL and MySQL High Availability clusters from scratch.";
+const path = "/blog/claude-opus-5-benchmark";
+// Raster, not the SVG this diagram is drawn as: Slack, LinkedIn, X and
+// WhatsApp do not render SVG og:images, and SeoMeta hardcodes
+// og:image:type to image/png. The in-article diagram is inline SVG so it
+// follows the theme; this is its 1200x630 rasterisation for unfurls only.
+const image = "/images/claude-opus-5-ha-architecture.png";
+const imageAlt = "Claude Opus 5 Autonomous Infrastructure Benchmark";
+
+const publishDate = "August 17, 2026";
+const readTime = "8 min read";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "Benchmarking Claude Opus 5 on Autonomous Distributed Infrastructure: Building PostgreSQL & MySQL HA Clusters from Scratch",
+  description,
+  url: "https://www.getcolors.ai/blog/claude-opus-5-benchmark",
+  image: "https://www.getcolors.ai/images/claude-opus-5-ha-architecture.png",
+  datePublished: "2026-08-17T20:00:00Z",
+  dateModified: "2026-08-17T20:00:00Z",
+  author: {
+    "@type": "Organization",
+    name: "Colors",
+    url: "https://www.getcolors.ai",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: "https://www.getcolors.ai",
+  },
+  about: [
+    { "@type": "Thing", name: "Claude Opus 5" },
+    { "@type": "Thing", name: "Agentic AI" },
+    { "@type": "Thing", name: "High Availability Databases" },
+    { "@type": "Thing", name: "PostgreSQL HA" },
+    { "@type": "Thing", name: "MySQL HA" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Claude Opus 5 Benchmark" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Research &amp; Benchmark</p>
+      <h1>Benchmarking Claude Opus 5 on Autonomous Distributed Infrastructure: Building PostgreSQL &amp; MySQL HA Clusters from Scratch</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">Claude Opus 5</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+      </div>
+      <p class="lede">An empirical, end-to-end evaluation of Claude Opus 5 across distributed systems design, infrastructure as code, deterministic testing, and live cloud deployment.</p>
+    </header>
+
+    <div class="panel summary-card">
+      <div class="card-label">Executive Summary</div>
+      <p>Can a frontier model architect, implement, test, SHA-pin, and converge a production-shaped distributed system from an empty directory, then prove it survives losing a machine?</p>
+      <p>We ran <strong>Claude Opus 5</strong> through a creation-effort benchmark inside <a href="https://www.getcolors.ai/"><strong>Colors</strong></a>, using two cold concurrent subagents — one per database engine — with no shared memory and no cross-visibility.</p>
+      <ul class="summary-list">
+        <li><strong>Both arms converged on real hardware:</strong> six DigitalOcean droplets, Cloudflare DNS, and Cloudflare R2, from a pushed git SHA rather than a local working tree.</li>
+        <li><strong>17,787 lines across 199 files:</strong> Clojure packages, OpenTofu templates, Ansible playbooks, systemd units, and golden fixtures.</li>
+        <li><strong>Failover exercised for real, not simulated:</strong> a PostgreSQL leader powered off at the cloud API promoted in ~9s with no data loss; a SIGKILLed MySQL primary had the endpoint writable again at T+43s.</li>
+        <li><strong>Neither package reused ONCE.</strong> Both agents independently declined the established compute layer and wrote their own provider templates — within 6% of each other in size.</li>
+      </ul>
+    </div>
+
+    <article class="content-body">
+      <h2>1. Experimental Methodology &amp; Controls</h2>
+      <p>Most coding benchmarks score a model on a self-contained function. Infrastructure work is a different problem: it has state, ordering, partial failure, credentials, and a definition of done that only a running machine can confirm. The interesting question is not whether a model can write Terraform — it is whether the thing it writes converges, and whether it survives a node dying.</p>
+
+      <h3>Eliminating the order effect</h3>
+      <p>Building one engine first teaches patterns that make the second cheaper. That transfer is larger than the difference between the engines, so a sequential A-then-B run mostly measures "second is easier." Three controls removed it:</p>
+      <ul>
+        <li><strong>Two cold concurrent subagents.</strong> Both launched in the same instant with no shared context. The MySQL agent was forbidden from reading <code>postgres-ha*</code>; the PostgreSQL agent was forbidden from reading <code>mysql-ha*</code>. Neither could see the other's design.</li>
+        <li><strong>One prompt template.</strong> Both prompts were rendered from a single canonical file with an eight-row substitution table covering only engine-specific nouns — hostnames, bucket names, credential names. No example, hint, or named tool appears in one that is absent from the other.</li>
+        <li><strong>Pre-written symmetric desired state.</strong> Each <code>colors.yml</code> started at 102 lines fixing provider, region, instance size, node budget, storage targets and the destroy guard. A diff confirmed the two files differed only in name, host, zone and bucket.</li>
+      </ul>
+      <p>Deliberately <em>not</em> fixed: the replication topology, the failover orchestrator, the client endpoint mechanism, the backup tool, and the PITR mechanism. Choosing those is the work being measured, and pre-specifying them would have deleted the finding.</p>
+
+      <h2>2. Architectural Divergence: How Claude Opus 5 Solved Each Stack</h2>
+      <p>Given identical budgets — three droplets maximum, <code>s-2vcpu-4gb</code>, <code>ubuntu-24-04-x64</code>, DigitalOcean <code>ams3</code>, VPC discovered at runtime — the two agents produced engine-native architectures that disagree in one specific and instructive place.</p>
+
+      <figure class="media-figure panel diagram-figure">
+        <svg viewBox="0 0 900 470" role="img" aria-label="PostgreSQL HA and MySQL HA topologies compared" class="arch">
+          <line class="d-rule" x1="450" y1="10" x2="450" y2="440" stroke-dasharray="4 6" />
+
+          <text class="d-title d-blue" x="16" y="28">PostgreSQL HA</text>
+          <text class="d-sub" x="16" y="48">Patroni 4.1.5 · etcd 3.5.33 colocated · pgBackRest 2.59</text>
+          <rect class="d-box" x="16" y="64" width="404" height="44" rx="8" />
+          <text class="d-ink" x="32" y="84">pg-ha → three A records</text>
+          <text class="d-sub" x="32" y="100">failover writes no DNS and calls no cloud API</text>
+          <path class="d-blue-s" d="M218 108 L218 128 M218 128 L86 128 L86 148 M218 128 L218 148 M218 128 L350 128 L350 148" />
+          <rect class="d-box" x="16" y="148" width="132" height="116" rx="8" />
+          <text class="d-blue d-sm" x="30" y="168">node 1 · leader</text>
+          <text class="d-ink d-sm" x="30" y="188">HAProxy 2.8</text>
+          <text class="d-ink d-sm" x="30" y="206">Patroni</text>
+          <text class="d-ink d-sm" x="30" y="224">PostgreSQL 17</text>
+          <text class="d-green d-sm" x="30" y="242">etcd member</text>
+          <text class="d-sub" x="30" y="258">sync commit ANY 1</text>
+          <rect class="d-box" x="152" y="148" width="132" height="116" rx="8" />
+          <text class="d-sub" x="166" y="168">node 2 · standby</text>
+          <text class="d-ink d-sm" x="166" y="188">HAProxy 2.8</text>
+          <text class="d-ink d-sm" x="166" y="206">Patroni</text>
+          <text class="d-ink d-sm" x="166" y="224">PostgreSQL 17</text>
+          <text class="d-green d-sm" x="166" y="242">etcd member</text>
+          <rect class="d-box" x="288" y="148" width="132" height="116" rx="8" />
+          <text class="d-sub" x="302" y="168">node 3 · standby</text>
+          <text class="d-ink d-sm" x="302" y="188">HAProxy 2.8</text>
+          <text class="d-ink d-sm" x="302" y="206">Patroni</text>
+          <text class="d-ink d-sm" x="302" y="224">PostgreSQL 17</text>
+          <text class="d-green d-sm" x="302" y="242">etcd member</text>
+          <path class="d-blue-s" d="M218 264 L218 300" />
+          <text class="d-sub" x="228" y="288">WAL + full backups</text>
+          <rect class="d-box" x="16" y="300" width="404" height="48" rx="8" />
+          <text class="d-ink" x="32" y="320">Cloudflare R2 · postgres-ha-backup</text>
+          <text class="d-sub" x="32" y="337">daily full + continuous WAL + daily verified restore</text>
+          <text class="d-sub" x="16" y="378">Leader powered off at the API →</text>
+          <text class="d-ink d-sm" x="16" y="396">promoted in ~9s, zero data loss, no DNS write</text>
+
+          <text class="d-title d-green" x="474" y="28">MySQL HA</text>
+          <text class="d-sub" x="474" y="48">Group Replication · reserved IP · binlog PITR</text>
+          <rect class="d-box" x="474" y="64" width="404" height="44" rx="8" />
+          <text class="d-ink" x="490" y="84">my-ha → one reserved IP</text>
+          <text class="d-sub" x="490" y="100">the DNS record never changes; the cluster moves the IP</text>
+          <path class="d-green-s" d="M676 108 L676 148" />
+          <text class="d-sub" x="686" y="132">claimed by PRIMARY</text>
+          <rect class="d-box" x="474" y="148" width="132" height="116" rx="8" />
+          <text class="d-green d-sm" x="488" y="168">node 1 · primary</text>
+          <text class="d-ink d-sm" x="488" y="188">mysqld 8.0</text>
+          <text class="d-ink d-sm" x="488" y="206">Group Replication</text>
+          <text class="d-ink d-sm" x="488" y="224">binlog spooler</text>
+          <text class="d-sub" x="488" y="242">Paxos, no external DCS</text>
+          <rect class="d-box" x="610" y="148" width="132" height="116" rx="8" />
+          <text class="d-sub" x="624" y="168">node 2 · secondary</text>
+          <text class="d-ink d-sm" x="624" y="188">mysqld 8.0</text>
+          <text class="d-ink d-sm" x="624" y="206">Group Replication</text>
+          <text class="d-ink d-sm" x="624" y="224">binlog spooler</text>
+          <rect class="d-box" x="746" y="148" width="132" height="116" rx="8" />
+          <text class="d-sub" x="760" y="168">node 3 · secondary</text>
+          <text class="d-ink d-sm" x="760" y="188">mysqld 8.0</text>
+          <text class="d-ink d-sm" x="760" y="206">Group Replication</text>
+          <text class="d-ink d-sm" x="760" y="224">binlog spooler</text>
+          <path class="d-green-s" d="M676 264 L676 300" />
+          <text class="d-sub" x="686" y="288">binlogs every minute</text>
+          <rect class="d-box" x="474" y="300" width="404" height="48" rx="8" />
+          <text class="d-ink" x="490" y="320">Cloudflare R2 · mysql-ha-backup</text>
+          <text class="d-sub" x="490" y="337">daily dump + continuous binlog + daily verified restore</text>
+          <text class="d-sub" x="474" y="378">Primary SIGKILLed →</text>
+          <text class="d-ink d-sm" x="474" y="396">new primary at 23s, endpoint writable at 43s</text>
+        </svg>
+        <figcaption class="mono">Figure 1: The two topologies. Both keep quorum on three machines; they disagree about where the client endpoint lives.</figcaption>
+      </figure>
+
+      <h3>PostgreSQL arm (<code>postgres-ha</code> &amp; <code>postgres-ha-digitalocean</code>)</h3>
+      <ul>
+        <li><strong>Quorum &amp; consensus:</strong> a 3-member <strong>etcd 3.5.33</strong> cluster colocated on the database nodes, pinned by release tag <em>and</em> by the SHA-256 of its tarball, driving <strong>Patroni 4.1.5</strong> with quorum synchronous commit (<code>ANY 1</code>). Patroni 4 removed the <code>raft</code> DCS, so an external store was not optional.</li>
+        <li><strong>Client routing:</strong> <strong>HAProxy 2.8</strong> on all three nodes, port <code>5432</code> to the leader and <code>5433</code> to replicas, health-checked against Patroni's REST API, behind three Cloudflare A records. A failover changes nothing in DNS and calls no cloud API.</li>
+        <li><strong>Backup &amp; PITR:</strong> <strong>pgBackRest 2.59</strong> to R2, with <code>archive_command</code> set in Patroni's DCS rather than on a node — so a promoted standby keeps archiving. WAL-G was evaluated and rejected for lacking <code>check</code> and alternate-path restore.</li>
+        <li><strong>Verified restore:</strong> restore the newest backup, replay <em>every</em> archived segment, start it on a spare port, and require a leader-written heartbeat newer than 900s. A <code>recovery_target=immediate</code> drill would pass with archiving completely broken.</li>
+      </ul>
+
+      <h3>MySQL arm (<code>mysql-ha</code> &amp; <code>mysql-ha-digitalocean</code>)</h3>
+      <ul>
+        <li><strong>Quorum &amp; consensus:</strong> native <strong>MySQL 8.0 Group Replication</strong> in single-primary mode. The three mysqld processes <em>are</em> the Paxos group, so the quorum store is colocated by construction and there is no orchestrator — detection, quorum and election are one mechanism instead of three that must agree.</li>
+        <li><strong>Client routing:</strong> a DigitalOcean <strong>reserved IP</strong> claimed by whichever member reports PRIMARY, polled on a 10s timer. The Cloudflare record's content never changes, so OpenTofu keeps owning DNS while the cluster owns the assignment.</li>
+        <li><strong>Backup &amp; PITR:</strong> <code>mysqldump --single-transaction --set-gtid-purged=ON</code> with zstd, plus <code>mysqlbinlog --read-from-remote-server --stop-never --raw</code> running on <em>every</em> member and uploading each minute. Because every ONLINE member logs every transaction under the same GTID, any one prefix is a complete source and the archiver needs no leader election. XtraBackup was rejected for coupling to the distribution's MySQL build.</li>
+        <li><strong>Verified restore:</strong> a scratch <code>mysqld</code> daily, asserting <code>replayed_beats &gt; 0</code> — the only check that distinguishes a restore from a <em>point-in-time</em> restore.</li>
+      </ul>
+
+      <h3>The disagreement worth reading twice</h3>
+      <p>Each arm explicitly rejected what the other chose. The MySQL agent took a reserved IP to get one stable address, accepting a cloud API call in the failover path. The PostgreSQL agent rejected exactly that design on the grounds that it "puts a DO token on every DB node and needs an API call while degraded," and paid for the alternative in client-side complexity instead.</p>
+      <p>Neither is wrong. They weighted <em>dependency during degradation</em> against <em>client simplicity</em> differently, and both wrote down why.</p>
+
+      <h2>3. Objective Metrics &amp; Scorecard</h2>
+      <p>Recovered from the filesystem, git history, and live cloud probes by one script run identically against both packages — so no number below is an artefact of how the two arms were counted.</p>
+
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Category / Metric</th>
+              <th style="text-align: right;">PostgreSQL arm</th>
+              <th style="text-align: right;">MySQL arm</th>
+              <th style="text-align: right;">Combined</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Convergence status</strong></td>
+              <td style="text-align: right;"><span class="badge badge-green mono">✔ Converged</span></td>
+              <td style="text-align: right;"><span class="badge badge-green mono">✔ Converged</span></td>
+              <td style="text-align: right;"><span class="badge badge-blue mono">2 / 2</span></td>
+            </tr>
+            <tr>
+              <td><strong>Package size</strong></td>
+              <td style="text-align: right;">108 files (8,800 lines)</td>
+              <td style="text-align: right;">91 files (8,987 lines)</td>
+              <td style="text-align: right;"><strong>199 files (17,787 lines)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Source / test split</strong></td>
+              <td style="text-align: right;">2,623 / 4,033</td>
+              <td style="text-align: right;">2,584 / 4,471</td>
+              <td style="text-align: right;">5,207 / 8,504</td>
+            </tr>
+            <tr>
+              <td><strong>Clojure</strong></td>
+              <td style="text-align: right;">1,558 lines</td>
+              <td style="text-align: right;">1,000 lines</td>
+              <td style="text-align: right;">2,558 lines</td>
+            </tr>
+            <tr>
+              <td><strong>OpenTofu</strong></td>
+              <td style="text-align: right;">568 lines</td>
+              <td style="text-align: right;">537 lines</td>
+              <td style="text-align: right;">1,105 lines</td>
+            </tr>
+            <tr>
+              <td><strong>Ansible YAML</strong></td>
+              <td style="text-align: right;">618 lines</td>
+              <td style="text-align: right;">1,079 lines</td>
+              <td style="text-align: right;">1,697 lines</td>
+            </tr>
+            <tr>
+              <td><strong>Design rationale (<code>plans/</code>)</strong></td>
+              <td style="text-align: right;">291 lines</td>
+              <td style="text-align: right;">223 lines</td>
+              <td style="text-align: right;">514 lines</td>
+            </tr>
+            <tr>
+              <td><strong>Golden fixture files</strong></td>
+              <td style="text-align: right;">54</td>
+              <td style="text-align: right;">46</td>
+              <td style="text-align: right;">100</td>
+            </tr>
+            <tr>
+              <td><strong>Git commits</strong></td>
+              <td style="text-align: right;">8</td>
+              <td style="text-align: right;">8</td>
+              <td style="text-align: right;">16</td>
+            </tr>
+            <tr>
+              <td><strong>Deployment tracked files</strong></td>
+              <td style="text-align: right;">14</td>
+              <td style="text-align: right;">14</td>
+              <td style="text-align: right;">28</td>
+            </tr>
+            <tr>
+              <td><strong>Desired-state keys</strong></td>
+              <td style="text-align: right;">57</td>
+              <td style="text-align: right;">38</td>
+              <td style="text-align: right;">95</td>
+            </tr>
+            <tr>
+              <td><strong>Reused ONCE</strong></td>
+              <td style="text-align: right;">no — green only</td>
+              <td style="text-align: right;">no — green only</td>
+              <td style="text-align: right;"><strong>0 / 2</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Launcher byte-identical to payload</strong></td>
+              <td style="text-align: right;"><span class="badge badge-green mono">✔</span></td>
+              <td style="text-align: right;"><span class="badge badge-green mono">✔</span></td>
+              <td style="text-align: right;"><span class="badge badge-blue mono">2 / 2</span></td>
+            </tr>
+            <tr>
+              <td><strong>Secrets in tracked files</strong></td>
+              <td style="text-align: right;">none</td>
+              <td style="text-align: right;">none</td>
+              <td style="text-align: right;"><span class="badge badge-green mono">clean</span></td>
+            </tr>
+            <tr>
+              <td><strong>Self-reported failed checks</strong></td>
+              <td style="text-align: right;">7</td>
+              <td style="text-align: right;">6</td>
+              <td style="text-align: right;">13</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Source volume came out within 40 lines across the two arms, and both landed on exactly 8 commits. What differs is <em>where</em> the work went: PostgreSQL put its logic in Clojure, MySQL put its in Ansible. Same total, different layer.</p>
+
+      <h2>4. Verified Failover &amp; Recovery</h2>
+      <p>Both packages were required to survive losing a machine for real. Neither result is a simulation or a dry run.</p>
+
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Observation</th>
+              <th style="text-align: left;">PostgreSQL arm</th>
+              <th style="text-align: left;">MySQL arm</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Fault injected</strong></td>
+              <td>leader droplet powered off via cloud API</td>
+              <td><code>SIGKILL</code> on the primary's mysqld</td>
+            </tr>
+            <tr>
+              <td><strong>Promotion</strong></td>
+              <td>~9s (TTL 30s)</td>
+              <td>23s</td>
+            </tr>
+            <tr>
+              <td><strong>Endpoint serving new primary</strong></td>
+              <td>no DNS write required</td>
+              <td>43s (reserved IP moved at 36s)</td>
+            </tr>
+            <tr>
+              <td><strong>Data loss</strong></td>
+              <td>none — pre-failover marker row survived</td>
+              <td>none</td>
+            </tr>
+            <tr>
+              <td><strong>Old node rejoin</strong></td>
+              <td>automatic, missed WAL fetched from R2</td>
+              <td>automatic on <code>systemctl start</code></td>
+            </tr>
+            <tr>
+              <td><strong>Archive continuity</strong></td>
+              <td>358 WAL segments unbroken from segment 1 across both timelines</td>
+              <td>binlogs from all three members, restore check <code>replayed_beats: 8</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The PostgreSQL deployment also re-ran <code>./green create</code> resolved straight from the pushed SHA on GitHub, with no working-tree override — converging all six stages and proving the pin and the launcher copy work on their own rather than only on the machine that wrote them.</p>
+
+      <h2>5. Friction You Only Find by Running It</h2>
+      <p>Each arm hit exactly one engine-specific wall, and both were invisible to every offline check.</p>
+      <ul>
+        <li><strong>MySQL caps replication-channel passwords at 32 characters.</strong> The supplied credential was 40 (<code>ERROR 3056</code> / <code>3972</code>, probed on a live server). The agent neither truncated the secret nor asked for a new one: the replication account carries <code>SHA-256(password)[:32]</code> in hex — one deterministic expression read by both consumers, 128 bits retained, documented in four places.</li>
+        <li><strong>A powered-off node black-holes the SYN.</strong> PostgreSQL's endpoint resolves to three addresses, and <code>libpq</code> without <code>connect_timeout</code> waits out the OS TCP retry — about two minutes — before trying the next one. The fix became validated desired state rather than a README note: <code>client-connect-timeout-seconds</code>, exercised by acceptance nine times over, with <code>bb golden</code> failing if it disappears. Measured at <code>connect_timeout=5</code>: 6/10 probes at ~80ms, 4/10 at ~5.1s, zero failures.</li>
+      </ul>
+      <p>The most expensive single mistake was not infrastructure at all. The PostgreSQL convergence gate demanded <code>state == running</code> from all three members, but a healthy standby reports <code>streaming</code>, and under synchronous mode its role is <code>sync_standby</code>. The cluster was correct on the first attempt; the gate spent 7.5 minutes failing to notice and skipped every task behind it. Five of that arm's seven failures were its own checks being wrong rather than the system under test.</p>
+
+      <h2>6. What This Means for Platform &amp; AI Engineering</h2>
+      <p>Three things are worth carrying out of this run.</p>
+      <ul>
+        <li><strong>The reuse path lost to a blank page.</strong> Every previously existing package in this workspace builds on ONCE's provider registry and compute stages. Both agents independently declined it and wrote their own DigitalOcean and Cloudflare templates, arriving at 568 and 537 lines separately. Two isolated agents rejecting the same abstraction on the same task is a signal about that abstraction's fit for multi-node topologies — not about either database.</li>
+        <li><strong>"Deployed" is a weaker claim than "survived."</strong> Both packages passed every offline check before either had a failover bug. The 32-character cap and the black-holed SYN appeared only under a real fault. A benchmark that stops at <code>--dry-run</code> would have scored both arms as finished and shipped both flaws.</li>
+        <li><strong>Determinism is the deliverable.</strong> The output that matters is not the running cluster — it is a SHA-pinned Package Skill whose launcher is byte-identical to its payload, whose golden fixtures fail if a provider template drifts, and which converges the same way from a clean checkout. Both arms produced that.</li>
+      </ul>
+
+      <div class="panel repo-box">
+        <div class="card-label">Artifacts</div>
+        <p>Every package and deployment from this run is public.</p>
+        <div class="repo-grid">
+          <a class="repo-item" href="https://github.com/getcolors/postgres-ha">
+            <span class="repo-name">getcolors/postgres-ha</span>
+            <span class="repo-desc">Patroni + colocated etcd + HAProxy + pgBackRest</span>
+          </a>
+          <a class="repo-item" href="https://github.com/getcolors/postgres-ha-digitalocean">
+            <span class="repo-name">getcolors/postgres-ha-digitalocean</span>
+            <span class="repo-desc">Desired state for the PostgreSQL deployment</span>
+          </a>
+          <a class="repo-item" href="https://github.com/getcolors/mysql-ha">
+            <span class="repo-name">getcolors/mysql-ha</span>
+            <span class="repo-desc">Group Replication + reserved IP + binlog PITR</span>
+          </a>
+          <a class="repo-item" href="https://github.com/getcolors/mysql-ha-digitalocean">
+            <span class="repo-name">getcolors/mysql-ha-digitalocean</span>
+            <span class="repo-desc">Desired state for the MySQL deployment</span>
+          </a>
+        </div>
+      </div>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-block: 24px 80px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 36px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .summary-card {
+    padding: 24px 28px;
+    margin-bottom: 48px;
+    border-left: 4px solid var(--blue);
+    background: var(--surface);
+  }
+  .card-label {
+    font: 600 12px var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+  .summary-card p {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .summary-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .summary-list li {
+    margin-bottom: 8px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul, .content-body ol {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 8px;
+  }
+  .media-figure {
+    margin: 36px 0;
+    overflow: hidden;
+    padding: 0;
+  }
+  .media-figure figcaption {
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  /* The diagram is inline SVG rather than a raster so it reads from the page's
+     own custom properties and follows the theme. It scrolls inside the figure
+     on narrow screens instead of widening the document. */
+  .diagram-figure {
+    overflow-x: auto;
+  }
+  .arch {
+    display: block;
+    width: 100%;
+    min-width: 720px;
+    height: auto;
+    padding: 20px 16px 8px;
+  }
+  .arch text {
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .arch .d-title {
+    font-family: var(--sans, inherit);
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .arch .d-sm {
+    font-size: 11.5px;
+  }
+  .arch .d-sub {
+    font-size: 10.5px;
+    fill: var(--muted);
+  }
+  .arch .d-ink {
+    fill: var(--ink);
+  }
+  .arch .d-blue {
+    fill: var(--blue);
+  }
+  .arch .d-green {
+    fill: var(--green);
+  }
+  .arch .d-box {
+    fill: var(--page);
+    stroke: var(--line);
+  }
+  .arch .d-rule {
+    stroke: var(--rule);
+  }
+  .arch .d-blue-s {
+    stroke: var(--blue);
+    fill: none;
+    stroke-width: 1.4;
+  }
+  .arch .d-green-s {
+    stroke: var(--green);
+    fill: none;
+    stroke-width: 1.4;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin: 28px 0;
+    padding: 0;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .data-table th {
+    background: var(--surface);
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+  .data-table tr:hover td {
+    background: var(--surface);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .badge-green {
+    background: oklch(94% 0.04 145);
+    color: oklch(40% 0.15 145);
+  }
+  .badge-blue {
+    background: oklch(94% 0.04 260);
+    color: var(--blue);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .repo-box {
+    padding: 28px;
+    margin-top: 48px;
+  }
+  .repo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .repo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+    background: var(--page);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 160ms ease, transform 160ms ease;
+  }
+  .repo-item:hover {
+    border-color: var(--blue);
+    transform: translateY(-2px);
+  }
+  .repo-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+  .repo-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>

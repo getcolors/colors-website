@@ -26,6 +26,10 @@ import {
   postgresAgyInstallCmd,
   mysqlAgy,
   mysqlAgyInstallCmd,
+  postgresHa,
+  postgresHaInstallCmd,
+  mysqlHa,
+  mysqlHaInstallCmd,
   temporal,
   temporalInstallCmd,
   restate,
@@ -52,6 +56,8 @@ const featuredPackageSkills = [
   { label: "Temporal", href: "#temporal" },
   { label: "PostgreSQL HA", href: "#postgres-agy" },
   { label: "MySQL HA", href: "#mysql-agy" },
+  { label: "PostgreSQL HA (Opus 5)", href: "#postgres-ha" },
+  { label: "MySQL HA (Opus 5)", href: "#mysql-ha" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1398,6 +1404,94 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{mysqlAgy.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- POSTGRESQL HA (OPUS 5) -->
+      <div class="sec sec-alt" id="postgres-ha">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{postgresHa.eyebrow}</div>
+          <SectionHeading id="postgres-ha" title={postgresHa.heading} />
+          <p class="sec-lede sec-lede-wide">{postgresHa.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={postgresHaInstallCmd} id="featured-postgres-ha-install" />
+            <span class="install-note" set:html={html(postgresHa.runtimeNote)} />
+            <ResourceLinks repoUrl={postgresHa.repoUrl} catalogUrl="/getcolors/postgres-ha" />
+          </div>
+
+          <div class="grid-5">
+            {postgresHa.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{postgresHa.dagCaption}</div>
+            <div class="dag">
+              {postgresHa.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{postgresHa.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MYSQL HA (OPUS 5) -->
+      <div class="sec" id="mysql-ha">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{mysqlHa.eyebrow}</div>
+          <SectionHeading id="mysql-ha" title={mysqlHa.heading} />
+          <p class="sec-lede sec-lede-wide">{mysqlHa.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={mysqlHaInstallCmd} id="featured-mysql-ha-install" />
+            <span class="install-note" set:html={html(mysqlHa.runtimeNote)} />
+            <ResourceLinks repoUrl={mysqlHa.repoUrl} catalogUrl="/getcolors/mysql-ha" />
+          </div>
+
+          <div class="grid-5">
+            {mysqlHa.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{mysqlHa.dagCaption}</div>
+            <div class="dag">
+              {mysqlHa.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{mysqlHa.dagNote}</p>
           </div>
         </div>
       </div>

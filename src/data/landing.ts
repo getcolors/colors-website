@@ -946,6 +946,102 @@ export const mysqlAgy = {
     "Delete releases the Floating Reserved IP and DNS records before destroying compute, guarded by `compute-prevent-destroy: true`.",
 };
 
+export const postgresHaInstallCmd =
+  "npx skills add https://github.com/getcolors/postgres-ha --skill package-postgres-ha-green";
+
+export const postgresHa = {
+  eyebrow: "Package Skill",
+  repoUrl: "https://github.com/getcolors/postgres-ha",
+  heading: "PostgreSQL HA (Opus 5): Patroni, colocated etcd, HAProxy on every node",
+  lede: "A second, independent implementation of a 3-node PostgreSQL 17 failover cluster, built by Claude Opus 5 in an isolated benchmark run. Patroni 4.1.5 drives a colocated 3-member etcd; HAProxy runs on all three nodes behind three A records, so a failover writes no DNS and calls no cloud API.",
+  runtimeNote:
+    "PostgreSQL HA (Opus 5) ships in **green** (Babashka / Clojure) and depends only on the Colors SDK — it writes its own DigitalOcean and Cloudflare templates rather than reusing Once.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "The agent reads `colors.yml`: PostgreSQL 17, Patroni 4.1.5, etcd 3.5.33 pinned by tarball SHA-256, three Droplets in AMS3, and a pgBackRest repository in Cloudflare R2.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "DigitalOcean, Cloudflare and R2 credentials arrive as `COLORS_PAR_*` environment variables. Only two database credentials exist, and the package is built not to need a third.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "`build` renders OpenTofu and Ansible deterministically with no provider contact; `create --dry-run` walks the whole DAG without side effects.",
+    },
+    {
+      title: "Provision & cluster",
+      body: "OpenTofu creates three Droplets on the region's default VPC; Ansible forms etcd quorum, bootstraps Patroni with quorum synchronous commit `ANY 1`, and starts an HAProxy on every node.",
+    },
+    {
+      title: "Archive & prove restore",
+      body: "pgBackRest streams WAL to R2 with `archive_command` held in Patroni's DCS, so a promoted node keeps archiving. A daily timer restores the newest backup, replays every segment, and fails unless a leader-written heartbeat is under 900s old.",
+    },
+  ],
+  dagCaption: "PostgreSQL HA (Opus 5) — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "group", nodes: ["ansible-local", "cluster", "acceptance"] },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → (`ansible-local`, `cluster`, `acceptance`).",
+  dagNote:
+    "Delete reverses the DAG, tearing down the cluster and DNS before destroying compute. Guarded by committed `compute-prevent-destroy: true`.",
+};
+
+export const mysqlHaInstallCmd =
+  "npx skills add https://github.com/getcolors/mysql-ha --skill package-mysql-ha-green";
+
+export const mysqlHa = {
+  eyebrow: "Package Skill",
+  repoUrl: "https://github.com/getcolors/mysql-ha",
+  heading: "MySQL HA (Opus 5): Group Replication with a reserved-IP endpoint",
+  lede: "A second, independent implementation of a 3-node MySQL 8.0 failover cluster, built by Claude Opus 5 in an isolated benchmark run. The three mysqld processes are the Paxos group, so quorum needs no external store, and a DigitalOcean reserved IP follows whichever member reports PRIMARY.",
+  runtimeNote:
+    "MySQL HA (Opus 5) ships in **green** (Babashka / Clojure) and depends only on the Colors SDK — it writes its own DigitalOcean and Cloudflare templates rather than reusing Once.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "The agent reads `colors.yml`: MySQL 8.0, a fixed group UUID, three Droplets in AMS3, Cloudflare DNS, and an R2 bucket for dumps and binary logs.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "DigitalOcean, Cloudflare and R2 credentials arrive as `COLORS_PAR_*` environment variables. MySQL caps replication passwords at 32 characters, so the replication account derives its own deterministically rather than requiring a third secret.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "`build` renders OpenTofu and Ansible deterministically with no provider contact; `create --dry-run` walks the whole DAG without side effects.",
+    },
+    {
+      title: "Provision & cluster",
+      body: "OpenTofu creates three Droplets and a reserved IP; Ansible bootstraps Group Replication in single-primary mode, with the group port never leaving the VPC.",
+    },
+    {
+      title: "Archive & prove restore",
+      body: "Every ONLINE member spools binary logs to R2 each minute, so any one member is a complete source and the archiver needs no leader election. A daily scratch `mysqld` replays them and asserts it recovered past the snapshot.",
+    },
+  ],
+  dagCaption: "MySQL HA (Opus 5) — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "group", nodes: ["base", "cluster", "backup", "health"] },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → (`base`, `cluster`, `backup`, `health`).",
+  dagNote:
+    "Delete releases the reserved IP and DNS records before destroying compute, guarded by committed `compute-prevent-destroy: true`.",
+};
+
 export const cta = {
   heading: "Give your agent a new skill to create a personal PaaS.",
   lede: "Dry-run first. Approve. Then provision — with Once, built with Colors. Paste this into your coding agent.",

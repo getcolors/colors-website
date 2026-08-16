@@ -1,0 +1,22 @@
+name: MySQL HA (Opus 5)
+summary: Operate a 3-node MySQL 8.0 Group Replication cluster with a reserved-IP endpoint claimed by the primary, Cloudflare DNS, and continuous binary log point-in-time recovery with a daily verified restore to Cloudflare R2 on DigitalOcean.
+repository: getcolors/mysql-ha
+featured: /featured#mysql-ha
+keywords:
+  - MySQL
+  - MySQL HA
+  - Group Replication
+  - InnoDB Cluster
+  - database
+  - high availability
+  - failover
+  - floating IP
+  - point-in-time recovery
+  - DigitalOcean
+  - Cloudflare
+  - Cloudflare R2
+  - self-hosted
+package-skills:
+  - name: package-mysql-ha-green
+    path: skills/package-mysql-ha-green/SKILL.md
+    runtime: green

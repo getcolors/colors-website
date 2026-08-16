@@ -1,0 +1,23 @@
+name: PostgreSQL HA (Opus 5)
+repository: getcolors/postgres-ha
+featured: /featured#postgres-ha
+summary: Operate a 3-node PostgreSQL 17 failover cluster with Patroni, colocated etcd, quorum synchronous commit, HAProxy client routing on every node, Cloudflare DNS, and pgBackRest continuous WAL backups with a daily verified restore to Cloudflare R2 on DigitalOcean.
+keywords:
+  - PostgreSQL
+  - PostgreSQL HA
+  - Patroni
+  - etcd
+  - HAProxy
+  - database
+  - high availability
+  - failover
+  - point-in-time recovery
+  - pgBackRest
+  - DigitalOcean
+  - Cloudflare
+  - Cloudflare R2
+  - self-hosted
+package-skills:
+  - name: package-postgres-ha-green
+    path: skills/package-postgres-ha-green/SKILL.md
+    runtime: green
