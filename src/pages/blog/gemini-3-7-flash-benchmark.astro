@@ -19,14 +19,14 @@ const readTime = "12 min read";
     </div>
 
     <header class="post-header">
-      <div class="post-meta">
-        <span class="section-label">Research & Benchmark</span>
-        <span class="runtime runtime-blue">Gemini 3.7 Flash</span>
-        <span class="post-date mono">{publishDate}</span>
-        <span class="dot">·</span>
-        <span class="post-readtime mono">{readTime}</span>
-      </div>
+      <p class="eyebrow section-label">Research & Benchmark</p>
       <h1>Benchmarking Gemini 3.7 Flash on Autonomous Distributed Infrastructure: Building PostgreSQL & MySQL HA Clusters from Scratch</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">Gemini 3.7 Flash</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+      </div>
       <p class="lede">An empirical, end-to-end evaluation of Gemini 3.7 Flash across distributed systems design, infrastructure as code, deterministic testing, and live cloud deployment.</p>
     </header>
 
@@ -346,17 +346,28 @@ const readTime = "12 min read";
   .post-header {
     margin-bottom: 36px;
   }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
   .post-meta {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 12px;
+    margin: 16px 0 20px;
     font-size: 13px;
     color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime {
+    font-size: 12px;
+    line-height: 1;
   }
   .dot {
     color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
   }
   .summary-card {
     padding: 24px 28px;
