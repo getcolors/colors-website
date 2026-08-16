@@ -1,6 +1,7 @@
 name: PostgreSQL HA
 repository: getcolors/postgres-agy
 summary: Operate a 3-node PostgreSQL 17 failover cluster with Patroni, colocated etcd v3, HAProxy client routing, Cloudflare DNS, and pgBackRest continuous WAL backups to Cloudflare R2 on DigitalOcean.
+featured: /featured#postgres-agy
 keywords:
   - PostgreSQL
   - PostgreSQL HA

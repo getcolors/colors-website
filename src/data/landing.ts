@@ -848,6 +848,104 @@ export const walter = {
     "Stop and start never reach OpenTofu. No template declares a power state, so powering the machine down out of band causes no drift — there is nothing to reconcile, because power was never managed. Starting reads the address back from the provider rather than from stored state, which a power cycle does not refresh. Delete reverses the create graph, dropping the managed ssh alias before anything is destroyed.",
 };
 
+export const postgresAgyInstallCmd =
+  "npx skills add https://github.com/getcolors/postgres-agy --skill package-postgres-agy-green";
+
+export const postgresAgy = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/postgres-agy/",
+  repoUrl: "https://github.com/getcolors/postgres-agy",
+  heading: "PostgreSQL HA: 3-node Patroni & etcd failover cluster",
+  lede: "PostgreSQL HA is a Package Skill built with Colors. It provisions a 3-node PostgreSQL 17 cluster on DigitalOcean, establishes etcd v3 quorum consensus with Patroni leader election, routes clients via local HAProxy, and streams continuous WAL backups to Cloudflare R2.",
+  runtimeNote:
+    "PostgreSQL HA ships in **green** (Babashka / Clojure). It orchestrates Patroni, etcd, HAProxy, and pgBackRest with zero human intervention during failover.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins PostgreSQL 17, Patroni 4.1.5, etcd v3.5, 3 Droplets in AMS3, Cloudflare DNS, and pgBackRest R2 bucket.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "DigitalOcean API tokens, Cloudflare DNS tokens, and Cloudflare R2 S3 credentials arrive through `COLORS_PAR_*` environment variables.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Build renders deterministic OpenTofu and Ansible templates locally; `create --dry-run` walks the execution DAG without contacting live providers.",
+    },
+    {
+      title: "Provision & cluster",
+      body: "OpenTofu provisions 3 Droplets on the private VPC; Ansible converges etcd v3 quorum, initializes Patroni, configures synchronous replication, and starts HAProxy.",
+    },
+    {
+      title: "Stream & verify PITR",
+      body: "pgBackRest streams WAL archives continuously to Cloudflare R2. Automated restore check systemd timers verify standbys can reconstruct state from R2 without data loss.",
+    },
+  ],
+  dagCaption: "PostgreSQL HA — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-compute" },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-dns" },
+    { kind: "edge" },
+    { kind: "group", nodes: ["ansible-local", "cluster", "ansible-remote"] },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `tofu-compute` → `tofu-dns` → (`ansible-local`, `cluster`, `ansible-remote`).",
+  dagNote:
+    "Delete reverses the DAG, removing HAProxy DNS routing before tearing down etcd consensus and destroying Droplets. Guarded by committed `compute-prevent-destroy: true`.",
+};
+
+export const mysqlAgyInstallCmd =
+  "npx skills add https://github.com/getcolors/mysql-agy --skill package-mysql-agy-green";
+
+export const mysqlAgy = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/mysql-agy/",
+  repoUrl: "https://github.com/getcolors/mysql-agy",
+  heading: "MySQL HA: 3-node Group Replication & Floating VIP cluster",
+  lede: "MySQL HA is a Package Skill built with Colors. It provisions a 3-node MySQL 8.4 Group Replication cluster on DigitalOcean, manages dynamic primary election via an automated Floating VIP daemon, and streams continuous 1-minute binary logs to Cloudflare R2.",
+  runtimeNote:
+    "MySQL HA ships in **green** (Babashka / Clojure). Consensus is maintained natively via MySQL Group Communication System (Paxos) without external key-value stores.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins MySQL 8.4, Group Replication Single-Primary mode, Reserved IP, Cloudflare DNS, and R2 backup settings.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "DigitalOcean API tokens, replication credentials, and Cloudflare R2 keys arrive strictly through `COLORS_PAR_*` environment variables.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Renders all OpenTofu and Ansible files locally; `create --dry-run` verifies execution DAG and cloud plans without making changes.",
+    },
+    {
+      title: "Provision & form group",
+      body: "OpenTofu allocates 3 Droplets and 1 Floating Reserved IP; Ansible joins the 3 members into a Paxos consensus group and starts the VIP claim daemon.",
+    },
+    {
+      title: "Continuous PITR & drill",
+      body: "Systemd services spool binary logs every 60s to Cloudflare R2 with daily compressed dumps and automated scratch restore drills verifying zero transaction lag.",
+    },
+  ],
+  dagCaption: "MySQL HA — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-compute" },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-dns" },
+    { kind: "edge" },
+    { kind: "group", nodes: ["ansible-local", "ansible-remote"] },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `tofu-compute` → `tofu-dns` → (`ansible-local`, `ansible-remote`).",
+  dagNote:
+    "Delete releases the Floating Reserved IP and DNS records before destroying compute, guarded by `compute-prevent-destroy: true`.",
+};
+
 export const cta = {
   heading: "Give your agent a new skill to create a personal PaaS.",
   lede: "Dry-run first. Approve. Then provision — with Once, built with Colors. Paste this into your coding agent.",

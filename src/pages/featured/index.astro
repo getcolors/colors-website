@@ -22,6 +22,10 @@ import {
   once,
   rama,
   ramaInstallCmd,
+  postgresAgy,
+  postgresAgyInstallCmd,
+  mysqlAgy,
+  mysqlAgyInstallCmd,
   temporal,
   temporalInstallCmd,
   restate,
@@ -46,6 +50,8 @@ const featuredPackageSkills = [
   { label: "Walter", href: "#walter" },
   { label: "Restate", href: "#restate" },
   { label: "Temporal", href: "#temporal" },
+  { label: "PostgreSQL HA", href: "#postgres-agy" },
+  { label: "MySQL HA", href: "#mysql-agy" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1304,6 +1310,94 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{temporal.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- POSTGRESQL HA -->
+      <div class="sec sec-alt" id="postgres-agy">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{postgresAgy.eyebrow}</div>
+          <SectionHeading id="postgres-agy" title={postgresAgy.heading} />
+          <p class="sec-lede sec-lede-wide">{postgresAgy.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={postgresAgyInstallCmd} id="featured-postgres-agy-install" />
+            <span class="install-note" set:html={html(postgresAgy.runtimeNote)} />
+            <ResourceLinks docsUrl={postgresAgy.docsUrl} repoUrl={postgresAgy.repoUrl} catalogUrl="/getcolors/postgres-agy" />
+          </div>
+
+          <div class="grid-5">
+            {postgresAgy.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{postgresAgy.dagCaption}</div>
+            <div class="dag">
+              {postgresAgy.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{postgresAgy.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MYSQL HA -->
+      <div class="sec" id="mysql-agy">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{mysqlAgy.eyebrow}</div>
+          <SectionHeading id="mysql-agy" title={mysqlAgy.heading} />
+          <p class="sec-lede sec-lede-wide">{mysqlAgy.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={mysqlAgyInstallCmd} id="featured-mysql-agy-install" />
+            <span class="install-note" set:html={html(mysqlAgy.runtimeNote)} />
+            <ResourceLinks docsUrl={mysqlAgy.docsUrl} repoUrl={mysqlAgy.repoUrl} catalogUrl="/getcolors/mysql-agy" />
+          </div>
+
+          <div class="grid-5">
+            {mysqlAgy.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{mysqlAgy.dagCaption}</div>
+            <div class="dag">
+              {mysqlAgy.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                if (item.kind === "group")
+                  return (
+                    <div class="dag-group">
+                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                    </div>
+                  );
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{mysqlAgy.dagNote}</p>
           </div>
         </div>
       </div>
