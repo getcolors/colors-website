@@ -1,0 +1,21 @@
+name: MySQL HA
+repository: getcolors/mysql-agy
+summary: Operate a 3-node MySQL 8.4 Group Replication cluster with automated Floating VIP failover, Cloudflare DNS, and continuous binary log point-in-time recovery to Cloudflare R2 on DigitalOcean.
+keywords:
+  - MySQL
+  - MySQL HA
+  - Group Replication
+  - InnoDB Cluster
+  - database
+  - high availability
+  - failover
+  - floating IP
+  - point-in-time recovery
+  - DigitalOcean
+  - Cloudflare
+  - Cloudflare R2
+  - self-hosted
+package-skills:
+  - name: package-mysql-agy-green
+    path: skills/package-mysql-agy-green/SKILL.md
+    runtime: green
