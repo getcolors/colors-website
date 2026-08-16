@@ -35,29 +35,26 @@ const articles = [
 
     <div class="articles-grid">
       {articles.map((post) => (
-        <article class="post-card panel">
-          <a href={post.slug} class="post-media">
-            <img src={post.image} alt={post.title} loading="lazy" />
-          </a>
+        <a href={post.slug} class="post-card panel">
+          <div class="post-media">
+            <img src={post.image} alt={post.title} />
+          </div>
           <div class="post-body">
-            <div class="post-meta">
-              <span class="runtime runtime-blue">{post.runtime}</span>
-              <span class="post-date mono">{post.date}</span>
-              <span class="dot">·</span>
-              <span class="post-readtime mono">{post.readTime}</span>
-            </div>
-            <h2 class="post-title">
-              <a href={post.slug}>{post.title}</a>
-            </h2>
-            <p class="post-summary">{post.summary}</p>
-            <div class="post-footer">
-              <div class="tag-list">
-                {post.tags.map((tag) => <span class="tag-item mono">#{tag}</span>)}
+            <div>
+              <div class="post-meta">
+                <span class="runtime runtime-blue">{post.runtime}</span>
+                <span class="post-date mono">{post.date}</span>
+                <span class="dot">·</span>
+                <span class="post-readtime mono">{post.readTime}</span>
               </div>
-              <a href={post.slug} class="button-link">Read article →</a>
+              <h2 class="post-title">{post.title}</h2>
+              <p class="post-summary">{post.summary}</p>
+            </div>
+            <div class="tag-list">
+              {post.tags.map((tag) => <span class="tag-item mono">#{tag}</span>)}
             </div>
           </div>
-        </article>
+        </a>
       ))}
     </div>
   </div>
@@ -83,11 +80,17 @@ const articles = [
     grid-template-columns: 360px 1fr;
     gap: 32px;
     padding: 24px;
-    transition: border-color 160ms ease, box-shadow 160ms ease;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
   }
   .post-card:hover {
     border-color: var(--blue);
     box-shadow: 0 10px 30px oklch(20% 0.01 260 / 6%);
+    transform: translateY(-2px);
+  }
+  .post-card:hover .post-title {
+    color: var(--blue);
   }
   .post-media {
     border-radius: 8px;
@@ -117,7 +120,7 @@ const articles = [
     flex-wrap: wrap;
     align-items: center;
     gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     font-size: 12px;
     color: var(--muted);
     line-height: 1;
@@ -135,33 +138,21 @@ const articles = [
     font-size: 24px;
     line-height: 1.2;
     letter-spacing: -0.01em;
-  }
-  .post-title a {
     color: var(--ink);
-    text-decoration: none;
-  }
-  .post-title a:hover {
-    color: var(--blue);
+    transition: color 160ms ease;
   }
   .post-summary {
     color: var(--muted);
     font-size: 15px;
     line-height: 1.6;
-    margin: 0 0 20px;
-  }
-  .post-footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--rule);
+    margin: 0 0 18px;
   }
   .tag-list {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
   }
   .tag-item {
     font-size: 12px;
