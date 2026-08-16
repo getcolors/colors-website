@@ -16,6 +16,7 @@ const STATIC_PAGES = [
   "/featured",
   "/skills",
   "/blog",
+  "/blog/agentic-devops-compounding-advantage",
   "/blog/gemini-3-7-flash-benchmark",
 ];
 

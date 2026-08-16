@@ -17,6 +17,13 @@ export async function GET() {
     <pubDate>Sun, 16 Aug 2026 12:00:00 GMT</pubDate>
     <description>An empirical creation-effort benchmark evaluating Gemini 3.7 Flash building and deploying 3-node PostgreSQL and MySQL High Availability clusters to DigitalOcean with continuous backups to Cloudflare R2.</description>
   </item>
+  <item>
+    <title>Agentic DevOps Has a Compounding Advantage</title>
+    <link>https://www.getcolors.ai/blog/agentic-devops-compounding-advantage</link>
+    <guid isPermaLink="true">https://www.getcolors.ai/blog/agentic-devops-compounding-advantage</guid>
+    <pubDate>Sat, 15 Aug 2026 12:00:00 GMT</pubDate>
+    <description>Why agentic DevOps accelerates faster over time: every verified Package Skill creates an executable corpus of operational knowledge that reduces the reasoning and implementation required for future deployments.</description>
+  </item>
 </channel>
 </rss>`;
 
