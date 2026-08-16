@@ -10,9 +10,42 @@ const imageAlt = "Gemini 3.7 Flash Autonomous Infrastructure Benchmark";
 
 const publishDate = "August 16, 2026";
 const readTime = "7 min read";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "Benchmarking Gemini 3.7 Flash on Autonomous Distributed Infrastructure: Building PostgreSQL & MySQL HA Clusters from Scratch",
+  description,
+  url: "https://www.getcolors.ai/blog/gemini-3-7-flash-benchmark",
+  image: "https://www.getcolors.ai/images/benchmark_setup_flow_1786877790896.jpg",
+  datePublished: "2026-08-16T12:00:00Z",
+  dateModified: "2026-08-16T12:00:00Z",
+  author: {
+    "@type": "Organization",
+    name: "Colors",
+    url: "https://www.getcolors.ai",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: "https://www.getcolors.ai",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://www.getcolors.ai/favicon.svg",
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Gemini 3.7 Flash" },
+    { "@type": "Thing", name: "Agentic AI" },
+    { "@type": "Thing", name: "High Availability Databases" },
+    { "@type": "Thing", name: "PostgreSQL HA" },
+    { "@type": "Thing", name: "MySQL HA" },
+  ],
+};
 ---
 
-<CatalogLayout {title} {description} {path} {image} {imageAlt} active="blog">
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <div class="wrap post-page">
     <div class="breadcrumb-bar">
       <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Gemini 3.7 Flash Benchmark" }]} />

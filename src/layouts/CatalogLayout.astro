@@ -10,10 +10,11 @@ interface Props {
   path: string;
   image?: string;
   imageAlt?: string;
+  type?: "website" | "article";
   active?: "featured" | "catalog" | "blog";
 }
 
-const { title, description, path, image, imageAlt, active = "catalog" } = Astro.props;
+const { title, description, path, image, imageAlt, type = "website", active = "catalog" } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,7 +24,7 @@ const { title, description, path, image, imageAlt, active = "catalog" } = Astro.
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <SeoMeta title={title} description={description} path={path} {image} {imageAlt} />
+    <SeoMeta title={title} description={description} path={path} {image} {imageAlt} {type} />
     <StyleGate />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-4VKP1WY4QJ"></script>
