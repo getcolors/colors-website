@@ -951,6 +951,7 @@ export const postgresHaInstallCmd =
 
 export const postgresHa = {
   eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/postgres-ha/",
   repoUrl: "https://github.com/getcolors/postgres-ha",
   heading: "PostgreSQL HA (Opus 5): Patroni, colocated etcd, HAProxy on every node",
   lede: "A second, independent implementation of a 3-node PostgreSQL 17 failover cluster, built by Claude Opus 5 in an isolated benchmark run. Patroni 4.1.5 drives a colocated 3-member etcd; HAProxy runs on all three nodes behind three A records, so a failover writes no DNS and calls no cloud API.",
@@ -999,6 +1000,7 @@ export const mysqlHaInstallCmd =
 
 export const mysqlHa = {
   eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/mysql-ha/",
   repoUrl: "https://github.com/getcolors/mysql-ha",
   heading: "MySQL HA (Opus 5): Group Replication with a reserved-IP endpoint",
   lede: "A second, independent implementation of a 3-node MySQL 8.0 failover cluster, built by Claude Opus 5 in an isolated benchmark run. The three mysqld processes are the Paxos group, so quorum needs no external store, and a DigitalOcean reserved IP follows whichever member reports PRIMARY.",

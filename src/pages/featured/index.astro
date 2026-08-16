@@ -1418,7 +1418,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <div class="sec-install">
             <InstallBox command={postgresHaInstallCmd} id="featured-postgres-ha-install" />
             <span class="install-note" set:html={html(postgresHa.runtimeNote)} />
-            <ResourceLinks repoUrl={postgresHa.repoUrl} catalogUrl="/getcolors/postgres-ha" />
+            <ResourceLinks docsUrl={postgresHa.docsUrl} repoUrl={postgresHa.repoUrl} catalogUrl="/getcolors/postgres-ha" />
           </div>
 
           <div class="grid-5">
@@ -1462,7 +1462,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <div class="sec-install">
             <InstallBox command={mysqlHaInstallCmd} id="featured-mysql-ha-install" />
             <span class="install-note" set:html={html(mysqlHa.runtimeNote)} />
-            <ResourceLinks repoUrl={mysqlHa.repoUrl} catalogUrl="/getcolors/mysql-ha" />
+            <ResourceLinks docsUrl={mysqlHa.docsUrl} repoUrl={mysqlHa.repoUrl} catalogUrl="/getcolors/mysql-ha" />
           </div>
 
           <div class="grid-5">
