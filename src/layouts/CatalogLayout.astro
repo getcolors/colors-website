@@ -10,9 +10,10 @@ interface Props {
   path: string;
   image?: string;
   imageAlt?: string;
+  active?: "featured" | "catalog" | "blog";
 }
 
-const { title, description, path, image, imageAlt } = Astro.props;
+const { title, description, path, image, imageAlt, active = "catalog" } = Astro.props;
 ---
 
 <!doctype html>
@@ -34,7 +35,7 @@ const { title, description, path, image, imageAlt } = Astro.props;
     </script>
   </head>
   <body>
-    <SiteHeader active="catalog" />
+    <SiteHeader active={active} />
     <main><slot /></main>
     <SiteFooter />
   </body>

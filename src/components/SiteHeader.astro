@@ -2,13 +2,14 @@
 import { nav } from "~/data/landing";
 
 interface Props {
-  active?: "featured" | "catalog";
+  active?: "featured" | "catalog" | "blog";
 }
 
 const { active } = Astro.props;
 const isCurrent = (href: string) =>
   (active === "featured" && href === "/featured") ||
-  (active === "catalog" && href === "/skills");
+  (active === "catalog" && href === "/skills") ||
+  (active === "blog" && href === "/blog");
 ---
 
 <header class="site-header" data-site-header>

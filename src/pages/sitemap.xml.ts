@@ -11,7 +11,13 @@ import { loadCatalog } from "~/data/catalog";
 
 // /blog/rss.xml is a feed and /index.md is a content-negotiated alternate of
 // `/`, so neither belongs in the sitemap.
-const STATIC_PAGES = ["/", "/featured", "/skills"];
+const STATIC_PAGES = [
+  "/",
+  "/featured",
+  "/skills",
+  "/blog",
+  "/blog/gemini-3-7-flash-benchmark",
+];
 
 export async function GET({ site }: APIContext) {
   // No fallback literal on purpose. `site` is set unconditionally in

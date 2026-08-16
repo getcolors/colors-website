@@ -54,6 +54,7 @@ compute-prevent-destroy: true`;
 export const nav = [
   { label: "Featured", href: "/featured" },
   { label: "Catalog", href: "/skills" },
+  { label: "Blog", href: "/blog" },
 ];
 
 export const hero = {

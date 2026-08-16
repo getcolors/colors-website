@@ -1,0 +1,527 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+
+const title = "Benchmarking Gemini 3.7 Flash on Autonomous Distributed Infrastructure — Colors";
+const description = "An empirical, end-to-end evaluation of Gemini 3.7 Flash building and deploying PostgreSQL and MySQL High Availability clusters from scratch.";
+const path = "/blog/gemini-3-7-flash-benchmark";
+const image = "/images/benchmark_setup_flow_1786877790896.jpg";
+const imageAlt = "Gemini 3.7 Flash Autonomous Infrastructure Benchmark";
+
+const publishDate = "August 16, 2026";
+const readTime = "12 min read";
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} active="blog">
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Gemini 3.7 Flash Benchmark" }]} />
+    </div>
+
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="section-label">Research & Benchmark</span>
+        <span class="runtime runtime-blue">Gemini 3.7 Flash</span>
+        <span class="post-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="post-readtime mono">{readTime}</span>
+      </div>
+      <h1>Benchmarking Gemini 3.7 Flash on Autonomous Distributed Infrastructure: Building PostgreSQL & MySQL HA Clusters from Scratch</h1>
+      <p class="lede">An empirical, end-to-end evaluation of Gemini 3.7 Flash across distributed systems design, infrastructure as code, deterministic testing, and live cloud deployment.</p>
+    </header>
+
+    <div class="panel summary-card">
+      <div class="card-label">Executive Summary</div>
+      <p>Can modern frontier AI models autonomously architect, implement, test, pin, and deploy production-grade distributed systems from a blank directory without human guidance?</p>
+      <p>We subjected <strong>Gemini 3.7 Flash</strong> (operating in Adaptive Thinking / High Reasoning mode) to a rigorous creation-effort benchmark within the <strong>Google Antigravity (AGY)</strong> agentic ecosystem and the <a href="https://www.getcolors.ai/"><strong>Colors</strong></a> infrastructure framework.</p>
+      <ul class="summary-list">
+        <li><strong>100% Autonomous Convergence:</strong> Both subagents converged on real DigitalOcean hardware and Cloudflare R2 with zero human intervention.</li>
+        <li><strong>13,105 Lines of Production Code Written:</strong> Across 198 files spanning Clojure/Babashka SDKs, OpenTofu templates, Ansible playbooks, and systemd units.</li>
+        <li><strong>Zero Golden Regressions:</strong> 216 test assertions passed, achieving 100% byte-for-byte golden fixture matching.</li>
+        <li><strong>High Token Economy:</strong> Generated ~337K output tokens across 485 tool calls while evaluating over 114M cumulative context tokens up to a peak context window of 212K tokens without degradation.</li>
+      </ul>
+    </div>
+
+    <article class="content-body">
+      <h2>1. Experimental Methodology & Controls</h2>
+      <p>Standard AI benchmarks often evaluate models on isolated coding snippets or toy algorithms. Real infrastructure engineering is fundamentally different: it requires state management, asynchronous orchestration, multi-file dependency graphs, network protocol understanding, and self-healing under failure.</p>
+
+      <figure class="media-figure panel">
+        <img src="/images/benchmark_setup_flow_1786877790896.jpg" alt="Benchmark Experimental Setup: Two Concurrent Isolated Subagents with Symmetrical Prompts" />
+        <figcaption class="mono">Figure 1: Symmetrical, isolated concurrent subagent benchmark workflow.</figcaption>
+      </figure>
+
+      <h3>Eliminating the Order Effect</h3>
+      <p>In sequential testing, building Stack A gives the model context and learned patterns that artificially make Stack B easier to implement. To eliminate this bias:</p>
+      <ul>
+        <li><strong>Concurrent Isolated Subagents:</strong> Two cold subagents were spawned simultaneously with zero shared memory or cross-visibility. Subagent 1 (<code>mysql-agy</code>) was forbidden from inspecting PostgreSQL files, and Subagent 2 (<code>postgres-agy</code>) was forbidden from inspecting MySQL files.</li>
+        <li><strong>Symmetrical Prompt Template:</strong> Both agents received prompts generated from a single canonical template (<code>agent-prompt-template.md</code>) parameterized only by engine-specific nouns (ports, package names, bucket names).</li>
+        <li><strong>Objective Telemetry:</strong> Claims were audited against objective filesystem artifacts: commit logs, unit test assertions, golden file diffs, and live droplet metrics.</li>
+      </ul>
+
+      <h2>2. Architectural Divergence: How Gemini 3.7 Flash Solved Each Stack</h2>
+      <p>Given identical budgets (3 Droplets max, <code>s-2vcpu-4gb</code>, <code>ubuntu-24-04-x64</code> in DigitalOcean <code>ams3</code>), the model independently chose optimal, engine-native architectures:</p>
+
+      <figure class="media-figure panel">
+        <img src="/images/database_ha_architecture_1786877801459.jpg" alt="Database HA Topologies: PostgreSQL HA vs MySQL HA Architecture" />
+        <figcaption class="mono">Figure 2: Architectural comparison between PostgreSQL and MySQL High Availability clusters.</figcaption>
+      </figure>
+
+      <h3>PostgreSQL HA Arm (<code>postgres-agy</code> & <code>postgres-agy-digitalocean</code>)</h3>
+      <ul>
+        <li><strong>Quorum & Consensus:</strong> Deployed a 3-member <strong>etcd v3.5.33</strong> cluster colocated on the VPC private network (<code>2379</code>/<code>2380</code>), managed by <strong>Patroni 4.1.5</strong> with quorum synchronous commit (<code>synchronous_standby_names = ANY 1</code>).</li>
+        <li><strong>Client Routing:</strong> Deployed <strong>HAProxy 2.8</strong> on all 3 nodes routing port <code>5432</code> to the active leader and <code>5433</code> to read-only replicas. Paired with Cloudflare DNS multi-A records (<code>postgres-agy.bigconfig.online</code>), enabling client-side <code>libpq</code> failover without control-plane API latency during an outage.</li>
+        <li><strong>Backup & PITR:</strong> Implemented <strong>pgBackRest 2.59.0</strong> with <code>repo1-type=s3</code> streaming WAL files directly to Cloudflare R2 (<code>postgres-agy-backup</code>). Standbys execute a scheduled restore drill into a temporary cluster verifying leader heartbeat row continuity.</li>
+      </ul>
+
+      <h3>MySQL HA Arm (<code>mysql-agy</code> & <code>mysql-agy-digitalocean</code>)</h3>
+      <ul>
+        <li><strong>Quorum & Consensus:</strong> Implemented native <strong>MySQL 8.4 Group Replication</strong> in Single-Primary mode. Consensus is maintained internally via MySQL's Group Communication System (Paxos) without external DCS dependencies.</li>
+        <li><strong>Client Routing:</strong> Created an automated Floating VIP claim daemon (<code>mysql-agy-endpoint</code>) running on a 10s timer that polls cluster status and dynamically assigns the DigitalOcean Reserved IP (<code>178.128.139.24</code>) to the active primary.</li>
+        <li><strong>Backup & PITR:</strong> Implemented a continuous binary log spooler pushing increments every 1 minute to Cloudflare R2 (<code>mysql-agy-backup</code>), combined with daily <code>zstd</code> logical dumps and an automated restore drill that spins up an isolated scratch instance to replay binary logs and assert lag &lt; 900s.</li>
+      </ul>
+
+      <h2>3. Objective Metrics & Scorecard</h2>
+      <p>Recovered directly from the filesystem, git histories, and live cloud probes:</p>
+
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Category / Metric</th>
+              <th style="text-align: right;">MySQL Arm (<code>mysql-agy</code>)</th>
+              <th style="text-align: right;">PostgreSQL Arm (<code>postgres-agy</code>)</th>
+              <th style="text-align: right;">Combined Benchmark Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Convergence Status</strong></td>
+              <td style="text-align: right;"><span class="badge badge-green mono">✔ 100% Converged</span></td>
+              <td style="text-align: right;"><span class="badge badge-green mono">✔ 100% Converged</span></td>
+              <td style="text-align: right;"><span class="badge badge-blue mono">100% Success</span></td>
+            </tr>
+            <tr>
+              <td><strong>Wall-Clock Duration</strong></td>
+              <td style="text-align: right;"><strong>18 min 28 sec</strong></td>
+              <td style="text-align: right;"><strong>27 min 10 sec</strong></td>
+              <td style="text-align: right;"><strong>27 min 10 sec (Parallel)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Package Code Size</strong></td>
+              <td style="text-align: right;">91 files (6,913 lines)</td>
+              <td style="text-align: right;">107 files (6,192 lines)</td>
+              <td style="text-align: right;"><strong>198 files (13,105 lines)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Deployment Code Size</strong></td>
+              <td style="text-align: right;">46 files (29,016 lines)</td>
+              <td style="text-align: right;">35 files (22,928 lines)</td>
+              <td style="text-align: right;"><strong>81 files (51,944 lines)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Git Commits (Pkg / Deploy)</strong></td>
+              <td style="text-align: right;">10 / 4 commits</td>
+              <td style="text-align: right;">12 / 5 commits</td>
+              <td style="text-align: right;"><strong>31 commits total</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Unit Test Assertions</strong></td>
+              <td style="text-align: right;">38 tests (139 assertions)</td>
+              <td style="text-align: right;">17 tests (77 assertions)</td>
+              <td style="text-align: right;"><strong>216 assertions (100% pass)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Golden Fixture Verification</strong></td>
+              <td style="text-align: right;">0 diffs (100% byte match)</td>
+              <td style="text-align: right;">0 diffs (100% byte match)</td>
+              <td style="text-align: right;"><strong>Zero regressions</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Launcher Contract Checks</strong></td>
+              <td style="text-align: right;">7 / 7 passed</td>
+              <td style="text-align: right;">7 / 7 passed</td>
+              <td style="text-align: right;"><strong>14 / 14 passed</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Live Acceptance Checks</strong></td>
+              <td style="text-align: right;">0 failed health checks</td>
+              <td style="text-align: right;">10 / 10 passed</td>
+              <td style="text-align: right;"><strong>100% verified</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Live Cloud Infrastructure</strong></td>
+              <td style="text-align: right;">3 Droplets + 1 Reserved IP</td>
+              <td style="text-align: right;">3 Droplets + HAProxy</td>
+              <td style="text-align: right;"><strong>6 Droplets, 2 R2 Buckets</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>4. Token Consumption & Trajectory Telemetry</h2>
+      <p>Evaluating the efficiency of agentic workflows requires analyzing token economy, context growth, and tool distribution across hundreds of execution steps:</p>
+
+      <figure class="media-figure panel">
+        <img src="/images/telemetry_data_charts_1786877811816.jpg" alt="AI Agent Telemetry and Token Performance Dashboard" />
+        <figcaption class="mono">Figure 3: Token telemetry, tool invocation counts, and context scale.</figcaption>
+      </figure>
+
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Trajectory Metric</th>
+              <th style="text-align: right;">MySQL Arm (<code>mysql-agy</code>)</th>
+              <th style="text-align: right;">PostgreSQL Arm (<code>postgres-agy</code>)</th>
+              <th style="text-align: right;">Combined Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Total Trajectory Steps</strong></td>
+              <td style="text-align: right;">380 steps</td>
+              <td style="text-align: right;">649 steps</td>
+              <td style="text-align: right;"><strong>1,029 steps</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Model Invocations / Turns</strong></td>
+              <td style="text-align: right;">364 turns</td>
+              <td style="text-align: right;">617 turns</td>
+              <td style="text-align: right;"><strong>981 turns</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Total Tool Invocations</strong></td>
+              <td style="text-align: right;">181 calls</td>
+              <td style="text-align: right;">304 calls</td>
+              <td style="text-align: right;"><strong>485 calls</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Generated Output Tokens</strong></td>
+              <td style="text-align: right;">~141.6K tokens</td>
+              <td style="text-align: right;">~195.4K tokens</td>
+              <td style="text-align: right;"><strong>~337.0K tokens (1.35 MB)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Peak Context Window Size</strong></td>
+              <td style="text-align: right;">~150.9K tokens</td>
+              <td style="text-align: right;">~212.4K tokens</td>
+              <td style="text-align: right;">—</td>
+            </tr>
+            <tr>
+              <td><strong>Cumulative Context Processed</strong></td>
+              <td style="text-align: right;">~32.6M tokens</td>
+              <td style="text-align: right;">~81.4M tokens</td>
+              <td style="text-align: right;"><strong>~114.0M tokens</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Tool Call Breakdown</h3>
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Tool Name</th>
+              <th style="text-align: right;">MySQL Arm</th>
+              <th style="text-align: right;">PostgreSQL Arm</th>
+              <th style="text-align: right;">Combined Total</th>
+              <th style="text-align: right;">% of Calls</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>run_command</code> <em>(build, test, deploy, verify)</em></td>
+              <td style="text-align: right;">63</td>
+              <td style="text-align: right;">106</td>
+              <td style="text-align: right;"><strong>169</strong></td>
+              <td style="text-align: right;">34.8%</td>
+            </tr>
+            <tr>
+              <td><code>write_to_file</code> <em>(scaffold, playbooks, templates)</em></td>
+              <td style="text-align: right;">58</td>
+              <td style="text-align: right;">64</td>
+              <td style="text-align: right;"><strong>122</strong></td>
+              <td style="text-align: right;">25.2%</td>
+            </tr>
+            <tr>
+              <td><code>view_file</code> <em>(reference inspection, validation)</em></td>
+              <td style="text-align: right;">54</td>
+              <td style="text-align: right;">65</td>
+              <td style="text-align: right;"><strong>119</strong></td>
+              <td style="text-align: right;">24.5%</td>
+            </tr>
+            <tr>
+              <td><code>manage_task</code> <em>(async command monitoring)</em></td>
+              <td style="text-align: right;">4</td>
+              <td style="text-align: right;">31</td>
+              <td style="text-align: right;"><strong>35</strong></td>
+              <td style="text-align: right;">7.2%</td>
+            </tr>
+            <tr>
+              <td><code>replace_file_content</code> <em>(precise code fixes)</em></td>
+              <td style="text-align: right;">1</td>
+              <td style="text-align: right;">16</td>
+              <td style="text-align: right;"><strong>17</strong></td>
+              <td style="text-align: right;">3.5%</td>
+            </tr>
+            <tr>
+              <td><code>schedule</code> <em>(background timer scheduling)</em></td>
+              <td style="text-align: right;">0</td>
+              <td style="text-align: right;">14</td>
+              <td style="text-align: right;"><strong>14</strong></td>
+              <td style="text-align: right;">2.9%</td>
+            </tr>
+            <tr>
+              <td><code>list_dir</code> / <code>grep_search</code></td>
+              <td style="text-align: right;">0</td>
+              <td style="text-align: right;">7</td>
+              <td style="text-align: right;"><strong>7</strong></td>
+              <td style="text-align: right;">1.4%</td>
+            </tr>
+            <tr>
+              <td><code>send_message</code> <em>(final status report)</em></td>
+              <td style="text-align: right;">1</td>
+              <td style="text-align: right;">1</td>
+              <td style="text-align: right;"><strong>2</strong></td>
+              <td style="text-align: right;">0.5%</td>
+            </tr>
+            <tr style="background-color: var(--surface); font-weight: bold;">
+              <td><strong>Total</strong></td>
+              <td style="text-align: right;"><strong>181</strong></td>
+              <td style="text-align: right;"><strong>304</strong></td>
+              <td style="text-align: right;"><strong>485</strong></td>
+              <td style="text-align: right;"><strong>100.0%</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>5. Observations on Gemini 3.7 Flash Capabilities</h2>
+      <ol>
+        <li><strong>Long-Horizon Context Stability:</strong> In both runs, context history grew beyond <strong>150,000 to 212,000 tokens</strong>. Despite this depth, Gemini 3.7 Flash exhibited zero instruction drift, maintained strict negative constraints (no plaintext secrets, no hardcoded IPs), and accurately referenced file paths established at step 1.</li>
+        <li><strong>Surgical Code Modifications:</strong> When refining playbooks or test assertions, the model utilized <code>replace_file_content</code> with exact character-sequence matches, avoiding clumsy full-file overwrites and preventing merge collisions.</li>
+        <li><strong>Autonomous Self-Healing & Verification:</strong> During local dry runs and acceptance checks, transient syntax and permission errors were diagnosed directly from stack traces and remediated without human prompt hints.</li>
+        <li><strong>Adherence to Safety Guards:</strong> Both agents preserved <code>compute-prevent-destroy: true</code> flags, avoided exposing <code>.envrc.private</code> secrets, and pinned all dependencies by exact SHA digests.</li>
+      </ol>
+
+      <h2>6. What This Means for Platform & AI Engineering</h2>
+      <p>This benchmark demonstrates that frontier reasoning models like <strong>Gemini 3.7 Flash</strong> have crossed a critical capability threshold: moving from code completion assistants to <strong>autonomous distributed systems engineers</strong>.</p>
+      <p>When paired with a structured execution framework like Antigravity / <a href="https://www.getcolors.ai/"><strong>Colors</strong></a>—providing strict phase gates, golden fixtures, and isolated environments—autonomous agents can reliably design and deploy mission-critical infrastructure with zero hallucination risk.</p>
+
+      <div class="panel repo-box">
+        <div class="section-label">Public Artifact Repositories</div>
+        <div class="repo-grid">
+          <a href="https://github.com/getcolors/postgres-agy" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/postgres-agy</span>
+            <span class="repo-desc">PostgreSQL HA Package Skill (Patroni + etcd + pgBackRest)</span>
+          </a>
+          <a href="https://github.com/getcolors/postgres-agy-digitalocean" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/postgres-agy-digitalocean</span>
+            <span class="repo-desc">3-Node PostgreSQL HA Deployment for DigitalOcean & R2</span>
+          </a>
+          <a href="https://github.com/getcolors/mysql-agy" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/mysql-agy</span>
+            <span class="repo-desc">MySQL HA Package Skill (Group Replication + VIP claim)</span>
+          </a>
+          <a href="https://github.com/getcolors/mysql-agy-digitalocean" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/mysql-agy-digitalocean</span>
+            <span class="repo-desc">3-Node MySQL HA Deployment for DigitalOcean & R2</span>
+          </a>
+        </div>
+      </div>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    max-width: 860px;
+    padding-block: 24px 80px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 36px;
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .dot {
+    color: var(--rule);
+  }
+  .summary-card {
+    padding: 24px 28px;
+    margin-bottom: 48px;
+    border-left: 4px solid var(--blue);
+    background: var(--surface);
+  }
+  .card-label {
+    font: 600 12px var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+  .summary-card p {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .summary-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .summary-list li {
+    margin-bottom: 8px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul, .content-body ol {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 8px;
+  }
+  .media-figure {
+    margin: 36px 0;
+    overflow: hidden;
+    padding: 0;
+  }
+  .media-figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .media-figure figcaption {
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin: 28px 0;
+    padding: 0;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .data-table th {
+    background: var(--surface);
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+  .data-table tr:hover td {
+    background: var(--surface);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .badge-green {
+    background: oklch(94% 0.04 145);
+    color: oklch(40% 0.15 145);
+  }
+  .badge-blue {
+    background: oklch(94% 0.04 260);
+    color: var(--blue);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .repo-box {
+    padding: 28px;
+    margin-top: 48px;
+  }
+  .repo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .repo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+    background: var(--page);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 160ms ease, transform 160ms ease;
+  }
+  .repo-item:hover {
+    border-color: var(--blue);
+    transform: translateY(-2px);
+  }
+  .repo-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+  .repo-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>
