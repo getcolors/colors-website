@@ -7,7 +7,7 @@ const description = "An empirical benchmark building Umami, Rybbit and PostHog a
 const path = "/blog/self-hosted-analytics-benchmark";
 
 const publishDate = "August 17, 2026";
-const readTime = "6 min read";
+const readTime = "7 min read";
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -129,6 +129,16 @@ const structuredData = {
         <li>Umami's compose file shipping <code>&#123;&#123; lookup('env', …) &#125;&#125;</code> as a literal string, because <code>ansible.builtin.copy</code> does not template — so the credential variable was inert and the real password was a constant published in a public repository.</li>
       </ul>
 
+      <h3>The checks that could not fail</h3>
+      <p>Three of these surfaced only after publication, and they are the sharpest examples in the set, because in each case a green result was structurally incapable of being anything else.</p>
+      <ul>
+        <li><strong>Rybbit's synthetic event was never valid.</strong> The acceptance step posted <code>name</code> where the API discriminates on <code>type</code>, and the request had always been rejected with a 400. Nobody noticed because the step reports <em>not-configured</em> and sends nothing when no site exists — which was true of every converge until someone added one. The check only became reachable once there was something to check.</li>
+        <li><strong>Celery had never started.</strong> PostHog holds a third migration system, separate from Django's and ClickHouse's, and a pending async migration stops the worker booting — 74 restarts. Acceptance passed throughout, because the path it exercises (capture, Kafka, ClickHouse) never touches Celery. It took PostHog's own setup page to say so.</li>
+        <li><strong>The verification locked the front door.</strong> The acceptance step asks for a project, which creates an organization, after which PostHog's hosted realm reports <code>can_create_org: false</code> and the signup page becomes an invite wall. A converge reliably produced a UI that nobody could log into, as a side effect of checking it worked.</li>
+      </ul>
+      <p>All three were introduced by the audit rather than by the agents — the wrong payload, the skipped migration checks, the project-creating probe are ours. That is worth stating plainly: the failure mode this article is about is not a property of generated code. It is a property of verification, and it caught the people writing the verification too.</p>
+      <p>The gates now assert what they previously assumed: background jobs are checked by asking PostHog whether Celery is alive and no async migration is pending, and the synthetic event goes to a dedicated throwaway site so a converge stops writing test rows into real analytics.</p>
+
       <h2>4. Security defects</h2>
       <p>All three arms shipped live security problems, all now fixed:</p>
       <ul>
@@ -143,7 +153,7 @@ const structuredData = {
 
       <h2>6. Reproducibility</h2>
       <p>Floating image tags caused two independent failures. ClickHouse 24.8 could not apply PostHog's schema at all. And <code>posthog/posthog:latest</code> and <code>posthog/posthog-node:latest</code> turned out to be built from <strong>different commits</strong>, so the plugin server queried a column the application's migrations had never created — the ingestion consumer died on its first message, and events accumulated in Kafka while the API returned <code>200</code>.</p>
-      <p>Both images are now pinned to one commit, with a test asserting they are equal. A cold PostHog deployment also costs <strong>68 minutes</strong> of CPU-bound Django migrations, so the package now commits an 854 KB plain-SQL schema checkpoint, restored only into an empty database and only when its stamped commit matches the image.</p>
+      <p>Both images are now pinned to one commit, with a test asserting they are equal, and the remaining floating tags across all three arms — Rybbit’s backend and client, PostHog’s capture service — are pinned by digest. Doing so required relaxing the packages’ own validation, which <em>required</em> the mutable <code>name:tag</code> form and rejected a digest outright: the safest pin was unrepresentable. A cold PostHog deployment also costs <strong>68 minutes</strong> of CPU-bound Django migrations, so the package now commits an 854 KB plain-SQL schema checkpoint, restored only into an empty database and only when its stamped commit matches the image.</p>
 
       <h2>7. Scorecard</h2>
       <div class="table-wrap panel">
@@ -158,15 +168,15 @@ const structuredData = {
           </thead>
           <tbody>
             <tr><td><strong>Agent commits</strong></td><td style="text-align: right;">4</td><td style="text-align: right;">3</td><td style="text-align: right;">6</td></tr>
-            <tr><td><strong>Audit commits</strong></td><td style="text-align: right;">9</td><td style="text-align: right;">10</td><td style="text-align: right;">65</td></tr>
+            <tr><td><strong>Audit commits</strong></td><td style="text-align: right;">10</td><td style="text-align: right;">19</td><td style="text-align: right;">75</td></tr>
             <tr><td><strong>Package source lines</strong></td><td style="text-align: right;">1,351</td><td style="text-align: right;">1,541</td><td style="text-align: right;">2,635</td></tr>
-            <tr><td><strong>Tests / assertions after audit</strong></td><td style="text-align: right;">17 / 53</td><td style="text-align: right;">17 / 52</td><td style="text-align: right;">41 / 137</td></tr>
-            <tr><td><strong>Live converges to working</strong></td><td style="text-align: right;">3</td><td style="text-align: right;">3</td><td style="text-align: right;"><strong>29</strong></td></tr>
+            <tr><td><strong>Tests / assertions after audit</strong></td><td style="text-align: right;">17 / 53</td><td style="text-align: right;">22 / 66</td><td style="text-align: right;">45 / 152</td></tr>
+            <tr><td><strong>Live converges to working</strong></td><td style="text-align: right;">3</td><td style="text-align: right;">3</td><td style="text-align: right;"><strong>33</strong></td></tr>
             <tr><td><strong>Final status</strong></td><td style="text-align: right;"><span class="badge badge-green mono">✔ verified</span></td><td style="text-align: right;"><span class="badge badge-green mono">✔ verified</span></td><td style="text-align: right;"><span class="badge badge-green mono">✔ verified</span></td></tr>
           </tbody>
         </table>
       </div>
-      <p class="table-note mono">Audit commits are the cost of making a reported success true. The ratio — 9, 10 and 65 — tracks target complexity far more closely than it tracks anything about the agents.</p>
+      <p class="table-note mono">Audit commits are the cost of making a reported success true. The ratio — 10, 19 and 75 against 4, 3 and 6 agent commits — tracks target complexity far more closely than it tracks anything about the agents.</p>
 
       <h2>8. What we changed about verification</h2>
       <p>The gates were rewritten so that a passing result means something. Each acceptance step now verifies TLS without disabling certificate checks, sends a synthetic event and <strong>reads it back out of the datastore</strong>, and confirms the backup drill by finding a fresh, non-empty object in storage.</p>
