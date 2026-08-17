@@ -1,0 +1,17 @@
+name: PostHog
+repository: getcolors/posthog
+summary: Operate a single-node PostHog product analytics suite — Django, ClickHouse with embedded Keeper, Kafka, Temporal, and a Rust capture service — on one machine.
+keywords:
+  - PostHog
+  - product analytics
+  - ClickHouse
+  - Kafka
+  - Temporal
+  - PostgreSQL
+  - Redis
+  - DigitalOcean
+featured: /featured#posthog
+package-skills:
+  - name: package-posthog-green
+    path: skills/package-posthog-green/SKILL.md
+    runtime: green

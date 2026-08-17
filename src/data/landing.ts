@@ -411,6 +411,156 @@ export const clickhouse = {
     "The shared firewall exposes only SSH, ICMP, and WireGuard UDP. Acceptance verifies Keeper, replicas, dbt, Metabase, DNS, VPN reachability, and public-port isolation; the drift stage requires every OpenTofu plan to be empty. Delete reverses the graph with parallel DNS/firewall and server teardown, while destroy protection refuses accidents.",
 };
 
+export const umamiInstallCmd = "npx skills use getcolors/umami";
+
+export const umami = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/umami/",
+  repoUrl: "https://github.com/getcolors/umami",
+  heading: "Umami: single-node web analytics, built with Colors",
+  lede: "Umami is a Package Skill built with Colors. It provisions one DigitalOcean droplet running Umami web analytics with colocated PostgreSQL 17 behind Caddy, with restore-verified backups to Cloudflare R2.",
+  runtimeNote:
+    "Umami ships in **green** alone. Only Caddy's 80/443 are public; PostgreSQL and Umami's own port stay on the private Compose network.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins every image by tag, the droplet shape and region, DNS, backup schedule and retention, and the state backend. No secret appears in it.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "Credentials arrive through `COLORS_PAR_*` from a gitignored `.envrc.private`, and are interpolated into the stack at converge time rather than rendered into `.colors/`.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds the OpenTofu and Ansible trees, then runs `create --dry-run` before contacting any provider or machine.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the droplet in the region's default VPC behind a firewall, publishes the Cloudflare record, then Ansible converges Docker Compose and issues TLS. The seeded admin password is rotated during the same run.",
+    },
+    {
+      title: "Prove it works",
+      body: "Acceptance verifies HTTPS with a real certificate, refuses to pass while the seeded credentials still authenticate, reads a synthetic event back out of PostgreSQL, and confirms a fresh backup object in R2.",
+    },
+  ],
+  dagCaption: "Umami — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`, and delete reverses it so the application stops before its machine is destroyed.",
+  dagNote:
+    "Three containers: PostgreSQL, Umami and Caddy. Backups dump PostgreSQL nightly, restore each dump into a scratch database before uploading it, and prune R2 to the same horizon as local disk. `compute-prevent-destroy` refuses accidental deletion.",
+};
+
+export const rybbitInstallCmd = "npx skills use getcolors/rybbit";
+
+export const rybbit = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/rybbit/",
+  repoUrl: "https://github.com/getcolors/rybbit",
+  heading: "Rybbit: hybrid OLTP and columnar analytics, built with Colors",
+  lede: "Rybbit is a Package Skill built with Colors. It provisions one DigitalOcean droplet pairing PostgreSQL 17 for metadata and authentication with ClickHouse for columnar events, plus Redis and Caddy.",
+  runtimeNote:
+    "Rybbit ships in **green** alone. Only Caddy's 80/443 are public; PostgreSQL, ClickHouse, Redis and the Rybbit backend and client ports stay private.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins every image by tag, the droplet shape and region, DNS, backup schedule and retention, and the state backend. No secret appears in it.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "Credentials arrive through `COLORS_PAR_*` from a gitignored `.envrc.private`, and are interpolated into the stack at converge time rather than rendered into `.colors/`.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds the OpenTofu and Ansible trees, then runs `create --dry-run` before contacting any provider or machine.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the droplet and firewall and publishes DNS; Ansible then generates the stack's database, cache and auth secrets on the machine, retains them, and converges six containers.",
+    },
+    {
+      title: "Prove it works",
+      body: "Acceptance verifies HTTPS with a real certificate, reads a synthetic pageview back out of ClickHouse, and confirms the backup drill left a fresh object in R2.",
+    },
+  ],
+  dagCaption: "Rybbit — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`, and delete reverses it so the application stops before its machine is destroyed.",
+  dagNote:
+    "Six containers. Backups dump PostgreSQL and take a native ClickHouse `BACKUP` — never a hot copy of the data directory, which races running merges — restore the dump into a scratch database before uploading, and prune R2 alongside local disk.",
+};
+
+export const posthogInstallCmd = "npx skills use getcolors/posthog";
+
+export const posthog = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/posthog/",
+  repoUrl: "https://github.com/getcolors/posthog",
+  heading: "PostHog: a product analytics suite on one machine, built with Colors",
+  lede: "PostHog is a Package Skill built with Colors. It provisions one DigitalOcean droplet running the PostHog application, ClickHouse with embedded Keeper, Kafka, Temporal, a Rust capture service and a plugin server — the tiers PostHog cannot run without, reduced to a single node.",
+  runtimeNote:
+    "PostHog ships in **green** alone. Only Caddy's 80/443 are public; the ingestion path from capture through Kafka to ClickHouse stays on the private Compose network.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins every image by tag, the droplet shape and region, DNS, backup schedule and retention, and the state backend. No secret appears in it.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "Credentials arrive through `COLORS_PAR_*` from a gitignored `.envrc.private`, and are interpolated into the stack at converge time rather than rendered into `.colors/`.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds the OpenTofu and Ansible trees, then runs `create --dry-run` before contacting any provider or machine.",
+    },
+    {
+      title: "Provision and migrate",
+      body: "OpenTofu creates the droplet and DNS; Ansible starts the datastores alone, restores a committed schema checkpoint when it matches the pinned image, and applies PostgreSQL and ClickHouse migrations before any application container starts.",
+    },
+    {
+      title: "Prove ingestion",
+      body: "Acceptance verifies HTTPS with a real certificate, posts a synthetic event and reads it back out of ClickHouse — distinguishing an accepted-but-unstored event from a stored one — and confirms a fresh backup object in R2.",
+    },
+  ],
+  dagCaption: "PostHog — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`, and delete reverses it so the application stops before its machine is destroyed.",
+  dagNote:
+    "Ten containers. The application and plugin server are pinned to one upstream commit because they share a Postgres schema; a committed plain-SQL checkpoint replaces an hour of cold migrations, and is restored only when its stamped commit matches the image.",
+};
+
 export const airflowInstallCmd = "npx skills use getcolors/airflow";
 
 export const airflow = {

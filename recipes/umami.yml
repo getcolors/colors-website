@@ -1,0 +1,16 @@
+name: Umami
+repository: getcolors/umami
+summary: Operate a single-node Umami web analytics service with PostgreSQL, Caddy TLS, and restore-verified backups to R2.
+keywords:
+  - Umami
+  - analytics
+  - web analytics
+  - PostgreSQL
+  - Caddy
+  - DigitalOcean
+  - Cloudflare R2
+featured: /featured#umami
+package-skills:
+  - name: package-umami-green
+    path: skills/package-umami-green/SKILL.md
+    runtime: green

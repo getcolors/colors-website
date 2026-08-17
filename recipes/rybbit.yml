@@ -1,0 +1,17 @@
+name: Rybbit
+repository: getcolors/rybbit
+summary: Operate a single-node Rybbit analytics service pairing PostgreSQL for metadata with ClickHouse for columnar events, behind Caddy TLS.
+keywords:
+  - Rybbit
+  - analytics
+  - web analytics
+  - ClickHouse
+  - PostgreSQL
+  - Redis
+  - Caddy
+  - DigitalOcean
+featured: /featured#rybbit
+package-skills:
+  - name: package-rybbit-green
+    path: skills/package-rybbit-green/SKILL.md
+    runtime: green

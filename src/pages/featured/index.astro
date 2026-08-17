@@ -11,6 +11,12 @@ import {
   airflowInstallCmd,
   clickhouse,
   clickhouseInstallCmd,
+  posthog,
+  posthogInstallCmd,
+  rybbit,
+  rybbitInstallCmd,
+  umami,
+  umamiInstallCmd,
   dbos,
   dbosInstallCmd,
   html,
@@ -898,6 +904,133 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{k3s.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- UMAMI: ANALYTICS PACKAGE -->
+      <div class="sec" id="umami">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{umami.eyebrow}</div>
+          <SectionHeading id="umami" title={umami.heading} />
+          <p class="sec-lede sec-lede-wide">{umami.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={umamiInstallCmd} id="featured-umami-install" />
+            <span class="install-note" set:html={html(umami.runtimeNote)} />
+            <ResourceLinks docsUrl={umami.docsUrl} repoUrl={umami.repoUrl} catalogUrl="/getcolors/umami" />
+          </div>
+
+          <div class="grid-5">
+            {umami.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{umami.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="Umami create and build workflow diagram"
+            >
+              {umami.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{umami.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RYBBIT: ANALYTICS PACKAGE -->
+      <div class="sec sec-alt" id="rybbit">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{rybbit.eyebrow}</div>
+          <SectionHeading id="rybbit" title={rybbit.heading} />
+          <p class="sec-lede sec-lede-wide">{rybbit.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={rybbitInstallCmd} id="featured-rybbit-install" />
+            <span class="install-note" set:html={html(rybbit.runtimeNote)} />
+            <ResourceLinks docsUrl={rybbit.docsUrl} repoUrl={rybbit.repoUrl} catalogUrl="/getcolors/rybbit" />
+          </div>
+
+          <div class="grid-5">
+            {rybbit.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{rybbit.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="Rybbit create and build workflow diagram"
+            >
+              {rybbit.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{rybbit.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- POSTHOG: ANALYTICS PACKAGE -->
+      <div class="sec" id="posthog">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{posthog.eyebrow}</div>
+          <SectionHeading id="posthog" title={posthog.heading} />
+          <p class="sec-lede sec-lede-wide">{posthog.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={posthogInstallCmd} id="featured-posthog-install" />
+            <span class="install-note" set:html={html(posthog.runtimeNote)} />
+            <ResourceLinks docsUrl={posthog.docsUrl} repoUrl={posthog.repoUrl} catalogUrl="/getcolors/posthog" />
+          </div>
+
+          <div class="grid-5">
+            {posthog.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{posthog.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="PostHog create and build workflow diagram"
+            >
+              {posthog.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{posthog.dagNote}</p>
           </div>
         </div>
       </div>
