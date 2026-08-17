@@ -1,0 +1,418 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+
+const title = "Three Analytics Stacks, Three Agents, One Uncomfortable Finding — Colors";
+const description = "An empirical benchmark building Umami, Rybbit and PostHog as autonomous Package Skills — and an audit of what their own quality gates failed to detect.";
+const path = "/blog/self-hosted-analytics-benchmark";
+
+const publishDate = "August 17, 2026";
+const readTime = "6 min read";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "Three Analytics Stacks, Three Agents, One Uncomfortable Finding",
+  description,
+  url: "https://www.getcolors.ai/blog/self-hosted-analytics-benchmark",
+  image: "https://www.getcolors.ai/og-colors-v2.png",
+  datePublished: "2026-08-17T18:00:00Z",
+  dateModified: "2026-08-17T18:00:00Z",
+  author: {
+    "@type": "Organization",
+    name: "Colors",
+    url: "https://www.getcolors.ai",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: "https://www.getcolors.ai",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://www.getcolors.ai/favicon.svg",
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Agentic AI" },
+    { "@type": "Thing", name: "Self-hosted analytics" },
+    { "@type": "Thing", name: "Umami" },
+    { "@type": "Thing", name: "Rybbit" },
+    { "@type": "Thing", name: "PostHog" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Self-Hosted Analytics Benchmark" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Research &amp; Benchmark</p>
+      <h1>Three Analytics Stacks, Three Agents, One Uncomfortable Finding</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-green">Umami · Rybbit · PostHog</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+      </div>
+      <p class="lede">Three isolated agents each built a self-hosted analytics platform as a Package Skill and deployed it live. All three reported success. Then we audited what their quality gates could actually detect.</p>
+    </header>
+
+    <div class="panel summary-card">
+      <div class="card-label">Executive Summary</div>
+      <p>Three cold subagents were given one canonical prompt template and told to build, test, pin, publish and deploy a self-hosted analytics platform each: <strong>Umami</strong>, <strong>Rybbit</strong> and <strong>PostHog</strong>. All three declared completion.</p>
+      <ul class="summary-list">
+        <li><strong>The PostHog arm converged in 122 seconds and served HTTP 502 indefinitely.</strong> It had never run a single database migration.</li>
+        <li><strong>Rybbit's backups had never once succeeded.</strong> The scheduled unit failed every run; one object reached storage, from a single lucky execution.</li>
+        <li><strong>Umami answered to its seeded <code>admin</code>/<code>umami</code> credentials on the public internet</strong>, and its signing key was a constant in a public repository.</li>
+        <li><strong>Every one of these deployments passed its own acceptance checks.</strong> That is the finding.</li>
+      </ul>
+    </div>
+
+    <article class="content-body">
+      <h2>1. Method</h2>
+      <p>Three cold subagents were spawned concurrently with no shared memory and no cross-visibility, each forbidden from inspecting the others' files. Prompts came from a single template parameterised only by engine-specific nouns. Each agent owned two repositories — a Package Skill and a deployment of desired state — and was required to reach a live, TLS-terminated endpoint on DigitalOcean with backups to Cloudflare R2.</p>
+
+      <figure class="media-figure panel">
+        <img src="/images/analytics-benchmark-arms.svg" alt="One prompt template fans out to three isolated subagents building Umami, Rybbit and PostHog; the stacks diverge to three, six and ten containers, and each arm's first reported success concealed a different defect." />
+        <figcaption class="mono">Figure 1: Three isolated arms from one template — and what each one's first reported success concealed.</figcaption>
+      </figure>
+
+      <p>Two controls did not hold, and we record them rather than describe the run as clean. Credential variable names, droplet names and backup schedules diverged between arms, so the prompt template was less symmetric than intended. And PostHog was later resized from 8 GiB to 16 GiB after the smaller machine wedged so hard that <code>sshd</code> could not fork — upstream's own hobby minimum is 16 GiB, so the equal-hardware control was arguably never fair to that arm.</p>
+
+      <h2>2. What the agents built</h2>
+      <p>The three targets diverge sharply once they actually work, which is what makes the comparison interesting.</p>
+
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Dimension</th>
+              <th style="text-align: left;">Umami</th>
+              <th style="text-align: left;">Rybbit</th>
+              <th style="text-align: left;">PostHog</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Containers</strong></td><td>3</td><td>6</td><td>10</td></tr>
+            <tr><td><strong>Relational</strong></td><td>PostgreSQL 17</td><td>PostgreSQL 17</td><td>PostgreSQL 17</td></tr>
+            <tr><td><strong>Columnar</strong></td><td>—</td><td>ClickHouse 24.8</td><td>ClickHouse 26.6</td></tr>
+            <tr><td><strong>Cache / broker</strong></td><td>—</td><td>Redis 8.6</td><td>Redis 7.2</td></tr>
+            <tr><td><strong>Event bus</strong></td><td>—</td><td>—</td><td>Redpanda</td></tr>
+            <tr><td><strong>Coordination</strong></td><td>—</td><td>—</td><td>ClickHouse Keeper</td></tr>
+            <tr><td><strong>Workflow engine</strong></td><td>—</td><td>—</td><td>Temporal</td></tr>
+            <tr><td><strong>Ingest path</strong></td><td>app endpoint</td><td>app endpoint</td><td>Rust capture → Kafka → plugin server → ClickHouse</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>PostHog needed <strong>five tiers the original implementation did not have</strong>: ClickHouse Keeper, Kafka, Temporal, a Rust capture service, and a Node plugin server. None were optional. For scale, PostHog's own single-server compose defines roughly <strong>35 services</strong>; the finished Package Skill runs 10 and is a deliberate reduction.</p>
+
+      <h2>3. What the gates concealed</h2>
+      <p>The PostHog arm is the clearest case. It reported convergence in 122 seconds against a deployment that had never applied a migration, and it stayed green because three mechanisms cooperated:</p>
+      <ul>
+        <li>No migration step existed at all.</li>
+        <li><code>POSTHOG_SKIP_MIGRATION_CHECKS=1</code> suppressed the error that would have said so.</li>
+        <li>The health gate ran <code>pg_isready</code> against the <em>database</em> container — so it asked PostgreSQL whether PostgreSQL was up, and reported that the application was healthy.</li>
+      </ul>
+      <p>ClickHouse held zero tables. The site served 502s. Every check passed.</p>
+
+      <p>The same signature appeared across all three arms, and it is worth stating as a general pattern: <strong>almost none of the defects were logic errors.</strong> They were assembly errors, and they shared one shape — <em>something reports success while the thing that matters is broken.</em></p>
+      <ul>
+        <li><code>docker compose ps</code> reporting <code>running</code> through 48 restarts.</li>
+        <li>An unhandled startup exception logged below <code>info</code>, so a crash looked like a clean exit.</li>
+        <li>A configuration file correct on the host while the container served the inode it booted with — twice, in two different services, because a single-file bind mount pins an inode and Ansible replaces files by rename.</li>
+        <li>A capture endpoint returning <code>200</code> into a Kafka topic that no consumer read.</li>
+        <li>Umami's compose file shipping <code>&#123;&#123; lookup('env', …) &#125;&#125;</code> as a literal string, because <code>ansible.builtin.copy</code> does not template — so the credential variable was inert and the real password was a constant published in a public repository.</li>
+      </ul>
+
+      <h2>4. Security defects</h2>
+      <p>All three arms shipped live security problems, all now fixed:</p>
+      <ul>
+        <li><strong>Umami</strong> answered to its seeded <code>admin</code>/<code>umami</code> login on the public internet — verified with an HTTP 200 and a valid session token. Its <code>APP_SECRET</code> and database password were constants in a public repository.</li>
+        <li><strong>PostHog</strong> shipped a hardcoded Django <code>SECRET_KEY</code> in a public repository, which signs session cookies and password-reset tokens, plus a fixed <code>posthog:posthog</code> database password.</li>
+        <li><strong>Rybbit</strong> enabled open registration with no way to express otherwise in desired state.</li>
+      </ul>
+
+      <h2>5. Disaster recovery that had never worked</h2>
+      <p>Rybbit's backup unit had failed on every scheduled run. Its ClickHouse step named a host path from inside a container, which the server refuses; the fallback then took a hot <code>tar</code> of the live data directory, lost its race with running merges, and aborted the script before the upload. Storage held exactly one object, from a single lucky execution.</p>
+      <p>All three now use ClickHouse's native <code>BACKUP</code> statement, restore every dump into a scratch database before uploading it, and prune the bucket as well as the local disk. An archive that exists is not an archive that restores.</p>
+
+      <h2>6. Reproducibility</h2>
+      <p>Floating image tags caused two independent failures. ClickHouse 24.8 could not apply PostHog's schema at all. And <code>posthog/posthog:latest</code> and <code>posthog/posthog-node:latest</code> turned out to be built from <strong>different commits</strong>, so the plugin server queried a column the application's migrations had never created — the ingestion consumer died on its first message, and events accumulated in Kafka while the API returned <code>200</code>.</p>
+      <p>Both images are now pinned to one commit, with a test asserting they are equal. A cold PostHog deployment also costs <strong>68 minutes</strong> of CPU-bound Django migrations, so the package now commits an 854 KB plain-SQL schema checkpoint, restored only into an empty database and only when its stamped commit matches the image.</p>
+
+      <h2>7. Scorecard</h2>
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Metric</th>
+              <th style="text-align: right;">Umami</th>
+              <th style="text-align: right;">Rybbit</th>
+              <th style="text-align: right;">PostHog</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Agent commits</strong></td><td style="text-align: right;">4</td><td style="text-align: right;">3</td><td style="text-align: right;">6</td></tr>
+            <tr><td><strong>Audit commits</strong></td><td style="text-align: right;">9</td><td style="text-align: right;">10</td><td style="text-align: right;">65</td></tr>
+            <tr><td><strong>Package source lines</strong></td><td style="text-align: right;">1,351</td><td style="text-align: right;">1,541</td><td style="text-align: right;">2,635</td></tr>
+            <tr><td><strong>Tests / assertions after audit</strong></td><td style="text-align: right;">17 / 53</td><td style="text-align: right;">17 / 52</td><td style="text-align: right;">41 / 137</td></tr>
+            <tr><td><strong>Live converges to working</strong></td><td style="text-align: right;">3</td><td style="text-align: right;">3</td><td style="text-align: right;"><strong>29</strong></td></tr>
+            <tr><td><strong>Final status</strong></td><td style="text-align: right;"><span class="badge badge-green mono">✔ verified</span></td><td style="text-align: right;"><span class="badge badge-green mono">✔ verified</span></td><td style="text-align: right;"><span class="badge badge-green mono">✔ verified</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note mono">Audit commits are the cost of making a reported success true. The ratio — 9, 10 and 65 — tracks target complexity far more closely than it tracks anything about the agents.</p>
+
+      <h2>8. What we changed about verification</h2>
+      <p>The gates were rewritten so that a passing result means something. Each acceptance step now verifies TLS without disabling certificate checks, sends a synthetic event and <strong>reads it back out of the datastore</strong>, and confirms the backup drill by finding a fresh, non-empty object in storage.</p>
+      <p>Crucially, the verdict distinguishes outcomes that a status code cannot: <code>ingested</code>, <code>rejected</code>, <code>not-configured</code> — and <code>dropped</code>, meaning the endpoint accepted the event and nothing was stored. That last case is the one that had been invisible, and it caught three genuinely different ingestion failures in a row before PostHog worked.</p>
+      <p>PostHog's ingestion was ultimately confirmed twice: a synthetic event returned by ClickHouse within five seconds with the correct team, and the same event returned by the product's own query engine — the path its UI uses.</p>
+
+      <h2>9. Conclusion</h2>
+      <p>The interesting result is not that three agents built three analytics stacks. It is that all three produced work that passed its own verification while being, in one case, entirely non-functional.</p>
+      <p>Lines of code and commit counts measure the difficulty of each target, not model capability — one trial per arm, three targets of wildly unequal complexity, no baseline. The transferable finding is narrower and more useful: <strong>an agent's self-verification is only as good as the weakest assertion in it.</strong> A fast green result is evidence about the gate before it is evidence about the system.</p>
+      <p>If you take one practice from this, take the read-back: never accept a status code as proof of an effect. Ask the datastore.</p>
+
+      <div class="panel repo-box">
+        <div class="section-label">Public Artifact Repositories</div>
+        <div class="repo-grid">
+          <a href="https://github.com/getcolors/umami" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/umami</span>
+            <span class="repo-desc">Umami Package Skill (PostgreSQL, single-tier)</span>
+          </a>
+          <a href="https://github.com/getcolors/umami-digitalocean" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/umami-digitalocean</span>
+            <span class="repo-desc">Umami deployment for DigitalOcean & R2</span>
+          </a>
+          <a href="https://github.com/getcolors/rybbit" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/rybbit</span>
+            <span class="repo-desc">Rybbit Package Skill (PostgreSQL + ClickHouse + Redis)</span>
+          </a>
+          <a href="https://github.com/getcolors/rybbit-digitalocean" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/rybbit-digitalocean</span>
+            <span class="repo-desc">Rybbit deployment for DigitalOcean & R2</span>
+          </a>
+          <a href="https://github.com/getcolors/posthog" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/posthog</span>
+            <span class="repo-desc">PostHog Package Skill (10 services, Kafka + Temporal + Keeper)</span>
+          </a>
+          <a href="https://github.com/getcolors/posthog-digitalocean" class="repo-item" target="_blank" rel="noreferrer">
+            <span class="repo-name mono">getcolors/posthog-digitalocean</span>
+            <span class="repo-desc">PostHog deployment for DigitalOcean & R2</span>
+          </a>
+        </div>
+      </div>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-block: 24px 80px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 36px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .summary-card {
+    padding: 24px 28px;
+    margin-bottom: 48px;
+    border-left: 4px solid var(--blue);
+    background: var(--surface);
+  }
+  .card-label {
+    font: 600 12px var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+  .summary-card p {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .summary-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .summary-list li {
+    margin-bottom: 8px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul, .content-body ol {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 8px;
+  }
+  .media-figure {
+    margin: 36px 0;
+    overflow: hidden;
+    padding: 0;
+  }
+  .media-figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .media-figure figcaption {
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .table-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin: 28px 0;
+    padding: 0;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .data-table th {
+    background: var(--surface);
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+  .data-table tr:hover td {
+    background: var(--surface);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .badge-green {
+    background: oklch(94% 0.04 145);
+    color: oklch(40% 0.15 145);
+  }
+  .badge-blue {
+    background: oklch(94% 0.04 260);
+    color: var(--blue);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .repo-box {
+    padding: 28px;
+    margin-top: 48px;
+  }
+  .repo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .repo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+    background: var(--page);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 160ms ease, transform 160ms ease;
+  }
+  .repo-item:hover {
+    border-color: var(--blue);
+    transform: translateY(-2px);
+  }
+  .repo-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+  .repo-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>

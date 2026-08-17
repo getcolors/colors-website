@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 490" role="img"
+     aria-label="One prompt template fans out to three isolated subagents building Umami, Rybbit and PostHog. Each produces a Package Skill and a deployment. The stacks diverge to three, six and ten containers, and each arm's first reported success concealed a different defect.">
+  <style>
+    .t { font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; fill: oklch(20% 0.01 260); }
+    .m { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+    .mut { fill: oklch(45% 0.01 260); }
+    .lbl { font-size: 11px; letter-spacing: 0.08em; }
+    .h { font-size: 14px; font-weight: 600; }
+    .n { font-size: 12px; }
+    .box { fill: oklch(97.5% 0.003 260); stroke: oklch(91% 0.005 260); }
+    .wall { stroke: oklch(91% 0.005 260); stroke-dasharray: 4 6; }
+    .flow { stroke: oklch(45% 0.01 260); fill: none; }
+    .tier { fill: oklch(65% 0.17 145); }
+    .tier-off { fill: oklch(91% 0.005 260); }
+    .warn { fill: oklch(60% 0.19 25); }
+  </style>
+
+  <!-- source -->
+  <rect x="330" y="16" width="300" height="40" rx="8" class="box" stroke-width="1"/>
+  <text x="480" y="41" text-anchor="middle" class="t m h">one prompt template</text>
+  <path d="M480 56 V78" class="flow" stroke-width="1.2"/>
+  <path d="M170 78 H790" class="flow" stroke-width="1.2"/>
+  <path d="M170 78 V100 M480 78 V100 M790 78 V100" class="flow" stroke-width="1.2"/>
+
+  <!-- isolation walls -->
+  <path d="M325 96 V446" class="wall" stroke-width="1"/>
+  <path d="M635 96 V446" class="wall" stroke-width="1"/>
+  <text x="480" y="470" text-anchor="middle" class="t m lbl mut">no shared memory · no cross-visibility · concurrent</text>
+
+  <g id="arms">
+    <rect x="60" y="100" width="220" height="46" rx="8" class="box" stroke-width="1"/>
+    <text x="170" y="122" text-anchor="middle" class="t m h">umami</text>
+    <text x="170" y="138" text-anchor="middle" class="t m n mut">subagent 1</text>
+    <path d="M170 146 V172" class="flow" stroke-width="1.2"/>
+    <rect x="60" y="172" width="220" height="40" rx="8" class="box" stroke-width="1"/>
+    <text x="170" y="197" text-anchor="middle" class="t n">Package Skill + deployment</text>
+    <path d="M170 212 V240" class="flow" stroke-width="1.2"/>
+    <text x="170" y="256" text-anchor="middle" class="t m lbl mut">CONTAINERS</text>
+      <rect x="140" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="162" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="184" y="268" width="16" height="16" rx="3" class="tier"/>
+    <text x="170" y="334" text-anchor="middle" class="t m h">3</text>
+    <text x="170" y="366" text-anchor="middle" class="t m lbl warn">FIRST REPORT CONCEALED</text>
+    <text x="170" y="390" text-anchor="middle" class="t n">default admin credentials</text>
+    <text x="170" y="408" text-anchor="middle" class="t n">live on the public internet</text>
+
+    <rect x="370" y="100" width="220" height="46" rx="8" class="box" stroke-width="1"/>
+    <text x="480" y="122" text-anchor="middle" class="t m h">rybbit</text>
+    <text x="480" y="138" text-anchor="middle" class="t m n mut">subagent 2</text>
+    <path d="M480 146 V172" class="flow" stroke-width="1.2"/>
+    <rect x="370" y="172" width="220" height="40" rx="8" class="box" stroke-width="1"/>
+    <text x="480" y="197" text-anchor="middle" class="t n">Package Skill + deployment</text>
+    <path d="M480 212 V240" class="flow" stroke-width="1.2"/>
+    <text x="480" y="256" text-anchor="middle" class="t m lbl mut">CONTAINERS</text>
+      <rect x="450" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="472" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="494" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="450" y="290" width="16" height="16" rx="3" class="tier"/>
+      <rect x="472" y="290" width="16" height="16" rx="3" class="tier"/>
+      <rect x="494" y="290" width="16" height="16" rx="3" class="tier"/>
+    <text x="480" y="334" text-anchor="middle" class="t m h">6</text>
+    <text x="480" y="366" text-anchor="middle" class="t m lbl warn">FIRST REPORT CONCEALED</text>
+    <text x="480" y="390" text-anchor="middle" class="t n">scheduled backups that had</text>
+    <text x="480" y="408" text-anchor="middle" class="t n">never once succeeded</text>
+
+    <rect x="680" y="100" width="220" height="46" rx="8" class="box" stroke-width="1"/>
+    <text x="790" y="122" text-anchor="middle" class="t m h">posthog</text>
+    <text x="790" y="138" text-anchor="middle" class="t m n mut">subagent 3</text>
+    <path d="M790 146 V172" class="flow" stroke-width="1.2"/>
+    <rect x="680" y="172" width="220" height="40" rx="8" class="box" stroke-width="1"/>
+    <text x="790" y="197" text-anchor="middle" class="t n">Package Skill + deployment</text>
+    <path d="M790 212 V240" class="flow" stroke-width="1.2"/>
+    <text x="790" y="256" text-anchor="middle" class="t m lbl mut">CONTAINERS</text>
+      <rect x="738" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="760" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="782" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="804" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="826" y="268" width="16" height="16" rx="3" class="tier"/>
+      <rect x="738" y="290" width="16" height="16" rx="3" class="tier"/>
+      <rect x="760" y="290" width="16" height="16" rx="3" class="tier"/>
+      <rect x="782" y="290" width="16" height="16" rx="3" class="tier"/>
+      <rect x="804" y="290" width="16" height="16" rx="3" class="tier"/>
+      <rect x="826" y="290" width="16" height="16" rx="3" class="tier"/>
+    <text x="790" y="334" text-anchor="middle" class="t m h">10</text>
+    <text x="790" y="366" text-anchor="middle" class="t m lbl warn">FIRST REPORT CONCEALED</text>
+    <text x="790" y="390" text-anchor="middle" class="t n">122-second convergence,</text>
+    <text x="790" y="408" text-anchor="middle" class="t n">zero migrations, HTTP 502</text>
+    <text x="790" y="432" text-anchor="middle" class="t m n mut">29 converges to working</text>
+  </g>
+</svg>
