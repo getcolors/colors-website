@@ -6,6 +6,19 @@ const title = "Three Analytics Stacks, Three Agents, One Uncomfortable Finding �
 const description = "An empirical benchmark building Umami, Rybbit and PostHog as autonomous Package Skills — and an audit of what their own quality gates failed to detect.";
 const path = "/blog/self-hosted-analytics-benchmark";
 
+// Its own card, not the site default: the generic one unfurls this piece as
+// "Colors — An SDK for Package Skills". Built by scripts/generate-og-image.py;
+// renaming the file is how the Slack and LinkedIn unfurl caches are busted.
+const image = "/og-analytics-benchmark-v1.png";
+const imageAlt =
+  "Umami, Rybbit and PostHog as three container counts -- 3, 6 and 10 -- " +
+  "each beside the defect its own quality gates failed to detect.";
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (p: string) => new URL(p, SITE_URL).toString();
+
 const publishDate = "August 17, 2026";
 const readTime = "7 min read";
 
@@ -14,22 +27,22 @@ const structuredData = {
   "@type": "TechArticle",
   headline: "Three Analytics Stacks, Three Agents, One Uncomfortable Finding",
   description,
-  url: "https://www.getcolors.ai/blog/self-hosted-analytics-benchmark",
-  image: "https://www.getcolors.ai/og-colors-v2.png",
+  url: absolute(path),
+  image: absolute(image),
   datePublished: "2026-08-17T18:00:00Z",
   dateModified: "2026-08-17T18:00:00Z",
   author: {
     "@type": "Organization",
     name: "Colors",
-    url: "https://www.getcolors.ai",
+    url: absolute("/"),
   },
   publisher: {
     "@type": "Organization",
     name: "Colors",
-    url: "https://www.getcolors.ai",
+    url: absolute("/"),
     logo: {
       "@type": "ImageObject",
-      url: "https://www.getcolors.ai/favicon.svg",
+      url: absolute("/favicon.svg"),
     },
   },
   about: [
@@ -42,7 +55,7 @@ const structuredData = {
 };
 ---
 
-<CatalogLayout {title} {description} {path} type="article" active="blog">
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
   <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <div class="wrap post-page">
     <div class="breadcrumb-bar">

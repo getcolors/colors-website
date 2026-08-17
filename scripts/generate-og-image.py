@@ -256,6 +256,67 @@ def render_blue_card(filename, kicker, title, subtitle, route):
     print(output)
 
 
+def render_article_card(filename, eyebrow, headline, arms, route):
+    """The benchmark article's own card.
+
+    The catalog template (render_blue_card) would work here and would say
+    nothing: this piece is about three stacks that diverged in size and each
+    hid a different defect, so the card shows the measured divergence -- one
+    tile per container -- and names what each arm was concealing. Tiles are
+    green because all three Package Skills are green; red is reserved for the
+    defect, so both colours carry meaning rather than decoration.
+    """
+    card = [f'<rect width="{W}" height="{H}" fill="{BG}"/>']
+
+    card.append(f'<clipPath id="amark"><rect x="{MARGIN}" y="56" width="{MARK}" height="{MARK}" rx="{MARK * 0.2}"/></clipPath>')
+    card.append('<g clip-path="url(#amark)">')
+    card.append(f'<rect x="{MARGIN}" y="56" width="{MARK}" height="{MARK}" fill="{GREEN}"/>')
+    card.append(f'<rect x="{MARGIN}" y="56" width="{MARK / 3:.3f}" height="{MARK}" fill="{RED}"/>')
+    card.append(f'<rect x="{MARGIN + 2 * MARK / 3:.3f}" y="56" width="{MARK / 3:.3f}" height="{MARK}" fill="{BLUE}"/>')
+    card.append('</g>')
+    card.append(draw(SANS, "Colors", 34, MARGIN + MARK + 18, 98, INK, -0.01, 0.022)[0])
+
+    card.append(draw(MONO6, eyebrow.upper(), 17, MARGIN, 160, MUTED, 0.10)[0])
+
+    for index, line in enumerate(headline):
+        card.append(draw(SANS, line, 58, MARGIN, 236 + index * 66, INK, -0.02, 0.023)[0])
+
+    # One tile per container. Ten tiles is not a decorative choice: it is what
+    # the PostHog arm actually needed against Umami's three.
+    TILE, GAP, ROW = 20, 7, 56
+    name_x = MARGIN
+    tile_x = MARGIN + max(text(MONO6, n, 22)[1] for n, _, _ in arms) + 28
+    widest = max(count for _, count, _ in arms)
+    note_x = tile_x + widest * (TILE + GAP) + 24
+    top = 392
+
+    for index, (name, count, defect) in enumerate(arms):
+        y = top + index * ROW
+        card.append(draw(MONO6, name, 22, name_x, y + TILE - 4, INK)[0])
+        for tile in range(count):
+            x = tile_x + tile * (TILE + GAP)
+            card.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{TILE}" height="{TILE}" rx="4" fill="{GREEN}"/>')
+        card.append(draw(MONO5, defect, 18, note_x, y + TILE - 4, RED)[0])
+
+    card.append(draw(MONO5, route, 18, MARGIN, 580, MUTED)[0])
+    card.append(f'<rect x="0" y="{H - 14}" width="{W}" height="14" fill="{GREEN}"/>')
+
+    card_svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}">{"".join(card)}</svg>'
+    output = os.path.join(ROOT, "public", filename)
+    with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False) as handle:
+        handle.write(card_svg)
+        source = handle.name
+    try:
+        subprocess.run(
+            ["node", "-e", f"require('sharp')({source!r},{{density:144}}).resize({W},{H}).png({{compressionLevel:9}}).toFile({output!r})"],
+            cwd=ROOT,
+            check=True,
+        )
+    finally:
+        os.unlink(source)
+    print(output)
+
+
 def recipes():
     parsed = []
     for path in sorted(glob.glob(os.path.join(ROOT, "recipes", "*.yml"))):
@@ -272,6 +333,20 @@ def recipes():
 
 catalog_recipes = recipes()
 all_skills = sum(len(recipe[3]) for recipe in catalog_recipes)
+# The benchmark article. Counts and defects are the audited findings, not
+# illustration: 3/6/10 containers, and the defect each arm's own gates missed.
+render_article_card(
+    "og-analytics-benchmark-v1.png",
+    "Benchmark · 3 agents · 3 analytics stacks",
+    ["All three passed their own gates.", "All three were hiding a defect."],
+    [
+        ("umami", 3, "default admin credentials live"),
+        ("rybbit", 6, "backups had never once succeeded"),
+        ("posthog", 10, "zero migrations, HTTP 502"),
+    ],
+    "/blog/self-hosted-analytics-benchmark",
+)
+
 render_blue_card("og-catalog-blue-v1.png", "Catalog", "Package Skills Catalog", f"{len(catalog_recipes)} curated sources and {all_skills} Package Skills for production infrastructure.", "/skills")
 render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills", "Production examples of deterministic, agent-operated infrastructure built with Colors.", "/featured")
 
