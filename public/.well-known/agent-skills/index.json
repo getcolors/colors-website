@@ -37,6 +37,13 @@
       "digest": "sha256:bf56a205a0a8f37863d1696c19d57c8a25ed3da1e80415e86f3a6c27959049de"
     },
     {
+      "name": "package-dbos-green",
+      "type": "archive",
+      "description": "Provisions a single-machine DBOS TypeScript durable-workflow service with colocated PostgreSQL on DigitalOcean. Use for build, dry-run, deployment, acceptance, recovery, upgrade, or authorized deletion.",
+      "url": "/.well-known/agent-skills/package-dbos-green-4243c8b7f7481125795fb37f9cb2fc070591b4b1c6dc666f8fe9f34da0f70f9f.tar.gz",
+      "digest": "sha256:4243c8b7f7481125795fb37f9cb2fc070591b4b1c6dc666f8fe9f34da0f70f9f"
+    },
+    {
       "name": "package-k3s-green",
       "type": "archive",
       "description": "Creates and operates a secure single-node K3s server on Hetzner Cloud with Green, OpenTofu, Ansible, Flux CD, and a public Git deployment repository. Use when initializing a K3s project, writing colors.yml, building or dry-running infrastructure, provisioning or destroying the server, configuring Flux, or invoking kubectl.",
@@ -49,6 +56,20 @@
       "description": "Build and operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Green, Flannel, DigitalOcean CCM, Flux, ExternalDNS, cert-manager, and acceptance.",
       "url": "/.well-known/agent-skills/package-k8s-green-3e9ef05e34c55dddb3ea0b0821542cd2e74607282729d86a004483eb2d79865e.tar.gz",
       "digest": "sha256:3e9ef05e34c55dddb3ea0b0821542cd2e74607282729d86a004483eb2d79865e"
+    },
+    {
+      "name": "package-mysql-agy-green",
+      "type": "archive",
+      "description": "A 3-node MySQL Group Replication high-availability cluster on DigitalOcean with continuous point-in-time recovery to Cloudflare R2.",
+      "url": "/.well-known/agent-skills/package-mysql-agy-green-8b280f013f6b9ed0c8218bb1069d142b3591ac6474df4c77babf3332b05563c6.tar.gz",
+      "digest": "sha256:8b280f013f6b9ed0c8218bb1069d142b3591ac6474df4c77babf3332b05563c6"
+    },
+    {
+      "name": "package-mysql-ha-green",
+      "type": "archive",
+      "description": "Build and operate a three-member MySQL Group Replication cluster on DigitalOcean with Green — automatic failover onto a reserved IP, daily snapshots and continuous binary-log archiving to Cloudflare R2, and a scheduled verified restore.",
+      "url": "/.well-known/agent-skills/package-mysql-ha-green-926707b88b2be1728028846c987b89fbdd06a9a4475ae09b231261d9c351a423.tar.gz",
+      "digest": "sha256:926707b88b2be1728028846c987b89fbdd06a9a4475ae09b231261d9c351a423"
     },
     {
       "name": "package-once-blue",
@@ -72,11 +93,67 @@
       "digest": "sha256:ca381465c644b781895efc8aab02b8b4561cdcaac0498f49cad0d6e6a32ff168"
     },
     {
+      "name": "package-postgres-agy-green",
+      "type": "archive",
+      "description": "Build and operate a three-node PostgreSQL 17 failover cluster on DigitalOcean with Patroni, colocated etcd v3, HAProxy client routing, Cloudflare DNS, pgBackRest backups to Cloudflare R2, heartbeat streaming, and verified restore check.",
+      "url": "/.well-known/agent-skills/package-postgres-agy-green-7bb893cf787aae3814b43931e588fe30717a44ff36e5db5748583a02a44a2ef9.tar.gz",
+      "digest": "sha256:7bb893cf787aae3814b43931e588fe30717a44ff36e5db5748583a02a44a2ef9"
+    },
+    {
+      "name": "package-postgres-ha-green",
+      "type": "archive",
+      "description": "Provision and operate a three-node PostgreSQL failover cluster on DigitalOcean with Patroni, etcd, HAProxy, Cloudflare DNS, and pgBackRest point-in-time recovery to Cloudflare R2, using Green.",
+      "url": "/.well-known/agent-skills/package-postgres-ha-green-72281a375b3d969fa76f51ba98543057795ae7063a2cfb4cc10807061039f8c4.tar.gz",
+      "digest": "sha256:72281a375b3d969fa76f51ba98543057795ae7063a2cfb4cc10807061039f8c4"
+    },
+    {
+      "name": "package-posthog-green",
+      "type": "archive",
+      "description": "Provisions and operates a single-node PostHog product analytics suite with PostgreSQL 17, ClickHouse 24.8, Redis 7.2, and Caddy on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-posthog-green-98d5e94791467bf2c38e79a9bf47274e80d9b02790032bd8df1dae346eed3fc2.tar.gz",
+      "digest": "sha256:98d5e94791467bf2c38e79a9bf47274e80d9b02790032bd8df1dae346eed3fc2"
+    },
+    {
       "name": "package-rama-green",
       "type": "archive",
       "description": "Provision and operate a private single-node Rama cluster on DigitalOcean using Green.",
       "url": "/.well-known/agent-skills/package-rama-green-48991e5f9ecbc0ceba5857cb3aa78bd444cebc01699dada033319306df2d8ba1.tar.gz",
       "digest": "sha256:48991e5f9ecbc0ceba5857cb3aa78bd444cebc01699dada033319306df2d8ba1"
+    },
+    {
+      "name": "package-restate-green",
+      "type": "archive",
+      "description": "Provisions and operates production-oriented single-node Restate with a durable TypeScript reference workflow on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-restate-green-ef590c3f5551f098b34fad6152cd1ef05b81c1d4b9a1a804363adb81f947ab79.tar.gz",
+      "digest": "sha256:ef590c3f5551f098b34fad6152cd1ef05b81c1d4b9a1a804363adb81f947ab79"
+    },
+    {
+      "name": "package-rybbit-green",
+      "type": "archive",
+      "description": "Provisions and operates a production-oriented single-node Rybbit analytics service with PostgreSQL, ClickHouse, Redis and Caddy on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-rybbit-green-6e866a0d3f339e525e6ac8b14c7f24edaf7dab9e5f9eaa2dd40131fa501fa76c.tar.gz",
+      "digest": "sha256:6e866a0d3f339e525e6ac8b14c7f24edaf7dab9e5f9eaa2dd40131fa501fa76c"
+    },
+    {
+      "name": "package-temporal-green",
+      "type": "archive",
+      "description": "Provision and operate a production-oriented single-machine Temporal deployment on DigitalOcean using Green.",
+      "url": "/.well-known/agent-skills/package-temporal-green-ac6e031075401b06f295d2772d4b05c7a30d1774c66ef3a627b7e50fdb494fd9.tar.gz",
+      "digest": "sha256:ac6e031075401b06f295d2772d4b05c7a30d1774c66ef3a627b7e50fdb494fd9"
+    },
+    {
+      "name": "package-umami-green",
+      "type": "archive",
+      "description": "Provisions and operates production-oriented single-node Umami web analytics with PostgreSQL and Caddy on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-umami-green-cbfa1c55430f452a8d5055c4c32e27b074dfd39717580b58d96553474ef36995.tar.gz",
+      "digest": "sha256:cbfa1c55430f452a8d5055c4c32e27b074dfd39717580b58d96553474ef36995"
+    },
+    {
+      "name": "package-vaultwarden-green",
+      "type": "archive",
+      "description": "Provisions a Basecamp ONCE server and deploys Vaultwarden with Litestream replication to Cloudflare R2. Use when building, dry-running, creating, recovering, or deleting a Vaultwarden deployment managed by Colors.",
+      "url": "/.well-known/agent-skills/package-vaultwarden-green-2aeef882f0ffcd7838c4039df24dbff9336796c57a1634589a0cbda9cf00b707.tar.gz",
+      "digest": "sha256:2aeef882f0ffcd7838c4039df24dbff9336796c57a1634589a0cbda9cf00b707"
     },
     {
       "name": "package-walter-green",
