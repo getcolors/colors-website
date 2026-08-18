@@ -1,57 +1,15 @@
 ---
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { posts } from "~/data/blog";
 
 const title = "Blog — Colors";
 const description = "Technical articles, empirical benchmarks, and architectural deep-dives into Agentic DevOps and the Colors SDK.";
 const path = "/blog";
 
-const articles = [
-  {
-    title: "Three Analytics Stacks, Three Agents, One Uncomfortable Finding",
-    slug: "/blog/self-hosted-analytics-benchmark",
-    date: "August 17, 2026",
-    readTime: "7 min read",
-    category: "Benchmark",
-    runtime: "Umami · Rybbit · PostHog",
-    summary: "Three isolated agents each built a self-hosted analytics platform as a Package Skill and deployed it live. All three reported success \u2014 and all three passed acceptance checks that could not detect a deployment serving 502s, backups that had never succeeded, or default credentials answering on the public internet.",
-    image: "/images/analytics-benchmark-arms.svg",
-    tags: ["Benchmark", "Umami", "Rybbit", "PostHog", "ClickHouse", "Verification"],
-  },
-  {
-    title: "Benchmarking Claude Opus 5 on Autonomous Distributed Infrastructure: Building PostgreSQL & MySQL HA Clusters from Scratch",
-    slug: "/blog/claude-opus-5-benchmark",
-    date: "August 17, 2026",
-    readTime: "8 min read",
-    category: "Benchmark",
-    runtime: "Claude Opus 5",
-    summary: "An empirical creation-effort benchmark evaluating Claude Opus 5 building and deploying 3-node PostgreSQL and MySQL High Availability clusters to DigitalOcean, with verified failover and continuous backups to Cloudflare R2.",
-    image: "/images/claude-opus-5-ha-architecture.png",
-    tags: ["Benchmark", "Claude Opus 5", "PostgreSQL HA", "MySQL HA", "Patroni", "Group Replication"],
-  },
-  {
-    title: "Benchmarking Gemini 3.7 Flash on Autonomous Distributed Infrastructure: Building PostgreSQL & MySQL HA Clusters from Scratch",
-    slug: "/blog/gemini-3-7-flash-benchmark",
-    date: "August 16, 2026",
-    readTime: "7 min read",
-    category: "Benchmark",
-    runtime: "Gemini 3.7 Flash",
-    summary: "An empirical creation-effort benchmark evaluating Gemini 3.7 Flash building and deploying 3-node PostgreSQL and MySQL High Availability clusters to DigitalOcean with continuous backups to Cloudflare R2.",
-    image: "/images/benchmark_setup_flow_1786877790896.jpg",
-    tags: ["Benchmark", "Gemini 3.7", "PostgreSQL HA", "MySQL HA", "DigitalOcean", "Cloudflare R2"],
-  },
-  {
-    title: "Agentic DevOps Has a Compounding Advantage",
-    slug: "/blog/agentic-devops-compounding-advantage",
-    date: "August 15, 2026",
-    readTime: "5 min read",
-    category: "Architecture",
-    runtime: "Architecture",
-    summary: "Why agentic DevOps accelerates faster over time: every verified Package Skill creates an executable corpus of operational knowledge that reduces the reasoning and implementation required for future deployments.",
-    image: "/images/agentic_devops_compounding_advantage_1786891719453.jpg",
-    tags: ["Agentic DevOps", "Architecture", "Colors SDK", "Autonomous Systems", "Compounding Advantage"],
-  },
-];
+// The article list lives in src/data/blog.ts so the feed and the sitemap
+// cannot drift from what this page shows.
+const articles = posts;
 ---
 
 <CatalogLayout {title} {description} {path} active="blog">

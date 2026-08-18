@@ -317,6 +317,52 @@ def render_article_card(filename, eyebrow, headline, arms, route):
     print(output)
 
 
+def render_post_card(filename, eyebrow, headline, subtitle, route):
+    """A card for articles whose subject has no figure of its own.
+
+    Two articles were unfurling an in-article diagram at 1376x768 while the
+    page declared the standard 1200x630, so scrapers cropped them. These are
+    generated at the real size instead.
+    """
+    card = [f'<rect width="{W}" height="{H}" fill="{BG}"/>']
+
+    card.append(f'<clipPath id="pmark"><rect x="{MARGIN}" y="56" width="{MARK}" height="{MARK}" rx="{MARK * 0.2}"/></clipPath>')
+    card.append('<g clip-path="url(#pmark)">')
+    card.append(f'<rect x="{MARGIN}" y="56" width="{MARK}" height="{MARK}" fill="{GREEN}"/>')
+    card.append(f'<rect x="{MARGIN}" y="56" width="{MARK / 3:.3f}" height="{MARK}" fill="{RED}"/>')
+    card.append(f'<rect x="{MARGIN + 2 * MARK / 3:.3f}" y="56" width="{MARK / 3:.3f}" height="{MARK}" fill="{BLUE}"/>')
+    card.append('</g>')
+    card.append(draw(SANS, "Colors", 34, MARGIN + MARK + 18, 98, INK, -0.01, 0.022)[0])
+
+    card.append(draw(MONO6, eyebrow.upper(), 17, MARGIN, 162, MUTED, 0.10)[0])
+
+    lines = wrapped(headline, 58, W - 2 * MARGIN, 3, tracking=-0.02)
+    for index, line in enumerate(lines):
+        card.append(draw(SANS, line, 58, MARGIN, 244 + index * 66, INK, -0.02, 0.023)[0])
+
+    sub_y = 244 + len(lines) * 66 + 30
+    for index, line in enumerate(wrapped(subtitle, 25, W - 2 * MARGIN, 2)):
+        card.append(draw(SANS, line, 25, MARGIN, sub_y + index * 34, MUTED)[0])
+
+    card.append(draw(MONO5, route, 18, MARGIN, 580, MUTED)[0])
+    card.append(f'<rect x="0" y="{H - 14}" width="{W}" height="14" fill="{GREEN}"/>')
+
+    card_svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}">{"".join(card)}</svg>'
+    output = os.path.join(ROOT, "public", filename)
+    with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False) as handle:
+        handle.write(card_svg)
+        source = handle.name
+    try:
+        subprocess.run(
+            ["node", "-e", f"require('sharp')({source!r},{{density:144}}).resize({W},{H}).png({{compressionLevel:9}}).toFile({output!r})"],
+            cwd=ROOT,
+            check=True,
+        )
+    finally:
+        os.unlink(source)
+    print(output)
+
+
 def recipes():
     parsed = []
     for path in sorted(glob.glob(os.path.join(ROOT, "recipes", "*.yml"))):
@@ -333,6 +379,22 @@ def recipes():
 
 catalog_recipes = recipes()
 all_skills = sum(len(recipe[3]) for recipe in catalog_recipes)
+render_post_card(
+    "og-gemini-3-7-flash-benchmark-v1.png",
+    "Benchmark · Gemini 3.7 Flash",
+    "Three-node PostgreSQL and MySQL HA clusters, built from scratch",
+    "An empirical creation-effort benchmark: provisioning, failover and continuous backups to Cloudflare R2.",
+    "/blog/gemini-3-7-flash-benchmark",
+)
+
+render_post_card(
+    "og-agentic-devops-compounding-advantage-v1.png",
+    "Architecture",
+    "Agentic DevOps has a compounding advantage",
+    "Every verified Package Skill becomes an executable corpus that shrinks the work the next deployment needs.",
+    "/blog/agentic-devops-compounding-advantage",
+)
+
 # The benchmark article. Counts and defects are the audited findings, not
 # illustration: 3/6/10 containers, and the defect each arm's own gates missed.
 render_article_card(

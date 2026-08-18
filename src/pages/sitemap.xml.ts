@@ -7,18 +7,15 @@
 // catalog already owns the data needed to enumerate its generated pages.
 
 import type { APIContext } from "astro";
+import { posts } from "~/data/blog";
 import { loadCatalog } from "~/data/catalog";
 
 // /blog/rss.xml is a feed and /index.md is a content-negotiated alternate of
 // `/`, so neither belongs in the sitemap.
-const STATIC_PAGES = [
-  "/",
-  "/featured",
-  "/skills",
-  "/blog",
-  "/blog/agentic-devops-compounding-advantage",
-  "/blog/gemini-3-7-flash-benchmark",
-];
+// Article routes come from src/data/blog.ts rather than being listed here.
+// Two of the four articles were missing from this list, so they were absent
+// from the sitemap while being linked from /blog.
+const STATIC_PAGES = ["/", "/featured", "/skills", "/blog", ...posts.map((post) => post.slug)];
 
 export async function GET({ site }: APIContext) {
   // No fallback literal on purpose. `site` is set unconditionally in

@@ -5,8 +5,16 @@ import CatalogLayout from "~/layouts/CatalogLayout.astro";
 const title = "Agentic DevOps Has a Compounding Advantage — Colors";
 const description = "Why agentic DevOps accelerates faster over time: every verified Package Skill creates an executable corpus of operational knowledge that reduces the reasoning and implementation required for future deployments.";
 const path = "/blog/agentic-devops-compounding-advantage";
-const image = "/images/agentic_devops_compounding_advantage_1786891719453.jpg";
-const imageAlt = "Agentic DevOps Compounding Operational Advantage Diagram";
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
+// The in-article diagram is 1376x768; the card the page declares must be
+// 1200x630, so the social image is generated rather than reused from the body.
+const image = "/og-agentic-devops-compounding-advantage-v1.png";
+const imageAlt =
+  "Article card: every verified Package Skill becomes an executable corpus that shrinks the next deployment.";
 
 const publishDate = "August 15, 2026";
 const readTime = "5 min read";
@@ -16,8 +24,8 @@ const structuredData = {
   "@type": "TechArticle",
   headline: "Agentic DevOps Has a Compounding Advantage",
   description,
-  url: "https://www.getcolors.ai/blog/agentic-devops-compounding-advantage",
-  image: "https://www.getcolors.ai/images/agentic_devops_compounding_advantage_1786891719453.jpg",
+  url: absolute(path),
+  image: absolute("/images/agentic_devops_compounding_advantage_1786891719453.jpg"),
   datePublished: "2026-08-15T12:00:00Z",
   dateModified: "2026-08-15T12:00:00Z",
   author: {
@@ -28,10 +36,10 @@ const structuredData = {
   publisher: {
     "@type": "Organization",
     name: "Colors",
-    url: "https://www.getcolors.ai",
+    url: absolute("/"),
     logo: {
       "@type": "ImageObject",
-      url: "https://www.getcolors.ai/favicon.svg",
+      url: absolute("/favicon.svg"),
     },
   },
   about: [
@@ -93,7 +101,7 @@ const structuredData = {
       <h2>New deployments no longer start from an empty canvas</h2>
 
       <p>
-        The <a href="https://www.getcolors.ai/">colors</a> workspace contains a growing collection of Package Skills. Each Package Skill turns desired state into a tested, reproducible deployment.
+        The <a href=absolute("/")>colors</a> workspace contains a growing collection of Package Skills. Each Package Skill turns desired state into a tested, reproducible deployment.
       </p>
 
       <p>

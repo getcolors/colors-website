@@ -5,6 +5,11 @@ import CatalogLayout from "~/layouts/CatalogLayout.astro";
 const title = "Benchmarking Claude Opus 5 on Autonomous Distributed Infrastructure — Colors";
 const description = "An empirical, end-to-end evaluation of Claude Opus 5 building and deploying PostgreSQL and MySQL High Availability clusters from scratch.";
 const path = "/blog/claude-opus-5-benchmark";
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
 // Raster, not the SVG this diagram is drawn as: Slack, LinkedIn, X and
 // WhatsApp do not render SVG og:images, and SeoMeta hardcodes
 // og:image:type to image/png. The in-article diagram is inline SVG so it
@@ -20,19 +25,19 @@ const structuredData = {
   "@type": "TechArticle",
   headline: "Benchmarking Claude Opus 5 on Autonomous Distributed Infrastructure: Building PostgreSQL & MySQL HA Clusters from Scratch",
   description,
-  url: "https://www.getcolors.ai/blog/claude-opus-5-benchmark",
-  image: "https://www.getcolors.ai/images/claude-opus-5-ha-architecture.png",
+  url: absolute(path),
+  image: absolute("/images/claude-opus-5-ha-architecture.png"),
   datePublished: "2026-08-17T20:00:00Z",
   dateModified: "2026-08-17T20:00:00Z",
   author: {
     "@type": "Organization",
     name: "Colors",
-    url: "https://www.getcolors.ai",
+    url: absolute("/"),
   },
   publisher: {
     "@type": "Organization",
     name: "Colors",
-    url: "https://www.getcolors.ai",
+    url: absolute("/"),
   },
   about: [
     { "@type": "Thing", name: "Claude Opus 5" },
@@ -66,7 +71,7 @@ const structuredData = {
     <div class="panel summary-card">
       <div class="card-label">Executive Summary</div>
       <p>Can a frontier model architect, implement, test, SHA-pin, and converge a production-shaped distributed system from an empty directory, then prove it survives losing a machine?</p>
-      <p>We ran <strong>Claude Opus 5</strong> through a creation-effort benchmark inside <a href="https://www.getcolors.ai/"><strong>Colors</strong></a>, using two cold concurrent subagents — one per database engine — with no shared memory and no cross-visibility.</p>
+      <p>We ran <strong>Claude Opus 5</strong> through a creation-effort benchmark inside <a href=absolute("/")><strong>Colors</strong></a>, using two cold concurrent subagents — one per database engine — with no shared memory and no cross-visibility.</p>
       <ul class="summary-list">
         <li><strong>Both arms converged on real hardware:</strong> six DigitalOcean droplets, Cloudflare DNS, and Cloudflare R2, from a pushed git SHA rather than a local working tree.</li>
         <li><strong>17,787 lines across 199 files:</strong> Clojure packages, OpenTofu templates, Ansible playbooks, systemd units, and golden fixtures.</li>

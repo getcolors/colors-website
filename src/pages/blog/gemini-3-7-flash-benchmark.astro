@@ -5,8 +5,16 @@ import CatalogLayout from "~/layouts/CatalogLayout.astro";
 const title = "Benchmarking Gemini 3.7 Flash on Autonomous Distributed Infrastructure — Colors";
 const description = "An empirical, end-to-end evaluation of Gemini 3.7 Flash building and deploying PostgreSQL and MySQL High Availability clusters from scratch.";
 const path = "/blog/gemini-3-7-flash-benchmark";
-const image = "/images/benchmark_setup_flow_1786877790896.jpg";
-const imageAlt = "Gemini 3.7 Flash Autonomous Infrastructure Benchmark";
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
+// The in-article diagram is 1376x768; the card the page declares must be
+// 1200x630, so the social image is generated rather than reused from the body.
+const image = "/og-gemini-3-7-flash-benchmark-v1.png";
+const imageAlt =
+  "Benchmark card: three-node PostgreSQL and MySQL high-availability clusters built from scratch by Gemini 3.7 Flash.";
 
 const publishDate = "August 16, 2026";
 const readTime = "7 min read";
@@ -16,22 +24,22 @@ const structuredData = {
   "@type": "TechArticle",
   headline: "Benchmarking Gemini 3.7 Flash on Autonomous Distributed Infrastructure: Building PostgreSQL & MySQL HA Clusters from Scratch",
   description,
-  url: "https://www.getcolors.ai/blog/gemini-3-7-flash-benchmark",
-  image: "https://www.getcolors.ai/images/benchmark_setup_flow_1786877790896.jpg",
+  url: absolute(path),
+  image: absolute("/images/benchmark_setup_flow_1786877790896.jpg"),
   datePublished: "2026-08-16T12:00:00Z",
   dateModified: "2026-08-16T12:00:00Z",
   author: {
     "@type": "Organization",
     name: "Colors",
-    url: "https://www.getcolors.ai",
+    url: absolute("/"),
   },
   publisher: {
     "@type": "Organization",
     name: "Colors",
-    url: "https://www.getcolors.ai",
+    url: absolute("/"),
     logo: {
       "@type": "ImageObject",
-      url: "https://www.getcolors.ai/favicon.svg",
+      url: absolute("/favicon.svg"),
     },
   },
   about: [
@@ -66,7 +74,7 @@ const structuredData = {
     <div class="panel summary-card">
       <div class="card-label">Executive Summary</div>
       <p>Can modern frontier AI models autonomously architect, implement, test, pin, and deploy production-grade distributed systems from a blank directory without human guidance?</p>
-      <p>We subjected <strong>Gemini 3.7 Flash</strong> (operating in Adaptive Thinking / High Reasoning mode) to a rigorous creation-effort benchmark within the <strong>Google Antigravity (AGY)</strong> agentic ecosystem and the <a href="https://www.getcolors.ai/"><strong>Colors</strong></a> infrastructure framework.</p>
+      <p>We subjected <strong>Gemini 3.7 Flash</strong> (operating in Adaptive Thinking / High Reasoning mode) to a rigorous creation-effort benchmark within the <strong>Google Antigravity (AGY)</strong> agentic ecosystem and the <a href=absolute("/")><strong>Colors</strong></a> infrastructure framework.</p>
       <ul class="summary-list">
         <li><strong>100% Autonomous Convergence:</strong> Both subagents converged on real DigitalOcean hardware and Cloudflare R2 with zero human intervention.</li>
         <li><strong>13,105 Lines of Production Code Written:</strong> Across 198 files spanning Clojure/Babashka SDKs, OpenTofu templates, Ansible playbooks, and systemd units.</li>
@@ -341,7 +349,7 @@ const structuredData = {
 
       <h2>6. What This Means for Platform & AI Engineering</h2>
       <p>This benchmark demonstrates that frontier reasoning models like <strong>Gemini 3.7 Flash</strong> have crossed a critical capability threshold: moving from code completion assistants to <strong>autonomous distributed systems engineers</strong>.</p>
-      <p>When paired with a structured execution framework like Antigravity / <a href="https://www.getcolors.ai/"><strong>Colors</strong></a>—providing strict phase gates, golden fixtures, and isolated environments—autonomous agents can reliably design and deploy mission-critical infrastructure with zero hallucination risk.</p>
+      <p>When paired with a structured execution framework like Antigravity / <a href=absolute("/")><strong>Colors</strong></a>—providing strict phase gates, golden fixtures, and isolated environments—autonomous agents can reliably design and deploy mission-critical infrastructure with zero hallucination risk.</p>
 
       <div class="panel repo-box">
         <div class="section-label">Public Artifact Repositories</div>
