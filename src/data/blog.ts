@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "Both Agents Reported Success. Only One Checked.",
+    slug: "/blog/posthog-skill-benchmark",
+    date: "August 18, 2026",
+    isoDate: "2026-08-18T18:15:00Z",
+    readTime: "7 min read",
+    category: "Benchmark",
+    runtime: "PostHog · DigitalOcean",
+    summary:
+      "Two agents deployed PostHog to DigitalOcean. One had a curated skill and used 4.4× fewer tool calls. The more useful finding: the baseline shipped a deployment it never proved could store a single event.",
+    image: "/images/posthog-skill-benchmark.svg",
+    tags: ["Benchmark", "PostHog", "Skills", "ClickHouse", "DigitalOcean", "Agentic DevOps"],
+  },
+  {
     title: "Three Analytics Stacks, Three Agents, One Uncomfortable Finding",
     slug: "/blog/self-hosted-analytics-benchmark",
     date: "August 17, 2026",

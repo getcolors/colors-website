@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" fill="none">
+  <rect width="800" height="420" rx="12" fill="#0f1117"/>
+  <rect x="40" y="32" width="340" height="356" rx="10" fill="#1a1d27" stroke="#2a2d3a" stroke-width="1"/>
+  <rect x="420" y="32" width="340" height="356" rx="10" fill="#1a1d27" stroke="#2a2d3a" stroke-width="1"/>
+  <!-- Arm A header -->
+  <text x="210" y="68" text-anchor="middle" fill="#8b8fa3" font-family="monospace" font-size="11" font-weight="600" letter-spacing="0.08em">ARM A — BASELINE</text>
+  <line x1="60" y1="82" x2="360" y2="82" stroke="#2a2d3a"/>
+  <!-- Arm A metrics -->
+  <text x="210" y="130" text-anchor="middle" fill="#e4e5eb" font-family="system-ui" font-size="56" font-weight="700">636</text>
+  <text x="210" y="155" text-anchor="middle" fill="#8b8fa3" font-family="monospace" font-size="12">tool calls</text>
+  <text x="120" y="200" text-anchor="middle" fill="#f87171" font-family="system-ui" font-size="32" font-weight="700">17</text>
+  <text x="120" y="220" text-anchor="middle" fill="#8b8fa3" font-family="monospace" font-size="11">commits</text>
+  <text x="300" y="200" text-anchor="middle" fill="#f87171" font-family="system-ui" font-size="32" font-weight="700">8</text>
+  <text x="300" y="220" text-anchor="middle" fill="#8b8fa3" font-family="monospace" font-size="11">fix commits</text>
+  <!-- Arm A stack -->
+  <text x="210" y="260" text-anchor="middle" fill="#6b7280" font-family="monospace" font-size="10">POSTHOG release-1.43.0</text>
+  <rect x="70" y="275" width="120" height="28" rx="4" fill="#1e293b" stroke="#334155"/>
+  <text x="130" y="294" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="10">ZooKeeper</text>
+  <rect x="200" y="275" width="120" height="28" rx="4" fill="#1e293b" stroke="#334155"/>
+  <text x="260" y="294" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="10">Kafka 7.5</text>
+  <rect x="70" y="312" width="120" height="28" rx="4" fill="#1e293b" stroke="#334155"/>
+  <text x="130" y="331" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="10">CH 22.8</text>
+  <rect x="200" y="312" width="120" height="28" rx="4" fill="#1e293b" stroke="#334155"/>
+  <text x="260" y="331" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="10">Gunicorn</text>
+  <text x="210" y="370" text-anchor="middle" fill="#6b7280" font-family="monospace" font-size="10">2 of 7 checks run</text>
+
+  <!-- Arm B header -->
+  <text x="590" y="68" text-anchor="middle" fill="#8b8fa3" font-family="monospace" font-size="11" font-weight="600" letter-spacing="0.08em">ARM B — SKILL</text>
+  <line x1="440" y1="82" x2="740" y2="82" stroke="#2a2d3a"/>
+  <!-- Arm B metrics -->
+  <text x="590" y="130" text-anchor="middle" fill="#34d399" font-family="system-ui" font-size="56" font-weight="700">144</text>
+  <text x="590" y="155" text-anchor="middle" fill="#8b8fa3" font-family="monospace" font-size="12">tool calls</text>
+  <text x="500" y="200" text-anchor="middle" fill="#34d399" font-family="system-ui" font-size="32" font-weight="700">6</text>
+  <text x="500" y="220" text-anchor="middle" fill="#8b8fa3" font-family="monospace" font-size="11">commits</text>
+  <text x="680" y="200" text-anchor="middle" fill="#34d399" font-family="system-ui" font-size="32" font-weight="700">2</text>
+  <text x="680" y="220" text-anchor="middle" fill="#8b8fa3" font-family="monospace" font-size="11">fix commits</text>
+  <!-- Arm B stack -->
+  <text x="590" y="260" text-anchor="middle" fill="#6b7280" font-family="monospace" font-size="10">POSTHOG 82ea668</text>
+  <rect x="450" y="275" width="120" height="28" rx="4" fill="#0f2a1f" stroke="#166534"/>
+  <text x="510" y="294" text-anchor="middle" fill="#4ade80" font-family="monospace" font-size="10">Redpanda</text>
+  <rect x="580" y="275" width="120" height="28" rx="4" fill="#0f2a1f" stroke="#166534"/>
+  <text x="640" y="294" text-anchor="middle" fill="#4ade80" font-family="monospace" font-size="10">Rust capture</text>
+  <rect x="450" y="312" width="120" height="28" rx="4" fill="#0f2a1f" stroke="#166534"/>
+  <text x="510" y="331" text-anchor="middle" fill="#4ade80" font-family="monospace" font-size="10">CH 26.6 + Keeper</text>
+  <rect x="580" y="312" width="120" height="28" rx="4" fill="#0f2a1f" stroke="#166534"/>
+  <text x="640" y="331" text-anchor="middle" fill="#4ade80" font-family="monospace" font-size="10">Temporal</text>
+  <text x="590" y="370" text-anchor="middle" fill="#34d399" font-family="monospace" font-size="10">7 of 7 checks run</text>
+
+  <!-- Center divider -->
+  <text x="400" y="220" text-anchor="middle" fill="#4b5563" font-family="system-ui" font-size="28" font-weight="300">→</text>
+  <text x="400" y="248" text-anchor="middle" fill="#6366f1" font-family="monospace" font-size="11" font-weight="600">−77%</text>
+</svg>

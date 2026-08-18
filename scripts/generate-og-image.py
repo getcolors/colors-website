@@ -395,6 +395,14 @@ render_post_card(
     "/blog/agentic-devops-compounding-advantage",
 )
 
+render_post_card(
+    "og-posthog-skill-benchmark-v1.png",
+    "Benchmark · 2 agents · PostHog",
+    "Both agents reported success. Only one checked.",
+    "A curated skill cut agent effort by 77%. The baseline never proved its deployment could store an event.",
+    "/blog/posthog-skill-benchmark",
+)
+
 # The benchmark article. Counts and defects are the audited findings, not
 # illustration: 3/6/10 containers, and the defect each arm's own gates missed.
 render_article_card(

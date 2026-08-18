@@ -1,0 +1,338 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "Both Agents Reported Success. Only One Checked. — Colors";
+const description = "Two agents deployed PostHog to DigitalOcean. One had a curated skill. It used 4.4× fewer tool calls — but the more useful finding is that the baseline shipped a deployment it never proved could store an event.";
+const path = "/blog/posthog-skill-benchmark";
+
+const post = postFor(path);
+const image = "/og-posthog-skill-benchmark-v1.png";
+const imageAlt =
+  "Two PostHog deployment pipelines side by side: a baseline agent with 636 tool calls " +
+  "and 8 fix commits, and a skill-augmented agent with 144 tool calls and 2 fix commits.";
+
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (p: string) => new URL(p, SITE_URL).toString();
+
+const publishDate = post.date;
+const readTime = "7 min read";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "Both Agents Reported Success. Only One Checked.",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Agentic AI" },
+    { "@type": "Thing", name: "PostHog" },
+    { "@type": "Thing", name: "Skills" },
+    { "@type": "Thing", name: "DigitalOcean" },
+    { "@type": "Thing", name: "ClickHouse" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "PostHog Skill Benchmark" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Research &amp; Benchmark</p>
+      <h1>Both Agents Reported Success. Only One Checked.</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">PostHog · DigitalOcean</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+      </div>
+      <p class="lede">We gave two agents the same job: deploy self-hosted PostHog to a DigitalOcean droplet. One had a curated skill built from a previous deployment's failures. It finished with 4.4× fewer tool calls — but the number we did not expect was zero: the checks the baseline ran that could have caught a broken pipeline.</p>
+    </header>
+
+    <div class="panel summary-card">
+      <div class="card-label">What we found</div>
+      <p>Both agents reported a successful deployment. Both returned HTTP 200 from a health endpoint and a success response from <code>/capture/</code>. Only one of them established that an event had been <em>stored</em>.</p>
+      <ul class="summary-list">
+        <li><strong>77% fewer tool calls</strong> — 144 vs 636, with 49 polling timers reduced to zero.</li>
+        <li><strong>75% fewer fix commits</strong> — 2 vs 8, against a nearly identical wall-clock time.</li>
+        <li><strong>The baseline never queried ClickHouse.</strong> Its acceptance code contains health checks and nothing else.</li>
+        <li><strong>The two arms did not deploy the same software</strong> — a limitation we name in full below.</li>
+      </ul>
+    </div>
+
+    <article class="content-body">
+      <h2>1. Why a 200 proves almost nothing</h2>
+      <p>PostHog's ingestion path is four processes: a Rust <code>capture</code> service writes to Kafka, a Node plugin server consumes that topic and produces another, and ClickHouse's Kafka engine tables read <em>that</em>. The HTTP request touches only the first one. Capture answers <code>200</code> the moment it has handed the event to Kafka, and every hop after that can fail without the client ever learning.</p>
+      <p>This is not a quirk of one release. It is the defining property of self-hosted PostHog, and it repeats at every layer: a web container that stays alive with nothing listening, a plugin server that logs <code>Shutting down completed. Exiting...</code> at info level and restarts forever, a Celery worker that never starts because a required async migration is pending — and the migration can normally only be run by Celery. A deployment in any of these states serves a dashboard and looks fine.</p>
+      <p>So "did the deploy succeed?" is not answerable by the deploy. It is answerable only by reading an event back out of the database it was supposed to land in.</p>
+
+      <h2>2. Method</h2>
+      <p>Two subagents ran concurrently under Google Antigravity on Gemini 3.7 Flash in high-reasoning mode, with isolated memory, separate filesystems, and no cross-visibility. Neither had read access to the workspace containing the original PostHog package. Both targeted DigitalOcean <code>fra1</code> on an <code>s-8vcpu-16gb</code> Ubuntu 24.04 droplet, with Cloudflare DNS, Let's Encrypt TLS via Caddy, and OpenTofu state in Cloudflare R2.</p>
+      <p>Both received <code>create-package-skill</code>, the workflow skill that defines the Clojure DAG, OpenTofu, Ansible and Compose structure. The single variable was a second skill given only to Arm B: <code>posthog-single-node</code>, a knowledge package containing the container topology, the ClickHouse Keeper and named-collection configuration PostHog's migrations require, a catalogue of roughly thirty failures written as symptom → cause → fix, and a set of acceptance criteria.</p>
+
+      <h2>3. The process cost of not knowing</h2>
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Metric</th>
+              <th style="text-align: right;">Arm A — Baseline</th>
+              <th style="text-align: right;">Arm B — Skill</th>
+              <th style="text-align: right;">Δ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Total tool calls</strong></td><td style="text-align: right;">636</td><td style="text-align: right;">144</td><td style="text-align: right;"><span class="badge badge-green mono">−77%</span></td></tr>
+            <tr><td><strong>Shell commands</strong></td><td style="text-align: right;">382</td><td style="text-align: right;">112</td><td style="text-align: right;"><span class="badge badge-green mono">−71%</span></td></tr>
+            <tr><td><strong>File writes</strong></td><td style="text-align: right;">51</td><td style="text-align: right;">1</td><td style="text-align: right;"><span class="badge badge-green mono">−98%</span></td></tr>
+            <tr><td><strong>Polling timers</strong></td><td style="text-align: right;">49</td><td style="text-align: right;">0</td><td style="text-align: right;"><span class="badge badge-green mono">−100%</span></td></tr>
+            <tr><td><strong>Git commits</strong></td><td style="text-align: right;">17</td><td style="text-align: right;">6</td><td style="text-align: right;"><span class="badge badge-green mono">−65%</span></td></tr>
+            <tr><td><strong>Fix commits</strong></td><td style="text-align: right;">8</td><td style="text-align: right;">2</td><td style="text-align: right;"><span class="badge badge-green mono">−75%</span></td></tr>
+            <tr><td><strong>Wall-clock time</strong></td><td style="text-align: right;">46m 35s</td><td style="text-align: right;">43m 07s</td><td style="text-align: right;"><span class="badge badge-neutral mono">−7%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The wall-clock column is the honest one to dwell on, because it is the least impressive. The skill removed almost none of the elapsed time: converging PostHog is dominated by applying migrations, and migrations take as long as they take. What it removed was <em>work</em> — 492 tool calls of it.</p>
+      <p>The 49 polling timers are the clearest signature of that work. The baseline built its own convergence loop out of scheduled wake-ups: start something, wait, check whether it came up, retry after the next fix. The skill's playbook encodes the ordering directly — start the datastores alone, flush the ClickHouse system logs, migrate with the application down, then bring the application up — so there is nothing to poll. Zero timers is not an efficiency gain at the margin; it is a different shape of work.</p>
+
+      <h2>4. What each agent actually verified</h2>
+      <p>We read both agents' acceptance code rather than trusting their self-reports. The baseline's contains health checks and nothing else — no ClickHouse client invocation, no event query, no worker check.</p>
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Verification check</th>
+              <th style="text-align: center;">Arm A</th>
+              <th style="text-align: center;">Arm B</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>HTTPS health endpoint</td><td style="text-align: center;"><span class="badge badge-green mono">✔</span></td><td style="text-align: center;"><span class="badge badge-green mono">✔</span></td></tr>
+            <tr><td><code>/capture/</code> accepts the event</td><td style="text-align: center;"><span class="badge badge-green mono">✔</span></td><td style="text-align: center;"><span class="badge badge-green mono">✔</span></td></tr>
+            <tr><td>Event read back out of ClickHouse</td><td style="text-align: center;"><span class="badge badge-amber mono">not checked</span></td><td style="text-align: center;"><span class="badge badge-green mono">✔</span></td></tr>
+            <tr><td>HogQL returns the event</td><td style="text-align: center;"><span class="badge badge-amber mono">not checked</span></td><td style="text-align: center;"><span class="badge badge-green mono">✔</span></td></tr>
+            <tr><td>Celery worker alive</td><td style="text-align: center;"><span class="badge badge-amber mono">not checked</span></td><td style="text-align: center;"><span class="badge badge-green mono">✔</span></td></tr>
+            <tr><td>Async migrations complete</td><td style="text-align: center;"><span class="badge badge-amber mono">not checked</span></td><td style="text-align: center;"><span class="badge badge-green mono">✔</span></td></tr>
+            <tr><td>Backup produces a restorable artefact</td><td style="text-align: center;"><span class="badge badge-amber mono">not configured</span></td><td style="text-align: center;"><span class="badge badge-green mono">✔</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>To be precise about what this does and does not show: we are <strong>not</strong> claiming the baseline's deployment was broken. We are claiming nobody knows, including the agent that built it and reported it complete. Given that the failure mode this stack produces most often is an accepted event that is never stored, "we did not check" and "it works" are not close together.</p>
+      <p>The skill's acceptance step was written around this. It verifies TLS without <code>-k</code>, resolves the events table from <code>system.tables</code> rather than hardcoding a database name the migrations own, and — because ingestion is asynchronous — polls for the row instead of sampling once. It distinguishes <em>ingested</em> from <em>dropped</em> (2xx, no stored row) from <em>rejected</em>, so a failure names which hop broke.</p>
+
+      <h2>5. The limitation: the arms did not deploy the same software</h2>
+      <p>This is the part a benchmark write-up is tempted to leave out, and it changes how the architecture comparison should be read.</p>
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Component</th>
+              <th style="text-align: left;">Arm A — Baseline</th>
+              <th style="text-align: left;">Arm B — Skill</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>PostHog</strong></td><td><code>release-1.43.0</code></td><td>commit <code>82ea668</code></td></tr>
+            <tr><td><strong>ClickHouse</strong></td><td>22.8-alpine, external ZooKeeper</td><td>26.6.2.158, embedded Keeper</td></tr>
+            <tr><td><strong>Streaming</strong></td><td>Confluent ZooKeeper + Kafka 7.5</td><td>Redpanda v25.1.9</td></tr>
+            <tr><td><strong>Event capture</strong></td><td>inside Django</td><td>standalone Rust service</td></tr>
+            <tr><td><strong>Plugin server</strong></td><td>bundled in the image</td><td>separate <code>posthog-node</code> image</td></tr>
+            <tr><td><strong>Services</strong></td><td>9</td><td>10</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Arm A pinned a PostHog release from 2022. On that release the architecture in its column is not a mistake — capture really was part of Django, the plugin server really did ship inside the image, and <code>./bin/plugin-server</code> really was the right command. Its fixes were correct for the software it chose.</p>
+      <p>So this is not a clean architecture comparison, and we are not going to present it as one. Arm A did not select a legacy topology on the merits; it pinned an old release and inherited one. That was a rational move without domain knowledge — 1.43.0 is roughly where the documented single-server story stops — and it is exactly the kind of decision a curated skill forecloses, since Arm B was told which commit to use and why the application and plugin server must share it.</p>
+      <p>The consequence for the numbers: the process metrics in section 3 remain a like-for-like comparison of effort on the same task, because both agents were building the same thing to the same acceptance bar. The architecture table is not a quality judgement between two designs. It is a record of where each agent's version choice led.</p>
+      <p>One more correction while we are here. An earlier draft of the internal report recorded Arm B on ClickHouse 24.x. Its <code>colors.yml</code> pins <code>26.6.2.158</code>, which matters because PostHog's schema puts TTLs on <code>DateTime64</code> columns and 24.8 rejects them outright. Had Arm B actually run 24.x, its migrations would have failed. We caught this by reading the deployment rather than the summary — which is the same discipline the article is about.</p>
+
+      <h2>6. What transfers</h2>
+      <p>The reusable finding is not "skills make agents faster." On this task the skill barely moved the clock. It is that a curated failure catalogue changes what an agent <em>believes it has to prove</em>.</p>
+      <p>The eight fix commits in Arm A are all real knowledge, discovered the expensive way and then stranded in one agent's transcript. The same eight were already written down for Arm B, which is why it spent its commits on features instead. But the sharper difference is that Arm B's skill told it what a working deployment looks like — a row in ClickHouse, a live Celery worker, a backup object that exists — and so it went and checked. The baseline had no such definition, so it used the one available by default: the deploy command exited zero.</p>
+      <p>If you take one practice from this: <strong>write down the acceptance criteria before the deployment steps.</strong> Configuration files tell an agent what to build. The failure catalogue and the acceptance criteria tell it when to stop believing it is done.</p>
+      <p>The skill used here is <a href="https://github.com/getcolors/skills">open source</a>, as is the <a href="/blog/self-hosted-analytics-benchmark">earlier analytics benchmark</a> that first made this failure mode visible to us.</p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-block: 24px 80px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 36px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .summary-card {
+    padding: 24px 28px;
+    margin-bottom: 48px;
+    border-left: 4px solid var(--blue);
+    background: var(--surface);
+  }
+  .card-label {
+    font: 600 12px var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+  .summary-card p {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .summary-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .summary-list li {
+    margin-bottom: 8px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul, .content-body ol {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 8px;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin: 28px 0;
+    padding: 0;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .data-table th {
+    background: var(--surface);
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+  .data-table tr:hover td {
+    background: var(--surface);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .badge-green {
+    background: oklch(94% 0.04 145);
+    color: oklch(40% 0.15 145);
+  }
+  .badge-blue {
+    background: oklch(94% 0.04 260);
+    color: var(--blue);
+  }
+  /* Used for "not checked" — deliberately not red. The baseline did not fail
+     these checks; it never ran them, and the table must not imply otherwise. */
+  .badge-amber {
+    background: oklch(95% 0.05 85);
+    color: oklch(45% 0.12 65);
+  }
+  .badge-neutral {
+    background: var(--surface);
+    color: var(--muted);
+    border: 1px solid var(--line);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+</style>
