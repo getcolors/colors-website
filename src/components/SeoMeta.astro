@@ -2,6 +2,8 @@
 // Shared Open Graph + Twitter Card + canonical meta tags.
 // Use in the <head> of any page.
 
+import { requireLocalImage } from "~/data/og-image";
+
 interface Props {
   /** The <title> text (also used for og:title / twitter:title). */
   title: string;
@@ -45,6 +47,8 @@ const {
   type = "website",
 } = Astro.props;
 
+// A card the generator never produced would otherwise ship as a 404.
+requireLocalImage(image);
 const canonical = new URL(path, SITE_URL).toString();
 const absoluteImage = new URL(image, SITE_URL).toString();
 ---

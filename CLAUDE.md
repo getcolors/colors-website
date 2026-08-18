@@ -222,8 +222,12 @@ comment in the file.
 
 The files under `public/og-*.png` are generated, not hand-drawn. Run
 `scripts/generate-og-image.py` to rebuild them after any copy, recipe, or brand
-change; the setup block at the top of that script explains the one-off Python
-environment. In addition to the landing card, the script creates blue cards for
+change. **The build now fails if a referenced card is missing from `public/`** —
+`requireLocalImage()` in `src/data/og-image.ts`, called from `SeoMeta`. That
+guard exists because 22 catalog cards were referenced by built pages and had
+never been generated, so those unfurls fetched a 404 for as long as the recipes
+had existed: nothing broke at build time, so nobody noticed. The setup block at the top of that script
+explains the one-off Python environment. In addition to the landing card, the script creates blue cards for
 `/featured`, `/skills`, and every owner, source, and Package Skill route from
 the recipes. `catalogOgImage()` in `src/data/catalog.ts` must keep the same
 filename convention. The generator converts text to outlines straight from
