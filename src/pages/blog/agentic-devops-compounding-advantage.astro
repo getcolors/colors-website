@@ -1,10 +1,15 @@
 ---
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
 
 const title = "Agentic DevOps Has a Compounding Advantage — Colors";
 const description = "Why agentic DevOps accelerates faster over time: every verified Package Skill creates an executable corpus of operational knowledge that reduces the reasoning and implementation required for future deployments.";
 const path = "/blog/agentic-devops-compounding-advantage";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
 
 // Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
 // does not leave the structured data advertising production.
@@ -16,7 +21,7 @@ const image = "/og-agentic-devops-compounding-advantage-v1.png";
 const imageAlt =
   "Article card: every verified Package Skill becomes an executable corpus that shrinks the next deployment.";
 
-const publishDate = "August 15, 2026";
+const publishDate = post.date;
 const readTime = "5 min read";
 
 const structuredData = {
@@ -26,8 +31,8 @@ const structuredData = {
   description,
   url: absolute(path),
   image: absolute("/images/agentic_devops_compounding_advantage_1786891719453.jpg"),
-  datePublished: "2026-08-15T12:00:00Z",
-  dateModified: "2026-08-15T12:00:00Z",
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
   author: {
     "@type": "Person",
     name: "Alberto Miorin",

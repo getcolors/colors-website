@@ -1,10 +1,15 @@
 ---
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
 
 const title = "Benchmarking Claude Opus 5 on Autonomous Distributed Infrastructure — Colors";
 const description = "An empirical, end-to-end evaluation of Claude Opus 5 building and deploying PostgreSQL and MySQL High Availability clusters from scratch.";
 const path = "/blog/claude-opus-5-benchmark";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
 
 // Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
 // does not leave the structured data advertising production.
@@ -17,7 +22,7 @@ const absolute = (target: string) => new URL(target, SITE_URL).toString();
 const image = "/images/claude-opus-5-ha-architecture.png";
 const imageAlt = "Claude Opus 5 Autonomous Infrastructure Benchmark";
 
-const publishDate = "August 17, 2026";
+const publishDate = post.date;
 const readTime = "8 min read";
 
 const structuredData = {
@@ -27,8 +32,8 @@ const structuredData = {
   description,
   url: absolute(path),
   image: absolute("/images/claude-opus-5-ha-architecture.png"),
-  datePublished: "2026-08-17T20:00:00Z",
-  dateModified: "2026-08-17T20:00:00Z",
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
   author: {
     "@type": "Organization",
     name: "Colors",

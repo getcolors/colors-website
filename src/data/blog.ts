@@ -16,8 +16,8 @@ export interface Post {
   slug: string;
   /** Human date shown on the card. */
   date: string;
-  /** RFC 3339 instant, and the only machine-readable date. Must agree with
-   *  datePublished in the article's structured data. */
+  /** RFC 3339 instant. The article page reads this via postFor() for its own
+   *  datePublished, and the feed for pubDate, so it is the only copy. */
   isoDate: string;
   readTime: string;
   category: string;
@@ -93,3 +93,22 @@ export const escapeXml = (value: string): string =>
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+
+/** The registry entry for a route, or a build failure.
+ *
+ *  Article pages call this instead of restating their own dates, so isoDate
+ *  here and datePublished in the page's structured data cannot disagree --
+ *  they are one value. It throws rather than returning undefined because a
+ *  page with no entry is the original bug: an article that renders and is
+ *  linked while the feed and the sitemap have never heard of it.
+ */
+export function postFor(slug: string): Post {
+  const post = posts.find((candidate) => candidate.slug === slug);
+  if (!post) {
+    throw new Error(
+      `No entry in src/data/blog.ts for ${slug}. Add one, or /blog, the feed ` +
+        `and the sitemap will not know the article exists.`,
+    );
+  }
+  return post;
+}

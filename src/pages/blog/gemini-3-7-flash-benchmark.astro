@@ -1,10 +1,15 @@
 ---
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
 
 const title = "Benchmarking Gemini 3.7 Flash on Autonomous Distributed Infrastructure — Colors";
 const description = "An empirical, end-to-end evaluation of Gemini 3.7 Flash building and deploying PostgreSQL and MySQL High Availability clusters from scratch.";
 const path = "/blog/gemini-3-7-flash-benchmark";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
 
 // Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
 // does not leave the structured data advertising production.
@@ -16,7 +21,7 @@ const image = "/og-gemini-3-7-flash-benchmark-v1.png";
 const imageAlt =
   "Benchmark card: three-node PostgreSQL and MySQL high-availability clusters built from scratch by Gemini 3.7 Flash.";
 
-const publishDate = "August 16, 2026";
+const publishDate = post.date;
 const readTime = "7 min read";
 
 const structuredData = {
@@ -26,8 +31,8 @@ const structuredData = {
   description,
   url: absolute(path),
   image: absolute("/images/benchmark_setup_flow_1786877790896.jpg"),
-  datePublished: "2026-08-16T12:00:00Z",
-  dateModified: "2026-08-16T12:00:00Z",
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
   author: {
     "@type": "Organization",
     name: "Colors",

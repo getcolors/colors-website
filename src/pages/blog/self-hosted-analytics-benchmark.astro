@@ -1,10 +1,15 @@
 ---
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
 
 const title = "Three Analytics Stacks, Three Agents, One Uncomfortable Finding — Colors";
 const description = "An empirical benchmark building Umami, Rybbit and PostHog as autonomous Package Skills — and an audit of what their own quality gates failed to detect.";
 const path = "/blog/self-hosted-analytics-benchmark";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
 
 // Its own card, not the site default: the generic one unfurls this piece as
 // "Colors — An SDK for Package Skills". Built by scripts/generate-og-image.py;
@@ -19,7 +24,7 @@ const imageAlt =
 const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
 const absolute = (p: string) => new URL(p, SITE_URL).toString();
 
-const publishDate = "August 17, 2026";
+const publishDate = post.date;
 const readTime = "7 min read";
 
 const structuredData = {
@@ -29,8 +34,8 @@ const structuredData = {
   description,
   url: absolute(path),
   image: absolute(image),
-  datePublished: "2026-08-17T18:00:00Z",
-  dateModified: "2026-08-17T18:00:00Z",
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
   author: {
     "@type": "Organization",
     name: "Colors",
