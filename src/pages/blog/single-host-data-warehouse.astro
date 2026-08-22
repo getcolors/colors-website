@@ -1,0 +1,386 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "You Probably Don't Need the Modern Data Stack — Colors";
+const description =
+  "For simple use cases, one $40 virtual machine running dlt, dbt, ClickHouse, PocketBase, and systemd can replace a four-figure SaaS data stack. A live single-host GitHub warehouse is the proof.";
+const path = "/blog/single-host-data-warehouse";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
+const image = "/og-single-host-data-warehouse-v1.png";
+const imageAlt =
+  "Article card: dlt, dbt, ClickHouse, PocketBase and systemd on one $40 virtual machine replace a four-figure SaaS data stack.";
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "You Probably Don't Need the Modern Data Stack",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Person",
+    name: "Alberto Miorin",
+    url: "https://www.linkedin.com/in/amiorin/",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Data Engineering" },
+    { "@type": "Thing", name: "ClickHouse" },
+    { "@type": "Thing", name: "dlt" },
+    { "@type": "Thing", name: "dbt" },
+    { "@type": "Thing", name: "Single-Host Architecture" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Single-Host Data Warehouse" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Essay &amp; Architecture</p>
+      <h1>You probably don't need the modern data stack</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">Architecture</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+        <span class="dot">·</span>
+        <span class="meta-author mono">By <a href="https://www.linkedin.com/in/amiorin/" target="_blank" rel="noopener noreferrer">Alberto Miorin</a></span>
+      </div>
+      <p class="lede">For simple use cases, one virtual machine running open source tools can replace the SaaS data bundle. Not a toy setup: schedules, a control plane, authenticated run history, cancellation, and disaster recovery, on one $40 host.</p>
+    </header>
+
+    <div class="bill panel" role="img" aria-label="The modern data stack costs about 1,700 dollars a month, crossed out. One virtual machine costs 40 dollars a month.">
+      <div class="line saas"><span>modern data stack, small workload</span><span class="dots"></span><span class="amount">$1,700/mo</span></div>
+      <div class="line vm"><span>one virtual machine</span><span class="dots"></span><span class="amount">$40/mo</span></div>
+      <div class="bill-note mono">list prices, August 2026 · arithmetic in the table below</div>
+    </div>
+
+    <article class="content-body">
+      <p>
+        The standard answer to "we need analytics" in 2026 is a subscription bundle: a managed ingestion service, a cloud warehouse, a hosted orchestrator, and a BI tool. Each one is excellent. Each one bills monthly. And for a large class of teams, the data would fit comfortably on a laptop.
+      </p>
+      <p>
+        This article makes a concrete claim: for simple use cases, one virtual machine running open source tools can replace that bundle. Not a toy setup. It has schedules, a control plane, authenticated run history, cancellation, and disaster recovery. I'll use a real deployment as the example: a warehouse that ingests repositories, commits, events, and Actions runs from a GitHub organization into ClickHouse and builds dbt marts on top. The GitHub data is incidental. The shape of the solution is the point.
+      </p>
+
+      <h2>The bill you're replacing</h2>
+      <p>
+        For a small workload, the SaaS stack usually means a managed extractor like Fivetran or Airbyte Cloud, a cloud warehouse like Snowflake or BigQuery, and a managed orchestrator like MWAA or Astronomer. Each is reasonable on its own. Together they bill four figures a month for even a modest setup. You also get three vendor consoles, three auth systems, and three places to look when a pipeline fails at 3am.
+      </p>
+      <p>Here is the division of labor, with list prices as of August 2026:</p>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Job</th><th>SaaS stack</th><th>List price</th><th>Single host</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Extract &amp; load</td><td>Fivetran Standard</td><td class="price">~$550/mo, published 4-connector example</td><td class="tool">dlt</td></tr>
+            <tr><td>Warehouse</td><td>Snowflake Standard</td><td class="price">~$465/mo, X-Small warehouse 8h weekdays plus 1 TB storage</td><td class="tool">ClickHouse</td></tr>
+            <tr><td>Transform</td><td>dbt Cloud</td><td class="price">$100 per seat/mo</td><td class="tool">dbt (dbt-clickhouse)</td></tr>
+            <tr><td>Orchestration</td><td>Amazon MWAA</td><td class="price">~$358/mo, smallest environment, always on</td><td class="tool">a workflow library + systemd</td></tr>
+            <tr><td>Control plane &amp; UI</td><td>vendor consoles</td><td class="price">included</td><td class="tool">PocketBase</td></tr>
+            <tr><td>Logs</td><td>vendor log viewers</td><td class="price">CloudWatch billed separately</td><td class="tool">journald</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Take three dbt seats and the bundle lands around $1,700 a month, roughly $20,000 a year, before usage overruns. The entire right-hand column runs on one Vultr vc2-4c-8gb instance: 4 vCPUs, 8 GB of RAM, 160 GB of SSD, 4 TB of bandwidth, $40 a month. That is a 40x gap. Prices move and usage-based bills vary, so check the current pages before repeating these numbers. The pattern will outlive them. Every SaaS row scales its bill with rows, seats, or hours. The VM bills $40 whether you load once a day or every 15 minutes.
+      </p>
+      <p>
+        The first three rows are almost uncontroversial by now. dlt gives you declarative, incremental extraction in plain Python, merging on stable IDs. A single ClickHouse node is absurdly capable below a terabyte. dbt is the same tool you'd use in the SaaS stack anyway. The interesting rows are the last three, because orchestration, UI, and logs are the reasons people believe they need Airflow.
+      </p>
+
+      <h2>What Airflow actually sells you</h2>
+      <p>
+        Airflow earns its complexity when you have many pipelines with cross-dependencies, per-task retries, sensors waiting on external events, backfills over years of partitions, and a team sharing one scheduler. That is a real product. It is also wildly oversized for the most common pipeline in existence:
+      </p>
+      <pre is:raw><code>extract → transform → test</code></pre>
+      <p>Three steps in a row, once an hour. That is not a DAG problem.</p>
+      <p>
+        If a step fails at this scale, the honest recovery is not a checkpointed resume with exponential backoff. It's running the whole thing again. Extraction is idempotent because loads merge on stable IDs. dbt is idempotent by construction. A whole-run retry costs almost nothing, and it removes an entire category of state you would otherwise have to store, display, and debug.
+      </p>
+      <p>
+        The example repo writes this down as explicit non-goals: no task queues, no sensors, no XComs, no per-step retries, no backfill scheduler. A retry is a new run. Every feature on that list is something Airflow would have given us for free. Every one of them is state we would then be operating.
+      </p>
+
+      <h2>One workflow engine, two DAGs</h2>
+      <p>
+        There is still a DAG. Two, actually. The infrastructure has to be provisioned, and the data has to move. OpenTofu creates the VM and DNS, then Ansible converges ClickHouse, PocketBase, Caddy, and the runtime. The trick is using one small workflow engine for both jobs. In Colors Blue, a step is a function from options to options, and the graph is a wiring function:
+      </p>
+      <pre is:raw><code>def wire_fn(step, run_opts):
+    event = run_opts.get("blue/event")
+    if event == "run":
+        return {"start": (start_step, "dlt"),
+                "dlt":   (dlt_step, "dbt-run"),
+                "dbt-run":  (dbt_run_step, "dbt-test"),
+                "dbt-test": (dbt_test_step,)}.get(step)
+    return {"start": (start_step, "tofu"),
+            "tofu":  (tofu_step, "ansible"),
+            "ansible": (ansible_step,)}.get(step)</code></pre>
+      <p>
+        <code>create</code> walks provision and converge. <code>run</code> walks extract, transform, test. Same engine, same dry-run mode, same progress reporting, same validation. Desired state is a single <code>colors.yml</code> in git. Secrets are environment variables. <code>./blue build</code> and <code>./blue create --dry-run</code> work on a fresh checkout with zero credentials, so a configuration change is reviewable before anything touches a provider. The whole warehouse, infrastructure and pipeline both, is one repo you can diff.
+      </p>
+      <p>
+        The SaaS stack structurally cannot give you this: the infrastructure DAG and the data DAG in the same model, versioned together, pinned to the same commit.
+      </p>
+
+      <h2>PocketBase instead of the Airflow UI</h2>
+      <p>
+        Here's the quiet reason teams keep Airflow long after their DAGs stopped needing it: the UI. Someone needs to see whether last night's load ran, trigger a manual refresh, and cancel a stuck one. That's a real requirement. It's also a CRUD app, not an orchestrator.
+      </p>
+      <p>
+        PocketBase is a single-binary backend with SQLite, auth, a REST API, and an admin UI. The warehouse defines three collections named pipelines, schedules, and runs, and holds a hard line: PocketBase stores intent and whole-run evidence, never workflow internals. A schedule says "run this hourly." A run record says queued, running, succeeded, or failed, with a start time, an exit code, and a summary that contains no secrets. One run record equals exactly one workflow invocation.
+      </p>
+      <p>
+        Because the control plane is collections behind auth, the UI on top can be specific to your domain instead of Airflow's generic grid of DAGs and colored squares. Your operators see "GitHub warehouse, last load 09:00, 4,312 commits, refresh now", not <code>dag_run_id: scheduled__2026-08-22T09:00:00+00:00</code>.
+      </p>
+      <p>
+        About 140 lines of Python connect PocketBase to the machine. A systemd timer runs a dispatcher every 15 minutes. The dispatcher materializes due schedule slots into run records, with an idempotency key so timer restarts are safe. It stops the systemd unit of any run whose record requests cancellation. And it launches queued runs, each as a transient unit:
+      </p>
+      <pre is:raw><code>command = ["systemd-run", "--unit", unit, "--collect",
+           "--property=EnvironmentFile=/etc/github-dwh/environment",
+           "/opt/github-dwh/.venv/bin/python", "/opt/github-dwh/run.py", run_id]</code></pre>
+      <p>
+        That is the entire executor. systemd supervises the process, journald keeps the full logs, and a 22-line wrapper patches the run record with the outcome. Cancellation is <code>systemctl stop</code>, not a distributed-systems problem. Log retention is journald configuration, not a product. The operating system already shipped an orchestrator. You just have to not rebuild it.
+      </p>
+
+      <h2>What you give up</h2>
+      <p>Selling this honestly means naming the trade-offs.</p>
+      <ul>
+        <li><strong>One host.</strong> You own backups and recovery. The repo ships a tested recovery runbook. ClickHouse data and PocketBase state are the only things worth saving, since everything else regenerates from git.</li>
+        <li><strong>Whole-run retries only.</strong> Fine when runs are cheap and idempotent. Wrong for a six-hour pipeline where step two is expensive.</li>
+        <li><strong>No cross-pipeline dependencies, no backfill machinery.</strong> If you have twenty interdependent pipelines and a data team, buy the orchestrator.</li>
+        <li><strong>A scale ceiling.</strong> A single ClickHouse node goes much further than people expect, but "fits on one big machine" is the honest boundary of the whole argument.</li>
+      </ul>
+      <p>
+        The failure mode to avoid is letting the control plane grow. The moment PocketBase acquires task states, step queues, or retry policy, you have rebuilt Airflow badly and lost the argument. One run record, one process, one journald unit. That discipline is what keeps the system at 140 lines.
+      </p>
+
+      <h2>The point</h2>
+      <p>
+        The modern data stack solved real problems for companies with big data and big teams, then became the default for everyone else. If your data fits on one machine and your pipelines are extract, transform, test, the honest architecture is dlt and dbt for the data, ClickHouse for the warehouse, a small workflow engine for both infrastructure and pipeline, PocketBase for the humans, and systemd for the processes. One VM. One repo. One bill.
+      </p>
+      <p>
+        The GitHub warehouse in this article is live. Everything described here sits in its two repositories, the package <a href="https://github.com/getcolors/github-dwh" target="_blank" rel="noopener noreferrer">getcolors/github-dwh</a> and its deployment <a href="https://github.com/getcolors/github-dwh-vultr" target="_blank" rel="noopener noreferrer">getcolors/github-dwh-vultr</a>, with desired state in git down to the Vultr plan and the dbt tests. Swap the dlt source and it's your CRM, your billing exports, your product events. The data was never the hard part.
+      </p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-bottom: 72px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 28px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime, .meta-author {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .meta-author a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .meta-author a:hover {
+    color: var(--blue);
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  /* The receipt. The article's one signature element: the thesis as two
+     ledger lines, the SaaS total struck through. */
+  .bill {
+    padding: 20px 26px 22px;
+    margin-bottom: 48px;
+    border-left: 4px solid var(--blue);
+    background: var(--surface);
+    font-family: var(--mono);
+  }
+  .bill .line {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 5px 0;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .bill .dots {
+    flex: 1;
+    border-bottom: 1px dotted var(--muted);
+    transform: translateY(-4px);
+  }
+  .bill .amount {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .bill .saas .amount {
+    color: var(--red);
+    position: relative;
+  }
+  .bill .saas .amount::after {
+    content: "";
+    position: absolute;
+    left: -3%;
+    right: -3%;
+    top: 52%;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: strike 0.45s ease-out 0.8s forwards;
+  }
+  @keyframes strike {
+    to { transform: scaleX(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bill .saas .amount::after {
+      animation: none;
+      transform: scaleX(1);
+    }
+  }
+  .bill-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 10px;
+  }
+  .table-scroll {
+    overflow-x: auto;
+    margin: 0 0 24px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  th {
+    font: 600 11px var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-align: left;
+    border-bottom: 2px solid var(--ink);
+    padding: 8px 10px 7px;
+  }
+  td {
+    border-bottom: 1px solid var(--line);
+    padding: 9px 10px;
+    vertical-align: top;
+  }
+  td.price {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--red);
+  }
+  td.tool {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--green);
+    white-space: nowrap;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 24px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--code-ink);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .content-body a {
+    color: var(--blue);
+  }
+</style>

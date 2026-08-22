@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "You Probably Don't Need the Modern Data Stack",
+    slug: "/blog/single-host-data-warehouse",
+    date: "August 22, 2026",
+    isoDate: "2026-08-22T12:00:00Z",
+    readTime: "6 min read",
+    category: "Architecture",
+    runtime: "ClickHouse · dlt · dbt",
+    summary:
+      "For simple use cases, one $40 virtual machine running dlt, dbt, ClickHouse, PocketBase, and systemd can replace a four-figure SaaS data stack. A live single-host GitHub warehouse is the proof.",
+    image: "/og-single-host-data-warehouse-v1.png",
+    tags: ["Architecture", "ClickHouse", "dlt", "dbt", "PocketBase", "Single Host"],
+  },
+  {
     title: "Both Agents Reported Success. Only One Checked.",
     slug: "/blog/posthog-skill-benchmark",
     date: "August 18, 2026",

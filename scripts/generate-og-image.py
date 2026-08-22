@@ -396,6 +396,14 @@ render_post_card(
 )
 
 render_post_card(
+    "og-single-host-data-warehouse-v1.png",
+    "Architecture · Single host",
+    "You probably don't need the modern data stack",
+    "dlt, dbt, ClickHouse, PocketBase and systemd on one $40 VM replace a four-figure SaaS bundle.",
+    "/blog/single-host-data-warehouse",
+)
+
+render_post_card(
     "og-posthog-skill-benchmark-v1.png",
     "Benchmark · 2 agents · PostHog",
     "Both agents reported success. Only one checked.",
