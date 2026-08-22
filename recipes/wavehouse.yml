@@ -1,6 +1,7 @@
 name: WaveHouse
 repository: getcolors/wavehouse
 summary: Operate a public WaveHouse analytics demo with ClickHouse and a live GitHub stats dashboard on Vultr.
+featured: /featured#wavehouse
 keywords:
   - WaveHouse
   - ClickHouse

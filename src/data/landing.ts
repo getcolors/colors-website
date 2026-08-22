@@ -1199,6 +1199,56 @@ export const cta = {
   lede: "Dry-run first. Approve. Then provision — with Once, built with Colors. Paste this into your coding agent.",
 };
 
+export const wavehouseInstallCmd = "npx skills use getcolors/wavehouse";
+
+export const wavehouse = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/wavehouse/",
+  repoUrl: "https://github.com/getcolors/wavehouse",
+  heading: "WaveHouse: live GitHub analytics on one server, built with Colors",
+  lede: "WaveHouse is a Package Skill built with Colors. It provisions a public analytics demo on Vultr — ClickHouse, the WaveHouse real-time gateway, and the project's live GitHub stats dashboard — behind Caddy TLS and Cloudflare, with history backfilled from the GitHub API and a poller streaming new events over SSE.",
+  runtimeNote:
+    "WaveHouse ships in **green** alone. The dashboard is the upstream project's own page served same-origin with the `/v1` API, so the browser SDK needs no configuration; see it live at [stats.bigconfig.space](https://stats.bigconfig.space).",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It names the dashboard host, the tracked `owner/name` repository, poll interval, container images, and the Vultr and state-backend boundary.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "Vultr, Cloudflare, remote-state, and a read-only GitHub token arrive through `COLORS_PAR_*`; the gateway's operator key is generated on the server and never leaves it.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose, Caddy, schema, and pipe files, then runs `create --dry-run` before contacting providers or the server.",
+    },
+    {
+      title: "Provision and backfill",
+      body: "OpenTofu creates the instance, firewall, and proxied DNS record; Ansible converges the stack, registers 19 public pipes, backfills GitHub history, and starts the 60-second poller.",
+    },
+    {
+      title: "Prove it is live",
+      body: "Acceptance checks public HTTPS gateway health, the served dashboard assets, and that `gh_summary` reports backfilled events before create is called done.",
+    },
+  ],
+  dagCaption: "WaveHouse — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`.",
+  dagNote:
+    "Only Caddy 80/443 and key-only SSH are public; ingest and admin need the server-held operator key while browsers stay anonymous and read-only. Delete reverses Ansible, DNS, and infrastructure while the committed destroy guard refuses accidents.",
+};
+
 export const footer = {
   name: "Colors",
   href: "https://github.com/getcolors",

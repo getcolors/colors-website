@@ -44,6 +44,8 @@ import {
   vaultwardenInstallCmd,
   walter,
   walterInstallCmd,
+  wavehouse,
+  wavehouseInstallCmd,
 } from "~/data/landing";
 
 const title = "Featured — Colors";
@@ -67,6 +69,7 @@ const featuredPackageSkills = [
   { label: "MySQL HA", href: "#mysql-agy" },
   { label: "PostgreSQL HA (Opus 5)", href: "#postgres-ha" },
   { label: "MySQL HA (Opus 5)", href: "#mysql-ha" },
+  { label: "WaveHouse", href: "#wavehouse" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1633,6 +1636,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{mysqlHa.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- WAVEHOUSE -->
+      <div class="sec sec-alt" id="wavehouse">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{wavehouse.eyebrow}</div>
+          <SectionHeading id="wavehouse" title={wavehouse.heading} />
+          <p class="sec-lede sec-lede-wide">{wavehouse.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={wavehouseInstallCmd} id="featured-wavehouse-install" />
+            <span class="install-note" set:html={html(wavehouse.runtimeNote)} />
+            <ResourceLinks docsUrl={wavehouse.docsUrl} repoUrl={wavehouse.repoUrl} catalogUrl="/getcolors/wavehouse" />
+          </div>
+
+          <div class="grid-5">
+            {wavehouse.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{wavehouse.dagCaption}</div>
+            <div class="dag">
+              {wavehouse.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{wavehouse.dagNote}</p>
           </div>
         </div>
       </div>
