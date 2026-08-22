@@ -1249,6 +1249,56 @@ export const wavehouse = {
     "Only Caddy 80/443 and key-only SSH are public; ingest and admin need the server-held operator key while browsers stay anonymous and read-only. Delete reverses Ansible, DNS, and infrastructure while the committed destroy guard refuses accidents.",
 };
 
+export const githubDwhInstallCmd = "npx skills use getcolors/github-dwh";
+
+export const githubDwh = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/github-dwh/",
+  repoUrl: "https://github.com/getcolors/github-dwh",
+  heading: "GitHub DWH: your organization's GitHub warehouse on one server",
+  lede: "GitHub DWH is a Blue Package Skill built with Colors. It provisions a single-host warehouse for everything a GitHub organization credential can see — dlt extracts to ClickHouse, dbt builds tested marts, Lightdash serves the dashboards, and a PocketBase control plane schedules and records whole workflow runs behind Caddy TLS on Vultr.",
+  runtimeNote:
+    "GitHub DWH ships in **blue** alone. PocketBase stores schedules and whole-run history only; Blue owns workflow routing, systemd owns process supervision, and journald owns full logs.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It names the GitHub organization and resources, the control-plane and analytics hosts, ClickHouse databases, the Lightdash R2 bucket, the dispatch calendar, and the Vultr and state-backend boundary.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "Vultr, Cloudflare, remote-state, GitHub, ClickHouse, and Lightdash credentials arrive through `COLORS_PAR_*`; the package refuses a `COLORS_PAR_PROFILE` overlay because profile keys the shared remote state.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose, and dbt files, then runs `create --dry-run` before contacting providers or the server.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the instance, firewall, and DNS records with state in R2; Ansible converges ClickHouse, PocketBase, Lightdash, Caddy, and the systemd dispatcher, then converges the Lightdash organization, project, and dashboard.",
+    },
+    {
+      title: "Run the warehouse",
+      body: "Each scheduled or manual PocketBase run is one `./blue run`: dlt extracts, dbt builds and tests the marts, and Lightdash resynchronizes — with full logs in journald.",
+    },
+  ],
+  dagCaption: "GitHub DWH — RUN DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "dlt" },
+    { kind: "edge" },
+    { kind: "node", label: "dbt-run" },
+    { kind: "edge" },
+    { kind: "node", label: "dbt-test" },
+    { kind: "edge" },
+    { kind: "node", label: "lightdash" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The run DAG executes `start` → `dlt` → `dbt-run` → `dbt-test` → `lightdash`.",
+  dagNote:
+    "Create converges infrastructure and services as its own DAG (`start` → `tofu` → `ansible`); a failed load is retried only as a new complete run. Delete reverses Ansible and infrastructure while the committed destroy guard refuses accidents.",
+};
+
 export const footer = {
   name: "Colors",
   href: "https://github.com/getcolors",

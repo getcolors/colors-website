@@ -46,6 +46,8 @@ import {
   walterInstallCmd,
   wavehouse,
   wavehouseInstallCmd,
+  githubDwh,
+  githubDwhInstallCmd,
 } from "~/data/landing";
 
 const title = "Featured — Colors";
@@ -70,6 +72,7 @@ const featuredPackageSkills = [
   { label: "PostgreSQL HA (Opus 5)", href: "#postgres-ha" },
   { label: "MySQL HA (Opus 5)", href: "#mysql-ha" },
   { label: "WaveHouse", href: "#wavehouse" },
+  { label: "GitHub DWH", href: "#github-dwh" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1674,6 +1677,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{wavehouse.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- GITHUB DWH -->
+      <div class="sec" id="github-dwh">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{githubDwh.eyebrow}</div>
+          <SectionHeading id="github-dwh" title={githubDwh.heading} />
+          <p class="sec-lede sec-lede-wide">{githubDwh.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={githubDwhInstallCmd} id="featured-github-dwh-install" />
+            <span class="install-note" set:html={html(githubDwh.runtimeNote)} />
+            <ResourceLinks docsUrl={githubDwh.docsUrl} repoUrl={githubDwh.repoUrl} catalogUrl="/getcolors/github-dwh" />
+          </div>
+
+          <div class="grid-5">
+            {githubDwh.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{githubDwh.dagCaption}</div>
+            <div class="dag">
+              {githubDwh.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{githubDwh.dagNote}</p>
           </div>
         </div>
       </div>

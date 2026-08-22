@@ -1,0 +1,21 @@
+name: GitHub DWH
+repository: getcolors/github-dwh
+summary: Operate a single-host GitHub organization warehouse with ClickHouse, dbt, and Lightdash analytics.
+featured: /featured#github-dwh
+keywords:
+  - GitHub
+  - data warehouse
+  - ClickHouse
+  - dbt
+  - dlt
+  - Lightdash
+  - analytics
+  - PocketBase
+  - ELT
+  - Vultr
+  - self-hosted
+
+package-skills:
+  - name: package-github-dwh-blue
+    path: skills/package-github-dwh-blue/SKILL.md
+    runtime: blue
