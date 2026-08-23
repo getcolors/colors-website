@@ -404,6 +404,14 @@ render_post_card(
 )
 
 render_post_card(
+    "og-remote-clipboard-for-agents-v1.png",
+    "Architecture · Remote development",
+    "Let your remote coding agent see your clipboard",
+    "pngpaste, socat, launchd and one ssh -R forward hand a Mac clipboard to an agent on the server as a Unix socket.",
+    "/blog/remote-clipboard-for-agents",
+)
+
+render_post_card(
     "og-posthog-skill-benchmark-v1.png",
     "Benchmark · 2 agents · PostHog",
     "Both agents reported success. Only one checked.",

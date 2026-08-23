@@ -1,0 +1,375 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "Let Your Remote Coding Agent See Your Clipboard — Colors";
+const description =
+  "A coding agent on a remote machine cannot see your screen. pngpaste, socat, a launchd agent, one ssh -R forward and a small skill give it your Mac's clipboard as a Unix socket. Here is the recipe, and the two failures that each reported success.";
+const path = "/blog/remote-clipboard-for-agents";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
+const image = "/og-remote-clipboard-for-agents-v1.png";
+const imageAlt =
+  "Article card: a Mac clipboard reaches a coding agent on a remote machine through pngpaste, socat, launchd and one ssh -R forward.";
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "Let Your Remote Coding Agent See Your Clipboard",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Person",
+    name: "Alberto Miorin",
+    url: "https://www.linkedin.com/in/amiorin/",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "AI Coding Agents" },
+    { "@type": "Thing", name: "SSH" },
+    { "@type": "Thing", name: "launchd" },
+    { "@type": "Thing", name: "Nix" },
+    { "@type": "Thing", name: "Remote Development" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Remote Clipboard for Agents" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">How-to &amp; Architecture</p>
+      <h1>Let your remote coding agent see your clipboard</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">Architecture</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+        <span class="dot">·</span>
+        <span class="meta-author mono">By <a href="https://www.linkedin.com/in/amiorin/" target="_blank" rel="noopener noreferrer">Alberto Miorin</a></span>
+      </div>
+      <p class="lede">A coding agent on a remote machine cannot see your screen. Four small tools and one ssh forward give it your Mac's clipboard as a Unix socket, so "look at this" works the same over ssh as it does locally. The recipe is short. The two bugs that each reported success are the interesting part.</p>
+    </header>
+
+    <div class="pipe panel" role="img" aria-label="Data path: a screenshot on the Mac clipboard flows through pngpaste and socat into a local Unix socket, over an ssh remote forward to a Unix socket on the server, where nc reads it into a file the agent can open.">
+      <div class="hop mac"><span class="where mono">mac</span><span class="what">⌘⇧⌃4 &nbsp;→&nbsp; clipboard &nbsp;→&nbsp; <code>pngpaste -</code> &nbsp;→&nbsp; <code>socat</code> &nbsp;→&nbsp; <code>/tmp/local-clip.sock</code></span></div>
+      <div class="hop ssh"><span class="where mono">ssh</span><span class="what"><code>RemoteForward /tmp/clipboard.sock /tmp/local-clip.sock</code></span></div>
+      <div class="hop srv"><span class="where mono">server</span><span class="what"><code>/tmp/clipboard.sock</code> &nbsp;→&nbsp; <code>nc -U</code> &nbsp;→&nbsp; <code>clipboard-….png</code> &nbsp;→&nbsp; the agent's <code>Read</code></span></div>
+      <div class="pipe-note mono">one connection per grab · the socket is only alive while a session is</div>
+    </div>
+
+    <article class="content-body">
+      <p>
+        I run Claude Code on a remote development machine, provisioned by <a href="https://github.com/getcolors/walter" target="_blank" rel="noopener noreferrer">walter</a>, and drive it from a Mac. That split is worth it: the machine has the cores, the repositories, the credentials and the uptime, and the laptop has the screen. It also has a gap that gets annoying fast. When a layout is wrong or a terminal shows an error, the natural move is to take a screenshot and say "look at this". Locally, the agent reads the image straight from the clipboard. Over ssh, the clipboard is on the wrong computer.
+      </p>
+      <p>
+        The workaround everyone uses is to save the screenshot, <code>scp</code> it, and paste the path. It works, and it is exactly the kind of friction that makes you stop sending screenshots. This article is the setup that removes it: the agent on the server connects to a Unix socket, the bytes of whatever image is on the Mac's clipboard come back, and a skill turns that into a file it can open. Nothing runs as root, nothing listens on a TCP port, and the only new moving part on the Mac is a twelve-line launchd plist.
+      </p>
+
+      <h2>The shape</h2>
+      <p>
+        Three pieces. A <strong>bridge</strong> on the Mac that serves the clipboard as a Unix socket. A <strong>tunnel</strong>, which is one <code>RemoteForward</code> line in <code>~/.ssh/config</code> that mounts that socket on the server. And a <strong>skill</strong> on the server that tells the agent the socket exists, how to read it, and how to tell the failure modes apart. The agent never learns anything about the Mac; it sees a socket in <code>/tmp</code> that answers with PNG bytes.
+      </p>
+      <p>
+        The choice of a Unix socket rather than a port is deliberate. OpenSSH has forwarded Unix sockets since 6.7, the socket file carries the user's permissions, so another account on a shared box cannot read your clipboard, and there is no port to collide with when two people do this on one server.
+      </p>
+
+      <h2>The bridge: pngpaste and socat under launchd</h2>
+      <p>
+        <a href="https://github.com/jcsalterego/pngpaste" target="_blank" rel="noopener noreferrer">pngpaste</a> writes the clipboard's image to a file, or to stdout with <code>-</code>. <code>socat</code> turns any command into a socket server. Put them together and you have the whole bridge in one line:
+      </p>
+      <pre is:raw><code>socat UNIX-LISTEN:/tmp/local-clip.sock,fork,reuseaddr,unlink-early \
+      EXEC:"pngpaste -"</code></pre>
+      <p>
+        Every connection forks a fresh <code>pngpaste</code>, which writes the image and exits, which closes the connection. That is the protocol: connect, read to EOF, done. <code>unlink-early</code> removes a socket file left over from a previous run before binding, which matters more than it looks, as we'll see on the other end of the tunnel.
+      </p>
+      <p>
+        It has to run all the time, so it goes under launchd. Both binaries come from nix on my machine, which is relevant to the first bug. Here is the plist that works, at <code>~/Library/LaunchAgents/com.user.clipboardsocket.plist</code>:
+      </p>
+      <pre is:raw><code>&lt;key&gt;ProgramArguments&lt;/key&gt;
+&lt;array&gt;
+  &lt;string&gt;/bin/sh&lt;/string&gt;
+  &lt;string&gt;-c&lt;/string&gt;
+  &lt;string&gt;/bin/wait4path /nix/store &amp;&amp; exec ~/.nix-profile/bin/socat \
+    UNIX-LISTEN:/tmp/local-clip.sock,fork,reuseaddr,unlink-early \
+    "EXEC:~/.nix-profile/bin/pngpaste -"&lt;/string&gt;
+&lt;/array&gt;
+&lt;key&gt;RunAtLoad&lt;/key&gt;&lt;true/&gt;
+&lt;key&gt;KeepAlive&lt;/key&gt;&lt;true/&gt;</code></pre>
+      <p>
+        Load it once with <code>launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.user.clipboardsocket.plist</code>, and check it with <code>nc -U /tmp/local-clip.sock &gt; out.png</code> after copying a screenshot. Expand <code>~</code> to your real home directory in the file; launchd does not.
+      </p>
+
+      <h3>Bug one: loaded, KeepAlive, not running</h3>
+      <p>
+        My first version had no <code>wait4path</code>. It worked on the day I wrote it. After the next reboot, <code>launchctl list</code> showed the job loaded with exit code 78, no process, no socket, and <code>KeepAlive</code> doing nothing. The log files were empty.
+      </p>
+      <p>
+        The unified log had the actual reason: <code>Missing executable detected. Job: 'com.user.clipboardsocket' Executable: '/Users/amiorin/.nix-profile/bin/socat'</code>. The binary was there; I could run it by hand. The timeline explained it. The Determinate Nix installer puts <code>/nix</code> on its own encrypted APFS volume, and with FileVault on, the daemon that unlocks it cannot run until someone logs in. So at login, three things start within seconds of each other: macOS's own "Enter a password to unlock the disk Nix Store" dialog, the Determinate daemon that unlocks the volume from the keychain, and every LaunchAgent. Mine spawned two seconds before <code>/nix</code> was mounted. launchd found a dangling symlink, classified it as a configuration error, and stopped retrying. Exit 78 is <code>EX_CONFIG</code>, and <code>KeepAlive</code> only restarts a process that once started.
+      </p>
+      <p>
+        <code>/bin/wait4path</code> is the fix, and it is the one macOS ships for exactly this: it blocks until the path exists, then the shell <code>exec</code>s into socat. Determinate's own daemons use it. The dialog in the screenshot, incidentally, is harmless; it is a second, interactive unlock racing the daemon, and it goes away when the daemon wins.
+      </p>
+
+      <h2>The tunnel: one RemoteForward</h2>
+      <p>
+        The managed block in my <code>~/.ssh/config</code> for the server gains these lines:
+      </p>
+      <pre is:raw><code>Host walter-vultr
+    RemoteForward /tmp/clipboard.sock /tmp/local-clip.sock
+    ExitOnForwardFailure yes
+    ControlMaster auto
+    ControlPath ~/.ssh/control-%C
+    ControlPersist 10m</code></pre>
+      <p>
+        <code>RemoteForward</code> with two paths means: listen on <code>/tmp/clipboard.sock</code> on the server, and connect every client of it to <code>/tmp/local-clip.sock</code> on the Mac. The three multiplexing lines mean the first terminal tab sets up the forward and every later tab, and every <code>scp</code>, rides the same connection. The forward outlives the last tab by ten minutes, which is long enough to not notice it dropping between sessions.
+      </p>
+      <p>
+        <code>ExitOnForwardFailure yes</code> is the honest option, and it is what surfaced the second bug. Without it, ssh prints a warning you will never read and gives you a shell with no clipboard; with it, the connection refuses to pretend.
+      </p>
+
+      <h3>Bug two: the option that was on the wrong machine</h3>
+      <p>
+        The second morning, every connection died with <code>remote port forwarding failed for listen path /tmp/clipboard.sock</code>. On the server, <code>/tmp/clipboard.sock</code> was still there from the previous day's session, owned by me, with nothing listening. sshd will not bind over an existing socket file. My config had <code>StreamLocalBindUnlink yes</code> right under the forward, and the man page says it does exactly this: remove an existing Unix-domain socket before creating a new one.
+      </p>
+      <p>
+        It says that in <code>ssh_config(5)</code>, for the client, and the client creates sockets only for <code>LocalForward</code>. For a <code>RemoteForward</code> it is sshd that creates the socket, and sshd reads <code>sshd_config(5)</code>, which has the same option, defaulting to <code>no</code>. <code>sshd -T | grep streamlocalbindunlink</code> confirmed it. The line in my client config was not wrong, it was merely irrelevant, which is the kind of wrong that survives a code review.
+      </p>
+      <p>
+        The fix is a drop-in on the server, and since walter provisions the server, it belongs in desired state, not in a shell history. walter already writes a forwarding drop-in, because a development machine is what reverse tunnels terminate on, and a client's <code>ExitOnForwardFailure</code> is only as good as what sshd tells it. It now reads:
+      </p>
+      <pre is:raw><code># /etc/ssh/sshd_config.d/00-walter-forwarding.conf
+ClientAliveInterval 15
+ClientAliveCountMax 3
+AllowTcpForwarding yes
+GatewayPorts clientspecified
+StreamLocalBindUnlink yes</code></pre>
+      <p>
+        The first two lines close the related failure: without keepalives, sshd holds a crashed client's forward for hours, so the reconnecting client is refused the bind, or never learns its tunnel died. The change is <a href="https://github.com/getcolors/walter/commit/4a54f12" target="_blank" rel="noopener noreferrer">one commit in walter</a>, validated by <code>sshd -t</code> before the copy lands and checked into the golden renders for every provider, so the next machine gets it without anyone remembering.
+      </p>
+
+      <h2>The skill: nc, /dev/null, and four exit codes</h2>
+      <p>
+        On the server, the reading side is <code>nc -U /tmp/clipboard.sock</code>. The agent could type that itself. It should not, for two reasons that are easy to get wrong by hand, so they live in <a href="https://github.com/getcolors/skills/tree/main/clipboard-screenshot" target="_blank" rel="noopener noreferrer">a small skill</a> with a twenty-line script.
+      </p>
+      <p>
+        The first is that <code>nc</code> needs <code>&lt;/dev/null</code>. Without it, nc keeps the connection open waiting on stdin that never comes, and the agent's tool call hangs until its timeout. The second is that image bytes only enter a model's context by way of a file the agent reads, and the file needs the extension for its real format; <code>file --mime-type</code> decides between <code>.png</code>, <code>.jpg</code> and friends before the move.
+      </p>
+      <pre is:raw><code>timeout 10 nc -U "$SOCKET" &lt;/dev/null &gt;"$raw"
+mime="$(file -b --mime-type "$raw")"
+# png → .png, jpeg → .jpg, …; anything else is exit 5</code></pre>
+      <p>
+        The part worth copying is the exit codes. A stale socket file from a dead bridge still passes <code>test -S</code>, so "nothing came back" has to be split apart. A refused connection means the bridge is gone and re-copying the screenshot cannot help. A clean connection that sent nothing means the clipboard really is empty. The script returns 3 for the first and 4 for the second, 5 for a clipboard that holds text, and 6 for a connection that opened and never finished. The <code>SKILL.md</code> gives the agent a different instruction for each: do not retry a 3, ask for a re-copy on a 4, report the type on a 5, retry a 6 once.
+      </p>
+      <p>
+        That table exists because of the way this fails otherwise. An agent that gets zero bytes and says "your clipboard is empty" sends a person off re-copying a screenshot that was there all along, while the actual problem is a socket file nobody unlinked. Which is the same bug as bug two, one layer up. The skill also asks the agent to say what it sees before acting on it, since clipboards go stale and the user cannot see which bytes arrived.
+      </p>
+
+      <h2>Checking it end to end</h2>
+      <p>Three commands, one per piece, and they are worth running in this order so a failure points at the right layer:</p>
+      <pre is:raw><code># mac: the bridge
+nc -U /tmp/local-clip.sock &gt; out.png &amp;&amp; file out.png
+
+# mac: the tunnel bound (an empty result here means ExitOnForwardFailure fired)
+ssh walter-vultr 'ls -l /tmp/clipboard.sock'
+
+# server: the whole path
+ssh walter-vultr 'nc -U /tmp/clipboard.sock &lt;/dev/null &gt; /tmp/t.png; file /tmp/t.png'</code></pre>
+      <p>
+        With a screenshot copied, the last line says <code>PNG image data, 1376 x 768</code> or whatever you captured. With text copied, the Mac side logs <code>pngpaste: No image data found on the clipboard</code> and the server gets zero bytes, which is the correct answer, and the skill's exit 4.
+      </p>
+
+      <h2>What you give up</h2>
+      <ul>
+        <li><strong>Images only.</strong> pngpaste is the bridge, so text on the clipboard returns nothing. Text you can paste into the chat anyway.</li>
+        <li><strong>The socket lives as long as the session.</strong> An agent running in tmux after you close the laptop gets exit 3. That is honest, and it is also a reminder that the clipboard is on the laptop.</li>
+        <li><strong>Anything with your uid on the server can read your clipboard.</strong> The socket is <code>srw-------</code>, so it is you, not other users. On a machine you share with an agent that is you, that is the point, and it is still worth knowing.</li>
+        <li><strong>One more thing that can silently not run.</strong> Both bugs in this article were of the kind where a status command said fine. <code>launchctl list</code> said loaded. The client config had the right-sounding line. Verify the thing you actually want, which is bytes arriving on the server.</li>
+      </ul>
+
+      <h2>The point</h2>
+      <p>
+        None of this is clever. pngpaste, socat, launchd, a <code>-R</code> forward and <code>nc</code> are all older than the agents using them. The useful part is the wiring, and the two places where a reasonable configuration reported success while doing nothing: a LaunchAgent that lost a two-second race to an encrypted volume, and an ssh option that was correct in the wrong file. Both fixes are now in desired state, one in a plist and one in walter, which is the only place a fix like this stays fixed.
+      </p>
+      <p>
+        The skill is in <a href="https://github.com/getcolors/skills/tree/main/clipboard-screenshot" target="_blank" rel="noopener noreferrer">getcolors/skills</a>; <code>npx skills use getcolors/skills@clipboard-screenshot</code> hands it to your agent. The server side of the recipe is what every machine provisioned by <a href="https://github.com/getcolors/walter" target="_blank" rel="noopener noreferrer">walter</a> gets by default. The Mac side is the plist above, and the one line that matters in it is <code>wait4path</code>.
+      </p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-bottom: 72px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 28px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime, .meta-author {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .meta-author a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .meta-author a:hover {
+    color: var(--blue);
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  /* The pipe. The article's one signature element: the data path as three
+     hops, each labelled with the machine it runs on. */
+  .pipe {
+    padding: 18px 26px 20px;
+    margin-bottom: 48px;
+    border-left: 4px solid var(--blue);
+    background: var(--surface);
+  }
+  .pipe .hop {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    align-items: baseline;
+    gap: 14px;
+    padding: 7px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .pipe .hop + .hop {
+    border-top: 1px dotted var(--line);
+  }
+  .pipe .where {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .pipe .mac .where { color: var(--red); }
+  .pipe .ssh .where { color: var(--green); }
+  .pipe .srv .where { color: var(--blue); }
+  .pipe .what {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .pipe code {
+    font-size: 0.86em;
+  }
+  .pipe-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body h3 {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 32px 0 12px;
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 10px;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 24px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--code-ink);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .content-body a {
+    color: var(--blue);
+  }
+  @media (max-width: 560px) {
+    .pipe .hop {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+</style>

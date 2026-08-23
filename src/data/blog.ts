@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "Let Your Remote Coding Agent See Your Clipboard",
+    slug: "/blog/remote-clipboard-for-agents",
+    date: "August 23, 2026",
+    isoDate: "2026-08-23T12:00:00Z",
+    readTime: "8 min read",
+    category: "Architecture",
+    runtime: "launchd · ssh · Nix",
+    summary:
+      "A coding agent on a remote machine cannot see your screen. pngpaste, socat, a launchd agent, one ssh -R forward and a small skill give it your Mac's clipboard as a Unix socket. The recipe, and the two failures that each reported success.",
+    image: "/og-remote-clipboard-for-agents-v1.png",
+    tags: ["Architecture", "Claude Code", "SSH", "launchd", "Nix", "Skills"],
+  },
+  {
     title: "You Probably Don't Need the Modern Data Stack",
     slug: "/blog/single-host-data-warehouse",
     date: "August 22, 2026",
