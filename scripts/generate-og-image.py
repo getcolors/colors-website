@@ -403,13 +403,9 @@ render_post_card(
     "/blog/single-host-data-warehouse",
 )
 
-render_post_card(
-    "og-agentic-once-deterministic-forever-v1.png",
-    "Architecture · Agentic DevOps",
-    "Agentic once, deterministic forever",
-    "A rename, a hidden bug, a cloud migration, and the ratio that makes agent-operated infrastructure safer over time.",
-    "/blog/agentic-once-deterministic-forever",
-)
+# og-agentic-once-deterministic-forever-v2.png is a hand-supplied infographic,
+# not generated here — the one exception to "og-*.png are generated". Replacing
+# it means bumping the version suffix, same as generated cards.
 
 render_post_card(
     "og-remote-clipboard-for-agents-v1.png",

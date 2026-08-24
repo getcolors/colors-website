@@ -16,9 +16,9 @@ const post = postFor(path);
 // does not leave the structured data advertising production.
 const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
 const absolute = (target: string) => new URL(target, SITE_URL).toString();
-const image = "/og-agentic-once-deterministic-forever-v1.png";
+const image = "/og-agentic-once-deterministic-forever-v2.png";
 const imageAlt =
-  "Article card: agentic DevOps is safe when every agentic task is one commit away from becoming deterministic.";
+  "Infographic: the Rybbit incident timeline, the agentic-to-deterministic conversion ratio, and the agent perimeter.";
 
 const publishDate = post.date;
 const readTime = post.readTime;
@@ -82,6 +82,16 @@ const structuredData = {
         fast the agentic remainder got converted.
       </p>
     </header>
+
+    <figure class="hero-figure">
+      <img
+        src="/og-agentic-once-deterministic-forever-v2.png"
+        alt="Infographic of the article: the Rybbit conversion incident timeline from the 403 error to the successful migration, the safety model as a conversion ratio from agentic to deterministic tasks, and the agent perimeter of limited scope, human controls, and safe verbs."
+        width="1200"
+        height="630"
+        loading="eager"
+      />
+    </figure>
 
     <div class="ledger panel" role="img" aria-label="The session as a ledger. Agentic tasks, such as diagnosing a 403 from a screenshot and sequencing the migration, interleaved with deterministic tasks, such as converges, golden tests, and verified backups. Every agentic row is one commit away from becoming a deterministic row.">
       <div class="row det"><span class="kind mono">determ.</span><span class="what"><code>./green create</code> · rename converge: DNS, certificate, stack, acceptance pageview</span></div>
@@ -271,6 +281,16 @@ const structuredData = {
     color: var(--rule);
     font-size: 14px;
     line-height: 1;
+  }
+  .hero-figure {
+    margin: 0 0 32px;
+  }
+  .hero-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
   }
   /* The ledger. The article's one signature element: the session's tasks as
      rows, each labelled agentic or deterministic: the KPI drawn as a list. */
