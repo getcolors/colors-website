@@ -415,6 +415,12 @@ render_post_card(
     "/blog/remote-clipboard-for-agents",
 )
 
+# og-park-the-stochasticity-v2.png is the article's own infographic letterboxed
+# to 1200x630, not generated here — the second exception to "og-*.png are
+# generated", alongside the card above. The generated v1 text card it replaced
+# never shipped. Replacing it means bumping the version suffix, same as a
+# generated card.
+
 render_post_card(
     "og-posthog-skill-benchmark-v1.png",
     "Benchmark · 2 agents · PostHog",

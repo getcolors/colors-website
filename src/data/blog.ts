@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "Park the Stochasticity",
+    slug: "/blog/park-the-stochasticity",
+    date: "August 24, 2026",
+    isoDate: "2026-08-24T16:00:00Z",
+    readTime: "7 min read",
+    category: "Architecture",
+    runtime: "Colors · Package Skills",
+    summary:
+      "Anders Hejlsberg explained why the TypeScript team didn't let AI translate their half-million-line compiler to Go. Have it write a deterministic translator instead. Colors is that argument applied to infrastructure, where the agent writes the program once and the program runs production forever.",
+    image: "/images/park-the-stochasticity-infographic.png",
+    tags: ["Architecture", "Agentic DevOps", "Determinism", "TypeScript", "Package Skills", "Golden Tests"],
+  },
+  {
     title: "Agentic Once, Deterministic Forever",
     slug: "/blog/agentic-once-deterministic-forever",
     date: "August 24, 2026",

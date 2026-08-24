@@ -1,0 +1,387 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "Park the Stochasticity — Colors";
+const description =
+  "Anders Hejlsberg explained why the TypeScript team didn't let AI translate their half-million-line compiler to Go. Have it write a deterministic translator instead. Colors is that argument applied to infrastructure, where the agent writes the program and the program runs production.";
+const path = "/blog/park-the-stochasticity";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
+const image = "/og-park-the-stochasticity-v2.png";
+const imageAlt =
+  "Four-quadrant diagram: direct AI execution sampling a different deployment every run, versus an AI-written deterministic program producing consistent ones; authoring guarded by golden tests, parity and SHA pins; operating through the build, dry-run and create ladder.";
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "Park the Stochasticity",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Person",
+    name: "Alberto Miorin",
+    url: "https://www.linkedin.com/in/amiorin/",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Agentic DevOps" },
+    { "@type": "Thing", name: "Infrastructure as Code" },
+    { "@type": "Thing", name: "Package Skills" },
+    { "@type": "Thing", name: "TypeScript" },
+    { "@type": "Thing", name: "Determinism" },
+  ],
+  citation: {
+    "@type": "VideoObject",
+    name: "Why Microsoft didn't rewrite TypeScript using AI",
+    url: "https://www.youtube.com/shorts/68qLXn7HUjY",
+  },
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Park the Stochasticity" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Architecture &amp; Operations</p>
+      <h1>Park the stochasticity</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">Architecture</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+        <span class="dot">·</span>
+        <span class="meta-author mono">By <a href="https://www.linkedin.com/in/amiorin/" target="_blank" rel="noopener noreferrer">Alberto Miorin</a></span>
+      </div>
+      <p class="lede">
+        Anders Hejlsberg was asked why the TypeScript team didn't just let AI translate their
+        half-million-line compiler into Go. His answer is the clearest statement I know of the idea Colors
+        is built on. Don't ask the model for the translation. Ask it for the translator. Park the
+        stochasticity in a program, and every run after that is deterministic. We made the same trade for
+        infrastructure instead of compilers.
+      </p>
+      <p class="source-note">
+        <span class="source-label mono">Source</span>
+        <a href="https://www.youtube.com/shorts/68qLXn7HUjY" target="_blank" rel="noopener noreferrer">Anders Hejlsberg on why Microsoft didn't rewrite TypeScript using AI</a>
+        <span class="source-host mono">youtube.com/shorts/68qLXn7HUjY</span>
+      </p>
+    </header>
+
+    <figure class="hero-figure">
+      <img
+        src="/images/park-the-stochasticity-infographic.png"
+        alt="Four quadrants. Flawed, direct AI execution: one agent fans out into stochastic deployment A, B and C, which lead to drift and review fatigue. The solution: the agent writes one deterministic program, the Skill translator, whose every execution is a consistent deployment. Phase one, authoring, agentic once: the agent writes the Package Skill translator, checked by golden tests, multi-language parity and SHA pins. Phase two, operating, deterministic repeatability: colors.yml feeds the execution ladder of ./green build, ./green create --dry-run and ./green create."
+        width="1600"
+        height="893"
+        loading="eager"
+      />
+      <figcaption class="mono">
+        the stochasticity is spent either way. the only choice is where it lands
+      </figcaption>
+    </figure>
+
+    <article class="content-body">
+      <h2>Half a million lines you would have to read twice</h2>
+      <p>
+        When Microsoft announced the Go port of the TypeScript compiler, everyone asked the obvious
+        question. Why not have AI do the rewrite? <a href="https://www.youtube.com/shorts/68qLXn7HUjY" target="_blank" rel="noopener noreferrer">Hejlsberg's answer</a> has two
+        halves. The first is about what verification costs. Letting a model loose on half a million lines would not,
+        in his words, "absolve us from then having to go in and carefully examine every line that came out of
+        it." Short of perfect test coverage, one-shot AI output converts writing effort into reviewing effort
+        at roughly one to one. The lines still get read, just by a more expensive process.
+      </p>
+      <p>
+        The second half is his fix, and it is worth quoting at length. "A better approach would be enlist AI
+        to write a program that helps you translate from TypeScript to Go. Because at that point, you can
+        park the stochasticness in that program, and then you can get deterministic behavior whenever you run
+        the program, which means you get the same transformation every time you run it." A model cannot be
+        trusted to do the same thing twice. A program cannot do anything else.
+      </p>
+      <p>
+        The principle underneath generalizes well past compilers. Nondeterminism is affordable when you
+        author and poisonous when you operate. Anything you intend to run twice should be a program the model
+        helped write, not a model output you sample again.
+      </p>
+
+      <h2>Infrastructure is run twice by definition</h2>
+      <p>
+        Now move the argument to operations. "Deploy me an Airflow server" is something a capable agent will
+        happily do end to end, and that is the one-shot translation. Every deployment is a fresh sample from
+        the model. The re-deploy after an incident, the second environment, the version upgrade, the
+        migration to another provider. Each one is a new stochastic run. Each one needs the line-by-line
+        check Hejlsberg wanted to avoid, except here the lines are firewall rules, DNS records, and database
+        configuration on a machine that faces the internet.
+      </p>
+      <p>
+        Infrastructure is the worst possible place to accept that deal, because infrastructure is the thing
+        you run again by definition. Converge, recover, rebuild, scale. The whole discipline is repetition.
+        If the repetition samples a model, you do not have a deployment. You have a distribution of
+        deployments, and you have met exactly one of them.
+      </p>
+
+      <h2>The translator we ask the agent to write</h2>
+      <p>
+        Colors is what falls out of applying Hejlsberg's move to this domain. The agent's job is not to
+        deploy anything. Its job is to write a <a href="/skills">Package Skill</a>, a program that translates
+        desired state into a running system. The desired state is a <code>colors.yml</code>. It is flat,
+        kebab-case, and non-secret by rule, so the whole input to the translator is a file you can read in
+        one sitting and diff in one glance.
+      </p>
+      <pre><code>profile: airflow-digitalocean
+
+provider-compute: digitalocean
+provider-dns: cloudflare
+compute-prevent-destroy: true
+
+airflow-host: airflow.example.com
+airflow-image: apache/airflow:3.1.3
+digitalocean-region: fra1
+digitalocean-size: s-2vcpu-8gb-amd</code></pre>
+      <p>
+        The program that consumes it exposes a ladder of verbs, ordered by how much reality they touch:
+      </p>
+      <pre><code>./green build              # render everything from desired state, no credentials
+./green create --dry-run   # walk the whole DAG, skip every side effect
+./green create             # converge for real</code></pre>
+      <p>
+        <code>build</code> is a pure render. The same <code>colors.yml</code> produces the same generated
+        tree, byte for byte, on a fresh checkout with an empty environment. <code>--dry-run</code> rehearses
+        the full execution graph with every side effect skipped. By the time <code>create</code> talks to a
+        cloud API, the transformation it is about to perform has already been inspected twice, and the model
+        was not involved in any of the three steps. The stochasticity was spent once, at authoring time, on
+        the generator. At operate time there is nothing left to sample.
+      </p>
+
+      <h2>Audit the program, not each run</h2>
+      <p>
+        The payoff of Hejlsberg's argument is that verification concentrates. You review the translator once,
+        with machinery built for exactly that, and every later run inherits the review for free. Colors leans
+        on three such nets.
+      </p>
+      <p>
+        Golden tests pin the rendered trees. Every package commits the exact output its templates produce for
+        a fixture, and <code>bb golden</code> fails on any drift. After a dependency bump you read a diff of
+        what changed in the render. You do not re-derive trust in the whole output.
+      </p>
+      <p>
+        Parity makes determinism a cross-implementation property. The SDK exists in three independent
+        implementations, one in Clojure, one in TypeScript, one in Python. The parity suite feeds one fixture
+        through all three and diffs the generated trees byte for byte. Three separately written programs
+        agreeing on every byte is a strong claim that the specification lives in the transformation rather
+        than in any one codebase.
+      </p>
+      <p>
+        SHA pins extend the same guarantee through time. A deployment's launcher resolves its library at an
+        exact git SHA, so two converges months apart run the identical translator. Nothing in the chain says
+        "whatever the latest version does today". An unpinned dependency would let the transformation drift
+        while every input stayed the same, which is stochasticity sneaking back in through the side door.
+      </p>
+
+      <h2>Writing the translator is itself a procedure</h2>
+      <p>
+        One stochastic step remains. Someone has to sit through the authoring session in which an agent
+        writes a new Package Skill. We do not pretend that step is deterministic. We fence it.
+        The <a href="/#create-package-skill">Create Package Skill</a> workflow that drives it is a three-phase state machine.
+        Phase one is conversation only. Scope, naming, and an explicit list of what the agent may do, including
+        creating repositories, spending money, and touching DNS, all settled before a single file exists.
+        Phase two scaffolds the desired state and the credential conventions, with secrets confined to a
+        gitignored file the agent never reads. Phase three is autonomous execution against a definition of
+        done that reads, line by line, as a checklist of deterministic properties: generated files
+        reproducible, golden checks passing, builds and dry runs working from a fresh checkout without
+        credentials, pins pointing at real pushed SHAs.
+      </p>
+      <p>
+        The agent's judgment is confined to the one place it pays, and its output does not count as done
+        until the deterministic nets accept it. That is Hejlsberg's argument applied twice over. The first
+        move parks the stochasticity of operating in a program. The workflow parks as much of the
+        stochasticity of authoring as a procedure can hold.
+      </p>
+
+      <h2>The same KPI, stated from the compiler world</h2>
+      <p>
+        Regular readers will recognize the shape. <a href="/blog/agentic-once-deterministic-forever">Agentic Once, Deterministic Forever</a> framed
+        safety as a ratio, deterministic tasks over agentic ones.
+        The <a href="/blog/agentic-devops-compounding-advantage">compounding-advantage article</a> framed
+        progress as agentic work converting into an executable corpus that never converts back. Hejlsberg's
+        answer is the same claim arriving from a different field, made by someone with no stake in ours. When
+        the work will be run more than once, the valuable AI output is a verified program. The expensive AI
+        output is a pile of one-shot results you must re-check on every use.
+      </p>
+      <p>
+        The TypeScript team reached that conclusion looking at one compiler. I think it holds for every
+        server you will ever have to rebuild at three in the morning.
+        Hand your agent the <a href="/#create-package-skill">Create Package Skill workflow</a>, or start from
+        a <a href="/skills">Package Skill someone already verified</a>. Either way, let the model write
+        the program, not the deployment.
+      </p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-bottom: 72px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 28px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime, .meta-author {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .meta-author a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .meta-author a:hover {
+    color: var(--blue);
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  /* The citation for the interview the whole article argues from. It is linked
+     inline in the first paragraph too, but a reader deciding whether to watch
+     three minutes of video should not have to find it mid-sentence. */
+  .source-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0;
+    padding: 12px 16px;
+    border-left: 3px solid var(--red);
+    background: var(--surface);
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+  .source-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--red);
+  }
+  .source-note a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .source-note a:hover {
+    color: var(--blue);
+  }
+  .source-host {
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+  /* The infographic. The article's one signature element: both halves of the
+     argument, where the nondeterminism lands and the two phases it lands in,
+     in one picture, so the prose does not have to restate it up front. */
+  .hero-figure {
+    margin: 32px 0 48px;
+  }
+  .hero-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .hero-figure figcaption {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 24px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--code-ink);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .content-body a {
+    color: var(--blue);
+  }
+  @media (max-width: 560px) {
+    .source-note {
+      gap: 6px;
+    }
+  }
+</style>
