@@ -1,0 +1,382 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "Agentic Once, Deterministic Forever — Colors";
+const description =
+  "In one session an agent renamed a production analytics domain, fixed the bug the rename exposed, and moved the deployment to another cloud with ten minutes of downtime. The safety model is a ratio: how much of the work was deterministic, and how fast the agentic remainder converts.";
+const path = "/blog/agentic-once-deterministic-forever";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
+const image = "/og-agentic-once-deterministic-forever-v1.png";
+const imageAlt =
+  "Article card: agentic DevOps is safe when every agentic task is one commit away from becoming deterministic.";
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "Agentic Once, Deterministic Forever",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Person",
+    name: "Alberto Miorin",
+    url: "https://www.linkedin.com/in/amiorin/",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Agentic DevOps" },
+    { "@type": "Thing", name: "Infrastructure as Code" },
+    { "@type": "Thing", name: "Package Skills" },
+    { "@type": "Thing", name: "Claude Fable 5" },
+    { "@type": "Thing", name: "Self-hosted Analytics" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Agentic Once, Deterministic Forever" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Architecture &amp; Operations</p>
+      <h1>Agentic once, deterministic forever</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">Architecture</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+        <span class="dot">·</span>
+        <span class="meta-author mono">By <a href="https://www.linkedin.com/in/amiorin/" target="_blank" rel="noopener noreferrer">Alberto Miorin</a></span>
+      </div>
+      <p class="lede">
+        In one session, Claude Fable 5 renamed our production analytics domain, diagnosed the outage the
+        rename exposed, fixed the cause upstream, and moved the whole deployment from DigitalOcean to Vultr
+        with about ten minutes of downtime and zero lost history. The safety story is not that the model was
+        careful. It is a ratio: how much of the work was deterministic before the session started, and how
+        fast the agentic remainder got converted.
+      </p>
+    </header>
+
+    <div class="ledger panel" role="img" aria-label="The session as a ledger. Agentic tasks, such as diagnosing a 403 from a screenshot and sequencing the migration, interleaved with deterministic tasks, such as converges, golden tests, and verified backups. Every agentic row is one commit away from becoming a deterministic row.">
+      <div class="row det"><span class="kind mono">determ.</span><span class="what"><code>./green create</code> · rename converge: DNS, certificate, stack, acceptance pageview</span></div>
+      <div class="row agt"><span class="kind mono">agentic</span><span class="what">sign-in returns 403 · trace it from a DevTools screenshot to a frozen <code>stack.env</code></span></div>
+      <div class="row det"><span class="kind mono">determ.</span><span class="what"><code>bb test</code> · <code>bb golden</code> · the package fix proven before it ships</span></div>
+      <div class="row agt"><span class="kind mono">agentic</span><span class="what">sequence the migration: final backup → destroy → create → restore → prove ingestion</span></div>
+      <div class="row det"><span class="kind mono">determ.</span><span class="what">restore-checked backup at 09:30:00Z · droplet destroyed · Vultr converged · history restored</span></div>
+      <div class="ledger-note mono">the KPI: deterministic rows over agentic rows · every agentic row is one commit away from moving up</div>
+    </div>
+
+    <article class="content-body">
+      <p>
+        Our Rybbit analytics instance used to live at a hostname on a side domain. On the day it moved to
+        <code>rybbit.getcolors.ai</code>, the converge came back green: new proxied DNS record, new
+        certificate, every container healthy, and the acceptance step's synthetic pageview landed. Then
+        sign-in returned <code>403 Forbidden</code>, and the only evidence was a browser screenshot of the
+        DevTools console.
+      </p>
+      <p>
+        The agent driving the session was Claude Fable 5, running the <a href="https://github.com/getcolors/rybbit" target="_blank" rel="noopener noreferrer">Rybbit Package Skill</a>.
+        It traced the 403 from the edge inward: Caddy had the new hostname, the reverse proxy was fine, and the
+        backend container was six days old with <code>BASE_URL</code> still pointing at the retired domain. The
+        cause was a design decision, not a typo. The stack writes <code>stack.env</code> once, on first
+        install, so that generated database passwords and auth secrets survive every later converge. But the
+        file froze the desired-state lines along with the secrets. The playbook even documented this exact trap
+        for one variable, the signup policy, and patched that one line back into step on every converge. It
+        never generalized the lesson, so renaming the host silently left the auth layer rejecting the new
+        origin.
+      </p>
+
+      <h2>The conversion, same day</h2>
+      <p>
+        The immediate remediation was agentic: edit two lines on the host over SSH, recreate the two containers
+        that read them, watch the 403 turn into an honest 401 for bad credentials. That fix worked and proved
+        the diagnosis. It is also exactly the kind of work you do not want to depend on twice.
+      </p>
+      <p>
+        So the same session moved it upstream. The playbook's one-variable patch became a loop over every
+        desired-state line in <code>stack.env</code>, recreating the services that read them when any of them drift.
+        The package's unit tests passed, the golden renders showed exactly the intended diff and nothing else,
+        and the change shipped as a pinned SHA that every deployment picks up through its normal update flow.
+        From that commit on, a host rename is not an incident. It is a converge.
+      </p>
+      <p>
+        The payoff did not wait long. Hours later we decided to move the same deployment off DigitalOcean
+        entirely. New provider, same hostname, same data. The plan leaned on the morning's fix: flipping
+        <code>rybbit-host</code> in the new deployment's desired state was now guaranteed to propagate
+        everywhere it needed to. The final backup ran at 09:30:00Z, and the agent verified it in object
+        storage before destroying anything. The droplet and its DNS record went away, one converge built the Vultr
+        instance under the production hostname, and the restore brought back 35 PostgreSQL tables and the full
+        ClickHouse event history. Total dark time: about ten minutes. The tracking snippet embedded in
+        forty-nine repositories never changed, because the site ID and hostname both survived the move.
+      </p>
+      <p>
+        One detail from the verification is worth keeping. The agent sent a test pageview to prove ingestion
+        end to end, got HTTP 200, and found the event count unchanged. Rybbit's bot filter had discarded a
+        request with a synthetic user agent while still returning success, which is the right behavior. The agent noticed the
+        number had not moved, investigated instead of declaring victory, and repeated the test with a
+        realistic browser fingerprint. Event 557 landed next to the 556 historical ones. A status code is a
+        claim; a row in ClickHouse is evidence.
+      </p>
+
+      <h2>The ratio</h2>
+      <p>
+        Here is the frame I now use for whether agentic operations are safe: count the tasks.
+        A <strong>deterministic task</strong> produces the same result from the same input, lets you review
+        it before it runs, and fails loudly: a converge to desired state, a golden test, a restore-checked
+        backup, a dry-run that walks the whole DAG without credentials. An <strong>agentic task</strong> is
+        judgment: reading a screenshot, forming a hypothesis about a frozen file, choosing the order in which
+        a migration destroys and rebuilds things. The KPI is the ratio between them, and everything
+        about <a href="https://github.com/getcolors" target="_blank" rel="noopener noreferrer">Colors</a> pushes
+        it in one direction: agentic work converts into deterministic work, and never converts back.
+      </p>
+      <p>
+        In this session the ratio was already high before anything interesting happened. Everything routine
+        ran as converges and test suites that behave the same for an agent as for a human: the renames, the
+        rebuilds, the certificate issuance, the backup and its restore-check, the acceptance pageview. The agentic
+        remainder was small: one diagnosis, one remediation, one migration plan. And the remediation did not
+        stay agentic for even a day; it became a package commit, protected by golden renders, that turns the
+        next occurrence into a non-event. That is the compounding mechanism
+        from <a href="/blog/agentic-devops-compounding-advantage">the compounding-advantage article</a>, read as a
+        safety property: every conversion removes a place where an agent has to improvise, and with it a
+        place where an agent can be wrong.
+      </p>
+
+      <h2>The perimeter the agent worked inside</h2>
+      <p>
+        A rising ratio is the trend; the perimeter is what makes the residual agentic work acceptable on a
+        production system. None of it is exotic, and all of it was load-bearing that day:
+      </p>
+      <ul>
+        <li>
+          <strong>Scoped credentials, rotated after the session.</strong> Each deployment holds its own
+          gitignored credential file. The Cloudflare token could edit exactly the DNS zones it needed. The
+          migration's first attempt failed because the token could not see the destination zone; that is the
+          control working, and widening the token was a deliberate human act. The object-storage keys reach
+          one bucket. After the session, we rotated every credential the agent held, so anything it might
+          have leaked into a log or a transcript is dead.
+        </li>
+        <li>
+          <strong>Keys that die with the machine.</strong> The agent reached the Vultr instance with a
+          disposable SSH keypair generated into the deployment directory, registered through the API, and
+          destroyed with the instance. No long-lived personal key ever touched a machine built to be deleted.
+        </li>
+        <li>
+          <strong>Destruction is a different permission.</strong> Desired state commits
+          <code>compute-prevent-destroy: true</code>, and a real delete needs a one-run environment override
+          plus an explicit human confirmation. The session's single irreversible step, destroying the
+          droplet, happened after the agent verified the final backup in the bucket, and after a yes.
+        </li>
+        <li>
+          <strong>The cheap verbs need no credentials at all.</strong> <code>build</code> renders everything
+          from desired state; <code>--dry-run</code> walks the full DAG with every side effect skipped. The
+          agent used both before every real converge, so every risky command got a rehearsal by
+          construction, not by discipline.
+        </li>
+      </ul>
+
+      <h2>The model is load-bearing too</h2>
+      <p>
+        The deterministic half does not make the model optional. The agentic remainder in this session was
+        exactly the part you cannot turn into a procedure: connecting a 403 to a write-once file created six
+        days earlier, recognizing that a green converge and a working product are different claims,
+        distrusting its own successful-looking verification. A model at the level of Fable 5 handles that
+        remainder reliably enough to be left alone with scoped credentials; the converges and tests keep the
+        remainder small enough that "reliably enough" is a reasonable bet. Neither half is safe on its own. Capability without
+        determinism improvises everywhere, including where it should not; determinism without capability
+        stalls at the first screenshot.
+      </p>
+      <p>
+        The ratio is also why this gets safer over time rather than merely staying safe. Every session like
+        this one ends with the deterministic side larger than it started: a playbook that now holds three
+        lines in step instead of one, a golden render that would catch the regression, a migration sequence
+        written down as desired state and a backup contract rather than as heroics. The agentic column does
+        not grow back.
+      </p>
+
+      <h2>Run the same stack</h2>
+      <p>
+        The deployment in this story is the analytics instance that counted your visit to this page, and it
+        runs the same Package Skill you can install. The skill provisions the full Rybbit stack as desired
+        state, with the verbs used throughout this article: PostgreSQL, ClickHouse, Redis, Caddy behind
+        Cloudflare, and nightly restore-checked backups to
+        R2. <a href="/featured#rybbit">Try the Rybbit Package Skill</a>, hand it to your agent, and start
+        converting.
+      </p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-bottom: 72px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 28px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime, .meta-author {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .meta-author a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .meta-author a:hover {
+    color: var(--blue);
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  /* The ledger. The article's one signature element: the session's tasks as
+     rows, each labelled agentic or deterministic: the KPI drawn as a list. */
+  .ledger {
+    padding: 18px 26px 20px;
+    margin-bottom: 48px;
+    border-left: 4px solid var(--blue);
+    background: var(--surface);
+  }
+  .ledger .row {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    align-items: baseline;
+    gap: 14px;
+    padding: 7px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .ledger .row + .row {
+    border-top: 1px dotted var(--line);
+  }
+  .ledger .kind {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .ledger .agt .kind { color: var(--red); }
+  .ledger .det .kind { color: var(--green); }
+  .ledger .what {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .ledger code {
+    font-size: 0.86em;
+  }
+  .ledger-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body h3 {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 32px 0 12px;
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 10px;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 24px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--code-ink);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .content-body a {
+    color: var(--blue);
+  }
+  @media (max-width: 560px) {
+    .ledger .row {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+</style>

@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "Agentic Once, Deterministic Forever",
+    slug: "/blog/agentic-once-deterministic-forever",
+    date: "August 24, 2026",
+    isoDate: "2026-08-24T12:00:00Z",
+    readTime: "7 min read",
+    category: "Architecture",
+    runtime: "Colors · Fable 5 · Rybbit",
+    summary:
+      "An agent renamed a production analytics domain, fixed the bug the rename exposed, and moved the deployment to another cloud in ten minutes of downtime. The safety KPI is a ratio: deterministic tasks over agentic ones, and every session should move it up.",
+    image: "/og-agentic-once-deterministic-forever-v1.png",
+    tags: ["Architecture", "Agentic DevOps", "Claude Fable 5", "Rybbit", "Vultr", "Package Skills"],
+  },
+  {
     title: "Let Your Remote Coding Agent See Your Clipboard",
     slug: "/blog/remote-clipboard-for-agents",
     date: "August 23, 2026",

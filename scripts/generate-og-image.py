@@ -404,6 +404,14 @@ render_post_card(
 )
 
 render_post_card(
+    "og-agentic-once-deterministic-forever-v1.png",
+    "Architecture · Agentic DevOps",
+    "Agentic once, deterministic forever",
+    "A rename, a hidden bug, a cloud migration, and the ratio that makes agent-operated infrastructure safer over time.",
+    "/blog/agentic-once-deterministic-forever",
+)
+
+render_post_card(
     "og-remote-clipboard-for-agents-v1.png",
     "Architecture · Remote development",
     "Let your remote coding agent see your clipboard",
