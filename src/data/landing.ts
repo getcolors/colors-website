@@ -1299,6 +1299,56 @@ export const githubDwh = {
     "Create converges infrastructure and services as its own DAG (`start` → `tofu` → `ansible`); a failed load is retried only as a new complete run. Delete reverses Ansible and infrastructure while the committed destroy guard refuses accidents.",
 };
 
+export const clickstackInstallCmd = "npx skills use getcolors/clickstack";
+
+export const clickstack = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/clickstack/",
+  repoUrl: "https://github.com/getcolors/clickstack",
+  heading: "ClickStack: an open-source observability stack on one server, built with Colors",
+  lede: "ClickStack is a Package Skill built with Colors. It provisions the HyperDX observability stack on a single Vultr instance — ClickHouse for telemetry, MongoDB for application state, the HyperDX OpenTelemetry collector, and the HyperDX UI — behind Caddy TLS and Cloudflare, with logs, traces, and metrics ingested over OTLP on the same host that serves the dashboard.",
+  runtimeNote:
+    "ClickStack ships in **green** alone. One hostname carries both halves: the UI and OTLP/HTTP ingestion share port 443, so an exporter needs no endpoint beyond `https://<host>` and 4317/4318 are never exposed.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It names the public host, the initial team's admin email, the five container images, and the Vultr and state-backend boundary. It carries no key material and no secret.",
+    },
+    {
+      title: "Own the machine keypair",
+      body: "With no `vultr-ssh-keys` in desired state the package generates `~/.ssh/<profile>`, registers it as the Vultr account key named for the profile, and removes it last on delete — the workspace SSH keypair standard, not a bespoke rule.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose, and Caddy files, then runs `create --dry-run` before contacting providers or the server. Build and dry-run need no credentials and never read `~/.ssh`.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the instance, a firewall open only on 22/80/443, and a proxied Cloudflare record; Ansible converges the Compose stack and creates the initial HyperDX team — until one exists the collector binds no OTLP receivers at all.",
+    },
+    {
+      title: "Prove it ingests",
+      body: "Acceptance sends one OTLP log over public HTTPS and reads the row back out of ClickHouse, so create is called done only when telemetry actually lands.",
+    },
+  ],
+  dagCaption: "ClickStack — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`.",
+  dagNote:
+    "The ingestion key is the team's own `apiKey`, minted by the application and therefore unknowable in advance; convergence reads it back rather than inventing one. Delete reverses Ansible, DNS, and infrastructure and drops the keypair only after the compute destroy succeeded, while the committed destroy guard refuses accidents.",
+};
+
 export const footer = {
   name: "Colors",
   href: "https://github.com/getcolors",

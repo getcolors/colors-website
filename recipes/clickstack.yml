@@ -1,0 +1,21 @@
+name: ClickStack
+repository: getcolors/clickstack
+summary: Operate a single-server ClickStack observability stack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — on Vultr.
+featured: /featured#clickstack
+keywords:
+  - ClickStack
+  - HyperDX
+  - OpenTelemetry
+  - observability
+  - ClickHouse
+  - MongoDB
+  - OTLP
+  - tracing
+  - logs
+  - Vultr
+  - Cloudflare
+  - self-hosted
+package-skills:
+  - name: package-clickstack-green
+    path: skills/package-clickstack-green/SKILL.md
+    runtime: green
