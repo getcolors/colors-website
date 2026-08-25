@@ -1349,6 +1349,58 @@ export const clickstack = {
     "The ingestion key is the team's own `apiKey`, minted by the application and therefore unknowable in advance; convergence reads it back rather than inventing one. Delete reverses Ansible, DNS, and infrastructure and drops the keypair only after the compute destroy succeeded, while the committed destroy guard refuses accidents.",
 };
 
+export const signozInstallCmd = "npx skills use getcolors/signoz";
+
+export const signoz = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/signoz/",
+  repoUrl: "https://github.com/getcolors/signoz",
+  heading: "SigNoz: a self-hosted OpenTelemetry backend on one server, built with Colors",
+  lede: "SigNoz is a Package Skill built with Colors. It provisions the SigNoz observability stack on a single Vultr instance \u2014 ClickHouse and ClickHouse Keeper for telemetry, a Postgres metastore for dashboards and alert rules, the schema migrator, the SigNoz application, and the signoz-otel-collector ingester \u2014 behind Caddy TLS and Cloudflare, with traces, logs, and metrics arriving over OTLP on the same host that serves the UI.",
+  runtimeNote:
+    "SigNoz ships in **green** alone. One hostname carries both halves: the UI and OTLP/HTTP ingestion share port 443, so an exporter needs no endpoint beyond `https://<host>` and 4317/4318 never leave loopback.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It names the public host, the root account, the six container images, the nightly metastore backup, and the Vultr and state-backend boundary. It carries no key material and no secret.",
+    },
+    {
+      title: "Own the machine keypair",
+      body: "With no `vultr-ssh-keys` in desired state the package generates `~/.ssh/<profile>`, registers it as the Vultr account key named for the profile, writes the matching `~/.ssh/config` block so `ssh <profile>` works, and removes the key last on delete \u2014 the workspace SSH keypair and config standards, not bespoke rules.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose, and Caddy files, then runs `create --dry-run` before contacting providers or the server. Build and dry-run need no credentials and never read `~/.ssh`.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the instance, a firewall open only on 22/80/443, and a proxied Cloudflare record before Caddy asks Let's Encrypt for a certificate; Ansible then converges the Compose stack and mints the OTLP bearer token on the server, because SigNoz community edition has no ingestion keys of its own.",
+    },
+    {
+      title: "Prove it is closed",
+      body: "The end-to-end ingest proof runs on the server where the token lives. From outside, acceptance requires the UI over HTTPS, a healthy API, and an unauthenticated OTLP write that comes back **401** \u2014 an endpoint that accepted it would be an open write path into ClickHouse.",
+    },
+  ],
+  dagCaption: "SigNoz \u2014 CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` \u2192 `infrastructure` \u2192 `ssh-config` \u2192 `dns` \u2192 `ansible` \u2192 `acceptance`.",
+  dagNote:
+    "Delete is not the create order reversed twice over: the `~/.ssh/config` block goes before the compute destroy, while the keypair goes after it \u2014 a stale block is harmless, a key removed early locks you out of a machine that still exists. The committed destroy guard refuses accidents either way.",
+};
+
 export const footer = {
   name: "Colors",
   href: "https://github.com/getcolors",

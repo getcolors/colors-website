@@ -50,6 +50,8 @@ import {
   githubDwhInstallCmd,
   clickstack,
   clickstackInstallCmd,
+  signoz,
+  signozInstallCmd,
 } from "~/data/landing";
 
 const title = "Featured — Colors";
@@ -76,6 +78,7 @@ const featuredPackageSkills = [
   { label: "WaveHouse", href: "#wavehouse" },
   { label: "GitHub DWH", href: "#github-dwh" },
   { label: "ClickStack", href: "#clickstack" },
+  { label: "SigNoz", href: "#signoz" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1756,6 +1759,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{clickstack.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIGNOZ -->
+      <div class="sec" id="signoz">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{signoz.eyebrow}</div>
+          <SectionHeading id="signoz" title={signoz.heading} />
+          <p class="sec-lede sec-lede-wide">{signoz.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={signozInstallCmd} id="featured-signoz-install" />
+            <span class="install-note" set:html={html(signoz.runtimeNote)} />
+            <ResourceLinks docsUrl={signoz.docsUrl} repoUrl={signoz.repoUrl} catalogUrl="/getcolors/signoz" />
+          </div>
+
+          <div class="grid-5">
+            {signoz.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{signoz.dagCaption}</div>
+            <div class="dag">
+              {signoz.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{signoz.dagNote}</p>
           </div>
         </div>
       </div>

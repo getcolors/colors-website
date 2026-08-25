@@ -1,0 +1,22 @@
+name: SigNoz
+repository: getcolors/signoz
+summary: Operate a single-node SigNoz observability stack — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — on Vultr.
+featured: /featured#signoz
+keywords:
+  - SigNoz
+  - OpenTelemetry
+  - observability
+  - ClickHouse
+  - PostgreSQL
+  - OTLP
+  - tracing
+  - logs
+  - metrics
+  - Caddy
+  - Vultr
+  - Cloudflare
+  - self-hosted
+package-skills:
+  - name: package-signoz-green
+    path: skills/package-signoz-green/SKILL.md
+    runtime: green
