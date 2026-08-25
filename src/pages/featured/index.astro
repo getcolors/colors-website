@@ -52,6 +52,8 @@ import {
   clickstackInstallCmd,
   signoz,
   signozInstallCmd,
+  netbird,
+  netbirdInstallCmd,
 } from "~/data/landing";
 
 const title = "Featured — Colors";
@@ -79,6 +81,7 @@ const featuredPackageSkills = [
   { label: "GitHub DWH", href: "#github-dwh" },
   { label: "ClickStack", href: "#clickstack" },
   { label: "SigNoz", href: "#signoz" },
+  { label: "NetBird", href: "#netbird" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1797,6 +1800,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{signoz.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NETBIRD -->
+      <div class="sec" id="netbird">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{netbird.eyebrow}</div>
+          <SectionHeading id="netbird" title={netbird.heading} />
+          <p class="sec-lede sec-lede-wide">{netbird.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={netbirdInstallCmd} id="featured-netbird-install" />
+            <span class="install-note" set:html={html(netbird.runtimeNote)} />
+            <ResourceLinks docsUrl={netbird.docsUrl} repoUrl={netbird.repoUrl} catalogUrl="/getcolors/netbird" />
+          </div>
+
+          <div class="grid-5">
+            {netbird.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{netbird.dagCaption}</div>
+            <div class="dag">
+              {netbird.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{netbird.dagNote}</p>
           </div>
         </div>
       </div>

@@ -1,0 +1,22 @@
+name: NetBird
+repository: getcolors/netbird
+summary: Operate a self-hosted NetBird control plane and its identity provider — Traefik, the combined netbird-server, the dashboard and Authentik — on Vultr.
+featured: /featured#netbird
+keywords:
+  - NetBird
+  - Authentik
+  - WireGuard
+  - VPN
+  - zero trust
+  - overlay network
+  - SSO
+  - OIDC
+  - identity provider
+  - Traefik
+  - Vultr
+  - Cloudflare
+  - self-hosted
+package-skills:
+  - name: package-netbird-green
+    path: skills/package-netbird-green/SKILL.md
+    runtime: green

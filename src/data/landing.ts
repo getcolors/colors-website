@@ -1401,6 +1401,58 @@ export const signoz = {
     "Delete is not the create order reversed twice over: the `~/.ssh/config` block goes before the compute destroy, while the keypair goes after it \u2014 a stale block is harmless, a key removed early locks you out of a machine that still exists. The committed destroy guard refuses accidents either way.",
 };
 
+export const netbirdInstallCmd = "npx skills use getcolors/netbird";
+
+export const netbird = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/netbird/",
+  repoUrl: "https://github.com/getcolors/netbird",
+  heading: "NetBird: a self-hosted zero-trust network and its identity provider, built with Colors",
+  lede: "NetBird is a Package Skill built with Colors. It provisions a self-hosted NetBird control plane on a single Vultr instance — Traefik, the combined `netbird-server` carrying management, signal, relay and STUN, the dashboard, and Authentik with its Postgres and Redis — behind Cloudflare and Let's Encrypt, with SSO through Authentik and encrypted nightly backups to R2.",
+  runtimeNote:
+    "NetBird ships in **green** alone. Management, signal, relay and STUN are one process multiplexed behind Traefik on 443, so the firewall opens 22, 80, 443 and a single UDP port — and nothing else.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It names the two public hosts, the local break-glass owner, Authentik's first administrator, the seven container images, the nightly encrypted backup, and the Vultr and state-backend boundary. It carries no key material and no secret.",
+    },
+    {
+      title: "Own the machine keypair",
+      body: "With no `vultr-ssh-keys` in desired state the package generates `~/.ssh/<profile>`, registers it as the Vultr account key named for the profile, writes the matching `~/.ssh/config` block so `ssh <profile>` works, and removes the key last on delete — the workspace SSH keypair and config standards, not bespoke rules.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose and Traefik files, then runs `create --dry-run` before contacting providers or the server. Build and dry-run need no credentials and never read `~/.ssh`.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the instance, a firewall open only on 22/80/443 and one UDP port, and two **unproxied** Cloudflare records — proxying would break both STUN and the TLS-ALPN-01 challenge. Ansible then converges the Compose stack and generates every remaining secret on the host, where it stays.",
+    },
+    {
+      title: "Sign in without a browser",
+      body: "Convergence drives the real OAuth2 flow through Authentik's flow-executor API and creates the federated account itself, so there is no wizard and no GUI step. Acceptance enrols two throwaway peers on isolated networks, proves traffic flows over the relay, validates both certificates through the system trust store, and reads the served dashboard JavaScript to prove it was configured rather than merely answering 200.",
+    },
+  ],
+  dagCaption: "NetBird — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `ssh-config` → `dns` → `ansible` → `acceptance`.",
+  dagNote:
+    "DNS sits before convergence because Traefik asks Let's Encrypt for a certificate the moment it starts and TLS-ALPN-01 only succeeds once the names resolve. Delete reverses that, except twice: the `~/.ssh/config` block goes before the compute destroy while the keypair goes after it, and a final encrypted backup is taken before anything is torn down. The committed destroy guard refuses accidents either way.",
+};
+
 export const footer = {
   name: "Colors",
   href: "https://github.com/getcolors",
