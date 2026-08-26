@@ -1,0 +1,541 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "The Agentic DevOps Manifesto — Colors";
+const description =
+  "Thirteen theses on letting agents run infrastructure, written for people who think that is a bad idea. Every claim is implemented in the Colors repositories, including the three where we say what it costs and where we get it wrong.";
+const path = "/blog/agentic-devops-manifesto";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
+const image = "/og-agentic-devops-manifesto-v1.png";
+const imageAlt =
+  "Article card: thirteen theses on letting agents run infrastructure, written for the people who think that is a bad idea.";
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+// The thirteen, in order, doubling as the page's own index. One list rather
+// than a hand-typed nav plus hand-typed headings that could drift apart.
+const theses = [
+  { n: 1, id: "program", text: "The agent writes the program. The program touches the cloud." },
+  { n: 2, id: "diff", text: "You review a diff, not a transcript." },
+  { n: 3, id: "convergent", text: "Convergent, not deterministic." },
+  { n: 4, id: "plan", text: "The plan is where permission is granted." },
+  { n: 5, id: "guardrails", text: "Guardrails live in the repository, not in the operator's attention." },
+  { n: 6, id: "hallucination", text: "Hallucination is the least of your problems." },
+  { n: 7, id: "golden", text: "Golden files are the only coverage infrastructure allows." },
+  { n: 8, id: "pins", text: "Every edge is a pinned SHA." },
+  { n: 9, id: "launcher", text: "The copied launcher is where we get it wrong." },
+  { n: 10, id: "one-file", text: "One file is editable. Everything else is generated or secret." },
+  { n: 11, id: "phases", text: "Authorization is a phase, not a checkbox." },
+  { n: 12, id: "world", text: "The program knows nothing about the world it acts on." },
+  { n: 13, id: "no-desired-state", text: "Some work has no desired state, and forcing it there is a mistake." },
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "The Agentic DevOps Manifesto",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Person",
+    name: "Alberto Miorin",
+    url: "https://www.linkedin.com/in/amiorin/",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Agentic DevOps" },
+    { "@type": "Thing", name: "Infrastructure as Code" },
+    { "@type": "Thing", name: "Package Skills" },
+    { "@type": "Thing", name: "Desired State" },
+    { "@type": "Thing", name: "Golden Tests" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "The Agentic DevOps Manifesto" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Architecture &amp; Operations</p>
+      <h1>The agentic DevOps manifesto</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-green">Manifesto</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+        <span class="dot">·</span>
+        <span class="meta-author mono">By <a href="https://www.linkedin.com/in/amiorin/" target="_blank" rel="noopener noreferrer">Alberto Miorin</a></span>
+      </div>
+      <p class="lede">
+        You are right to distrust an agent holding cloud credentials. Thirteen theses on what we build
+        instead, what it costs, and the three places we say plainly where this gets it wrong.
+      </p>
+    </header>
+
+    <nav class="thesis-index panel" aria-label="The thirteen theses">
+      <p class="index-label mono">The thirteen</p>
+      <ol class="index-list">
+        {theses.map((thesis) => (
+          <li>
+            <a href={`#${thesis.id}`}>
+              <span class="index-n mono">{thesis.n}</span>
+              <span class="index-text">{thesis.text}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <article class="content-body">
+      <p>
+        The pitch you have been hearing goes like this. Give the model your provider APIs, describe what you
+        want in English, and it converges your infrastructure while you watch. Anyone who has run production
+        hears the problem straight away. Somebody now has to read back every operation the thing performed
+        and decide whether each one meant what it looked like. That is not less work than doing it yourself.
+        It is the same work, done later, with worse information, on somebody else's mistakes.
+      </p>
+      <p>
+        We agree. So we do not build that.
+      </p>
+      <p>
+        What follows is what we build instead. Every claim is implemented in
+        the <a href="https://github.com/getcolors" target="_blank" rel="noopener noreferrer">getcolors</a> repositories,
+        and three of these theses exist to say what the approach costs rather than what it buys. A manifesto
+        that only lists the parts that work is marketing.
+      </p>
+
+      <h2 id="program"><span class="thesis-n mono">1</span> The agent writes the program. The program touches the cloud.</h2>
+      <p>
+        An agent calling provider APIs directly needs a human per operation, or it gets no human at all. An
+        agent writing a convergence program needs a human per change to that program, and that one reading
+        covers every run afterwards.
+      </p>
+      <p>
+        That ratio is the entire argument. It is not a claim about intelligence, safety training, or how good
+        the models got this year. It is arithmetic about where the reviews go.
+      </p>
+
+      <h2 id="diff"><span class="thesis-n mono">2</span> You review a diff, not a transcript.</h2>
+      <p>
+        A transcript of API calls is evidence of what happened. You have to reconstruct intent from it, and
+        you can only do that after the effects have landed.
+      </p>
+      <p>
+        A diff against known-good code is a proposal. It sits still. It has line numbers. Your existing review
+        habits work on it, and so does <code>git blame</code> six months later when the thing breaks.
+      </p>
+      <p>
+        Both need a human. Only one of them lets the human say no.
+      </p>
+
+      <h2 id="convergent"><span class="thesis-n mono">3</span> Convergent, not deterministic.</h2>
+      <p>
+        We will not tell you the program does the same thing every time, because it does not. Run the same
+        OpenTofu configuration twice and you can get two outcomes. The provider API changed. A resource is
+        still eventually consistent. You hit a quota. <code>apt-get install</code> pulled a newer package this
+        month. An image tag moved.
+      </p>
+      <p>
+        What a Colors package gives you is idempotence, a declared desired state, a plan you can read before
+        anything happens, state that lets you spot drift, and somewhere to put guardrails. That is more useful
+        than determinism and it is a different promise. Selling it as determinism sets you up to catch the
+        tool breaking a promise nobody should have made, and then you distrust it for the wrong reason.
+      </p>
+
+      <h2 id="plan"><span class="thesis-n mono">4</span> The plan is where permission is granted.</h2>
+      <p>
+        Every Colors launcher has three gears before it changes anything.
+      </p>
+      <pre><code>./green build              # render .colors/&lt;profile&gt;/, no provider calls, no credentials
+./green create --dry-run   # walk the DAG, skip every side effect
+./green create             # converge for real</code></pre>
+      <p>
+        <code>build</code> and <code>--dry-run</code> work on a fresh checkout with an empty environment. That
+        is deliberate. It means a reviewer can check what an agent proposes without holding a single
+        credential, which makes review something a second person can do rather than a privilege of whoever has
+        the keys.
+      </p>
+      <p>
+        Validation failure exits 2 and lists every problem at once, not the first one. An agent iterating
+        against a tool that reports one error per run learns to guess.
+      </p>
+
+      <h2 id="guardrails"><span class="thesis-n mono">5</span> Guardrails live in the repository, not in the operator's attention.</h2>
+      <p>
+        Every deployment's <code>colors.yml</code> carries this.
+      </p>
+      <pre><code>compute-prevent-destroy: true</code></pre>
+      <p>
+        Lifting it takes an explicit one-run environment override. Editing the committed flag is out of bounds
+        for humans and agents alike, and it is out of bounds because it is written down in every
+        <code>CLAUDE.md</code> in the workspace, not because we trust everyone to remember.
+      </p>
+      <p>
+        The second guard matters more and is less obvious. <code>profile</code> keys the remote state at
+        <code>&lt;profile&gt;/&lt;stage&gt;.tfstate</code> and separates every project sharing one R2 bucket.
+        Overlay it from the environment and you point one deployment at another's state. So the packages
+        refuse to run when <code>COLORS_PAR_PROFILE</code> is set, and the refusal has a test of its own in
+        the NetBird package's validation suite.
+      </p>
+      <p>
+        An agent hitting that guard has hit a wall, not a puzzle. That is the wall working.
+      </p>
+
+      <h2 id="hallucination"><span class="thesis-n mono">6</span> Hallucination is the least of your problems.</h2>
+      <p>
+        A hallucinated API call usually errors out. Loud, immediate, harmless.
+      </p>
+      <p>
+        The output that hurts is the plausible, well formed call that succeeds. Deleting the resource that
+        looked right. Opening <code>0.0.0.0/0</code>. Writing to the wrong account or the wrong state file.
+        Nothing about that trips a review for hallucination, because nothing about it is a hallucination. It
+        is a correct operation aimed at the wrong thing.
+      </p>
+      <p>
+        Which is why "check the agent's output for mistakes" is not a safety strategy. The guards in thesis 5
+        catch these. Reading the transcript does not.
+      </p>
+
+      <h2 id="golden"><span class="thesis-n mono">7</span> Golden files are the only coverage infrastructure allows.</h2>
+      <p>
+        No unit test tells you a cloud account has the right firewall rules, so demanding test coverage before
+        you trust an agent is asking for something that does not exist for anybody, agent or not.
+      </p>
+      <p>
+        What does exist is a byte comparison of what the program renders.
+        The <a href="/getcolors/netbird">NetBird package</a> holds 52 golden files across two fixtures,
+        covering the OpenTofu templates, the Ansible plays, the systemd units, the backup scripts and the
+        resource addresses. Change a step and the diff is in front of you before a single provider call
+        happens.
+      </p>
+      <p>
+        Two fixtures rather than one, because the SSH Keypair Standard has two modes and conformance means
+        both the keygen path and the opt-out path hold.
+      </p>
+      <p>
+        The ONCE parity suite does the same job across languages. One fixture, three implementations, eight
+        provider variants, <code>diff -qr</code> on the results. Green, red and blue produce identical trees or
+        the change is not finished.
+      </p>
+      <p>
+        Read a golden diff after a pin bump. Never run <code>bb golden:accept</code> to make a failure go away.
+      </p>
+
+      <h2 id="pins"><span class="thesis-n mono">8</span> Every edge is a pinned SHA.</h2>
+      <p>
+        Not a version range. Not <code>main</code>. A forty character commit.
+      </p>
+      <pre><code>(def ^:private netbird-sha "7b0f784a17d453e0b2ec726d9a37e84db78e84d4")</code></pre>
+      <p>
+        A commit in the SDK is invisible in a package until it is pushed and the pin moves. A change spanning
+        two repositories is two commits in two repositories, upstream pushed first. <code>bb pin</code> stamps
+        the launcher after a push, so pins describe history rather than intent.
+      </p>
+      <p>
+        Agents are good at producing text that looks like a SHA. Never let one invent a pin, and never
+        hand-edit one. To work across a boundary without pinning, point the launcher at a working tree with
+        <code>GREEN_LIB_ROOT</code>, <code>NETBIRD_LIB_ROOT</code> and their siblings.
+      </p>
+
+      <h2 id="launcher"><span class="thesis-n mono">9</span> The copied launcher is where we get it wrong.</h2>
+      <p>
+        Installed launchers are copies, not symlinks. <code>npx skills update -p</code> rewrites the payload
+        under <code>.agents/skills/package-*/</code> and leaves the root <code>./green</code> alone, so the
+        project keeps running the old pin while <code>skills-lock.json</code> claims the new one. The copy is a
+        separate step.
+      </p>
+      <pre><code>npx skills update -p
+cp .agents/skills/package-once-green/green green    # and red, blue</code></pre>
+      <p>
+        We publish this because a perfectly reviewed program you are not running gives you nothing, and this
+        is the way we most often end up not running it. The <code>once-colors</code> deployment diffs root
+        against payload in CI to catch it.
+      </p>
+      <p>
+        The launcher itself is written to be as small as we can make it. Its own header says why: "A copied
+        payload is the one place in this project where code cannot be tested, so nothing that can live
+        elsewhere should live here."
+      </p>
+
+      <h2 id="one-file"><span class="thesis-n mono">10</span> One file is editable. Everything else is generated or secret.</h2>
+      <p>
+        <code>colors.yml</code> is the only file a human or an agent edits in a deployment. It holds
+        kebab-case keys and non-secret values.
+      </p>
+      <p>
+        Credentials are <code>COLORS_PAR_&lt;UPPER_SNAKE_KEY&gt;</code> environment variables in a gitignored
+        <code>.envrc.private</code>, overlaid onto the matching key at run time. They never appear in
+        <code>colors.yml</code>, in generated output, in documentation, or in chat. <code>.colors/</code> is
+        generated. Never edit it, never read it as source, never commit it.
+      </p>
+      <p>
+        The payoff is that the whole desired state of a production system fits in one readable file that
+        contains nothing dangerous. The NetBird deployment's <code>colors.yml</code> runs to a few dozen keys,
+        and its header names every credential the deployment needs without holding one, along with the list of
+        secrets nobody supplies at all. The relay secret, the session cookie key, the store encryption key,
+        Authentik's database password, the OIDC client secret and the durable automation token are all
+        generated on the server and never leave it.
+      </p>
+      <p>
+        The exception is documented in the same header. The backup recovery key is operator-supplied, because
+        a key generated on the server would be lost with the server it protects.
+      </p>
+
+      <h2 id="phases"><span class="thesis-n mono">11</span> Authorization is a phase, not a checkbox.</h2>
+      <p>
+        Our <a href="/#create-package-skill">Create Package Skill</a> workflow puts the agent in three phases
+        and holds it there.
+      </p>
+      <p>
+        Phase one is conversation only. No files created, modified or deleted. No plan written to disk. The
+        agent establishes what is being built and what it is allowed to do, including whether it may create
+        repositories, push commits, move pins, spend money on cloud resources, or touch DNS. It stays there
+        until the operator says, in so many words, proceed.
+      </p>
+      <p>
+        Phase two creates exactly four files: <code>colors.yml</code>, <code>.gitignore</code>,
+        <code>.envrc</code> and an ignored <code>.envrc.private</code> for the operator to fill in. Then it
+        stops again. The agent does not read, display, copy or validate the contents of
+        <code>.envrc.private</code>.
+      </p>
+      <p>
+        Phase three is autonomous, and it is autonomous because two humans-in-the-loop already happened at the
+        points where the decisions were.
+      </p>
+      <p>
+        "Ask before doing anything dangerous" degrades into asking about everything, which trains the operator
+        to approve without reading. Phases put the questions where the answers change the work.
+      </p>
+
+      <h2 id="world"><span class="thesis-n mono">12</span> The program knows nothing about the world it acts on.</h2>
+      <p>
+        Determinism in your program buys you no determinism about reality, and the gap is where the real work
+        is.
+      </p>
+      <p>
+        NetBird's ownership transfer needs one manual sign-in to Authentik. No convergence step performs it.
+        Run create, sign in, run create again.
+      </p>
+      <p>
+        HyperDX binds no OTLP receivers until convergence has created the first team, so a ClickStack server
+        that looks healthy accepts nothing until an ordering constraint that appears in no documentation has
+        been satisfied.
+      </p>
+      <p>
+        Neither of those fell out of reading code. Both came from running it against a real provider and
+        reading what came back. An agent that has never converged anything will not find them, and a manifesto
+        that implies otherwise is lying to you.
+      </p>
+
+      <h2 id="no-desired-state"><span class="thesis-n mono">13</span> Some work has no desired state, and forcing it there is a mistake.</h2>
+      <p>
+        Rotate this credential now. Drain this node. Find out why the disk filled.
+      </p>
+      <p>
+        An investigation has no steady state to converge on. Push it through a convergence program and you
+        write a lot of code that runs once. Direct agent-to-API work is the right tool for that, with scoped
+        credentials and an audit log, not with a human reading back every operation afterwards.
+      </p>
+      <p>
+        We build desired-state packages because most infrastructure work is desired-state shaped. Most is not
+        all, and a position that cannot say where it stops is not a position.
+      </p>
+
+      <h2 id="not-claiming">What we are not claiming</h2>
+      <p>
+        We are not claiming the agent is reliable. We are claiming its output is reviewable, and that the
+        review covers every future run rather than one.
+      </p>
+      <p>
+        We are not claiming the program is deterministic. We are claiming it is idempotent, that it shows you
+        a plan first, and that it keeps state so you can see drift.
+      </p>
+      <p>
+        We are not claiming you can stop paying attention. The guards exist because attention runs out. So
+        does ours. That is what they are for.
+      </p>
+      <p>
+        If you want the argument rather than
+        the theses, <a href="/blog/park-the-stochasticity">Park the Stochasticity</a> makes the case from the
+        TypeScript team's decision not to let AI translate their compiler,
+        and <a href="/blog/agentic-once-deterministic-forever">Agentic Once, Deterministic Forever</a> states
+        the safety KPI as a ratio you can actually track.
+      </p>
+      <p>
+        The stack is green, red and blue for the engine, <a href="/skills">Package Skills</a> for the things
+        you install, and a <code>colors.yml</code> per deployment for the state you want. It is all on GitHub
+        under <a href="https://github.com/getcolors" target="_blank" rel="noopener noreferrer">getcolors</a>.
+        Read a golden diff and decide for yourself.
+      </p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-bottom: 72px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 28px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime, .meta-author {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .meta-author a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .meta-author a:hover {
+    color: var(--blue);
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  /* This article has no infographic, and thirteen numbered claims are hard to
+     hold in the head as a wall of headings. The index is the signature element
+     in place of a hero figure, and it is built from the same `theses` array the
+     headings are numbered from, so the two cannot drift. */
+  .thesis-index {
+    margin: 32px 0 48px;
+    padding: 20px 22px;
+    background: var(--surface);
+  }
+  .index-label {
+    margin: 0 0 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--blue);
+  }
+  .index-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .index-list a {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    color: var(--ink);
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+  .index-list a:hover .index-text {
+    color: var(--blue);
+    text-decoration: underline;
+  }
+  .index-n {
+    flex: none;
+    min-width: 18px;
+    color: var(--muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: 24px;
+  }
+  .thesis-n {
+    display: inline-block;
+    margin-right: 12px;
+    color: var(--green);
+    font-size: 17px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 24px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--code-ink);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .content-body a {
+    color: var(--blue);
+  }
+  @media (max-width: 560px) {
+    .thesis-index {
+      padding: 16px 16px;
+    }
+  }
+</style>

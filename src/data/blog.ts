@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "The Agentic DevOps Manifesto",
+    slug: "/blog/agentic-devops-manifesto",
+    date: "August 26, 2026",
+    isoDate: "2026-08-26T09:00:00Z",
+    readTime: "11 min read",
+    category: "Architecture",
+    runtime: "Manifesto",
+    summary:
+      "Thirteen theses on letting agents run infrastructure, written for the people who think that is a bad idea. Every claim is implemented in the getcolors repositories, and three of them exist to say what the approach costs rather than what it buys.",
+    image: "/og-agentic-devops-manifesto-v1.png",
+    tags: ["Manifesto", "Agentic DevOps", "Desired State", "Golden Tests", "Package Skills", "Guardrails"],
+  },
+  {
     title: "Park the Stochasticity",
     slug: "/blog/park-the-stochasticity",
     date: "August 24, 2026",

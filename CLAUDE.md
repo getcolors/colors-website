@@ -6,7 +6,7 @@ This is the static website for Colors, an SDK for building Package Skills. The
 product was previously called BigConfig. `/` remains the landing page;
 `/featured` is the editorial showcase and `/skills` plus the generated
 owner/source/Package Skill routes form the PR-curated Package Skills Catalog.
-The blog is live again at `/blog` with seven articles; the manual and talk
+The blog is live again at `/blog` with ten articles; the manual and talk
 decks remain retired.
 
 ## Tech Stack
@@ -265,7 +265,7 @@ lets the browser fake it. If you ever add a real Sans 600 woff2, drop the
 
 ## The blog
 
-`/blog` and seven articles under `src/pages/blog/` are live. **`src/data/blog.ts`
+`/blog` and ten articles under `src/pages/blog/` are live. **`src/data/blog.ts`
 is the one list of them**, and `/blog`, `/blog/rss.xml` and `sitemap.xml.ts` all
 read it.
 
@@ -377,7 +377,7 @@ Cloudflare with the rest of the zone, which this repo does not manage.
 
 There is no `redirects` map in `astro.config.mjs` and no 404 page. Caddy handles
 it: the `handle_errors` block in `Caddyfile.prod` 301s **any** 404 to `/`. That
-covers every retired URL — the 44 old blog posts (the seven current articles are
+covers every retired URL — the 44 old blog posts (the ten current articles are
 real routes and are unaffected), `/manual`, `/once`, `/walter`,
 `/clickhouse`, `/marketplace`, `/package-spec`, the eight `/talk/*` decks, and
 the old `/api/*` and `/libraries/*` docs routes — without enumerating them.

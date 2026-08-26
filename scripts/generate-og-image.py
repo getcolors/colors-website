@@ -422,6 +422,14 @@ render_post_card(
 # generated card.
 
 render_post_card(
+    "og-agentic-devops-manifesto-v1.png",
+    "Architecture · Manifesto",
+    "The agentic DevOps manifesto",
+    "Thirteen theses on letting agents run infrastructure, written for the people who think that is a bad idea.",
+    "/blog/agentic-devops-manifesto",
+)
+
+render_post_card(
     "og-posthog-skill-benchmark-v1.png",
     "Benchmark · 2 agents · PostHog",
     "Both agents reported success. Only one checked.",
