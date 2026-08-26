@@ -606,17 +606,36 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       /* SECTIONS */
       .sec { border-top: 1px solid var(--rule); padding: 72px 24px; }
       .featured-intro { padding-top: 64px; border-top: 0; }
-      .featured-intro > .wrap { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 56px; align-items: start; }
+      /* The index sits under the title rather than beside it. Side by side, a
+         204px copy block stood next to a 719px panel and left ~515px of empty
+         left column; stacked, the same content is shorter overall and the hole
+         is gone. The <nav> already followed the copy in the DOM and the old
+         860px breakpoint already stacked them, so this only makes the desktop
+         layout agree with the reading order both already had. */
+      .featured-intro > .wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+      /* Pill, title, lede read straight down; the lede keeps .sec-lede-wide's
+         680px measure so it does not stretch across the full 1072px wrap. */
       .featured-intro-copy .sec-lede { margin-bottom: 0; }
-      .featured-toc { padding: 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
-      .featured-toc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
+      /* No panel fill or border at full width: at 559px the tint read as a
+         card, but stretched across the 1072px wrap it becomes a box wrapping
+         the page's whole upper half, with the white tiles nested inside it. A
+         hairline under the label does the same job with one less layer. */
+      .featured-toc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); }
       .featured-toc-title { margin: 0; color: var(--ink); font-size: 15px; font-weight: 600; }
-      .featured-toc-count { color: var(--soft); font-size: 13px; }
-      .featured-toc-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-      .featured-toc a { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 9px; min-width: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--page); color: var(--ink); font-size: 14px; transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease; }
+      /* Four tracks max. The widest label, "PostgreSQL HA (Opus 5)", needs
+         220px of tile (152 label + 12 arrow + 9 gap + 24 padding); the 1072px
+         wrap gives 262px at four columns and only 208px at five, so five
+         truncates it. Below 1100px the wrap shrinks past that margin, hence
+         the step down to three. */
+      .featured-toc-links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+      .featured-toc a { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 9px; min-width: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--page); color: var(--ink); font-size: 14px; transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease; }
       .featured-toc a:hover { border-color: oklch(80% 0.04 260); background: oklch(97% 0.015 260); color: var(--blue); }
-      .featured-toc-index { color: var(--soft); font: 11px var(--mono); }
       .featured-toc-arrow { color: var(--blue); }
+      /* 23 skills over four tracks leave one empty cell in the last row. The
+         catalog link fills it, which also gives the count a home -- it used to
+         sit in the header as "23 Package Skills" and say nothing actionable. */
+      .featured-toc-links a.featured-toc-all { border-style: dashed; background: var(--surface); color: var(--muted); }
+      .featured-toc-links a.featured-toc-all:hover { border-style: solid; background: var(--page); color: var(--blue); }
       .sec-alt { background: var(--surface); }
       .sec h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 12px; }
       /* A heading with no lede under it carries the lede's bottom margin. */
@@ -722,8 +741,13 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
          They no longer need !important — the declarations they override are
          now in this stylesheet rather than in style attributes, so ordinary
          cascade order settles it. Keep these blocks last. */
+      /* 4 -> 3 -> 2 -> 1. Ordered narrowest-last: these queries have equal
+         specificity, so where two match the later block settles it. */
+      @media (max-width: 1100px) {
+        .featured-toc-links { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      }
       @media (max-width: 860px) {
-        .featured-intro > .wrap { grid-template-columns: 1fr; gap: 38px; }
+        .featured-intro > .wrap { gap: 38px; }
         .featured-toc-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .hero,
         .grid-2,
@@ -751,7 +775,6 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         }
       }
       @media (max-width: 520px) {
-        .featured-toc { padding: 18px; }
         .featured-toc-head { align-items: flex-start; flex-direction: column; gap: 3px; }
         .featured-toc-links { grid-template-columns: 1fr; }
         .grid-4,
@@ -834,16 +857,22 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <nav class="featured-toc" aria-label="Featured Package Skills on this page">
             <div class="featured-toc-head">
               <p class="featured-toc-title">On this page</p>
-              <span class="featured-toc-count">{featuredPackageSkills.length} Package Skills</span>
             </div>
             <div class="featured-toc-links">
-              {featuredPackageSkills.map((item, index) => (
+              {/* No 01..23 markers: the order is neither alphabetical nor a
+                  sequence, so the numerals encoded nothing and simply repeated
+                  23 times -- tolerable down a 12-row column, noise in a
+                  six-row grid. */}
+              {featuredPackageSkills.map((item) => (
                 <a href={item.href}>
-                  <span class="featured-toc-index">{String(index + 1).padStart(2, "0")}</span>
                   <span>{item.label}</span>
                   <span class="featured-toc-arrow" aria-hidden="true">↓</span>
                 </a>
               ))}
+              <a class="featured-toc-all" href="/skills">
+                <span>All {featuredPackageSkills.length} in the catalog</span>
+                <span class="featured-toc-arrow" aria-hidden="true">→</span>
+              </a>
             </div>
           </nav>
         </div>
