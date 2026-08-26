@@ -40,7 +40,7 @@ export const posts: Post[] = [
     runtime: "NetBird · Claude Code · Codex",
     summary:
       "Three clipped YouTube transcripts became a live NetBird Agent Network deployment in a day: a keyless LLM endpoint and an agent container that cannot reach the internet, proven by acceptance gates. The six-step workflow behind it, with the failures left in, and the closing move that makes the next run cheaper.",
-    image: "/images/how-a-package-skill-gets-made-infographic.png",
+    image: "/images/how-a-package-skill-gets-made-infographic-v1.png",
     tags: ["Workflow", "Agentic DevOps", "NetBird", "Claude Code", "Adversarial Review", "Package Skills"],
   },
   {
