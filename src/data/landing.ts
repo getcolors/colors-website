@@ -1453,6 +1453,58 @@ export const netbird = {
     "DNS sits before convergence because Traefik asks Let's Encrypt for a certificate the moment it starts and TLS-ALPN-01 only succeeds once the names resolve. Delete reverses that, except twice: the `~/.ssh/config` block goes before the compute destroy while the keypair goes after it, and a final encrypted backup is taken before anything is torn down. The committed destroy guard refuses accidents either way.",
 };
 
+export const agentNetworkInstallCmd = "npx skills use getcolors/agent-network";
+
+export const agentNetwork = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/agent-network/",
+  repoUrl: "https://github.com/getcolors/agent-network",
+  heading: "Agent Network: keyless LLM access an isolated agent cannot escape, built with Colors",
+  lede: "Agent Network is a Package Skill built with Colors. It provisions a minimal NetBird Agent Network demo on a single Vultr instance — Traefik, the combined `netbird-server`, the dashboard in agent-network view, the private reverse proxy — and an agent container running headless Claude Code on an internal Docker network with no internet route. The agent holds no API key: its only path to an LLM is the generated tunnel-only endpoint, where every request carries its peer identity, passes a model allowlist and per-day budget caps, and lands attributed in the access log.",
+  runtimeNote:
+    "Agent Network ships in **green** alone. The isolation is the demo: an internal Docker network doubled by port-scoped DOCKER-USER rules, with acceptance proving the negative space — raw-TCP probes that must fail beside a control probe that must succeed — after a real Docker restart and a real reboot.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It names the public host and its wildcard, the claimed models with their prices, the guardrail allowlist, the per-day policy caps and the account-wide ceiling, the two Docker subnets, and every image by tag and digest. It carries no key material and no secret.",
+    },
+    {
+      title: "Own the machine keypair",
+      body: "With no `vultr-ssh-keys` in desired state the package generates `~/.ssh/<profile>`, registers it as the Vultr account key named for the profile, writes the matching `~/.ssh/config` block so `ssh <profile>` works, and removes the key last on delete — the workspace SSH keypair and config standards, not bespoke rules.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose and Traefik files, then runs `create --dry-run` before contacting providers or the server. Build and dry-run need no credentials and never read `~/.ssh`.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the instance, a firewall open only on 22/80/443 and one UDP port, and two **unproxied** Cloudflare records — the name and its wildcard, because the endpoint label is minted at bootstrap and nothing knows it earlier. Ansible converges the stack, issues the wildcard certificate over DNS-01, and reconciles the control plane headlessly: admin account, endpoint, provider, guardrail, policy, global limit, and the agent's single-use setup key on tmpfs.",
+    },
+    {
+      title: "Prove the claim",
+      body: "Acceptance is the demo: the agent cannot reach the internet but its keyless call traverses the tunnel; a claimed-but-disallowed model is denied by the guardrail and an unclaimed one by routing, both at zero upstream cost; headless Claude Code rides the same governed path; every access-log entry carries the enrolled peer id; and an outside caller gets exactly the pre-identity 403. A deliberately fake provider key is a supported mode — the relayed upstream 401 proves the whole path with nothing billable.",
+    },
+  ],
+  dagCaption: "Agent Network — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `ssh-config` → `dns` → `ansible` → `acceptance`.",
+  dagNote:
+    "DNS sits before convergence because both certificate paths need resolvable names — Traefik's TLS-ALPN-01 for the base host and lego's DNS-01 for the wildcard the endpoint lives under. Delete reverses that with the standard split: the `~/.ssh/config` block goes before the compute destroy while the keypair goes after it. No backups, deliberately — the deployment is disposable, and a later create regenerates the endpoint hostname and every peer identity.",
+};
+
 export const footer = {
   name: "Colors",
   href: "https://github.com/getcolors",

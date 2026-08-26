@@ -1,0 +1,25 @@
+name: Agent Network
+repository: getcolors/agent-network
+summary: Operate a minimal NetBird Agent Network demo — a keyless, policy-gated LLM endpoint and a network-isolated agent running headless Claude Code — on Vultr.
+featured: /featured#agent-network
+keywords:
+  - NetBird
+  - Agent Network
+  - keyless
+  - LLM gateway
+  - AI agents
+  - Claude Code
+  - Anthropic
+  - WireGuard
+  - zero trust
+  - model allowlist
+  - budget limits
+  - access logs
+  - Vultr
+  - Cloudflare
+  - self-hosted
+
+package-skills:
+  - name: package-agent-network-green
+    path: skills/package-agent-network-green/SKILL.md
+    runtime: green
