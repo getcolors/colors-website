@@ -40,7 +40,7 @@ export const posts: Post[] = [
     runtime: "Manifesto",
     summary:
       "Thirteen theses on letting agents run infrastructure, written for the people who think that is a bad idea. Every claim is implemented in the getcolors repositories, and three of them exist to say what the approach costs rather than what it buys.",
-    image: "/og-agentic-devops-manifesto-v1.png",
+    image: "/images/agentic-devops-manifesto-infographic.png",
     tags: ["Manifesto", "Agentic DevOps", "Desired State", "Golden Tests", "Package Skills", "Guardrails"],
   },
   {

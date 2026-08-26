@@ -16,9 +16,9 @@ const post = postFor(path);
 // does not leave the structured data advertising production.
 const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
 const absolute = (target: string) => new URL(target, SITE_URL).toString();
-const image = "/og-agentic-devops-manifesto-v1.png";
+const image = "/og-agentic-devops-manifesto-v2.png";
 const imageAlt =
-  "Article card: thirteen theses on letting agents run infrastructure, written for the people who think that is a bad idea.";
+  "The manifesto's infographic: thirteen numbered theses in four groups — the reviewable program, guarded execution and permission, the verifiable environment, and humans in the loop.";
 
 const publishDate = post.date;
 const readTime = post.readTime;
@@ -97,6 +97,19 @@ const structuredData = {
         instead, what it costs, and the three places we say plainly where this gets it wrong.
       </p>
     </header>
+
+    <figure class="hero-figure">
+      <img
+        src="/images/agentic-devops-manifesto-infographic.png"
+        alt="Thirteen theses in four columns. The reviewable program: the agent writes the program rather than calling APIs, humans review code diffs rather than API transcripts, and state is convergent rather than deterministic. Guarded execution and permission: permission is granted at the dry-run plan, guardrails live in the repository rather than in the operator's attention, and plausible mistakes matter more than hallucinations. The verifiable environment: golden files are the only coverage, every edge is a pinned SHA, beware the copied launcher, and one editable file is colors.yml. Humans in the loop: authorization is a phased workflow, real-world constraints are not in the code, and investigations need direct action rather than desired state."
+        width="1600"
+        height="873"
+        loading="eager"
+      />
+      <figcaption class="mono">
+        thirteen claims in four groups. three of them say where this gets it wrong
+      </figcaption>
+    </figure>
 
     <nav class="thesis-index panel" aria-label="The thirteen theses">
       <p class="index-label mono">The thirteen</p>
@@ -437,12 +450,28 @@ cp .agents/skills/package-once-green/green green    # and red, blue</code></pre>
     font-size: 14px;
     line-height: 1;
   }
-  /* This article has no infographic, and thirteen numbered claims are hard to
-     hold in the head as a wall of headings. The index is the signature element
-     in place of a hero figure, and it is built from the same `theses` array the
-     headings are numbered from, so the two cannot drift. */
+  /* The infographic above states the four groups; this is the same thirteen as
+     jump links, because a reader who wants thesis 9 should not scroll for it.
+     It is built from the same `theses` array the headings are numbered from, so
+     the index and the headings cannot drift. */
+  .hero-figure {
+    margin: 32px 0 40px;
+  }
+  .hero-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .hero-figure figcaption {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
   .thesis-index {
-    margin: 32px 0 48px;
+    margin: 0 0 48px;
     padding: 20px 22px;
     background: var(--surface);
   }

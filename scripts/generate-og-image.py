@@ -421,13 +421,11 @@ render_post_card(
 # never shipped. Replacing it means bumping the version suffix, same as a
 # generated card.
 
-render_post_card(
-    "og-agentic-devops-manifesto-v1.png",
-    "Architecture · Manifesto",
-    "The agentic DevOps manifesto",
-    "Thirteen theses on letting agents run infrastructure, written for the people who think that is a bad idea.",
-    "/blog/agentic-devops-manifesto",
-)
+# og-agentic-devops-manifesto-v2.png is the article's own infographic
+# letterboxed to 1200x630 on #f8f8f8, not generated here — the third exception
+# to "og-*.png are generated". Unlike the two above, the generated v1 text card
+# it replaced did ship, so the version suffix is doing real cache-busting work
+# rather than following the rule pre-emptively.
 
 render_post_card(
     "og-posthog-skill-benchmark-v1.png",
