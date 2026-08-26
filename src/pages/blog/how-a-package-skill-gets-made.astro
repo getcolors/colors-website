@@ -1,0 +1,452 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "How a Package Skill Gets Made — Colors";
+const description =
+  "Three clipped YouTube transcripts became a live, adversarially reviewed NetBird Agent Network deployment, then a knowledge skill that makes the next run cheaper. The six-step workflow, with the failures left in.";
+const path = "/blog/how-a-package-skill-gets-made";
+
+const post = postFor(path);
+
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
+const image = "/og-how-a-package-skill-gets-made-v2.png";
+const imageAlt =
+  "Infographic of the six steps: clip the sources with the Obsidian Web Clipper, load the claudex-loop and create-package-skill skills, describe and correct the desired package, provide credentials with one fake key, let the loop build it through adversarial plan review, converges and fresh-diff inspection, and distill the lessons into the agent-network-single-node knowledge skill.";
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "How a Package Skill Gets Made",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Person",
+    name: "Alberto Miorin",
+    url: "https://www.linkedin.com/in/albertomiorin/",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Agentic DevOps" },
+    { "@type": "Thing", name: "NetBird Agent Network" },
+    { "@type": "Thing", name: "Package Skills" },
+    { "@type": "Thing", name: "Claude Code" },
+    { "@type": "Thing", name: "Adversarial Review" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "How a Package Skill Gets Made" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Workflow &amp; Operations</p>
+      <h1>How a Package Skill gets made</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-green">Workflow</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+        <span class="dot">·</span>
+        <span class="meta-author mono">By <a href="https://www.linkedin.com/in/albertomiorin/" target="_blank" rel="noopener noreferrer">Alberto Miorin</a></span>
+      </div>
+      <p class="lede">
+        In one day, three clipped YouTube transcripts became a live NetBird Agent Network deployment: a
+        keyless, policy-gated LLM endpoint and an agent container that cannot reach the internet, proven by
+        acceptance gates rather than asserted. The interesting part is not the result. It is that the
+        workflow that produced it is six steps, two skills, and a closing move that makes the next run
+        cheaper than this one.
+      </p>
+    </header>
+
+    <figure class="hero-figure">
+      <img
+        src="/images/how-a-package-skill-gets-made-infographic.png"
+        alt={imageAlt}
+        width="2000"
+        height="1091"
+        loading="eager"
+      />
+    </figure>
+
+    <div class="steps panel" role="img" aria-label="The six steps as a pipeline: clip the sources (human), load two skills (human), describe the package under interrogation (both), provide credentials (human), build under adversarial review (agent), distill the lessons into a knowledge skill (agent).">
+      <div class="row"><span class="who mono you">you</span><span class="what">1 · clip the sources into the workspace: transcripts, docs, manuals</span></div>
+      <div class="row"><span class="who mono you">you</span><span class="what">2 · load two skills: <code>claudex-loop</code> + <code>create-package-skill</code></span></div>
+      <div class="row"><span class="who mono both">both</span><span class="what">3 · describe the desired Package Skill, under interrogation</span></div>
+      <div class="row"><span class="who mono you">you</span><span class="what">4 · provide the credentials, one of them deliberately fake</span></div>
+      <div class="row"><span class="who mono agt">agent</span><span class="what">5 · build: adversarial review, eight converges, catalog, push</span></div>
+      <div class="row"><span class="who mono agt">agent</span><span class="what">6 · distill the lessons into a knowledge skill for the next run</span></div>
+      <div class="steps-note mono">human effort concentrates in steps 1–4 · the agent's in 5–6 · the loop reviews itself with a rival model</div>
+    </div>
+
+    <article class="content-body">
+      <p>
+        NetBird shipped <a href="https://docs.netbird.io/agent-network" target="_blank" rel="noopener noreferrer">Agent Network</a>:
+        autonomous agents join a WireGuard overlay and call a generated endpoint hostname with no API key,
+        while the gateway attaches the peer's identity, enforces a model allowlist and budget caps, injects
+        the provider key server-side, and writes an attributed access log. I wanted it
+        as a <a href="/skills">Package Skill</a>, a deterministic module an agent can converge
+        from a <code>colors.yml</code>, with one opinion added: the agent container sits on an internal
+        Docker network with no internet route at all, so the governed endpoint is the <em>only</em> path
+        to anything. The isolation is the demo.
+      </p>
+      <p>
+        This article walks the six steps that turned that sentence
+        into <a href="https://github.com/getcolors/agent-network" target="_blank" rel="noopener noreferrer">a repository</a>,
+        a live deployment, a <a href="/getcolors/agent-network">catalog entry</a>, and finally a second,
+        smaller artifact that may matter more than the first.
+      </p>
+
+      <h2>1 · Clip the sources</h2>
+      <p>
+        The run started with reading material, not prompts. Three NetBird videos about Agent Network went
+        through the <a href="https://obsidian.md/clipper" target="_blank" rel="noopener noreferrer">Obsidian Web Clipper</a> into
+        the workspace as markdown files: transcript, title, source URL in the frontmatter. The agent
+        added the other two tiers itself during reconnaissance: the full official docs tree, and shallow
+        clones of the pinned upstream sources (the management server at v0.77.1, the dashboard at v2.91.1).
+      </p>
+      <p>
+        Three tiers, because they disagree. The ranking inverted during the build. The transcripts
+        supplied intent, the docs supplied vocabulary, and the source code turned out to be the only
+        authority: the prose docs were wrong about how the endpoint gets created and wrong about how
+        tunnel DNS reaches it, and both times the build trusted the function it could read over the
+        sentence it could quote. If your workflow cannot cite source files, it will faithfully implement
+        the documentation's mistakes.
+      </p>
+
+      <h2>2 · Load two skills</h2>
+      <p>
+        Two skills compose, and neither knows about the other. <a href="https://github.com/amiorin/claudex-loop" target="_blank" rel="noopener noreferrer"><code>claudex-loop</code></a> governs <em>how</em>:
+        reconnaissance before any question, an assumptions ledger, a structured interrogation, then an
+        adversarial review loop in which a rival model attacks the locked plan until it approves or a
+        round cap trips. The rival is Codex, a different vendor's model entirely, and after the build a
+        fresh session of it inspects the diff. <a href="https://github.com/getcolors/skills/tree/main/create-package-skill" target="_blank" rel="noopener noreferrer"><code>create-package-skill</code></a> governs <em>what</em>:
+        the phased workflow, boundaries, and conventions a Colors Package Skill and its deployment must
+        satisfy. That means desired state in <code>colors.yml</code>, credentials only as environment
+        variables, a build/dry-run boundary before any provider call, guarded deletion, and golden
+        fixtures.
+      </p>
+      <p>
+        The division matters. Process skills transfer across domains; domain skills transfer across
+        sessions. Neither has to be re-explained, which is the point
+        of <a href="/blog/agentic-devops-compounding-advantage">writing them down as skills at all</a>.
+      </p>
+
+      <h2>3 · Describe it, and interrupt it</h2>
+      <p>
+        The interrogation is a conversation, and the most valuable message in it was a correction
+        mid-sentence. My first description had two Vultr nodes. Halfway through explaining it I
+        stopped: <em>no. One node, Docker on it, and Docker networking makes sure the container running the agent
+        cannot reach the internet, only the gateway on the same host.</em> The workflow is built for
+        exactly this: the plan was not yet locked, so the correction cost one sentence instead of a
+        rebuild.
+      </p>
+      <p>
+        What got locked, one load-bearing question at a time: repository names; the payload (headless
+        Claude Code inside the isolated container, a real workload on the governed path, not curl); the
+        provider and models (Anthropic, two models claimed, only Haiku allowlisted, so both denial classes
+        are demonstrable at zero cost); the acceptance gates; and DNS (a base name and a wildcard, because
+        the endpoint hostname is a label the server mints at bootstrap and nothing knows it earlier). Then
+        the authorization boundary, stated once and logged: I authorized repository creation, pushes, DNS
+        records, paid compute, and real converges in advance, and deliberately did not
+        authorize <code>delete</code>. Destruction stays a separate, per-invocation human decision.
+      </p>
+
+      <h2>4 · Provide the credentials, one deliberately fake</h2>
+      <p>
+        Credentials never enter the conversation or the repository; they live in a gitignored environment
+        file the launcher overlays onto desired state at run time. The agent assembled the file itself from
+        sibling deployments in the same workspace, and verified each credential against its provider
+        rather than assuming. That caught two dead tokens left over from a revoked account before they
+        could fail a converge halfway through.
+      </p>
+      <p>
+        One credential I chose to make fake: the Anthropic API key. That sounds like a compromise and is
+        actually a mode. The keyless call from the isolated agent then produces the upstream's
+        own <code>401</code>, relayed back through the proxy, which proves every link NetBird owns: the
+        isolation held, tunnel DNS resolved the endpoint, the policy authorized the peer, and server-side
+        key injection reached Anthropic. Everything except the billable completion, verified for free. The
+        two denial gates never reach upstream at all. Swapping in a real key later is a one-line edit and a
+        re-converge; the same gates then require real completions.
+      </p>
+
+      <h2>5 · The loop builds it</h2>
+
+      <h3>The plan survives a rival first</h3>
+      <p>
+        Before any code, the locked plan went to Codex for adversarial review. Round one
+        returned <strong>eighteen findings</strong>. Not style notes. Findings like: your <code>extra_hosts</code> mapping
+        routes the metered path around the identity boundary; your denial probe can never produce
+        the reason you expect, because routing rejects the model before the guardrail sees it; your setup
+        key is an unbounded reusable credential; <code>internal: true</code> does not justify the phrase
+        "physically cannot reach the internet" for a container holding <code>NET_ADMIN</code>. The loop accepted sixteen
+        outright, two partially, and logged each disposition. Four rounds converged
+        to <code>VERDICT: APPROVED</code>. The plan that entered the build bore little resemblance, in its
+        load-bearing details, to the plan I had signed off on in conversation. That gap is the argument
+        for the loop.
+      </p>
+
+      <h3>Eight converges against the real platform</h3>
+      <p>
+        Unit tests and golden fixtures catch regressions; they cannot catch a platform that behaves
+        differently from its documentation. That takes converging against the real thing, and it took
+        eight runs. The provider catalog id is <code>anthropic_api</code>, not <code>anthropic</code>. A
+        422 says so. Docker Compose refuses to <code>exec</code> into any service while an unrelated
+        service's env file is missing, which breaks the token bootstrap until placeholder files exist. The
+        proxy's embedded client hairpins trying to reach its own host's public hostname. Traefik dials a
+        backend over an arbitrary shared network, which breaks PROXY-protocol trust pinned to one source
+        address. Each fix landed in the package, so no future converge meets these again.
+      </p>
+      <p>The third converge failed like this, for two of those reasons at once:</p>
+      <pre><code>agent-network-smoke: gate 3: keyless call through willing-nightfall.agent-network...
+agent-network-smoke:   attempt 1: HTTP 000 (endpoint TLS or route may still be settling)
+agent-network-smoke:   attempt 2: HTTP 000 (endpoint TLS or route may still be settling)
+  ...
+agent-network-smoke: FAIL: the keyless call neither completed nor returned the upstream 401</code></pre>
+      <p>
+        The expensive lesson was TLS. The pinned reverse proxy's per-name ACME is defective: every
+        certificate order dies with <code>no viable challenge type found</code> against authorizations
+        that demonstrably offer the challenge it speaks. Every failed order also burns Let's Encrypt's
+        failed-authorization rate limit, which locks the hostname out of issuance in sliding one-hour
+        windows. Retrying makes it worse. This one cost about two and a half hours. The fix deviated from
+        the reviewed plan: endpoint TLS now comes from a wildcard certificate issued at converge time via
+        DNS-01. The workflow's rule is that deviations get logged in the review log with their evidence,
+        not silently absorbed.
+      </p>
+
+      <h3>The rival inspects the diff too</h3>
+      <p>
+        After the gates passed, a fresh Codex session inspected the diff: cold, without the plan-review
+        context. Its best finding deserves quoting, because it corrected the meaning of a passing test:
+      </p>
+      <p class="finding">
+        The external probe accepted the relayed upstream <code>401</code> as proof the endpoint is
+        tunnel-only. It is the opposite: a <code>401</code> from Anthropic means the gateway attached its
+        server-side key and forwarded an unauthenticated outsider's request upstream. With a real key,
+        that would have been billable. The correct external outcome is the proxy's bare
+        pre-identity <code>403</code>, which also writes no access-log entry.
+      </p>
+      <p>
+        Accepted, fixed, validated live: the probe now requires exactly that <code>403</code>, fail-closed
+        on everything else. Two inspection rounds, nine findings, seven accepted, two partially rejected
+        with logged reasons. The final converge, on the final pinned SHA, exited zero with every gate
+        passing: isolation probes with a success control, the tunnel, the keyless call, both denial
+        classes, headless Claude Code on the governed path, per-peer attribution, limits read back against
+        desired state, isolation re-proven after a Docker restart and a reboot, and the external probe.
+        Then publication, which by comparison is clerical: two repositories pushed, the library pinned by
+        SHA, the <a href="/getcolors/agent-network">catalog recipe</a> merged,
+        the <a href="/featured#agent-network">featured entry</a> live.
+      </p>
+
+      <h2>6 · Distill the lessons</h2>
+      <p>
+        The last step is the one most workflows skip. Everything the build learned the hard way got
+        distilled into a knowledge
+        skill, <a href="https://github.com/getcolors/skills/tree/main/agent-network-single-node" target="_blank" rel="noopener noreferrer"><code>agent-network-single-node</code></a>:
+        the defective ACME and its rate-limit trap, the endpoint-minting API contract the docs get wrong,
+        the hairpin, the Traefik network pinning, the credential crash windows, and the acceptance gates
+        that would have lied. It holds a symptom-indexed failure catalogue, the API contract as the source
+        defines it, the pinned version set with the rules that generated it, and the verification
+        doctrine. Deliberately no file copies. The package repository stays the single tested
+        implementation; the skill carries the <em>why</em>.
+      </p>
+      <p>
+        This is the step that turns a one-off build into a compounding one. The next run that touches this
+        stack, whether a variant, a rebuild, or someone else's deployment, starts by loading a skill
+        whose description matches the error message on the screen, instead of re-earning two and a half
+        hours of rate-limit lockout. <a href="/blog/posthog-skill-benchmark">We have measured what that
+        is worth</a>: a curated skill cut a comparable deployment's agent effort by more than four times,
+        and it carried the checks the baseline never thought to run.
+      </p>
+
+      <h2>What this cost, and what it does not claim</h2>
+      <p>
+        Honest ledger: one working day end to end; eight converges where a documentation-faithful platform
+        would have needed three; roughly 2.5 hours lost to a certificate authority rate limit triggered by
+        an upstream defect; one provider API outage ridden out mid-run; four review rounds and two
+        inspection rounds of a rival model's time. The deployment is disposable: no backups, by decision
+        rather than omission. Fake-key mode has, by construction, never proven a billable completion. The threat model covers a workload that must not reach the internet, not an adversarial
+        payload attacking its own container. The acceptance gates state what they check; the article
+        should too.
+      </p>
+      <p>
+        The result is live, but the workflow is the product: clip the sources, load a process skill and a
+        domain skill, lock intent under interrogation, hand over scoped credentials, let a rival model
+        attack the plan and then the diff, prove the result against the real platform, and distill what
+        it cost you into the input of the next run.
+      </p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-bottom: 72px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 28px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--blue);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime, .meta-author {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .meta-author a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .meta-author a:hover {
+    color: var(--blue);
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .hero-figure {
+    margin: 0 0 32px;
+  }
+  .hero-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  /* The pipeline. The infographic's six panels as text: the same steps,
+     tagged by who does the work, and readable by a crawler. */
+  .steps {
+    padding: 20px 26px 22px;
+    margin-bottom: 48px;
+    border-left: 4px solid var(--green);
+    background: var(--surface);
+  }
+  .steps .row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 5px 0;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .steps .who {
+    flex: 0 0 52px;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .steps .you { color: var(--blue); }
+  .steps .both { color: var(--muted); }
+  .steps .agt { color: var(--green); }
+  .steps .what code {
+    font-size: 0.9em;
+  }
+  .steps-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body h3 {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 32px 0 14px;
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 10px;
+  }
+  .finding {
+    border-left: 4px solid var(--red);
+    background: var(--surface);
+    padding: 14px 18px;
+    font-size: 15px;
+    font-style: italic;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 24px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--code-ink);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .content-body a {
+    color: var(--blue);
+  }
+</style>

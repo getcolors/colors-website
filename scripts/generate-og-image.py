@@ -427,6 +427,11 @@ render_post_card(
 # it replaced did ship, so the version suffix is doing real cache-busting work
 # rather than following the rule pre-emptively.
 
+# og-how-a-package-skill-gets-made-v2.png is the article's own infographic
+# letterboxed to 1200x630 on #f0f2f5, not generated here — the fourth exception
+# to "og-*.png are generated". The generated v1 text card it replaced never
+# shipped; the version suffix follows the rule pre-emptively.
+
 render_post_card(
     "og-posthog-skill-benchmark-v1.png",
     "Benchmark · 2 agents · PostHog",

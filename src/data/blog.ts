@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "How a Package Skill Gets Made",
+    slug: "/blog/how-a-package-skill-gets-made",
+    date: "August 26, 2026",
+    isoDate: "2026-08-26T19:00:00Z",
+    readTime: "10 min read",
+    category: "Workflow",
+    runtime: "NetBird · Claude Code · Codex",
+    summary:
+      "Three clipped YouTube transcripts became a live NetBird Agent Network deployment in a day: a keyless LLM endpoint and an agent container that cannot reach the internet, proven by acceptance gates. The six-step workflow behind it, with the failures left in, and the closing move that makes the next run cheaper.",
+    image: "/images/how-a-package-skill-gets-made-infographic.png",
+    tags: ["Workflow", "Agentic DevOps", "NetBird", "Claude Code", "Adversarial Review", "Package Skills"],
+  },
+  {
     title: "The Agentic DevOps Manifesto",
     slug: "/blog/agentic-devops-manifesto",
     date: "August 26, 2026",

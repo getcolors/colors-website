@@ -1,0 +1,47 @@
+🎬 Three YouTube transcripts in the morning. A live deployment by evening.
+
+NetBird shipped Agent Network: agents call an LLM endpoint with no API key,
+and the gateway attaches their identity, enforces a model allowlist and
+budget caps, and writes an attributed access log.
+
+I wanted it as a Package Skill, with one opinion added: the agent container
+gets no internet route at all. The governed endpoint is the only path to
+anything. The isolation is the demo.
+
+The result is live. The workflow that produced it is the product. Six steps:
+
+1️⃣ Clip the sources. Three video transcripts via the Obsidian Web Clipper,
+the official docs, the pinned source code. The docs were wrong twice. The
+source code settled both.
+
+2️⃣ Load two skills. claudex-loop governs how: recon, interrogation, a rival
+model attacking the plan. create-package-skill governs what: desired state,
+credential boundaries, guarded deletion. Neither gets re-explained, ever.
+
+3️⃣ Describe it, and interrupt it. Halfway through my own description I
+stopped: no. One node, not two. The correction cost one sentence, because
+nothing was locked yet.
+
+4️⃣ Provide the credentials. One of them deliberately fake. A fake Anthropic
+key still proves isolation, tunnel DNS, policy, and server-side key
+injection. Anthropic's own 401 comes back through the proxy. Zero spend.
+
+5️⃣ The loop builds it. Codex returned eighteen findings against the plan in
+round one. Eight converges against the real platform. My favorite finding
+from the diff inspection: the external probe accepted a relayed 401 as
+proof the endpoint was tunnel-only. It proved the opposite. The correct
+answer is a bare 403 before identity, and the probe now demands exactly
+that.
+
+6️⃣ Distill the lessons. Everything the build learned the hard way, including
+2.5 hours lost to a Let's Encrypt rate limit triggered by an upstream ACME
+defect, is now a knowledge skill. The next run starts by loading it instead
+of re-earning it.
+
+Step 6 is the one most workflows skip. It is the one that compounds.
+
+📖 The full story, with the failures left in:
+https://getcolors.ai/blog/how-a-package-skill-gets-made
+
+#AgenticDevOps #AIAgents #NetBird #ClaudeCode #DevOps #PlatformEngineering
+#InfrastructureAsCode
