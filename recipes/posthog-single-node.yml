@@ -1,0 +1,16 @@
+type: context
+name: PostHog Single-Node
+repository: getcolors/skills
+summary: Verified ten-container topology, ClickHouse Keeper and named-collections configuration, converge ordering, and a ~30-entry failure catalogue for self-hosted single-node PostHog.
+keywords:
+  - posthog
+  - clickhouse
+  - self-hosted analytics
+  - migrate_clickhouse
+  - events accepted but not stored
+  - celery will not start
+  - kafka named collections
+companion: getcolors/posthog
+context-skills:
+  - name: posthog-single-node
+    path: posthog-single-node/SKILL.md

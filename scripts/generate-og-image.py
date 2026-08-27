@@ -476,20 +476,34 @@ render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills
 # One source card per repository, not per recipe: Context Skills share
 # getcolors/skills, and /{owner}/{repository} exists once.
 owners = {}
-seen_repositories = set()
+repository_recipes = {}
 for recipe_type, product, repository, summary, entries in catalog_recipes:
     owner, repo = repository.split("/", 1)
     owners.setdefault(owner, [set(), 0])
     owners[owner][0].add(repository)
     if recipe_type == "package":
         owners[owner][1] += len(entries)
-    if repository not in seen_repositories:
-        seen_repositories.add(repository)
-        source_label = "Package Skill source" if recipe_type == "package" else "Context Skill source"
-        render_blue_card(f"og-source-{slug(owner)}-{slug(repo)}-blue-v1.png", source_label, product, summary, f"/{owner}/{repo}")
+    repository_recipes.setdefault(repository, []).append((recipe_type, product, summary))
     for skill_name, runtime in entries:
         skill_label = f"Package Skill - {runtime}" if runtime else "Context Skill"
         render_blue_card(f"og-skill-{slug(owner)}-{slug(repo)}-{slug(skill_name)}-blue-v1.png", skill_label, skill_name, summary, f"/{owner}/{repo}/{skill_name}")
+# A repository with several recipes gets a card named after the repository,
+# since no single recipe's name describes the page.
+for repository, recipe_group in repository_recipes.items():
+    owner, repo = repository.split("/", 1)
+    if len(recipe_group) == 1:
+        recipe_type, product, summary = recipe_group[0]
+        source_label = "Package Skill source" if recipe_type == "package" else "Context Skill source"
+        render_blue_card(f"og-source-{slug(owner)}-{slug(repo)}-blue-v1.png", source_label, product, summary, f"/{owner}/{repo}")
+    else:
+        kinds = {recipe_type for recipe_type, _, _ in recipe_group}
+        source_label = "Context Skill source" if kinds == {"context"} else "Skill source"
+        group_summary = (
+            f"{len(recipe_group)} curated Context Skills distilled from verified builds."
+            if kinds == {"context"}
+            else f"{len(recipe_group)} curated skills."
+        )
+        render_blue_card(f"og-source-{slug(owner)}-{slug(repo)}-blue-v1.png", source_label, repository, group_summary, f"/{owner}/{repo}")
 for owner, (repositories, skill_count) in owners.items():
     render_blue_card(f"og-owner-{slug(owner)}-blue-v1.png", "Package Skill owner", owner, f"{len(repositories)} curated sources and {skill_count} Package Skills.", f"/{owner}")
 
