@@ -10,23 +10,30 @@ export async function getStaticPaths() {
 interface Props { owner: CatalogOwner; }
 const { owner } = Astro.props;
 const title = `${owner.name} Package Skills — Colors`;
-const description = `Browse ${owner.packageSkills.length} Package Skills from ${owner.name}, curated for the Colors Package Skills Catalog.`;
+const skillTotal = owner.packageSkills.length + owner.contextSkills.length;
+const description = `Browse ${skillTotal} curated skills from ${owner.name} in the Colors Skills Catalog.`;
 ---
 <CatalogLayout {title} {description} path={owner.url} image={catalogOgImage("owner", owner.name)} imageAlt={`${owner.name} Package Skills on Colors`}>
   <section class="owner-page wrap">
-    <Breadcrumbs items={[{ label: "Package Skills", href: "/skills" }, { label: owner.name }]} />
+    <Breadcrumbs items={[{ label: "Catalog", href: "/skills" }, { label: owner.name }]} />
     <div class="owner-head">
       <div><h1>{owner.name}</h1></div>
     </div>
     <div class="stats">
       <span>
         <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h14v6H5zM5 14h14v6H5z"/><path d="M8 7h.01M8 17h.01"/></svg>
-        <strong>{owner.sources.length}</strong> sources
+        <strong>{owner.repositories.length}</strong> sources
       </span>
       <span>
         <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5l8 4.5 8-4.5"/></svg>
         <strong>{owner.packageSkills.length}</strong> Package Skills
       </span>
+      {owner.contextSkills.length > 0 && (
+        <span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+          <strong>{owner.contextSkills.length}</strong> {owner.contextSkills.length === 1 ? "Context Skill" : "Context Skills"}
+        </span>
+      )}
       <span>
         <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 19V9M12 19V4M19 19v-7M3 19h18"/></svg>
         <strong>{formatInstalls(owner.installs)}</strong> total installs
@@ -38,12 +45,18 @@ const description = `Browse ${owner.packageSkills.length} Package Skills from ${
     </div>
     <div class="source-list panel">
       <div class="list-head"><span>Source</span><span>Installs</span></div>
-      {owner.sources.map((source) => (
-        <a class="source-row" href={source.url}>
-          <div><strong>{source.repositoryName}</strong><p>{source.packageSkills.length} {source.packageSkills.length === 1 ? "Package Skill" : "Package Skills"}: {source.packageSkills.slice(0, 3).map((item) => item.name).join(", ")}{source.packageSkills.length > 3 && ` +${source.packageSkills.length - 3} more`}</p></div>
-          <span>{formatInstalls(source.installs)}</span>
-        </a>
-      ))}
+      {owner.repositories.map((repository) => {
+        const skills = [...repository.packageSkills, ...repository.contextSkills];
+        const noun = repository.packageSkills.length === 0
+          ? (skills.length === 1 ? "Context Skill" : "Context Skills")
+          : (skills.length === 1 ? "Package Skill" : "Package Skills");
+        return (
+          <a class="source-row" href={repository.url}>
+            <div><strong>{repository.repositoryName}</strong><p>{skills.length} {noun}: {skills.slice(0, 3).map((item) => item.name).join(", ")}{skills.length > 3 && ` +${skills.length - 3} more`}</p></div>
+            <span>{formatInstalls(repository.installs)}</span>
+          </a>
+        );
+      })}
     </div>
   </section>
 </CatalogLayout>

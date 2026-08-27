@@ -2,18 +2,21 @@
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
 import InstallBox from "~/components/InstallBox.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
-import { catalogOgImage, formatInstalls, loadCatalog, runtimeLabels, type PackageSkill } from "~/data/catalog";
+import { catalogOgImage, formatInstalls, loadCatalog, runtimeLabels, type CatalogSkill } from "~/data/catalog";
 
+// One route serves both kinds: Context Skills share the owner/repository/skill
+// hierarchy, differing in chip, install semantics, and the companion link.
 export async function getStaticPaths() {
   const catalog = await loadCatalog();
-  return catalog.packageSkills.map((packageSkill) => ({
+  return [...catalog.packageSkills, ...catalog.contextSkills].map((packageSkill) => ({
     params: { owner: packageSkill.owner, repository: packageSkill.repositoryName, packageSkill: packageSkill.name },
     props: { packageSkill },
   }));
 }
-interface Props { packageSkill: PackageSkill; }
+interface Props { packageSkill: CatalogSkill; }
 const { packageSkill } = Astro.props;
-const title = `${packageSkill.name} Package Skill — Colors`;
+const kindLabel = packageSkill.kind === "context" ? "Context Skill" : "Package Skill";
+const title = `${packageSkill.name} ${kindLabel} — Colors`;
 const description = packageSkill.description;
 const structuredData = {
   "@context": "https://schema.org",
@@ -28,17 +31,23 @@ const structuredData = {
   interactionStatistic: { "@type": "InteractionCounter", interactionType: "https://schema.org/InstallAction", userInteractionCount: packageSkill.installs },
 };
 ---
-<CatalogLayout {title} {description} path={packageSkill.url} image={catalogOgImage("skill", packageSkill.owner, packageSkill.repositoryName, packageSkill.name)} imageAlt={`${packageSkill.name} Package Skill on Colors`}>
+<CatalogLayout {title} {description} path={packageSkill.url} image={catalogOgImage("skill", packageSkill.owner, packageSkill.repositoryName, packageSkill.name)} imageAlt={`${packageSkill.name} ${kindLabel} on Colors`}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <section class="package-skill-page wrap">
-    <Breadcrumbs items={[{ label: "Package Skills", href: "/skills" }, { label: packageSkill.owner, href: `/${packageSkill.owner}` }, { label: packageSkill.repositoryName, href: `/${packageSkill.owner}/${packageSkill.repositoryName}` }, { label: packageSkill.name }]} />
+    <Breadcrumbs items={[{ label: "Catalog", href: "/skills" }, { label: packageSkill.owner, href: `/${packageSkill.owner}` }, { label: packageSkill.repositoryName, href: `/${packageSkill.owner}/${packageSkill.repositoryName}` }, { label: packageSkill.name }]} />
     <h1>{packageSkill.name}</h1>
-    <div class="runtime-line"><span class:list={["runtime", `runtime-${packageSkill.runtime}`]}>{runtimeLabels[packageSkill.runtime]}</span></div>
+    <div class="runtime-line">
+      {packageSkill.kind === "package" ? (
+        <span class:list={["runtime", `runtime-${packageSkill.runtime}`]}>{runtimeLabels[packageSkill.runtime]}</span>
+      ) : (
+        <span class="runtime runtime-context">Context Skill</span>
+      )}
+    </div>
     <p class="lede description">{packageSkill.description}</p>
     <div class="detail-grid">
       <article>
         <section aria-label="Installation">
-          <InstallBox command={packageSkill.installCommand} prompt={packageSkill.prompt} />
+          <InstallBox command={packageSkill.installCommand} prompt={packageSkill.prompt} rewrite={packageSkill.kind !== "context"} />
         </section>
         <section class="instructions" aria-labelledby="instructions-heading">
           <div class="instructions-head"><p class="section-label" id="instructions-heading">SKILL.md</p></div>
@@ -49,6 +58,9 @@ const structuredData = {
         <div><p class="section-label">Installs</p><strong>{formatInstalls(packageSkill.installs)}</strong></div>
         <div><p class="section-label">Repository</p><a href={`https://github.com/${packageSkill.repository}`} target="_blank" rel="noopener noreferrer">{packageSkill.repository} ↗</a></div>
         {packageSkill.license && <div><p class="section-label">License</p><span>{packageSkill.license}</span></div>}
+        {packageSkill.kind === "context" && packageSkill.companion && (
+          <div><p class="section-label">Companion</p><a href={`/${packageSkill.companion}`}>{packageSkill.companion}</a></div>
+        )}
         {packageSkill.featured && (
           <div>
             <a class="featured-link" href={packageSkill.featured}>
@@ -65,6 +77,7 @@ const structuredData = {
   .package-skill-page { padding-top: 62px; }
   .package-skill-page h1 { overflow-wrap: anywhere; }
   .runtime-line { margin-top: 18px; }
+  .runtime-context { border-color: oklch(85% 0.05 260); background: oklch(96% 0.03 260); color: var(--blue); }
   .description { max-width: 900px; margin-top: 28px; }
   .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 70px; margin-top: 70px; }
   .detail-grid > * { min-width: 0; }

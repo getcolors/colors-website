@@ -30,11 +30,14 @@ export async function GET({ site }: APIContext) {
   // time. Deploys are the only way content changes, which keeps it honest.
   const lastmod = new Date().toISOString();
   const catalog = await loadCatalog();
+  // Repositories, not sources: several recipes may share one repository, and
+  // each /{owner}/{repository} page exists once.
   const pages = [
     ...STATIC_PAGES,
     ...catalog.owners.map((owner) => owner.url),
-    ...catalog.sources.map((source) => source.url),
+    ...catalog.repositories.map((repository) => repository.url),
     ...catalog.packageSkills.map((packageSkill) => packageSkill.url),
+    ...catalog.contextSkills.map((contextSkill) => contextSkill.url),
   ];
 
   const urls = pages.map(

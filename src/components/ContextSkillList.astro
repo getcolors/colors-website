@@ -1,0 +1,23 @@
+---
+import { formatInstalls, type ContextSkill } from "~/data/catalog";
+interface Props { contextSkills: ContextSkill[]; }
+const { contextSkills } = Astro.props;
+---
+<div class="context-skill-list panel">
+  <div class="list-head"><span>Context Skill</span><span>Installs</span></div>
+  {contextSkills.map((item) => (
+    <a class="context-skill-row" href={item.url}>
+      <strong>{item.name}</strong>
+      <span class="mono installs">{formatInstalls(item.installs)}</span>
+    </a>
+  ))}
+</div>
+<style>
+  .list-head, .context-skill-row { display: grid; grid-template-columns: minmax(0, 1fr) 90px; gap: 18px; align-items: center; padding: 14px 18px; }
+  .list-head { color: var(--faint); font: 11px var(--mono); text-transform: uppercase; }
+  .list-head span:last-child { text-align: right; }
+  .context-skill-row { border-top: 1px solid var(--line); }
+  .context-skill-row:hover { background: var(--surface); }
+  strong { overflow: hidden; color: var(--ink); text-overflow: ellipsis; font: 400 17px var(--sans); }
+  .installs { text-align: right; color: var(--muted); font-size: 13px; }
+</style>

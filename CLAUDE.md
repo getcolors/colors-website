@@ -5,7 +5,7 @@
 This is the static website for Colors, an SDK for building Package Skills. The
 product was previously called BigConfig. `/` remains the landing page;
 `/featured` is the editorial showcase and `/skills` plus the generated
-owner/source/Package Skill routes form the PR-curated Package Skills Catalog.
+owner/source/Package Skill routes form the PR-curated Skills Catalog (Package Skills and Context Skills).
 The blog is live again at `/blog` with ten articles; the manual and talk
 decks remain retired.
 
@@ -39,7 +39,7 @@ that package widens the range, not before.
 ├── pnpm-lock.yaml
 ├── tsconfig.json
 ├── recipes/              # one PR-curated YAML recipe per Package Skill product
-│   └── *.yml
+│   └── *.yml             # or per Context Skill (`type: context`)
 ├── src/
 │   ├── components/       # shared header, SEO, breadcrumbs, install box and catalog lists
 │   ├── data/
@@ -48,8 +48,9 @@ that package widens the range, not before.
 │   ├── layouts/
 │   │   └── CatalogLayout.astro
 │   └── pages/
-│       ├── [owner]/      # generated owner/source/Package Skill routes
-│       ├── package-skills/index.astro
+│       ├── [owner]/      # generated owner/repository/skill routes
+│       ├── blog/         # /blog index, rss.xml, and the article pages
+│       ├── featured/index.astro
 │       ├── skills/index.astro
 │       ├── index.astro
 │       ├── index.md.ts
@@ -190,7 +191,7 @@ Things to know before editing it:
   the panel's, so `.astro-code` restates IBM Plex Mono in the global block.
   Remove that rule and the hero silently renders in Courier.
 
-## Package Skills Catalog
+## The Skills Catalog
 
 `recipes/*.yml` is the admission boundary. A community PR adds one product
 recipe and groups its red/green/blue variants under `package-skills`; merging
@@ -203,8 +204,25 @@ matching skills.sh URL. A missing skills.sh page means zero installs and must
 not fail a build; a missing or mismatched `SKILL.md` must fail it. Catalog
 copy never comes from skills.sh.
 
+Recipes carry an optional `type:` — `package` (the default) or `context`. A
+Context Skill is distilled knowledge from a verified build, defined
+normatively by the workspace's `standards/context-skill.md`; its recipe lists
+`context-skills` entries instead of `package-skills` (no runtimes, no
+`package-` prefix) and may name a `companion:` product repository, rendered
+as a link in both directions. Context Skills are loaded with
+`npx skills use`, never installed — their pages pass `rewrite={false}` to
+`InstallBox` so the Command tab does not rewrite `use` to `add`. On `/skills`
+they render as a separate section below the Package Skill cards, covered by
+the same search.
+
 The generated hierarchy is `/skills`, `/{owner}`,
-`/{owner}/{repository}`, and `/{owner}/{repository}/{package-skill}`. The
+`/{owner}/{repository}`, and `/{owner}/{repository}/{skill}` for both skill
+kinds. **Several recipes may share one repository** — every Context Skill
+lives in `getcolors/skills` — so `loadCatalog()` groups recipes into
+`repositories`, and source pages, owner pages, `sitemap.xml.ts`, and the
+og-image generator all enumerate repositories, not recipes. Generating those
+routes from sources would emit duplicate paths the moment a second context
+skill lands. The
 editorial `/featured` showcase is separate. Catalog recipes may link to
 a showcase anchor through maintainer-controlled `featured` metadata; catalog
 pages and the showcase link to each other. `sitemap.xml.ts` enumerates all of

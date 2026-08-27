@@ -367,18 +367,26 @@ def recipes():
     parsed = []
     for path in sorted(glob.glob(os.path.join(ROOT, "recipes", "*.yml"))):
         raw = open(path, encoding="utf-8").read()
+        type_match = re.search(r"^type:\s*(\S+)\s*$", raw, re.M)
+        recipe_type = type_match.group(1) if type_match else "package"
         product = re.search(r"^name:\s*(.+)$", raw, re.M).group(1).strip()
         repository = re.search(r"^repository:\s*(.+)$", raw, re.M).group(1).strip()
         summary = re.search(r"^summary:\s*(.+)$", raw, re.M).group(1).strip()
         entries = []
-        for match in re.finditer(r"^\s+- name:\s*(\S+)\s*$.*?^\s+runtime:\s*(red|green|blue)\s*$", raw, re.M | re.S):
-            entries.append((match.group(1), match.group(2)))
-        parsed.append((product, repository, summary, entries))
+        if recipe_type == "package":
+            for match in re.finditer(r"^\s+- name:\s*(\S+)\s*$.*?^\s+runtime:\s*(red|green|blue)\s*$", raw, re.M | re.S):
+                entries.append((match.group(1), match.group(2)))
+        else:
+            for match in re.finditer(r"^\s+- name:\s*(\S+)\s*$", raw, re.M):
+                entries.append((match.group(1), None))
+        parsed.append((recipe_type, product, repository, summary, entries))
     return parsed
 
 
 catalog_recipes = recipes()
-all_skills = sum(len(recipe[3]) for recipe in catalog_recipes)
+package_recipes = [recipe for recipe in catalog_recipes if recipe[0] == "package"]
+all_skills = sum(len(recipe[4]) for recipe in package_recipes)
+context_skill_count = sum(len(recipe[4]) for recipe in catalog_recipes if recipe[0] == "context")
 render_post_card(
     "og-gemini-3-7-flash-benchmark-v1.png",
     "Benchmark · Gemini 3.7 Flash",
@@ -454,20 +462,36 @@ render_article_card(
     "/blog/self-hosted-analytics-benchmark",
 )
 
-render_blue_card("og-catalog-blue-v1.png", "Catalog", "Package Skills Catalog", f"{len(catalog_recipes)} curated sources and {all_skills} Package Skills for production infrastructure.", "/skills")
+catalog_card_text = f"{len(package_recipes)} curated sources and {all_skills} Package Skills for production infrastructure."
+if context_skill_count:
+    catalog_card_text = (
+        f"{len(package_recipes)} curated sources, {all_skills} Package Skills, and "
+        f"{context_skill_count} Context Skill{'s' if context_skill_count != 1 else ''} for production infrastructure."
+    )
+# v2 on 2026-08-27: the heading changed from "Package Skills Catalog" when
+# Context Skills joined the catalog — new artwork means a new filename.
+render_blue_card("og-catalog-blue-v2.png", "Catalog", "Skills Catalog", catalog_card_text, "/skills")
 render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills", "Production examples of deterministic, agent-operated infrastructure built with Colors.", "/featured")
 
+# One source card per repository, not per recipe: Context Skills share
+# getcolors/skills, and /{owner}/{repository} exists once.
 owners = {}
-for product, repository, summary, entries in catalog_recipes:
+seen_repositories = set()
+for recipe_type, product, repository, summary, entries in catalog_recipes:
     owner, repo = repository.split("/", 1)
-    owners.setdefault(owner, [0, 0])
-    owners[owner][0] += 1
-    owners[owner][1] += len(entries)
-    render_blue_card(f"og-source-{slug(owner)}-{slug(repo)}-blue-v1.png", "Package Skill source", product, summary, f"/{owner}/{repo}")
+    owners.setdefault(owner, [set(), 0])
+    owners[owner][0].add(repository)
+    if recipe_type == "package":
+        owners[owner][1] += len(entries)
+    if repository not in seen_repositories:
+        seen_repositories.add(repository)
+        source_label = "Package Skill source" if recipe_type == "package" else "Context Skill source"
+        render_blue_card(f"og-source-{slug(owner)}-{slug(repo)}-blue-v1.png", source_label, product, summary, f"/{owner}/{repo}")
     for skill_name, runtime in entries:
-        render_blue_card(f"og-skill-{slug(owner)}-{slug(repo)}-{slug(skill_name)}-blue-v1.png", f"Package Skill - {runtime}", skill_name, summary, f"/{owner}/{repo}/{skill_name}")
-for owner, (source_count, skill_count) in owners.items():
-    render_blue_card(f"og-owner-{slug(owner)}-blue-v1.png", "Package Skill owner", owner, f"{source_count} curated sources and {skill_count} Package Skills.", f"/{owner}")
+        skill_label = f"Package Skill - {runtime}" if runtime else "Context Skill"
+        render_blue_card(f"og-skill-{slug(owner)}-{slug(repo)}-{slug(skill_name)}-blue-v1.png", skill_label, skill_name, summary, f"/{owner}/{repo}/{skill_name}")
+for owner, (repositories, skill_count) in owners.items():
+    render_blue_card(f"og-owner-{slug(owner)}-blue-v1.png", "Package Skill owner", owner, f"{len(repositories)} curated sources and {skill_count} Package Skills.", f"/{owner}")
 
 for w in dict.fromkeys(_warnings):
     print("warning:", w, file=sys.stderr)

@@ -24,6 +24,8 @@ import {
   libraries,
   meta,
   realExample,
+  submitContextSkill,
+  submitContextSkillCmd,
   submitPackageSkill,
   submitPackageSkillCmd,
   trust,
@@ -144,9 +146,22 @@ Repository: ${submitPackageSkill.repoUrl}
 
 ${submitPackageSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
 
+## ${submitContextSkill.heading}
+
+${wrap(submitContextSkill.lede)}
+
+${wrap(submitContextSkill.useNote)}
+
+${fence("sh", submitContextSkillCmd)}
+
+Documentation: ${submitContextSkill.docsUrl}
+Repository: ${submitContextSkill.repoUrl}
+
+${submitContextSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
+
 ## Find infrastructure your agent can operate
 
-Browse the PR-curated Package Skills Catalog by platform, provider, or runtime:
+Browse the PR-curated Skills Catalog by platform, provider, or runtime:
 ${new URL("/skills", site).toString()}
 
 ---

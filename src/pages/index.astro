@@ -18,6 +18,8 @@ import {
   libraries,
   meta,
   realExample,
+  submitContextSkill,
+  submitContextSkillCmd,
   submitPackageSkill,
   submitPackageSkillCmd,
   trust,
@@ -916,11 +918,36 @@ const yamlTheme = {
         </div>
       </div>
 
+      <!-- AGENT SKILL: SUBMIT A CONTEXT SKILL -->
+      <div class="sec" id="submit-context-skill">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-red">{submitContextSkill.eyebrow}</div>
+          <SectionHeading id="submit-context-skill" title={submitContextSkill.heading} />
+          <p class="sec-lede sec-lede-wide">{submitContextSkill.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={submitContextSkillCmd} id="submit-context-skill-install" />
+            <span class="install-note" set:html={html(submitContextSkill.useNote)} />
+            <ResourceLinks docsUrl={submitContextSkill.docsUrl} repoUrl={submitContextSkill.repoUrl} />
+          </div>
+
+          <div class="grid-3">
+            {submitContextSkill.phases.map((phase, i) => (
+              <div class="step">
+                <div class="eyebrow">{`Phase ${i + 1}`}</div>
+                <h4>{phase.title}</h4>
+                <p set:html={html(phase.body)} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <!-- FINAL CTA -->
       <div class="cta" id="catalog">
         <div class="cta-inner">
           <SectionHeading id="catalog" title="Find infrastructure your agent can operate." centered />
-          <p>Browse the PR-curated Package Skills Catalog by platform, provider, or runtime.</p>
+          <p>Browse the PR-curated Skills Catalog by platform, provider, or runtime.</p>
           <a class="catalog-link" href="/skills"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" /></svg><span>View the Catalog</span></a>
 
         </div>

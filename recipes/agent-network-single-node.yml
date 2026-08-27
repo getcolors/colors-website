@@ -1,0 +1,18 @@
+type: context
+name: Agent Network Single-Node
+repository: getcolors/skills
+summary: Verified traps, API contract, and acceptance doctrine for single-node NetBird Agent Network deployments, distilled from a live adversarially reviewed build.
+keywords:
+  - netbird
+  - agent network
+  - wireguard
+  - keyless LLM endpoint
+  - isolation
+  - acme
+  - no viable challenge type found
+  - is not a known catalog provider
+  - model_blocked
+companion: getcolors/agent-network
+context-skills:
+  - name: agent-network-single-node
+    path: agent-network-single-node/SKILL.md

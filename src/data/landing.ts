@@ -237,6 +237,33 @@ export const submitPackageSkill = {
   ],
 };
 
+export const submitContextSkillCmd =
+  "npx skills add getcolors/skills@submit-context-skill";
+
+export const submitContextSkill = {
+  eyebrow: "Agent Skill",
+  docsUrl: "https://github.com/getcolors/skills/blob/main/submit-context-skill/SKILL.md",
+  repoUrl: "https://github.com/getcolors/skills",
+  heading: "Submit Context Skill: add an existing Context Skill to the Catalog",
+  lede: "Submit Context Skill gives a coding agent the workflow for validating a Context Skill — knowledge distilled from a verified build — against the Context Skill Standard, adding its catalog recipe, and opening an authorized pull request for curated discovery on getcolors.ai.",
+  useNote:
+    "This is an **Agent Skill**, not a Package Skill. A Context Skill carries symptom-routed traps and acceptance doctrine; the Catalog adds discoverability only, and `npx skills use` remains how an agent loads it.",
+  phases: [
+    {
+      title: "Validate",
+      body: "Read the skill and its references, run `skills-ref validate`, and verify symptom routing, provenance, pins, the failure catalogue, and evals.",
+    },
+    {
+      title: "Add the recipe",
+      body: "Create one `type: context` recipe naming the skill's repository, symptom-oriented search keywords, and the companion Package Skill it documents.",
+    },
+    {
+      title: "Open the PR",
+      body: "Run catalog validation and the site build, then create a branch, commit, push, fork, or pull request only with explicit authorization.",
+    },
+  ],
+};
+
 // The create/build DAG, in render order. `group` stacks its nodes to mark them
 // as running in parallel; `branch` is the ansible pair, where github follows
 // ansible-remote alone and so needs a second grid column on that row only.

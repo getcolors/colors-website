@@ -3,12 +3,14 @@ import CatalogLayout from "~/layouts/CatalogLayout.astro";
 import { formatInstalls, loadCatalog, runtimeLabels } from "~/data/catalog";
 
 const catalog = await loadCatalog();
-const title = "Package Skills Catalog — Colors";
-const description = "Find deterministic Package Skills for infrastructure and platform automation with the Colors SDK.";
+const packageSources = catalog.sources.filter((source) => source.type === "package");
+const contextSkills = catalog.contextSkills;
+const title = "Skills Catalog — Colors";
+const description = "Find deterministic Package Skills and build-verified Context Skills for infrastructure and platform automation with the Colors SDK.";
 ---
-<CatalogLayout {title} {description} path="/skills" image="/og-catalog-blue-v1.png" imageAlt="Colors Package Skills Catalog">
+<CatalogLayout {title} {description} path="/skills" image="/og-catalog-blue-v2.png" imageAlt="Colors Skills Catalog">
   <section class="catalog-hero wrap">
-    <div class="pill"><span>The Package Skills Catalog</span></div>
+    <div class="pill"><span>The Skills Catalog</span></div>
     <h1>What should your agent operate?</h1>
     <p class="lede">Search deterministic infrastructure automation by platform, provider, runtime, or the production resource you need to manage.</p>
     <label class="search">
@@ -17,10 +19,17 @@ const description = "Find deterministic Package Skills for infrastructure and pl
       <input id="catalog-search" type="search" placeholder="Search Kubernetes, databases, PaaS, Hetzner, Python…" autocomplete="off" />
       <kbd>/</kbd>
     </label>
-    <p id="result-count" class="result-count">{catalog.sources.length} sources · {catalog.packageSkills.length} Package Skills</p>
+    {contextSkills.length > 0 && (
+      <div class="catalog-tabs" role="tablist" aria-label="Skill kind">
+        <button type="button" role="tab" aria-selected="true" data-catalog-tab="all">All</button>
+        <button type="button" role="tab" aria-selected="false" data-catalog-tab="package">Package Skills</button>
+        <button type="button" role="tab" aria-selected="false" data-catalog-tab="context">Context Skills</button>
+      </div>
+    )}
+    <p id="result-count" class="result-count">{packageSources.length} sources · {catalog.packageSkills.length} Package Skills{contextSkills.length > 0 && ` · ${contextSkills.length} Context ${contextSkills.length === 1 ? "Skill" : "Skills"}`}</p>
   </section>
 
-  <section class="results wrap" aria-labelledby="results-heading">
+  <section id="package" class="results wrap" aria-labelledby="results-heading">
     <div class="results-head">
       <div>
         <h2 id="results-heading">Package Skills</h2>
@@ -28,7 +37,7 @@ const description = "Find deterministic Package Skills for infrastructure and pl
       <a class="button-link" href="/#submit-package-skill">Submit a Package Skill</a>
     </div>
     <div id="catalog-results" class="cards">
-      {catalog.sources.map((source) => (
+      {packageSources.map((source) => (
         <article class="package-card panel" data-search={[source.name, source.repository, source.summary, ...source.keywords, ...source.packageSkills.flatMap((item) => [item.name, item.runtime, runtimeLabels[item.runtime]])].join(" ").toLowerCase()}>
           <div class="card-top">
             <div>
@@ -55,26 +64,86 @@ const description = "Find deterministic Package Skills for infrastructure and pl
     <p id="empty-results" class="empty" hidden>No Package Skills match that infrastructure request.</p>
   </section>
 
+  {contextSkills.length > 0 && (
+    <section id="context" class="results wrap" aria-labelledby="context-heading">
+      <div class="results-head">
+        <div>
+          <h2 id="context-heading">Context Skills</h2>
+          <p class="section-lede">Knowledge distilled from verified builds — symptom-indexed traps, contracts, and acceptance doctrine. Loaded with <code>npx skills use</code>, not installed.</p>
+        </div>
+        <a class="button-link" href="/#submit-context-skill">Submit a Context Skill</a>
+      </div>
+      <div id="context-results" class="cards">
+        {contextSkills.map((skill) => (
+          <article class="package-card panel" data-search={[skill.name, skill.repository, skill.productName, skill.productSummary, ...skill.keywords, skill.companion ?? ""].join(" ").toLowerCase()}>
+            <div class="card-top">
+              <div>
+                <p class="keywords">{skill.keywords.slice(0, 5).join(" · ")}</p>
+                <h3><a class="card-link" href={skill.url}>{skill.productName}</a></h3>
+              </div>
+              <span class="installs"><strong>{formatInstalls(skill.installs)}</strong> installs</span>
+            </div>
+            <p class="summary">{skill.productSummary}</p>
+            <div class="runtimes"><span class="runtime runtime-context">context</span></div>
+            <div class="card-footer">
+              {skill.companion && <a href={`/${skill.companion}`}>Companion: {skill.companion}</a>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
   <script>
     const input = document.querySelector<HTMLInputElement>("#catalog-search");
     const cards = [...document.querySelectorAll<HTMLElement>("[data-search]")];
     const count = document.querySelector<HTMLElement>("#result-count");
     const empty = document.querySelector<HTMLElement>("#empty-results");
+    const packageSection = document.querySelector<HTMLElement>("#package");
+    const contextSection = document.querySelector<HTMLElement>("#context");
+    const tabs = [...document.querySelectorAll<HTMLButtonElement>("[data-catalog-tab]")];
+    let active = "all";
     const filter = () => {
       const terms = (input?.value ?? "").toLowerCase().trim().split(/\s+/).filter(Boolean);
+      const packageActive = active !== "context";
+      const contextActive = active !== "package";
       let sources = 0;
       let packageSkills = 0;
+      let contextSkills = 0;
       for (const card of cards) {
-        const visible = terms.every((term) => card.dataset.search?.includes(term));
+        const inContext = card.closest("#context-results") !== null;
+        const tabVisible = inContext ? contextActive : packageActive;
+        const visible = tabVisible && terms.every((term) => card.dataset.search?.includes(term));
         card.hidden = !visible;
-        if (visible) {
+        if (!visible) continue;
+        if (inContext) {
+          contextSkills += 1;
+        } else {
           sources += 1;
           packageSkills += card.querySelectorAll(".runtime").length;
         }
       }
-      if (count) count.textContent = `${sources} source${sources === 1 ? "" : "s"} · ${packageSkills} Package Skill${packageSkills === 1 ? "" : "s"}`;
-      if (empty) empty.hidden = sources !== 0;
+      const parts = [];
+      if (packageActive) {
+        parts.push(`${sources} source${sources === 1 ? "" : "s"}`, `${packageSkills} Package Skill${packageSkills === 1 ? "" : "s"}`);
+      }
+      if (contextActive && contextSection) {
+        parts.push(`${contextSkills} Context Skill${contextSkills === 1 ? "" : "s"}`);
+      }
+      if (count) count.textContent = parts.join(" · ");
+      if (packageSection) packageSection.hidden = !packageActive;
+      if (empty) empty.hidden = !packageActive || sources !== 0;
+      // In All mode an empty context section disappears; on its own tab it
+      // stays, header and all, so the page never goes blank.
+      if (contextSection) contextSection.hidden = !contextActive || (active === "all" && contextSkills === 0);
     };
+    const select = (tab: string) => {
+      active = tab;
+      tabs.forEach((button) => button.setAttribute("aria-selected", String(button.dataset.catalogTab === tab)));
+      filter();
+    };
+    tabs.forEach((button) => button.addEventListener("click", () => select(button.dataset.catalogTab ?? "all")));
+    if (location.hash === "#context" && contextSection) select("context");
     input?.addEventListener("input", filter);
     document.addEventListener("keydown", (event) => {
       if (event.key === "/" && document.activeElement !== input) {
@@ -95,8 +164,15 @@ const description = "Find deterministic Package Skills for infrastructure and pl
   .search input { min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 16px; }
   .search kbd { padding: 2px 7px; border: 1px solid var(--line); border-radius: 5px; color: var(--faint); font: 12px var(--mono); }
   .result-count { color: var(--muted); font: 13px var(--sans); }
+  .catalog-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .catalog-tabs button { padding: 8px 16px; border: 1px solid var(--line); border-radius: 100px; background: var(--panel); color: var(--muted); font: 13px var(--sans); cursor: pointer; transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease; }
+  .catalog-tabs button:hover { border-color: oklch(80% 0.04 260); color: var(--ink); }
+  .catalog-tabs button[aria-selected="true"] { border-color: var(--blue); background: oklch(96% 0.03 260); color: var(--blue); }
   .results { padding-block: 0 80px; }
   .results-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+  .section-lede { max-width: 720px; margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+  .section-lede code { font: 13px var(--mono); }
+  .runtimes .runtime-context { border-color: oklch(85% 0.05 260); background: oklch(96% 0.03 260); color: var(--blue); }
   .results-head h2 { margin: 0; }
   .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
   .package-card { position: relative; display: flex; flex-direction: column; min-height: 310px; padding: 28px; transition: border-color 150ms ease, background-color 150ms ease; }

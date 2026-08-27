@@ -5,6 +5,7 @@ import { packageSkillDefinition } from "~/data/landing";
 export { packageSkillDefinition };
 
 export type Runtime = "red" | "green" | "blue";
+export type RecipeType = "package" | "context";
 
 type RecipePackageSkill = {
   name: string;
@@ -12,17 +13,27 @@ type RecipePackageSkill = {
   runtime: Runtime;
 };
 
+type RecipeContextSkill = {
+  name: string;
+  path: string;
+};
+
 export type Recipe = {
+  type: RecipeType;
   name: string;
   repository: string;
   summary: string;
   keywords: string[];
   featured?: string;
+  companion?: string;
   branch: string;
   packageSkills: RecipePackageSkill[];
+  contextSkills: RecipeContextSkill[];
 };
 
-export type PackageSkill = RecipePackageSkill & {
+type CatalogSkillShared = {
+  name: string;
+  path: string;
   owner: string;
   repository: string;
   repositoryName: string;
@@ -42,6 +53,18 @@ export type PackageSkill = RecipePackageSkill & {
   prompt: string;
 };
 
+export type PackageSkill = CatalogSkillShared & {
+  kind: "package";
+  runtime: Runtime;
+};
+
+export type ContextSkill = CatalogSkillShared & {
+  kind: "context";
+  companion?: string;
+};
+
+export type CatalogSkill = PackageSkill | ContextSkill;
+
 export type CatalogSource = Recipe & {
   owner: string;
   repositoryName: string;
@@ -49,6 +72,23 @@ export type CatalogSource = Recipe & {
   githubUrl: string;
   installs: number;
   packageSkills: PackageSkill[];
+  contextSkills: ContextSkill[];
+};
+
+// Several recipes may share one repository (every context skill lives in
+// getcolors/skills), but /{owner}/{repository} exists once. Source and owner
+// pages therefore render repositories, not recipes — generating routes from
+// sources would emit duplicate paths as soon as a second context skill lands.
+export type CatalogRepository = {
+  owner: string;
+  repository: string;
+  repositoryName: string;
+  url: string;
+  githubUrl: string;
+  installs: number;
+  recipes: CatalogSource[];
+  packageSkills: PackageSkill[];
+  contextSkills: ContextSkill[];
 };
 
 export type CatalogOwner = {
@@ -56,13 +96,16 @@ export type CatalogOwner = {
   url: string;
   githubUrl: string;
   installs: number;
-  sources: CatalogSource[];
+  repositories: CatalogRepository[];
   packageSkills: PackageSkill[];
+  contextSkills: ContextSkill[];
 };
 
 export type Catalog = {
   sources: CatalogSource[];
+  repositories: CatalogRepository[];
   packageSkills: PackageSkill[];
+  contextSkills: ContextSkill[];
   owners: CatalogOwner[];
 };
 
@@ -91,14 +134,18 @@ const readRecipes = (): Recipe[] => {
   return Object.entries(recipeModules)
     .map(([source, raw]) => {
       const value = parseYaml(raw) as Record<string, unknown>;
+      const type = value.type ?? "package";
       const name = value.name;
       const repository = value.repository;
       const summary = value.summary;
       const keywords = value.keywords;
       const featured = value.featured;
+      const companion = value.companion;
       const branch = value.branch ?? "main";
-      const entries = value["package-skills"];
+      const packageEntries = value["package-skills"];
+      const contextEntries = value["context-skills"];
 
+      if (type !== "package" && type !== "context") fail(source, "type must be package or context");
       if (typeof name !== "string" || !name.trim()) fail(source, "name is required");
       if (typeof repository !== "string" || !/^[\w.-]+\/[\w.-]+$/.test(repository)) {
         fail(source, "repository must be owner/name");
@@ -110,10 +157,24 @@ const readRecipes = (): Recipe[] => {
       if (featured !== undefined && (typeof featured !== "string" || !featured.startsWith("/"))) {
         fail(source, "featured must be a site-relative URL");
       }
-      if (typeof branch !== "string" || !branch) fail(source, "branch must be a string");
-      if (!Array.isArray(entries) || entries.length === 0) {
-        fail(source, "package-skills must contain at least one entry");
+      if (companion !== undefined) {
+        if (type !== "context") fail(source, "companion is only valid on type context recipes");
+        if (typeof companion !== "string" || !/^[\w.-]+\/[\w.-]+$/.test(companion)) {
+          fail(source, "companion must be owner/name");
+        }
       }
+      if (typeof branch !== "string" || !branch) fail(source, "branch must be a string");
+      if (type === "package" && contextEntries !== undefined) {
+        fail(source, "context-skills is only valid on type context recipes");
+      }
+      if (type === "context" && packageEntries !== undefined) {
+        fail(source, "package-skills is only valid on type package recipes");
+      }
+      const entries = type === "package" ? packageEntries : contextEntries;
+      if (!Array.isArray(entries) || entries.length === 0) {
+        fail(source, `${type === "package" ? "package" : "context"}-skills must contain at least one entry`);
+      }
+      const recipeType = type as RecipeType;
       const recipeName = name as string;
       const recipeRepository = repository as string;
       const recipeSummary = summary as string;
@@ -124,37 +185,68 @@ const readRecipes = (): Recipe[] => {
       if (names.has(recipeName.toLowerCase())) fail(source, `duplicate name ${recipeName}`);
       names.add(recipeName.toLowerCase());
 
-      const packageSkills = recipeEntries.map((entry, index) => {
-        if (!entry || typeof entry !== "object") fail(source, `package-skills[${index}] is invalid`);
+      const validateEntry = (entry: unknown, index: number) => {
+        const list = recipeType === "package" ? "package-skills" : "context-skills";
+        if (!entry || typeof entry !== "object") fail(source, `${list}[${index}] is invalid`);
         const item = entry as Record<string, unknown>;
-        if (typeof item.name !== "string" || !/^package-[a-z0-9-]+$/.test(item.name)) {
-          fail(source, `package-skills[${index}].name must start with package-`);
+        if (recipeType === "package") {
+          if (typeof item.name !== "string" || !/^package-[a-z0-9-]+$/.test(item.name)) {
+            fail(source, `${list}[${index}].name must start with package-`);
+          }
+          if (item.runtime !== "red" && item.runtime !== "green" && item.runtime !== "blue") {
+            fail(source, `${list}[${index}].runtime is invalid`);
+          }
+        } else {
+          if (
+            typeof item.name !== "string" ||
+            !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(item.name) ||
+            item.name.startsWith("package-")
+          ) {
+            fail(source, `${list}[${index}].name must be a spec-valid skill name without the package- prefix`);
+          }
+          if (item.runtime !== undefined) fail(source, `${list}[${index}].runtime is only valid on Package Skills`);
         }
-        if (typeof item.path !== "string" || !item.path.endsWith("/SKILL.md")) {
-          fail(source, `package-skills[${index}].path must end in /SKILL.md`);
+        const itemName = item.name as string;
+        // The Agent Skills spec requires the skill name to match its directory,
+        // so the path's parent directory must be the name.
+        if (
+          typeof item.path !== "string" ||
+          !(item.path === `${itemName}/SKILL.md` || item.path.endsWith(`/${itemName}/SKILL.md`))
+        ) {
+          fail(source, `${list}[${index}].path must end in ${itemName}/SKILL.md`);
         }
-        if (item.runtime !== "red" && item.runtime !== "green" && item.runtime !== "blue") {
-          fail(source, `package-skills[${index}].runtime is invalid`);
-        }
-        const packageSkill = {
-          name: item.name as string,
-          path: item.path as string,
-          runtime: item.runtime as Runtime,
-        };
-        const identity = `${recipeRepository}/${packageSkill.name}`;
-        if (identities.has(identity)) fail(source, `duplicate Package Skill ${identity}`);
+        const identity = `${recipeRepository}/${itemName}`;
+        if (identities.has(identity)) fail(source, `duplicate skill ${identity}`);
         identities.add(identity);
-        return packageSkill;
-      });
+        return item;
+      };
+
+      const packageSkills =
+        recipeType === "package"
+          ? recipeEntries.map((entry, index) => {
+              const item = validateEntry(entry, index);
+              return { name: item.name as string, path: item.path as string, runtime: item.runtime as Runtime };
+            })
+          : [];
+      const contextSkills =
+        recipeType === "context"
+          ? recipeEntries.map((entry, index) => {
+              const item = validateEntry(entry, index);
+              return { name: item.name as string, path: item.path as string };
+            })
+          : [];
 
       return {
+        type: recipeType,
         name: recipeName,
         repository: recipeRepository,
         summary: recipeSummary,
         keywords: recipeKeywords,
         featured: featured as string | undefined,
+        companion: companion as string | undefined,
         branch: recipeBranch,
         packageSkills,
+        contextSkills,
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -261,39 +353,56 @@ export const loadCatalog = () => {
     const sources = await Promise.all(
       recipes.map(async (recipe): Promise<CatalogSource> => {
         const [owner, repositoryName] = recipe.repository.split("/");
+        const loadShared = async (entry: { name: string; path: string }): Promise<CatalogSkillShared> => {
+          const rawUrl = `https://raw.githubusercontent.com/${recipe.repository}/${recipe.branch}/${entry.path}`;
+          const source = await fetchText(rawUrl, true);
+          const metadata = parseFrontmatter(source, rawUrl);
+          if (metadata.name !== entry.name) {
+            throw new Error(`${rawUrl} declares ${metadata.name}, recipe expects ${entry.name}`);
+          }
+          const stats = await loadInstalls(owner, repositoryName, entry.name);
+          const sourceDirectory = `${recipe.repository}/blob/${recipe.branch}/${entry.path.replace(/\/SKILL\.md$/, "")}`;
+          return {
+            ...entry,
+            owner,
+            repository: recipe.repository,
+            repositoryName,
+            productName: recipe.name,
+            productSummary: recipe.summary,
+            keywords: recipe.keywords,
+            featured: recipe.featured,
+            description: metadata.description,
+            license: metadata.license,
+            markdown: metadata.body,
+            html: renderMarkdown(metadata.body, sourceDirectory),
+            installs: stats.installs,
+            url: `/${owner}/${repositoryName}/${entry.name}`,
+            sourceUrl: `https://github.com/${recipe.repository}/blob/${recipe.branch}/${entry.path}`,
+            skillsShUrl: stats.url,
+            installCommand: `npx skills add https://github.com/${recipe.repository} --skill ${entry.name}`,
+            prompt: `Run \`npx skills use "https://github.com/${recipe.repository}" --skill "${entry.name}"\` and follow the generated Package Skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary. Resolve relative paths from the supporting-files directory it provides.`,
+          };
+        };
         const packageSkills = await Promise.all(
-          recipe.packageSkills.map(async (entry): Promise<PackageSkill> => {
-            const rawUrl = `https://raw.githubusercontent.com/${recipe.repository}/${recipe.branch}/${entry.path}`;
-            const source = await fetchText(rawUrl, true);
-            const metadata = parseFrontmatter(source, rawUrl);
-            if (metadata.name !== entry.name) {
-              throw new Error(`${rawUrl} declares ${metadata.name}, recipe expects ${entry.name}`);
-            }
-            const stats = await loadInstalls(owner, repositoryName, entry.name);
-            const sourceDirectory = `${recipe.repository}/blob/${recipe.branch}/${entry.path.replace(/\/SKILL\.md$/, "")}`;
+          recipe.packageSkills.map(async (entry): Promise<PackageSkill> => ({
+            ...(await loadShared(entry)),
+            kind: "package",
+            runtime: entry.runtime,
+          })),
+        );
+        const contextSkills = await Promise.all(
+          recipe.contextSkills.map(async (entry): Promise<ContextSkill> => {
+            const shared = await loadShared(entry);
             return {
-              ...entry,
-              owner,
-              repository: recipe.repository,
-              repositoryName,
-              productName: recipe.name,
-              productSummary: recipe.summary,
-              keywords: recipe.keywords,
-              featured: recipe.featured,
-              description: metadata.description,
-              license: metadata.license,
-              markdown: metadata.body,
-              html: renderMarkdown(metadata.body, sourceDirectory),
-              installs: stats.installs,
-              url: `/${owner}/${repositoryName}/${entry.name}`,
-              sourceUrl: `https://github.com/${recipe.repository}/blob/${recipe.branch}/${entry.path}`,
-              skillsShUrl: stats.url,
-              installCommand: `npx skills add https://github.com/${recipe.repository} --skill ${entry.name}`,
-              prompt: `Run \`npx skills use "https://github.com/${recipe.repository}" --skill "${entry.name}"\` and follow the generated Package Skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary. Resolve relative paths from the supporting-files directory it provides.`,
+              ...shared,
+              kind: "context",
+              companion: recipe.companion,
+              installCommand: `npx skills use ${recipe.repository}@${entry.name}`,
+              prompt: `Run \`npx skills use "${recipe.repository}@${entry.name}"\` and read the Context Skill's complete output before continuing. It carries symptom-indexed traps and acceptance doctrine verified against a running deployment.`,
             };
           }),
         );
-        const installs = packageSkills.reduce((total, item) => total + item.installs, 0);
+        const installs = [...packageSkills, ...contextSkills].reduce((total, item) => total + item.installs, 0);
         return {
           ...recipe,
           owner,
@@ -302,29 +411,62 @@ export const loadCatalog = () => {
           githubUrl: `https://github.com/${recipe.repository}`,
           installs,
           packageSkills: packageSkills.sort((a, b) => b.installs - a.installs || a.name.localeCompare(b.name)),
+          contextSkills: contextSkills.sort((a, b) => b.installs - a.installs || a.name.localeCompare(b.name)),
         };
       }),
     );
 
-    const packageSkills = sources
-      .flatMap((source) => source.packageSkills)
-      .sort((a, b) => b.installs - a.installs || a.name.localeCompare(b.name));
+    const bySkillRank = (a: CatalogSkillShared, b: CatalogSkillShared) =>
+      b.installs - a.installs || a.name.localeCompare(b.name);
+    const packageSkills = sources.flatMap((source) => source.packageSkills).sort(bySkillRank);
+    const contextSkills = sources.flatMap((source) => source.contextSkills).sort(bySkillRank);
+
+    const byRepository = new Map<string, CatalogRepository>();
+    for (const source of sources) {
+      let repository = byRepository.get(source.repository);
+      if (!repository) {
+        repository = {
+          owner: source.owner,
+          repository: source.repository,
+          repositoryName: source.repositoryName,
+          url: source.url,
+          githubUrl: source.githubUrl,
+          installs: 0,
+          recipes: [],
+          packageSkills: [],
+          contextSkills: [],
+        };
+        byRepository.set(source.repository, repository);
+      }
+      repository.recipes.push(source);
+      repository.packageSkills.push(...source.packageSkills);
+      repository.contextSkills.push(...source.contextSkills);
+      repository.installs += source.installs;
+    }
+    const repositories = [...byRepository.values()].sort(
+      (a, b) => b.installs - a.installs || a.repository.localeCompare(b.repository),
+    );
+    for (const repository of repositories) {
+      repository.packageSkills.sort(bySkillRank);
+      repository.contextSkills.sort(bySkillRank);
+    }
+
     const ownerNames = [...new Set(sources.map((source) => source.owner))];
     const owners = ownerNames.map((name): CatalogOwner => {
-      const ownerSources = sources
-        .filter((source) => source.owner === name)
-        .sort((a, b) => b.installs - a.installs || a.name.localeCompare(b.name));
-      const ownerPackageSkills = ownerSources.flatMap((source) => source.packageSkills);
+      const ownerRepositories = repositories.filter((repository) => repository.owner === name);
+      const ownerPackageSkills = ownerRepositories.flatMap((repository) => repository.packageSkills);
+      const ownerContextSkills = ownerRepositories.flatMap((repository) => repository.contextSkills);
       return {
         name,
         url: `/${name}`,
         githubUrl: `https://github.com/${name}`,
-        installs: ownerPackageSkills.reduce((total, item) => total + item.installs, 0),
-        sources: ownerSources,
+        installs: ownerRepositories.reduce((total, item) => total + item.installs, 0),
+        repositories: ownerRepositories,
         packageSkills: ownerPackageSkills,
+        contextSkills: ownerContextSkills,
       };
     });
-    return { sources, packageSkills, owners };
+    return { sources, repositories, packageSkills, contextSkills, owners };
   })();
   return catalogPromise;
 };
