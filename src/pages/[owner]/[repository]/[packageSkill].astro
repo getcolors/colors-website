@@ -2,7 +2,7 @@
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
 import InstallBox from "~/components/InstallBox.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
-import { catalogOgImage, formatInstalls, loadCatalog, runtimeLabels, type CatalogSkill } from "~/data/catalog";
+import { catalogOgImage, formatInstalls, loadCatalog, runtimeLabels, type CatalogSkill, type ContextSkill } from "~/data/catalog";
 
 // One route serves both kinds: Context Skills share the owner/repository/skill
 // hierarchy, differing in chip, install semantics, and the companion link.
@@ -10,11 +10,19 @@ export async function getStaticPaths() {
   const catalog = await loadCatalog();
   return [...catalog.packageSkills, ...catalog.contextSkills].map((packageSkill) => ({
     params: { owner: packageSkill.owner, repository: packageSkill.repositoryName, packageSkill: packageSkill.name },
-    props: { packageSkill },
+    props: {
+      packageSkill,
+      // The reverse of the Companion aside: a Package Skill page lists the
+      // Context Skills distilled from verified builds of its product, so the
+      // companion link renders in both directions at the leaf level too.
+      companionContextSkills: packageSkill.kind === "context"
+        ? []
+        : catalog.contextSkills.filter((skill) => skill.companion === packageSkill.repository),
+    },
   }));
 }
-interface Props { packageSkill: CatalogSkill; }
-const { packageSkill } = Astro.props;
+interface Props { packageSkill: CatalogSkill; companionContextSkills: ContextSkill[]; }
+const { packageSkill, companionContextSkills } = Astro.props;
 const kindLabel = packageSkill.kind === "context" ? "Context Skill" : "Package Skill";
 const title = `${packageSkill.name} ${kindLabel} — Colors`;
 const description = packageSkill.description;
@@ -60,6 +68,12 @@ const structuredData = {
         {packageSkill.license && <div><p class="section-label">License</p><span>{packageSkill.license}</span></div>}
         {packageSkill.kind === "context" && packageSkill.companion && (
           <div><p class="section-label">Companion</p><a href={`/${packageSkill.companion}`}>{packageSkill.companion}</a></div>
+        )}
+        {companionContextSkills.length > 0 && (
+          <div>
+            <p class="section-label">{companionContextSkills.length === 1 ? "Context Skill" : "Context Skills"}</p>
+            {companionContextSkills.map((skill) => <a href={skill.url}>{skill.name}</a>)}
+          </div>
         )}
         {packageSkill.featured && (
           <div>
