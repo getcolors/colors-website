@@ -183,6 +183,47 @@ export const libraries = {
   ],
 };
 
+// The 2×2 the four Agent Skill sections spell out: two verbs (create, submit)
+// by two skill kinds (Package, Context). Each cell links to its full section,
+// so the hrefs must match those sections' anchors.
+export const skillMatrix = {
+  heading: "Four Agent Skills, two verbs, two kinds",
+  lede: "A Package Skill provisions infrastructure; a Context Skill remembers what a verified build learned. Each kind can be created with your agent, and each can be submitted to the Skills Catalog — four workflows that pair up into a matrix.",
+  columns: ["Package Skill", "Context Skill"],
+  rows: [
+    {
+      verb: "Create",
+      cells: [
+        {
+          title: "Create Package Skill",
+          body: "Build a new Package Skill and a deployment that uses it.",
+          href: "#create-package-skill",
+        },
+        {
+          title: "Create Context Skill",
+          body: "Distill a completed, verified build into routed knowledge.",
+          href: "#create-context-skill",
+        },
+      ],
+    },
+    {
+      verb: "Submit",
+      cells: [
+        {
+          title: "Submit Package Skill",
+          body: "Validate an existing Package Skill and add its recipe to the Catalog.",
+          href: "#submit-package-skill",
+        },
+        {
+          title: "Submit Context Skill",
+          body: "Validate against the Context Skill Standard and add its recipe.",
+          href: "#submit-context-skill",
+        },
+      ],
+    },
+  ],
+};
+
 export const createPackageSkillCmd =
   "npx skills use getcolors/skills@create-package-skill";
 
@@ -233,6 +274,36 @@ export const submitPackageSkill = {
     {
       title: "Open the PR",
       body: "Run catalog validation and the site build, then create a branch, commit, push, fork, or pull request only with explicit authorization.",
+    },
+  ],
+};
+
+// `use`, not `add`, matching createPackageSkillCmd: the markdown twin fences
+// this verbatim, and create-package-skill's "Optional distillation" section
+// advertises the same `use` form. InstallBox derives both tabs either way.
+export const createContextSkillCmd =
+  "npx skills use getcolors/skills@create-context-skill";
+
+export const createContextSkill = {
+  eyebrow: "Agent Skill",
+  docsUrl: "https://github.com/getcolors/skills/blob/main/create-context-skill/SKILL.md",
+  repoUrl: "https://github.com/getcolors/skills",
+  heading: "Create Context Skill: distill a verified build into a Context Skill",
+  lede: "Create Context Skill gives a coding agent the workflow for distilling a completed, verified build into a Context Skill conforming to the Context Skill Standard — symptom-first routing, provenance-labelled claims, pinned versions, a failure catalogue, and evals, with no copies of the companion package's files.",
+  useNote:
+    "This is an **Agent Skill**, not a Package Skill. Its input is a completed build whose acceptance gates passed — without one, there is nothing to distill.",
+  phases: [
+    {
+      title: "Harvest",
+      body: "Collect verbatim failures, review dispositions, deviations from documentation, and the exact pinned versions while the build's session still holds them.",
+    },
+    {
+      title: "Structure and route",
+      body: "Write the why into the body and the reference material into references, keep every claim provenance-labelled, and copy no file the companion package owns.",
+    },
+    {
+      title: "Prove and hand off",
+      body: "Write user-in-trouble evals, pass `skills-ref validate`, and stop: committing, pushing, and the catalog pull request each need explicit authorization.",
     },
   ],
 };

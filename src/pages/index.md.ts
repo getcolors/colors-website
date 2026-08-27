@@ -15,6 +15,8 @@
 import type { APIContext } from "astro";
 import {
   colorsYml,
+  createContextSkill,
+  createContextSkillCmd,
   createPackageSkill,
   createPackageSkillCmd,
   difference,
@@ -24,6 +26,7 @@ import {
   libraries,
   meta,
   realExample,
+  skillMatrix,
   submitContextSkill,
   submitContextSkillCmd,
   submitPackageSkill,
@@ -120,6 +123,14 @@ ${wrap(libraries.lede)}
 |---|---|---|---|
 ${libraries.items.map((l) => `| ${l.name} | ${l.stack} | ${l.docsUrl} | ${l.repoUrl} |`).join("\n")}
 
+## ${skillMatrix.heading}
+
+${wrap(skillMatrix.lede)}
+
+| | ${skillMatrix.columns.join(" | ")} |
+|---|---|---|
+${skillMatrix.rows.map((r) => `| **${r.verb}** | ${r.cells.map((c) => `**${c.title}** — ${c.body}`).join(" | ")} |`).join("\n")}
+
 ## ${createPackageSkill.heading}
 
 ${wrap(createPackageSkill.lede)}
@@ -145,6 +156,19 @@ Documentation: ${submitPackageSkill.docsUrl}
 Repository: ${submitPackageSkill.repoUrl}
 
 ${submitPackageSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
+
+## ${createContextSkill.heading}
+
+${wrap(createContextSkill.lede)}
+
+${wrap(createContextSkill.useNote)}
+
+${fence("sh", createContextSkillCmd)}
+
+Documentation: ${createContextSkill.docsUrl}
+Repository: ${createContextSkill.repoUrl}
+
+${createContextSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
 
 ## ${submitContextSkill.heading}
 

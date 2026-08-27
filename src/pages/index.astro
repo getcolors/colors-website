@@ -9,6 +9,8 @@ import SiteFooter from "~/components/SiteFooter.astro";
 import SiteHeader from "~/components/SiteHeader.astro";
 import {
   colorsYml,
+  createContextSkill,
+  createContextSkillCmd,
   createPackageSkill,
   createPackageSkillCmd,
   difference,
@@ -18,6 +20,7 @@ import {
   libraries,
   meta,
   realExample,
+  skillMatrix,
   submitContextSkill,
   submitContextSkillCmd,
   submitPackageSkill,
@@ -477,6 +480,8 @@ const yamlTheme = {
         --red: oklch(60% 0.19 25);
         --green: oklch(65% 0.17 145);
         --blue: oklch(55% 0.18 260);
+        /* The Context Skill accent — same purple as CatalogLayout's chip. */
+        --context: oklch(55% 0.18 320);
         --mono: 'IBM Plex Mono', monospace;
       }
 
@@ -502,6 +507,9 @@ const yamlTheme = {
       .eyebrow-red { color: var(--red); }
       /* Green-only Package Skills key their section labels to that accent. */
       .eyebrow-green { color: var(--green); }
+      /* Context Skill sections take the catalog's purple, so the matrix's
+         second column stays legible while scrolling the full sections. */
+      .eyebrow-context { color: var(--context); }
 
       /* HERO */
       .hero {
@@ -603,6 +611,19 @@ const yamlTheme = {
       .lib p { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
 
       /* Cards — the four Once steps. */
+      /* The Agent Skill matrix: verbs down, skill kinds across. Column headers
+         reuse the eyebrow treatment in each kind's accent; the cells are anchor
+         cards into the four full sections below. Below 860px the headers
+         disappear and the cells stack — each title names both verb and kind,
+         so no information is lost. */
+      .matrix { display: grid; grid-template-columns: auto 1fr 1fr; gap: 16px 24px; }
+      .matrix-head { margin-bottom: 0; align-self: end; }
+      .matrix-verb { margin-bottom: 0; align-self: center; }
+      .matrix-cell { display: block; border: 1px solid var(--line); border-radius: 10px; padding: 20px; background: var(--page); color: var(--ink); }
+      .matrix-cell:hover { color: var(--ink); border-color: oklch(78% 0.01 260); }
+      .matrix-cell h4 { font-size: 15px; font-weight: 600; margin: 0 0 6px; }
+      .matrix-cell p { font-size: 13px; color: var(--muted); margin: 0; }
+
       .step { border: 1px solid var(--line); border-radius: 10px; padding: 20px; background: var(--page); }
       .step .eyebrow { font-size: 11px; margin-bottom: 8px; }
       .step h4 { font-size: 15px; font-weight: 600; margin: 0 0 6px; }
@@ -666,8 +687,14 @@ const yamlTheme = {
         .grid-2,
         .grid-3,
         .example-grid,
-        .trust-grid {
+        .trust-grid,
+        .matrix {
           grid-template-columns: 1fr;
+        }
+        .matrix-head,
+        .matrix-verb,
+        .matrix-corner {
+          display: none;
         }
         /* The no-wrap command/prompt panel must not become the hero track's
            automatic minimum width on narrow screens. */
@@ -868,8 +895,32 @@ const yamlTheme = {
         </div>
       </div>
 
+      <!-- THE AGENT SKILL MATRIX -->
+      <div class="sec sec-alt" id="agent-skills">
+        <div class="wrap">
+          <SectionHeading id="agent-skills" title={skillMatrix.heading} />
+          <p class="sec-lede sec-lede-wide">{skillMatrix.lede}</p>
+          <div class="matrix">
+            <div class="matrix-corner" aria-hidden="true"></div>
+            <div class="matrix-head eyebrow eyebrow-red">{skillMatrix.columns[0]}</div>
+            <div class="matrix-head eyebrow eyebrow-context">{skillMatrix.columns[1]}</div>
+            {skillMatrix.rows.map((row) => (
+              <>
+                <div class="matrix-verb eyebrow">{row.verb}</div>
+                {row.cells.map((cell) => (
+                  <a class="matrix-cell" href={cell.href}>
+                    <h4>{cell.title}</h4>
+                    <p>{cell.body}</p>
+                  </a>
+                ))}
+              </>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <!-- AGENT SKILL: CREATE A PACKAGE SKILL -->
-      <div class="sec sec-alt" id="create-package-skill">
+      <div class="sec" id="create-package-skill">
         <div class="wrap">
           <div class="eyebrow eyebrow-red">{createPackageSkill.eyebrow}</div>
           <SectionHeading id="create-package-skill" title={createPackageSkill.heading} />
@@ -894,7 +945,7 @@ const yamlTheme = {
       </div>
 
       <!-- AGENT SKILL: SUBMIT A PACKAGE SKILL -->
-      <div class="sec" id="submit-package-skill">
+      <div class="sec sec-alt" id="submit-package-skill">
         <div class="wrap">
           <div class="eyebrow eyebrow-red">{submitPackageSkill.eyebrow}</div>
           <SectionHeading id="submit-package-skill" title={submitPackageSkill.heading} />
@@ -918,10 +969,35 @@ const yamlTheme = {
         </div>
       </div>
 
-      <!-- AGENT SKILL: SUBMIT A CONTEXT SKILL -->
-      <div class="sec" id="submit-context-skill">
+      <!-- AGENT SKILL: CREATE A CONTEXT SKILL -->
+      <div class="sec" id="create-context-skill">
         <div class="wrap">
-          <div class="eyebrow eyebrow-red">{submitContextSkill.eyebrow}</div>
+          <div class="eyebrow eyebrow-context">{createContextSkill.eyebrow}</div>
+          <SectionHeading id="create-context-skill" title={createContextSkill.heading} />
+          <p class="sec-lede sec-lede-wide">{createContextSkill.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={createContextSkillCmd} id="create-context-skill-install" />
+            <span class="install-note" set:html={html(createContextSkill.useNote)} />
+            <ResourceLinks docsUrl={createContextSkill.docsUrl} repoUrl={createContextSkill.repoUrl} />
+          </div>
+
+          <div class="grid-3">
+            {createContextSkill.phases.map((phase, i) => (
+              <div class="step">
+                <div class="eyebrow">{`Phase ${i + 1}`}</div>
+                <h4>{phase.title}</h4>
+                <p set:html={html(phase.body)} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENT SKILL: SUBMIT A CONTEXT SKILL -->
+      <div class="sec sec-alt" id="submit-context-skill">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-context">{submitContextSkill.eyebrow}</div>
           <SectionHeading id="submit-context-skill" title={submitContextSkill.heading} />
           <p class="sec-lede sec-lede-wide">{submitContextSkill.lede}</p>
 
