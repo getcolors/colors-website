@@ -378,14 +378,20 @@ a real API, the catalog goes in then.
 
 The exception is `/.well-known/agent-skills/index.json`: the landing page lists
 real Agent Skills, including Package Skills that reconcile infrastructure to
-desired state. `scripts/generate-agent-skills.mjs` fetches their source
-repositories at the explicit SHAs in `scripts/agent-skills.json`, extracts name
-and description from each `SKILL.md`, and emits the v0.2.0 discovery index.
-Package Skills include supporting files and launchers, so they are deterministic
-`.tar.gz` archives; the self-contained Create Package Skill is a `skill-md`.
-Every URL is content-addressed and every entry carries its SHA-256 digest. Never
-edit `public/.well-known/agent-skills/` directly. A Monday workflow checks
-upstream `main` branches and opens one grouped PR containing pin and artifact
+desired state. **The skill list is derived from `recipes/*.yml`** — every
+`package-skills` and `context-skills` entry of every getcolors recipe becomes a
+deterministic `.tar.gz` archive (a Package Skill carries its launcher and
+supporting files, a Context Skill its `references/` and `evals/`), so a merged
+recipe cannot be missing from the index. `scripts/agent-skills.json` holds the
+per-repository SHA pins plus the only hand-listed extras: the four
+create/submit workflow skills, published as bare `skill-md` documents.
+`scripts/generate-agent-skills.mjs` fetches each repository at its pin,
+extracts name and description from each `SKILL.md`, and emits the v0.2.0
+discovery index; `--update` also seeds a pin for any repository the recipes
+newly require, prunes pins nothing requires, and moves every pin to its branch
+head. Every URL is content-addressed and every entry carries its SHA-256
+digest. Never edit `public/.well-known/agent-skills/` directly. A Monday
+workflow runs the update and opens one grouped PR containing pin and artifact
 updates.
 
 DNS-AID records (`_index._agents.getcolors.ai`) are DNS, not files: they live in

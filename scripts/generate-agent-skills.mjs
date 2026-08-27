@@ -6,9 +6,11 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { parse as parseYaml } from "yaml";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const configPath = join(root, "scripts", "agent-skills.json");
+const recipesDir = join(root, "recipes");
 const outputDir = join(root, "public", ".well-known", "agent-skills");
 const update = process.argv.includes("--update");
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -56,7 +58,49 @@ const fetchTo = async (url, destination) => {
 
 const config = JSON.parse(await readFile(configPath, "utf8"));
 
+// The skill list is derived from the catalog recipes, so a merged recipe
+// cannot be missing from the discovery index. Package Skills and Context
+// Skills both ship as archives: a Package Skill carries its launcher and
+// supporting files, a Context Skill its references/ and evals/. The
+// config's own `skills` array holds only the extras no recipe describes —
+// the create/submit workflow skills, published as bare skill-md documents.
+const recipeSkills = [];
+for (const file of (await readdir(recipesDir)).sort()) {
+  if (!file.endsWith(".yml")) continue;
+  const recipe = parseYaml(await readFile(join(recipesDir, file), "utf8"));
+  const [owner, repository] = (recipe.repository ?? "").split("/");
+  if (owner !== "getcolors" || !repository) {
+    // The index publishes this organization's skills; a community recipe
+    // is catalogued on the site but not re-hosted here.
+    console.warn(`Skipping ${file}: repository ${recipe.repository} is not getcolors/*`);
+    continue;
+  }
+  for (const skill of [...(recipe["package-skills"] ?? []), ...(recipe["context-skills"] ?? [])]) {
+    if (!skill.path?.endsWith("/SKILL.md")) {
+      throw new Error(`${file}: ${skill.name} path must end in /SKILL.md`);
+    }
+    recipeSkills.push({
+      repository,
+      path: skill.path.slice(0, -"/SKILL.md".length),
+      type: "archive",
+    });
+  }
+}
+const skills = [...recipeSkills, ...config.skills];
+const required = new Set(skills.map((skill) => skill.repository));
+
 if (update) {
+  // Seed a pin for any repository the recipes or extras now require, prune
+  // pins nothing requires any more, then move every pin to its branch head.
+  for (const repository of required) {
+    config.repositories[repository] ??= { ref: "main", sha: "" };
+  }
+  for (const repository of Object.keys(config.repositories)) {
+    if (!required.has(repository)) delete config.repositories[repository];
+  }
+  config.repositories = Object.fromEntries(
+    Object.entries(config.repositories).sort(([a], [b]) => a.localeCompare(b)),
+  );
   for (const [repository, pin] of Object.entries(config.repositories)) {
     const result = run("git", [
       "ls-remote",
@@ -70,6 +114,14 @@ if (update) {
     pin.sha = sha;
   }
   await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`);
+}
+
+for (const repository of required) {
+  if (!config.repositories[repository]) {
+    throw new Error(
+      `No pin for getcolors/${repository} in agent-skills.json — run with --update to seed it`,
+    );
+  }
 }
 
 const temp = await mkdtemp(join(tmpdir(), "colors-agent-skills-"));
@@ -96,7 +148,7 @@ try {
 
   const entries = [];
   const names = new Set();
-  for (const skill of config.skills) {
+  for (const skill of skills) {
     if (!checkouts.has(skill.repository)) {
       throw new Error(`Unknown repository ${skill.repository}`);
     }

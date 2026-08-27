@@ -2,39 +2,67 @@
   "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
   "skills": [
     {
+      "name": "agent-network-single-node",
+      "type": "archive",
+      "description": "Everything a single-node NetBird Agent Network deployment needs that the docs and the quickstart installer will not tell you - the four-container gateway stack plus one network-isolated agent, the endpoint that is minted by POSTing the settings resource and not by connecting a provider, the reverse proxy whose per-name ACME is defective on 0.77.1 (\"no viable challenge type found\") and burns Let's Encrypt rate limits while failing, and the acceptance gates that prove an isolation claim instead of assuming it. Use this whenever the user mentions NetBird Agent Network, a keyless or identity-gated LLM endpoint, the netbird reverse proxy, or an AI agent that must not reach the internet - even if they do not say \"single-node\". Also use it on these symptoms - an endpoint hostname with HTTP 000 or no certificate, 422 \"is not a known catalog provider\", llm_policy.model_blocked or model_not_routable, or an isolated container escaping after a Docker restart. The full symptom index is at the top of the body.",
+      "url": "/.well-known/agent-skills/agent-network-single-node-0bb06ce051a143c16b4c7df6642ae26daa4553531906f576286a8d2f72a2c9a7.tar.gz",
+      "digest": "sha256:0bb06ce051a143c16b4c7df6642ae26daa4553531906f576286a8d2f72a2c9a7"
+    },
+    {
+      "name": "create-context-skill",
+      "type": "skill-md",
+      "description": "Distill a completed, verified build into a Colors Context Skill conforming to the Context Skill Standard - five required artifacts, symptom-first routing, no working-file copies. Use at the end of a build whose acceptance gates passed, when the user says to distill the lessons, capture what the build learned, or turn converge failures into a skill - or to migrate an existing knowledge skill with assets into conforming shape.",
+      "url": "/.well-known/agent-skills/create-context-skill-99fc5ce1279c88289fed2cf6573eac61b4df0898b01a151e313f48f017e639e5/SKILL.md",
+      "digest": "sha256:99fc5ce1279c88289fed2cf6573eac61b4df0898b01a151e313f48f017e639e5"
+    },
+    {
       "name": "create-package-skill",
       "type": "skill-md",
       "description": "Use when asked to create a getcolors Package Skill and a deployment that uses it, including desired-state configuration, provider credentials, GitHub repositories, provisioning, or end-to-end deployment.",
-      "url": "/.well-known/agent-skills/create-package-skill-1ab5312d970dc01942a3559efd36dc141e9b9cc07a760564e3673ce45f82d19c/SKILL.md",
-      "digest": "sha256:1ab5312d970dc01942a3559efd36dc141e9b9cc07a760564e3673ce45f82d19c"
+      "url": "/.well-known/agent-skills/create-package-skill-5d3bc1e68a29b4a3ea15379fa52889d3089af20dfe39c749294bfa63bb4e5095/SKILL.md",
+      "digest": "sha256:5d3bc1e68a29b4a3ea15379fa52889d3089af20dfe39c749294bfa63bb4e5095"
+    },
+    {
+      "name": "package-agent-network-green",
+      "type": "archive",
+      "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
+      "url": "/.well-known/agent-skills/package-agent-network-green-8d29562a32afb3e8938f6681016fb6ec0588a77f6fba4375cee2bf0bfbbb57a1.tar.gz",
+      "digest": "sha256:8d29562a32afb3e8938f6681016fb6ec0588a77f6fba4375cee2bf0bfbbb57a1"
     },
     {
       "name": "package-airflow-blue",
       "type": "archive",
       "description": "Creates and operates a single-node Apache Airflow server with Blue, OpenTofu and Ansible — Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
-      "url": "/.well-known/agent-skills/package-airflow-blue-fd9d09184584b92113170ff3ab66bf188aa885b7ed0db8db0a0de0d9f56113f1.tar.gz",
-      "digest": "sha256:fd9d09184584b92113170ff3ab66bf188aa885b7ed0db8db0a0de0d9f56113f1"
+      "url": "/.well-known/agent-skills/package-airflow-blue-729f0c235ff1efe2755b025660f2e84f4d76a0c74551c540b2d0fbb78846b3ae.tar.gz",
+      "digest": "sha256:729f0c235ff1efe2755b025660f2e84f4d76a0c74551c540b2d0fbb78846b3ae"
     },
     {
       "name": "package-airflow-green",
       "type": "archive",
       "description": "Creates and operates a single-node Apache Airflow server with Green, OpenTofu and Ansible — Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
-      "url": "/.well-known/agent-skills/package-airflow-green-b5e91dacfe0f5ea9c81e6ea4f4d4deddd9d5f6996762d8c2054c625c2abfbb8c.tar.gz",
-      "digest": "sha256:b5e91dacfe0f5ea9c81e6ea4f4d4deddd9d5f6996762d8c2054c625c2abfbb8c"
+      "url": "/.well-known/agent-skills/package-airflow-green-b1a89fd0bb2293a19f3f7924f89f336f9d5a84081eb387ca223a6131365dbbc0.tar.gz",
+      "digest": "sha256:b1a89fd0bb2293a19f3f7924f89f336f9d5a84081eb387ca223a6131365dbbc0"
     },
     {
       "name": "package-airflow-red",
       "type": "archive",
       "description": "Creates and operates a single-node Apache Airflow server with Red, OpenTofu and Ansible — Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
-      "url": "/.well-known/agent-skills/package-airflow-red-493a7cbf59ad29317358add99c9d993f94f042cfe51531cf75f70fde21831151.tar.gz",
-      "digest": "sha256:493a7cbf59ad29317358add99c9d993f94f042cfe51531cf75f70fde21831151"
+      "url": "/.well-known/agent-skills/package-airflow-red-317d36e103facade3f23a2a84461a977cbc70d9e93c3634860cf51b2956764b7.tar.gz",
+      "digest": "sha256:317d36e103facade3f23a2a84461a977cbc70d9e93c3634860cf51b2956764b7"
     },
     {
       "name": "package-clickhouse-green",
       "type": "archive",
       "description": "Provision and operate a private replicated ClickHouse cluster, Metabase, WireGuard, Cloudflare DNS, and local dbt on Hetzner with Green.",
-      "url": "/.well-known/agent-skills/package-clickhouse-green-bf56a205a0a8f37863d1696c19d57c8a25ed3da1e80415e86f3a6c27959049de.tar.gz",
-      "digest": "sha256:bf56a205a0a8f37863d1696c19d57c8a25ed3da1e80415e86f3a6c27959049de"
+      "url": "/.well-known/agent-skills/package-clickhouse-green-a3ab55343de9d544450a4e8fa05154fd3ed798aeb8057f4b6bd81faa666326ab.tar.gz",
+      "digest": "sha256:a3ab55343de9d544450a4e8fa05154fd3ed798aeb8057f4b6bd81faa666326ab"
+    },
+    {
+      "name": "package-clickstack-green",
+      "type": "archive",
+      "description": "Provisions ClickStack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — as a single-server observability stack on one Vultr instance.",
+      "url": "/.well-known/agent-skills/package-clickstack-green-5f96165973ffe2c3c562fd3ebbb5427d2c46a7a80104570591f8219b216fe700.tar.gz",
+      "digest": "sha256:5f96165973ffe2c3c562fd3ebbb5427d2c46a7a80104570591f8219b216fe700"
     },
     {
       "name": "package-dbos-green",
@@ -44,18 +72,25 @@
       "digest": "sha256:4243c8b7f7481125795fb37f9cb2fc070591b4b1c6dc666f8fe9f34da0f70f9f"
     },
     {
+      "name": "package-github-dwh-blue",
+      "type": "archive",
+      "description": "Provision and operate a single-host GitHub organization warehouse with ClickHouse, dlt, dbt, PocketBase, systemd, Vultr, and Cloudflare.",
+      "url": "/.well-known/agent-skills/package-github-dwh-blue-336b5c3ae320f4701003fbb03e1cf4703eb44c5304d319c6b0f0d1956c5a865e.tar.gz",
+      "digest": "sha256:336b5c3ae320f4701003fbb03e1cf4703eb44c5304d319c6b0f0d1956c5a865e"
+    },
+    {
       "name": "package-k3s-green",
       "type": "archive",
       "description": "Creates and operates a secure single-node K3s server on Hetzner Cloud with Green, OpenTofu, Ansible, Flux CD, and a public Git deployment repository. Use when initializing a K3s project, writing colors.yml, building or dry-running infrastructure, provisioning or destroying the server, configuring Flux, or invoking kubectl.",
-      "url": "/.well-known/agent-skills/package-k3s-green-812febdfc722d4af628febfce0c9e0ca0956cd1483b42625bd26ec05dc6345ea.tar.gz",
-      "digest": "sha256:812febdfc722d4af628febfce0c9e0ca0956cd1483b42625bd26ec05dc6345ea"
+      "url": "/.well-known/agent-skills/package-k3s-green-5edb902283f6dbee4f0f39171431354dd15b67dd572df28b7ba4b89c2ab99baa.tar.gz",
+      "digest": "sha256:5edb902283f6dbee4f0f39171431354dd15b67dd572df28b7ba4b89c2ab99baa"
     },
     {
       "name": "package-k8s-green",
       "type": "archive",
       "description": "Build and operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Green, Flannel, DigitalOcean CCM, Flux, ExternalDNS, cert-manager, and acceptance.",
-      "url": "/.well-known/agent-skills/package-k8s-green-3e9ef05e34c55dddb3ea0b0821542cd2e74607282729d86a004483eb2d79865e.tar.gz",
-      "digest": "sha256:3e9ef05e34c55dddb3ea0b0821542cd2e74607282729d86a004483eb2d79865e"
+      "url": "/.well-known/agent-skills/package-k8s-green-12e14880a394bcf4d3309afda234061d0bbda3ef60ef7b3d4d029014462486c6.tar.gz",
+      "digest": "sha256:12e14880a394bcf4d3309afda234061d0bbda3ef60ef7b3d4d029014462486c6"
     },
     {
       "name": "package-mysql-agy-green",
@@ -72,25 +107,32 @@
       "digest": "sha256:926707b88b2be1728028846c987b89fbdd06a9a4475ae09b231261d9c351a423"
     },
     {
+      "name": "package-netbird-green",
+      "type": "archive",
+      "description": "Provision and manage a self-hosted NetBird control plane with Authentik as its identity provider on a single Vultr instance, from declarative desired state. Use when asked to deploy, converge, inspect, back up, restore or delete a NetBird zero-trust network, a self-hosted WireGuard control plane, or a NetBird instance with SSO/MFA.",
+      "url": "/.well-known/agent-skills/package-netbird-green-5c5a593cf2faaeea50dd03c4f4e6a1db7b551c461e57d041d21ef58615482487.tar.gz",
+      "digest": "sha256:5c5a593cf2faaeea50dd03c4f4e6a1db7b551c461e57d041d21ef58615482487"
+    },
+    {
       "name": "package-once-blue",
       "type": "archive",
       "description": "Creates and operates production single-server Basecamp ONCE deployments with Blue, uv, OpenTofu, and Ansible. Use for colors.yml setup, safe builds and dry-runs, provisioning, deletion, or status reports.",
-      "url": "/.well-known/agent-skills/package-once-blue-e089bef121623027157f4df19f3e320941fde31737bf168394744afc50375c3e.tar.gz",
-      "digest": "sha256:e089bef121623027157f4df19f3e320941fde31737bf168394744afc50375c3e"
+      "url": "/.well-known/agent-skills/package-once-blue-4a3d36401dbe84f2e36f2ea361b2a7e5b472eedee4444669c4589a9743a1c945.tar.gz",
+      "digest": "sha256:4a3d36401dbe84f2e36f2ea361b2a7e5b472eedee4444669c4589a9743a1c945"
     },
     {
       "name": "package-once-green",
       "type": "archive",
       "description": "Creates and operates production single-server Basecamp ONCE deployments with Green, OpenTofu, and Ansible. Use when initializing an ONCE project, generating colors.yml, selecting cloud/SMTP/DNS/state providers, building or dry-running configuration, provisioning, deleting, or describing an ONCE server.",
-      "url": "/.well-known/agent-skills/package-once-green-335118f3f781bb56447cbcb1c2440b94d015a2212fb444095e90bb9cd833ec2b.tar.gz",
-      "digest": "sha256:335118f3f781bb56447cbcb1c2440b94d015a2212fb444095e90bb9cd833ec2b"
+      "url": "/.well-known/agent-skills/package-once-green-c85c6bad4d7d26a3d3891fccdc8993be633e2213da63b85b4db2de7e326f0ba6.tar.gz",
+      "digest": "sha256:c85c6bad4d7d26a3d3891fccdc8993be633e2213da63b85b4db2de7e326f0ba6"
     },
     {
       "name": "package-once-red",
       "type": "archive",
       "description": "Creates and operates production single-server Basecamp ONCE deployments with Red, Bun, OpenTofu, and Ansible. Use for colors.yml setup, safe builds and dry-runs, provisioning, deletion, or status reports.",
-      "url": "/.well-known/agent-skills/package-once-red-ca381465c644b781895efc8aab02b8b4561cdcaac0498f49cad0d6e6a32ff168.tar.gz",
-      "digest": "sha256:ca381465c644b781895efc8aab02b8b4561cdcaac0498f49cad0d6e6a32ff168"
+      "url": "/.well-known/agent-skills/package-once-red-cbc96a2ac0aba9faad5f855fcbcc592b2f9c2732744abdde08943c458ed20ee1.tar.gz",
+      "digest": "sha256:cbc96a2ac0aba9faad5f855fcbcc592b2f9c2732744abdde08943c458ed20ee1"
     },
     {
       "name": "package-postgres-agy-green",
@@ -110,15 +152,15 @@
       "name": "package-posthog-green",
       "type": "archive",
       "description": "Provisions and operates a single-node PostHog product analytics suite with PostgreSQL 17, ClickHouse 24.8, Redis 7.2, and Caddy on DigitalOcean.",
-      "url": "/.well-known/agent-skills/package-posthog-green-98d5e94791467bf2c38e79a9bf47274e80d9b02790032bd8df1dae346eed3fc2.tar.gz",
-      "digest": "sha256:98d5e94791467bf2c38e79a9bf47274e80d9b02790032bd8df1dae346eed3fc2"
+      "url": "/.well-known/agent-skills/package-posthog-green-9ba5df55283df84f89e0e5387a69262b1188f436d9fb71dc96e9e31c4d528271.tar.gz",
+      "digest": "sha256:9ba5df55283df84f89e0e5387a69262b1188f436d9fb71dc96e9e31c4d528271"
     },
     {
       "name": "package-rama-green",
       "type": "archive",
       "description": "Provision and operate a private single-node Rama cluster on DigitalOcean using Green.",
-      "url": "/.well-known/agent-skills/package-rama-green-48991e5f9ecbc0ceba5857cb3aa78bd444cebc01699dada033319306df2d8ba1.tar.gz",
-      "digest": "sha256:48991e5f9ecbc0ceba5857cb3aa78bd444cebc01699dada033319306df2d8ba1"
+      "url": "/.well-known/agent-skills/package-rama-green-50afb1ec447e927ac524c94540fb1e52f908036e815a9eff2ff8cde6ba2ad7eb.tar.gz",
+      "digest": "sha256:50afb1ec447e927ac524c94540fb1e52f908036e815a9eff2ff8cde6ba2ad7eb"
     },
     {
       "name": "package-restate-green",
@@ -131,22 +173,29 @@
       "name": "package-rybbit-green",
       "type": "archive",
       "description": "Provisions and operates a production-oriented single-node Rybbit analytics service with PostgreSQL, ClickHouse, Redis and Caddy on DigitalOcean.",
-      "url": "/.well-known/agent-skills/package-rybbit-green-6e866a0d3f339e525e6ac8b14c7f24edaf7dab9e5f9eaa2dd40131fa501fa76c.tar.gz",
-      "digest": "sha256:6e866a0d3f339e525e6ac8b14c7f24edaf7dab9e5f9eaa2dd40131fa501fa76c"
+      "url": "/.well-known/agent-skills/package-rybbit-green-2d8c76bc8e1d255854f6eb9be187c3f000b7642290e55119b0ccd46d615888d8.tar.gz",
+      "digest": "sha256:2d8c76bc8e1d255854f6eb9be187c3f000b7642290e55119b0ccd46d615888d8"
+    },
+    {
+      "name": "package-signoz-green",
+      "type": "archive",
+      "description": "Provision and manage a single-node SigNoz observability stack on Vultr — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — with OpenTofu, Ansible and Cloudflare DNS. Use when asked to deploy, converge, inspect or tear down self-hosted SigNoz, to send OpenTelemetry traces, logs or metrics to a private backend, or to work on a colors.yml for a signoz deployment.",
+      "url": "/.well-known/agent-skills/package-signoz-green-0a55914e0ee47a7362827a65769dca563dc8f64b786668a60e8e7cca6577ab8f.tar.gz",
+      "digest": "sha256:0a55914e0ee47a7362827a65769dca563dc8f64b786668a60e8e7cca6577ab8f"
     },
     {
       "name": "package-temporal-green",
       "type": "archive",
       "description": "Provision and operate a production-oriented single-machine Temporal deployment on DigitalOcean using Green.",
-      "url": "/.well-known/agent-skills/package-temporal-green-ac6e031075401b06f295d2772d4b05c7a30d1774c66ef3a627b7e50fdb494fd9.tar.gz",
-      "digest": "sha256:ac6e031075401b06f295d2772d4b05c7a30d1774c66ef3a627b7e50fdb494fd9"
+      "url": "/.well-known/agent-skills/package-temporal-green-3bb2aa67ee76b86f95229c12e40108f3f1a45b9e59626f3b188b24c3433c4f5a.tar.gz",
+      "digest": "sha256:3bb2aa67ee76b86f95229c12e40108f3f1a45b9e59626f3b188b24c3433c4f5a"
     },
     {
       "name": "package-umami-green",
       "type": "archive",
       "description": "Provisions and operates production-oriented single-node Umami web analytics with PostgreSQL and Caddy on DigitalOcean.",
-      "url": "/.well-known/agent-skills/package-umami-green-cbfa1c55430f452a8d5055c4c32e27b074dfd39717580b58d96553474ef36995.tar.gz",
-      "digest": "sha256:cbfa1c55430f452a8d5055c4c32e27b074dfd39717580b58d96553474ef36995"
+      "url": "/.well-known/agent-skills/package-umami-green-814e5ed7225cf7546b368d4ed25efde4777343303655da286a0bca7a065f3134.tar.gz",
+      "digest": "sha256:814e5ed7225cf7546b368d4ed25efde4777343303655da286a0bca7a065f3134"
     },
     {
       "name": "package-vaultwarden-green",
@@ -159,8 +208,43 @@
       "name": "package-walter-green",
       "type": "archive",
       "description": "Creates and operates a remote development machine with Green, OpenTofu and Ansible, and powers it off and on to stop paying for it while you sleep. Use when initializing a walter project, generating colors.yml, selecting a compute or state provider, building or dry-running configuration, provisioning or destroying the machine, or stopping and starting it.",
-      "url": "/.well-known/agent-skills/package-walter-green-7aae29a8baa1d3978b7ea8718be9dddfcbfe02116e047fc93007d197bb462ca9.tar.gz",
-      "digest": "sha256:7aae29a8baa1d3978b7ea8718be9dddfcbfe02116e047fc93007d197bb462ca9"
+      "url": "/.well-known/agent-skills/package-walter-green-f83d886e6dfe3a7bafae17722ccab3d3239470ef73762dfdce68131772022d14.tar.gz",
+      "digest": "sha256:f83d886e6dfe3a7bafae17722ccab3d3239470ef73762dfdce68131772022d14"
+    },
+    {
+      "name": "package-wavehouse-green",
+      "type": "archive",
+      "description": "Provisions a public WaveHouse analytics demo — ClickHouse, the WaveHouse gateway, and the live GitHub stats dashboard — on one Vultr instance.",
+      "url": "/.well-known/agent-skills/package-wavehouse-green-ee77fb0ee40e1898699544359c0d3ad2d3c506410b25a81c814abfd8d0b613b4.tar.gz",
+      "digest": "sha256:ee77fb0ee40e1898699544359c0d3ad2d3c506410b25a81c814abfd8d0b613b4"
+    },
+    {
+      "name": "posthog-single-node",
+      "type": "archive",
+      "description": "Everything needed to stand up a working self-hosted single-node PostHog on one server - the ten-container topology, the ClickHouse Keeper/macros/named-collections configuration PostHog's migrations require, the capture and plugin-server ingestion chain, the converge ordering, and a catalogue of ~30 failures that each look like success. Use this whenever the user mentions self-hosting, deploying, provisioning, upgrading, or debugging PostHog, or is working on a PostHog docker-compose, Ansible playbook, ClickHouse schema, migrate_clickhouse run, or event-ingestion problem - even if they do not say \"single-node\" and even if they think their problem is small. Also use it when someone reports that PostHog accepts events but stores none, that a container \"runs\" but serves nothing, or that Celery will not start.",
+      "url": "/.well-known/agent-skills/posthog-single-node-8bbeb434623b0adeaf66e15f7fb56a3e1458eb82776e3ca4dac03cc70b7037ad.tar.gz",
+      "digest": "sha256:8bbeb434623b0adeaf66e15f7fb56a3e1458eb82776e3ca4dac03cc70b7037ad"
+    },
+    {
+      "name": "rybbit-single-node",
+      "type": "archive",
+      "description": "Everything needed to run a self-hosted single-node Rybbit analytics stack you can actually trust - the six-container topology, the provider-independent seam that lets one converge run on DigitalOcean or Vultr or anything else with an SSH port, ClickHouse backups that restore instead of merely existing, and verification that catches a stack which looks healthy and stores nothing. Use this whenever the user mentions self-hosting, deploying, provisioning, sizing, migrating, backing up, restoring, or debugging Rybbit, or is working on a Rybbit docker-compose, Caddy reverse proxy, ClickHouse or PostgreSQL backup, or event-ingestion problem - even if they do not say \"single-node\". Also use it on these symptoms - Rybbit returns success but records no events, a Caddyfile or config edit had no effect, analytics show the CDN's address instead of the visitor's, or signup cannot be disabled. The full symptom index is at the top of the body.",
+      "url": "/.well-known/agent-skills/rybbit-single-node-3c560fb23c1f34c179fa7cb9802b3a156ade586464a0a5bd461d3fd3cb80faf6.tar.gz",
+      "digest": "sha256:3c560fb23c1f34c179fa7cb9802b3a156ade586464a0a5bd461d3fd3cb80faf6"
+    },
+    {
+      "name": "submit-context-skill",
+      "type": "skill-md",
+      "description": "Submit an existing Colors Context Skill to the getcolors.ai catalog by validating it against the Context Skill Standard, adding a type context recipe, and opening a pull request.",
+      "url": "/.well-known/agent-skills/submit-context-skill-c438f937c8277e2afca69c24ada17b01598169cbc84fd9c976a48b5a136ec3a8/SKILL.md",
+      "digest": "sha256:c438f937c8277e2afca69c24ada17b01598169cbc84fd9c976a48b5a136ec3a8"
+    },
+    {
+      "name": "submit-package-skill",
+      "type": "skill-md",
+      "description": "Submit an existing Colors Package Skill to the getcolors.ai Package Skills Catalog by validating it, adding a catalog recipe, and opening a pull request.",
+      "url": "/.well-known/agent-skills/submit-package-skill-186a5d04fc1d8af7cf4ea0a5fdec554fac1c8c56b0182e1578766144b47c6f57/SKILL.md",
+      "digest": "sha256:186a5d04fc1d8af7cf4ea0a5fdec554fac1c8c56b0182e1578766144b47c6f57"
     }
   ]
 }
