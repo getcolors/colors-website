@@ -151,7 +151,7 @@ ${new URL("/skills", site).toString()}
 
 ---
 
-${footer.name} — ${footer.href}
+${footer.name} — ${footer.links.map((link) => `${link.label}: ${link.href}`).join(" · ")}
 `;
 
   return new Response(body, {

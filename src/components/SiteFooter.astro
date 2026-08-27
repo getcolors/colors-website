@@ -8,7 +8,11 @@ import { footer } from "~/data/landing";
       <img src="/favicon.svg" width="20" height="20" alt="" />
       <span>{footer.name}</span>
     </a>
-    <a href={footer.href} target="_blank" rel="noopener noreferrer">{footer.label}</a>
+    <div class="footer-links">
+      {footer.links.map((link) => (
+        <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+      ))}
+    </div>
   </div>
 </footer>
 
@@ -18,5 +22,6 @@ import { footer } from "~/data/landing";
   .foot a { color: var(--soft); text-decoration: none; }
   .foot a:hover { color: var(--blue); }
   .footer-home { display: inline-flex; align-items: center; gap: 10px; }
+  .footer-links { display: flex; align-items: center; gap: 20px; }
   .footer-home img { border-radius: 4px; }
 </style>

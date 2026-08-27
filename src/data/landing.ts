@@ -1507,6 +1507,8 @@ export const agentNetwork = {
 
 export const footer = {
   name: "Colors",
-  href: "https://github.com/getcolors",
-  label: "GitHub",
+  links: [
+    { href: "https://github.com/getcolors", label: "GitHub" },
+    { href: "https://discord.gg/3aQzzrrdFj", label: "Discord" },
+  ],
 };
