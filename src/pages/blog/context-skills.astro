@@ -1,0 +1,327 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "The Skill Your Build Leaves Behind — Colors";
+const description =
+  "Introducing Context Skills: knowledge distilled from a verified build, routed by the error on your screen, honest about what verified it. Three are live in the Skills Catalog, with one workflow to create them and another to submit yours.";
+const path = "/blog/context-skills";
+
+// Dates come from the registry, so the human date on the page, the feed's
+// pubDate and datePublished below are one value rather than three copies.
+const post = postFor(path);
+
+// Resolved against `site` the way SeoMeta does, so a SITE_URL preview build
+// does not leave the structured data advertising production.
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (target: string) => new URL(target, SITE_URL).toString();
+const image = "/og-context-skills-v2.png";
+const imageAlt =
+  "Four-panel infographic: an agent without a Context Skill spends eight commits rediscovering known failures while one with it uses 4.4× fewer tool calls; the three skill kinds — Agent Skill (procedure), Package Skill (program), Context Skill (judgement); the key principles — routed by the error on your screen, no second copy of companion files; and the workflow from verified build through skills-ref validate and evals to the catalog's three live skills.";
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "The Skill Your Build Leaves Behind",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Person",
+    name: "Alberto Miorin",
+    url: "https://www.linkedin.com/in/albertomiorin/",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Context Skills" },
+    { "@type": "Thing", name: "Agentic DevOps" },
+    { "@type": "Thing", name: "Agent Skills" },
+    { "@type": "Thing", name: "Knowledge Management" },
+    { "@type": "Thing", name: "Package Skills" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "The Skill Your Build Leaves Behind" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Announcement · Context Skills</p>
+      <h1>The skill your build leaves behind</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-context">Context Skills</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+        <span class="dot">·</span>
+        <span class="meta-author mono">By <a href="https://www.linkedin.com/in/albertomiorin/" target="_blank" rel="noopener noreferrer">Alberto Miorin</a></span>
+      </div>
+      <p class="lede">
+        Every hard deployment teaches things that its transcript then swallows: the error that meant the
+        opposite of what it said, the version pair that must never drift apart, the acceptance gate that
+        passed while the product was broken. Today the <a href="/skills">Skills Catalog</a> gains a third
+        kind of skill built to carry exactly that. A <strong>Context Skill</strong> is knowledge distilled
+        from a verified build — routed by the error on your screen, honest about what verified it, and
+        forbidden from carrying a copy of anything a tested implementation already owns. Three are live.
+        Two workflows create and admit the next ones.
+      </p>
+    </header>
+
+    <figure class="hero-figure">
+      <img
+        src="/images/context-skills-infographic-v1.png"
+        alt="Four panels. From chaos to clarity: an agent without a Context Skill wanders a maze — eight commits of rediscovery, misleading docs, acceptance checks that lie, knowledge stranding in the transcript — while an agent with one uses 4.4× fewer tool calls and spends its commits on features. The third kind of skill: Agent Skill carries a procedure, Package Skill a program (the deterministic translator from colors.yml to a running system), Context Skill verified judgement — why the program is shaped this way, what breaks, proof of health. Key principles: routed by the error on your screen, with high-signal symptoms as search keywords; no second copy — the skill points at companion files, never reproduces them, because a copy is a fork that testing cannot see. The workflow and catalog: distill from a verified build, prove the result with skills-ref validate and evals, submit to the catalog where agent-network-single-node, posthog-single-node and rybbit-single-node are live."
+        width="1600"
+        height="873"
+        loading="eager"
+      />
+      <figcaption class="mono">
+        the whole argument in one picture: what stranding costs, what kind of thing a Context Skill is, the two rules, and the path into the catalog
+      </figcaption>
+    </figure>
+
+    <article class="content-body">
+      <h2>Eight commits of rediscovery</h2>
+      <p>
+        The evidence that this category should exist predates it.
+        In <a href="/blog/posthog-skill-benchmark">our PostHog benchmark</a>, two agents deployed the same
+        stack; the only variable was that one of them also received <code>posthog-single-node</code>, a
+        second skill carrying the topology, the configuration the migrations require, and a catalogue of
+        roughly thirty failures written as symptom → cause → fix. The baseline agent spent eight fix
+        commits rediscovering, the expensive way, what the other agent had been handed in writing — and
+        then shipped a deployment it never proved could store an event, because nothing had told it what a
+        working deployment looks like. The skill-equipped agent used 4.4× fewer tool calls and spent its
+        commits on features.
+      </p>
+      <p>
+        Those eight commits are the general case. An agent that converges a real stack against a real cloud
+        buys knowledge at the price of failed converges, misleading documentation, and acceptance checks
+        that lie — and then the session ends and the knowledge strands in a transcript nobody will read
+        twice. <a href="/blog/how-a-package-skill-gets-made">How a Package Skill Gets Made</a> ends on the
+        step most workflows skip: distill the lessons. Context Skills are that step given a name, a
+        standard, and a shelf.
+      </p>
+
+      <h2>The third kind of skill</h2>
+      <p>
+        The getcolors ecosystem now has three skill kinds, and they answer different questions. A generic
+        Agent Skill carries a <em>procedure</em> — <a href="/#create-package-skill">Create Package
+        Skill</a> is one. A <a href="/skills">Package Skill</a> carries a <em>program</em>: the
+        deterministic translator from <code>colors.yml</code> to a running system
+        that <a href="/blog/park-the-stochasticity">Park the Stochasticity</a> argued for. A Context Skill
+        carries what neither can: the <em>judgment</em> the authoring session bought — why the program is
+        shaped the way it is, what breaks when you deviate, and what proof of health actually looks like.
+      </p>
+      <p>
+        The category is defined by a normative <a href="https://github.com/getcolors/workspace/blob/main/standards/context-skill.md" target="_blank" rel="noopener noreferrer">Context
+        Skill Standard</a>, and its qualifying test is provenance: the knowledge must have been bought from
+        a verified build. A well-written README, a tutorial, a summary of upstream docs — none of these
+        qualify, however useful, because nothing was converged to earn them. Five artifacts are required:
+        a symptom-first routing description, provenance statements for every claim, the pinned version set
+        with the rules that generated it, a symptom-indexed failure catalogue with verbatim error text, and
+        evals shaped as a user in trouble.
+      </p>
+
+      <h2>Routed by the error on your screen</h2>
+      <p>
+        A skill an agent cannot find is a skill that does not exist, so the standard treats the frontmatter
+        description as routing text, not documentation. It names symptoms — error strings, observed
+        behaviours, situations — rather than mechanism, because the reader who needs it is staring at one
+        of those strings right now:
+      </p>
+      <pre><code>no viable challenge type found          → agent-network-single-node
+events accepted but not stored          → rybbit-single-node
+stale container configuration           → rybbit-single-node
+is not a known catalog provider         → agent-network-single-node</code></pre>
+      <p>
+        The Agent Skills spec caps that description at 1,024 characters, and the cap is enforced — the
+        highest-signal symptoms stay in the description, and the full index moves to the top of the body.
+        The same symptoms become the catalog's search keywords, so the string on your screen finds the
+        skill whether your agent routes by frontmatter or you search <a href="/skills#context">the
+        catalog</a> by hand.
+      </p>
+
+      <h2>No second copy</h2>
+      <p>
+        The standard's sharpest rule: a Context Skill carries <strong>no copies of anything a tested
+        implementation owns</strong>. Where a companion Package Skill exists, the skill names it and points
+        at its files; it never reproduces them. A copied config is a fork that testing cannot see — golden
+        tests and parity checks guard the package's files, and a byte identical twin inside a skill quietly
+        stops being identical.
+      </p>
+      <p>
+        We learned how quietly while migrating the two pre-standard skills into shape. One of them carried
+        working-file copies that had all diverged from the companion package — drift in both directions.
+        Most deltas were the package having moved ahead, which deletion resolves. But one was a verified
+        improvement that existed <em>only in the copy</em>: an HTTP/3 firewall publication whose absence
+        makes browsers attempt QUIC, get nothing, and fall back to TCP — intermittent slowness you can
+        carry for months. It went upstream first, through the package's own tests, golden fixtures, and
+        pin, and only then was the copy deleted. That is the rule's argument made flesh: knowledge stranded
+        in a copy is invisible exactly when it matters.
+      </p>
+      <p>
+        The link runs both ways in the catalog: a Context Skill names its companion, and the
+        companion's <a href="/getcolors/rybbit">product</a> and <a href="/getcolors/rybbit/package-rybbit-green">Package
+        Skill</a> pages link back to the Context Skill.
+      </p>
+
+      <h2>Knowledge that admits it decays</h2>
+      <p>
+        A Context Skill's claims were true against specific versions on a specific day, and the standard
+        makes it say so. Every claim either names what verified it or is labelled unverified. The pinned
+        version set records the rules that generated it, and a pin bump starts the decay clock: the
+        standard defines which claims survive a bump and which need retesting. Evals — written as the
+        support message a user in trouble would actually send — are the category's regression net, testing
+        routing and diagnosis together. The most valuable entries in the failure catalogues are the ones
+        conventional documentation refuses to write: the gate that passed while the thing it guarded was
+        broken, and what the passing actually meant.
+      </p>
+
+      <h2>Three today, and the two workflows</h2>
+      <p>
+        The catalog's <a href="/skills#context">Context Skills tab</a> lists three, each distilled from a
+        live, adversarially reviewed build and each conforming to the
+        standard: <a href="/getcolors/skills/agent-network-single-node"><code>agent-network-single-node</code></a>, <a href="/getcolors/skills/posthog-single-node"><code>posthog-single-node</code></a>, and <a href="/getcolors/skills/rybbit-single-node"><code>rybbit-single-node</code></a>. Loading one is
+        one command; they are used, never installed:
+      </p>
+      <pre><code>npx skills use getcolors/skills@rybbit-single-node     # load one for this request
+npx skills use getcolors/skills@create-context-skill   # distill your own verified build
+npx skills add getcolors/skills@submit-context-skill   # submit yours to the catalog</code></pre>
+      <p>
+        The second command is the distillation workflow — five phases from harvesting verbatim failures
+        while the session still holds them to proving the result
+        with <code>skills-ref validate</code> and evals. It has already been field-tested: the two
+        migrations above ran under it, and what they taught was folded back in the same day. The third is
+        the admission funnel, and before inviting anyone into it we replayed a complete submission
+        end-to-end — validation, recipe, build gates — and fixed the two gaps the dry run exposed. The
+        catalog adds discoverability only: GitHub remains the source, and admission validates the artifacts
+        your verification left behind, not the verification itself.
+      </p>
+      <p>
+        If your agent has ever spent an afternoon rediscovering something your last build already knew,
+        that afternoon is the product this category replaces. Finish your next verified build with the
+        distillation step, and leave behind the skill your next agent gets to start from.
+      </p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-bottom: 72px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 28px;
+  }
+  .post-header .eyebrow {
+    margin: 0 0 12px;
+    color: var(--context);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .meta-date, .meta-readtime, .meta-author {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .meta-author a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .meta-author a:hover {
+    color: var(--blue);
+  }
+  .dot {
+    color: var(--rule);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .hero-figure {
+    margin: 32px 0 48px;
+  }
+  .hero-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .hero-figure figcaption {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 24px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--code-ink);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  .content-body a {
+    color: var(--blue);
+  }
+</style>

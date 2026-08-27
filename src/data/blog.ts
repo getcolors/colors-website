@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "The Skill Your Build Leaves Behind",
+    slug: "/blog/context-skills",
+    date: "August 27, 2026",
+    isoDate: "2026-08-27T14:00:00Z",
+    readTime: "7 min read",
+    category: "Announcement",
+    runtime: "Context Skills",
+    summary:
+      "Introducing Context Skills: knowledge distilled from a verified build, routed by the error on your screen, honest about what verified it. Three are live in the Skills Catalog, with one workflow to create them and another to submit yours.",
+    image: "/images/context-skills-infographic-v1.png",
+    tags: ["Announcement", "Context Skills", "Agent Skills", "Agentic DevOps", "Knowledge", "Catalog"],
+  },
+  {
     title: "How a Package Skill Gets Made",
     slug: "/blog/how-a-package-skill-gets-made",
     date: "August 26, 2026",

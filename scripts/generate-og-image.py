@@ -387,6 +387,11 @@ catalog_recipes = recipes()
 package_recipes = [recipe for recipe in catalog_recipes if recipe[0] == "package"]
 all_skills = sum(len(recipe[4]) for recipe in package_recipes)
 context_skill_count = sum(len(recipe[4]) for recipe in catalog_recipes if recipe[0] == "context")
+# og-context-skills-v2.png is the article's own infographic letterboxed to
+# 1200x630 on the artwork's rgb(209,210,213) border, not generated here — the
+# fifth exception to "og-*.png are generated". The generated v1 text card it
+# replaced never shipped; the version suffix follows the rule pre-emptively.
+
 render_post_card(
     "og-gemini-3-7-flash-benchmark-v1.png",
     "Benchmark · Gemini 3.7 Flash",
