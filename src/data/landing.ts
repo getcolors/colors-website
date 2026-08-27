@@ -454,7 +454,7 @@ export const clickhouse = {
   heading: "ClickHouse: a private analytics stack, built with Colors",
   lede: "ClickHouse is a Package Skill built with Colors. It provisions a three-node replicated ClickHouse cluster with a three-member Keeper quorum, plus a separate Metabase and PostgreSQL server, on Hetzner Cloud.",
   runtimeNote:
-    "ClickHouse ships in **green** alone. ClickHouse, Keeper, and Metabase stay closed to the public internet; local dbt and browser traffic cross WireGuard.",
+    "ClickHouse ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. ClickHouse, Keeper, and Metabase stay closed to the public internet; local dbt and browser traffic cross WireGuard.",
   steps: [
     {
       title: "Read desired state",
@@ -1406,7 +1406,7 @@ export const clickstack = {
   heading: "ClickStack: an open-source observability stack on one server, built with Colors",
   lede: "ClickStack is a Package Skill built with Colors. It provisions the HyperDX observability stack on a single Vultr instance — ClickHouse for telemetry, MongoDB for application state, the HyperDX OpenTelemetry collector, and the HyperDX UI — behind Caddy TLS and Cloudflare, with logs, traces, and metrics ingested over OTLP on the same host that serves the dashboard.",
   runtimeNote:
-    "ClickStack ships in **green** alone. One hostname carries both halves: the UI and OTLP/HTTP ingestion share port 443, so an exporter needs no endpoint beyond `https://<host>` and 4317/4318 are never exposed.",
+    "ClickStack ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. One hostname carries both halves: the UI and OTLP/HTTP ingestion share port 443, so an exporter needs no endpoint beyond `https://<host>` and 4317/4318 are never exposed.",
   steps: [
     {
       title: "Read desired state",
