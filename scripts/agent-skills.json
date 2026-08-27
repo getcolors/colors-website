@@ -2,7 +2,7 @@
   "repositories": {
     "agent-network": {
       "ref": "main",
-      "sha": "34af5ec218084ff7d4894cd1c4b464e63785827e"
+      "sha": "6929666fa46f8ca5dcbac05bbca19fc278d22064"
     },
     "airflow": {
       "ref": "main",
@@ -42,7 +42,7 @@
     },
     "netbird": {
       "ref": "main",
-      "sha": "849c0820fdab19f9f2270649f0c7043caf643527"
+      "sha": "5aa92770f281e5a237fd2bed9a30be33c22da68f"
     },
     "once": {
       "ref": "main",

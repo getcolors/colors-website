@@ -23,11 +23,25 @@
       "digest": "sha256:ffdec3d1bc1b07052a7085e0d237feb6869e93918b858fbefd9f556a364609fa"
     },
     {
+      "name": "package-agent-network-blue",
+      "type": "archive",
+      "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
+      "url": "/.well-known/agent-skills/package-agent-network-blue-e6729d9a300c3f390508f02d0c44feac9726860dc8df7ac6d922d42a5f9b04c2.tar.gz",
+      "digest": "sha256:e6729d9a300c3f390508f02d0c44feac9726860dc8df7ac6d922d42a5f9b04c2"
+    },
+    {
       "name": "package-agent-network-green",
       "type": "archive",
       "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
-      "url": "/.well-known/agent-skills/package-agent-network-green-8d29562a32afb3e8938f6681016fb6ec0588a77f6fba4375cee2bf0bfbbb57a1.tar.gz",
-      "digest": "sha256:8d29562a32afb3e8938f6681016fb6ec0588a77f6fba4375cee2bf0bfbbb57a1"
+      "url": "/.well-known/agent-skills/package-agent-network-green-a608f96fe91765b5f34a00e8d18de2d98288f04df0d4be7b617d2e03de191329.tar.gz",
+      "digest": "sha256:a608f96fe91765b5f34a00e8d18de2d98288f04df0d4be7b617d2e03de191329"
+    },
+    {
+      "name": "package-agent-network-red",
+      "type": "archive",
+      "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
+      "url": "/.well-known/agent-skills/package-agent-network-red-3ca02b3da70586c5bd48fe123576de10e1ff28b6b06851d5356f50a13846192a.tar.gz",
+      "digest": "sha256:3ca02b3da70586c5bd48fe123576de10e1ff28b6b06851d5356f50a13846192a"
     },
     {
       "name": "package-airflow-blue",
@@ -107,11 +121,25 @@
       "digest": "sha256:926707b88b2be1728028846c987b89fbdd06a9a4475ae09b231261d9c351a423"
     },
     {
+      "name": "package-netbird-blue",
+      "type": "archive",
+      "description": "Provision and manage a self-hosted NetBird control plane with Authentik as its identity provider on a single Vultr instance, from declarative desired state. Use when asked to deploy, converge, inspect, back up, restore or delete a NetBird zero-trust network, a self-hosted WireGuard control plane, or a NetBird instance with SSO/MFA.",
+      "url": "/.well-known/agent-skills/package-netbird-blue-87e54715b11b10eea915b8b3aa2028b5c2f86c9af11df082b842f0e1b2d4714c.tar.gz",
+      "digest": "sha256:87e54715b11b10eea915b8b3aa2028b5c2f86c9af11df082b842f0e1b2d4714c"
+    },
+    {
       "name": "package-netbird-green",
       "type": "archive",
       "description": "Provision and manage a self-hosted NetBird control plane with Authentik as its identity provider on a single Vultr instance, from declarative desired state. Use when asked to deploy, converge, inspect, back up, restore or delete a NetBird zero-trust network, a self-hosted WireGuard control plane, or a NetBird instance with SSO/MFA.",
-      "url": "/.well-known/agent-skills/package-netbird-green-5c5a593cf2faaeea50dd03c4f4e6a1db7b551c461e57d041d21ef58615482487.tar.gz",
-      "digest": "sha256:5c5a593cf2faaeea50dd03c4f4e6a1db7b551c461e57d041d21ef58615482487"
+      "url": "/.well-known/agent-skills/package-netbird-green-78fe2d9a40e57f0117b9a427c041bb05d6fddd7d23b8694948592f5b48918e79.tar.gz",
+      "digest": "sha256:78fe2d9a40e57f0117b9a427c041bb05d6fddd7d23b8694948592f5b48918e79"
+    },
+    {
+      "name": "package-netbird-red",
+      "type": "archive",
+      "description": "Provision and manage a self-hosted NetBird control plane with Authentik as its identity provider on a single Vultr instance, from declarative desired state. Use when asked to deploy, converge, inspect, back up, restore or delete a NetBird zero-trust network, a self-hosted WireGuard control plane, or a NetBird instance with SSO/MFA.",
+      "url": "/.well-known/agent-skills/package-netbird-red-d3ff78cb6ed9781fbd11d6073257347e554bc6204fc609d5f1c70a8a8f44742a.tar.gz",
+      "digest": "sha256:d3ff78cb6ed9781fbd11d6073257347e554bc6204fc609d5f1c70a8a8f44742a"
     },
     {
       "name": "package-once-blue",

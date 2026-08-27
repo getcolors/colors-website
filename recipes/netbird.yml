@@ -17,6 +17,12 @@ keywords:
   - Cloudflare
   - self-hosted
 package-skills:
+  - name: package-netbird-red
+    path: skills/package-netbird-red/SKILL.md
+    runtime: red
   - name: package-netbird-green
     path: skills/package-netbird-green/SKILL.md
     runtime: green
+  - name: package-netbird-blue
+    path: skills/package-netbird-blue/SKILL.md
+    runtime: blue
