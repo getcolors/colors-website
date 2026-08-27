@@ -19,8 +19,8 @@
       "name": "create-package-skill",
       "type": "skill-md",
       "description": "Use when asked to create a getcolors Package Skill and a deployment that uses it, including desired-state configuration, provider credentials, GitHub repositories, provisioning, or end-to-end deployment.",
-      "url": "/.well-known/agent-skills/create-package-skill-5d3bc1e68a29b4a3ea15379fa52889d3089af20dfe39c749294bfa63bb4e5095/SKILL.md",
-      "digest": "sha256:5d3bc1e68a29b4a3ea15379fa52889d3089af20dfe39c749294bfa63bb4e5095"
+      "url": "/.well-known/agent-skills/create-package-skill-ffdec3d1bc1b07052a7085e0d237feb6869e93918b858fbefd9f556a364609fa/SKILL.md",
+      "digest": "sha256:ffdec3d1bc1b07052a7085e0d237feb6869e93918b858fbefd9f556a364609fa"
     },
     {
       "name": "package-agent-network-green",
@@ -236,15 +236,15 @@
       "name": "submit-context-skill",
       "type": "skill-md",
       "description": "Submit an existing Colors Context Skill to the getcolors.ai catalog by validating it against the Context Skill Standard, adding a type context recipe, and opening a pull request.",
-      "url": "/.well-known/agent-skills/submit-context-skill-c438f937c8277e2afca69c24ada17b01598169cbc84fd9c976a48b5a136ec3a8/SKILL.md",
-      "digest": "sha256:c438f937c8277e2afca69c24ada17b01598169cbc84fd9c976a48b5a136ec3a8"
+      "url": "/.well-known/agent-skills/submit-context-skill-00e950b431ca2f9f669d2d76e281201e65e140db1d1da999cef2fb972f7b21a8/SKILL.md",
+      "digest": "sha256:00e950b431ca2f9f669d2d76e281201e65e140db1d1da999cef2fb972f7b21a8"
     },
     {
       "name": "submit-package-skill",
       "type": "skill-md",
       "description": "Submit an existing Colors Package Skill to the getcolors.ai Package Skills Catalog by validating it, adding a catalog recipe, and opening a pull request.",
-      "url": "/.well-known/agent-skills/submit-package-skill-186a5d04fc1d8af7cf4ea0a5fdec554fac1c8c56b0182e1578766144b47c6f57/SKILL.md",
-      "digest": "sha256:186a5d04fc1d8af7cf4ea0a5fdec554fac1c8c56b0182e1578766144b47c6f57"
+      "url": "/.well-known/agent-skills/submit-package-skill-20548b41aedf6da56c1e478c22685a56ab9e45fa5ec1cccfa826190b55a350b1/SKILL.md",
+      "digest": "sha256:20548b41aedf6da56c1e478c22685a56ab9e45fa5ec1cccfa826190b55a350b1"
     }
   ]
 }
