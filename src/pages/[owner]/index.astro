@@ -1,17 +1,38 @@
 ---
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
-import { catalogOgImage, formatInstalls, loadCatalog, type CatalogOwner } from "~/data/catalog";
+import { catalogOgImage, formatInstalls, loadCatalog, runtimeLabels, type CatalogOwner, type Runtime } from "~/data/catalog";
 
 export async function getStaticPaths() {
   const catalog = await loadCatalog();
   return catalog.owners.map((owner) => ({ params: { owner: owner.name }, props: { owner } }));
 }
 interface Props { owner: CatalogOwner; }
-const { owner } = Astro.props;
+const { owner }: Props = Astro.props;
 const title = `${owner.name} Package Skills — Colors`;
 const skillTotal = owner.packageSkills.length + owner.contextSkills.length;
 const description = `Browse ${skillTotal} curated skills from ${owner.name} in the Colors Skills Catalog.`;
+const hasBothKinds = owner.packageSkills.length > 0 && owner.contextSkills.length > 0;
+type OwnerRepository = CatalogOwner["repositories"][number];
+// Rows are searched by everything a visitor might scan for: the repository,
+// the recipes' product names and keywords, skill names, runtimes, and kinds.
+const rowSearch = (repository: OwnerRepository) =>
+  [
+    repository.repository,
+    repository.repositoryName,
+    ...repository.recipes.flatMap((recipe) => [recipe.name, ...recipe.keywords]),
+    ...repository.packageSkills.flatMap((item) => [item.name, item.runtime, runtimeLabels[item.runtime]]),
+    ...repository.contextSkills.map((item) => item.name),
+    repository.contextSkills.length > 0 ? "context skill" : "",
+  ].join(" ").toLowerCase();
+const rowKinds = (repository: OwnerRepository) =>
+  [repository.packageSkills.length > 0 && "package", repository.contextSkills.length > 0 && "context"]
+    .filter(Boolean)
+    .join(" ");
+const rowRuntimes = (repository: OwnerRepository) =>
+  [...new Set(repository.packageSkills.map((item) => item.runtime))] as Runtime[];
+const rowKeywords = (repository: OwnerRepository) =>
+  [...new Set(repository.recipes.flatMap((recipe) => recipe.keywords))].slice(0, 6);
 ---
 <CatalogLayout {title} {description} path={owner.url} image={catalogOgImage("owner", owner.name)} imageAlt={`${owner.name} Package Skills on Colors`}>
   <section class="owner-page wrap">
@@ -43,6 +64,21 @@ const description = `Browse ${skillTotal} curated skills from ${owner.name} in t
         <span>GitHub</span>
       </a>
     </div>
+    <div class="finder">
+      <label class="search">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 5 5"></path></svg>
+        <span class="sr-only">Filter sources</span>
+        <input id="owner-search" type="search" placeholder="Filter by platform, provider, runtime, keyword…" autocomplete="off" />
+        <kbd>/</kbd>
+      </label>
+      {hasBothKinds && (
+        <div class="catalog-tabs" role="tablist" aria-label="Skill kind">
+          <button type="button" role="tab" aria-selected="true" data-owner-tab="all">All</button>
+          <button type="button" role="tab" aria-selected="false" data-owner-tab="package">Package Skills</button>
+          <button type="button" role="tab" aria-selected="false" data-owner-tab="context">Context Skills</button>
+        </div>
+      )}
+    </div>
     <div class="source-list panel">
       <div class="list-head"><span>Source</span><span>Installs</span></div>
       {owner.repositories.map((repository) => {
@@ -51,29 +87,87 @@ const description = `Browse ${skillTotal} curated skills from ${owner.name} in t
           ? (skills.length === 1 ? "Context Skill" : "Context Skills")
           : (skills.length === 1 ? "Package Skill" : "Package Skills");
         return (
-          <a class="source-row" href={repository.url}>
-            <div><strong>{repository.repositoryName}</strong><p>{skills.length} {noun}: {skills.slice(0, 3).map((item) => item.name).join(", ")}{skills.length > 3 && ` +${skills.length - 3} more`}</p></div>
-            <span>{formatInstalls(repository.installs)}</span>
+          <a class="source-row" href={repository.url} data-search={rowSearch(repository)} data-kinds={rowKinds(repository)}>
+            <div>
+              <span class="row-title">
+                <strong>{repository.repositoryName}</strong>
+                {rowRuntimes(repository).map((runtime) => (
+                  <span class:list={["runtime", `runtime-${runtime}`]} title={runtimeLabels[runtime]}>{runtime}</span>
+                ))}
+                {repository.contextSkills.length > 0 && <span class="runtime runtime-context">context</span>}
+              </span>
+              <p>{skills.length} {noun} · {rowKeywords(repository).join(" · ")}</p>
+            </div>
+            <span class="installs">{formatInstalls(repository.installs)}</span>
           </a>
         );
       })}
+      <p id="owner-empty" class="empty" hidden>No sources match that filter.</p>
     </div>
   </section>
 </CatalogLayout>
+
+<script>
+  const input = document.querySelector<HTMLInputElement>("#owner-search");
+  const rows = [...document.querySelectorAll<HTMLElement>(".source-row[data-search]")];
+  const empty = document.querySelector<HTMLElement>("#owner-empty");
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>("[data-owner-tab]")];
+  let active = "all";
+  const filter = () => {
+    const terms = (input?.value ?? "").toLowerCase().trim().split(/\s+/).filter(Boolean);
+    let visibleCount = 0;
+    for (const row of rows) {
+      const kindOk = active === "all" || (row.dataset.kinds ?? "").split(" ").includes(active);
+      const visible = kindOk && terms.every((term) => row.dataset.search?.includes(term));
+      row.hidden = !visible;
+      if (visible) visibleCount += 1;
+    }
+    if (empty) empty.hidden = visibleCount !== 0;
+  };
+  const select = (tab: string) => {
+    active = tab;
+    tabs.forEach((button) => button.setAttribute("aria-selected", String(button.dataset.ownerTab === tab)));
+    filter();
+  };
+  tabs.forEach((button) => button.addEventListener("click", () => select(button.dataset.ownerTab ?? "all")));
+  input?.addEventListener("input", filter);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "/" && document.activeElement !== input) {
+      event.preventDefault();
+      input?.focus();
+    }
+  });
+</script>
+
 <style>
   .owner-page { padding-block: 62px 80px; }
   .owner-head { display: flex; align-items: end; justify-content: space-between; gap: 25px; }
-  .stats { display: flex; flex-wrap: wrap; gap: 14px 32px; margin: 35px 0 55px; color: var(--muted); font-size: 14px; }
+  .stats { display: flex; flex-wrap: wrap; gap: 14px 32px; margin: 35px 0 30px; color: var(--muted); font-size: 14px; }
   .stats span { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
   .stats svg { width: 18px; height: 18px; fill: none; stroke: var(--blue); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .stats strong { color: var(--ink); font-size: 14px; font-weight: 600; }
   .stats .github-link { display: inline-flex; align-items: center; gap: 7px; color: var(--blue); white-space: nowrap; }
+  .finder { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; margin-bottom: 26px; }
+  .search { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; flex: 1 1 320px; max-width: 520px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  .search:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px oklch(55% .18 260 / .12); }
+  .search svg { width: 18px; fill: none; stroke: var(--muted); stroke-width: 1.7; }
+  .search input { min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 15px; }
+  .search kbd { padding: 2px 7px; border: 1px solid var(--line); border-radius: 5px; color: var(--faint); font: 12px var(--mono); }
+  .catalog-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .catalog-tabs button { padding: 8px 16px; border: 1px solid var(--line); border-radius: 100px; background: var(--panel); color: var(--muted); font: 13px var(--sans); cursor: pointer; transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease; }
+  .catalog-tabs button:hover { border-color: oklch(80% 0.04 260); color: var(--ink); }
+  .catalog-tabs button[aria-selected="true"] { border-color: var(--blue); background: oklch(96% 0.03 260); color: var(--blue); }
   .list-head, .source-row { display: grid; grid-template-columns: 1fr 100px; gap: 20px; padding: 15px 20px; }
   .list-head { color: var(--faint); font: 11px var(--mono); text-transform: uppercase; }
   .list-head span:last-child { text-align: right; }
   .source-row { align-items: center; border-top: 1px solid var(--line); }
+  .source-row[hidden] { display: none; }
   .source-row:hover { background: var(--surface); }
+  .row-title { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .source-row strong { color: var(--ink); font: 500 17px var(--sans); }
   .source-row p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
-  .source-row > span { color: var(--muted); font: 13px var(--mono); text-align: right; }
+  .source-row .installs { color: var(--muted); font: 13px var(--mono); text-align: right; }
+  .empty { padding: 40px 20px; color: var(--muted); text-align: center; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  @media (max-width: 700px) { .finder { align-items: stretch; flex-direction: column; } .search { max-width: none; } }
 </style>

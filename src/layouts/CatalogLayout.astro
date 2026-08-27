@@ -108,6 +108,9 @@ const { title, description, path, image, imageAlt, type = "website", active = "c
     --red: oklch(60% 0.19 25);
     --green: oklch(65% 0.17 145);
     --blue: oklch(55% 0.18 260);
+    /* The fourth accent: Context Skills. Purple, so the chip dot cannot be
+       mistaken for the red/green/blue runtime accents. */
+    --context: oklch(55% 0.18 320);
     --mono: "IBM Plex Mono", monospace;
     --sans: "IBM Plex Sans", Helvetica, Arial, sans-serif;
   }
@@ -132,6 +135,7 @@ const { title, description, path, image, imageAlt, type = "website", active = "c
   .runtime-red { --runtime-color: var(--red); }
   .runtime-green { --runtime-color: var(--green); }
   .runtime-blue { --runtime-color: var(--blue); }
+  .runtime-context { --runtime-color: var(--context); border-color: oklch(88% 0.05 320); background: oklch(96.5% 0.02 320); color: oklch(45% 0.16 320); }
   .mono { font-family: var(--mono); }
   .muted { color: var(--muted); }
   .button-link { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 8px; color: var(--blue); font: 13px var(--mono); }
