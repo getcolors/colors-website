@@ -12,6 +12,12 @@ keywords:
   - DigitalOcean
 featured: /featured#posthog
 package-skills:
+  - name: package-posthog-red
+    path: skills/package-posthog-red/SKILL.md
+    runtime: red
   - name: package-posthog-green
     path: skills/package-posthog-green/SKILL.md
     runtime: green
+  - name: package-posthog-blue
+    path: skills/package-posthog-blue/SKILL.md
+    runtime: blue

@@ -13,6 +13,12 @@ keywords:
   - Cloudflare R2
   - self-hosted
 package-skills:
+  - name: package-dbos-red
+    path: skills/package-dbos-red/SKILL.md
+    runtime: red
   - name: package-dbos-green
     path: skills/package-dbos-green/SKILL.md
     runtime: green
+  - name: package-dbos-blue
+    path: skills/package-dbos-blue/SKILL.md
+    runtime: blue

@@ -107,11 +107,25 @@
       "digest": "sha256:258673a93594e9061847d22fee359ffa67c25c9ceb4a7ae535f3e5fadcf98b63"
     },
     {
+      "name": "package-dbos-blue",
+      "type": "archive",
+      "description": "Provisions a single-machine DBOS TypeScript durable-workflow service with colocated PostgreSQL on DigitalOcean. Use for build, dry-run, deployment, acceptance, recovery, upgrade, or authorized deletion.",
+      "url": "/.well-known/agent-skills/package-dbos-blue-73e68c8bbd893a5de443da013744b762d2929e4159968017caa3ba53c69997a9.tar.gz",
+      "digest": "sha256:73e68c8bbd893a5de443da013744b762d2929e4159968017caa3ba53c69997a9"
+    },
+    {
       "name": "package-dbos-green",
       "type": "archive",
       "description": "Provisions a single-machine DBOS TypeScript durable-workflow service with colocated PostgreSQL on DigitalOcean. Use for build, dry-run, deployment, acceptance, recovery, upgrade, or authorized deletion.",
-      "url": "/.well-known/agent-skills/package-dbos-green-4243c8b7f7481125795fb37f9cb2fc070591b4b1c6dc666f8fe9f34da0f70f9f.tar.gz",
-      "digest": "sha256:4243c8b7f7481125795fb37f9cb2fc070591b4b1c6dc666f8fe9f34da0f70f9f"
+      "url": "/.well-known/agent-skills/package-dbos-green-534109590dee73690fbeb6c96497dcccdb1a640f0417fd74699aa2d52f8668c5.tar.gz",
+      "digest": "sha256:534109590dee73690fbeb6c96497dcccdb1a640f0417fd74699aa2d52f8668c5"
+    },
+    {
+      "name": "package-dbos-red",
+      "type": "archive",
+      "description": "Provisions a single-machine DBOS TypeScript durable-workflow service with colocated PostgreSQL on DigitalOcean. Use for build, dry-run, deployment, acceptance, recovery, upgrade, or authorized deletion.",
+      "url": "/.well-known/agent-skills/package-dbos-red-c6db48452dc73e33709f3578f8737effa457c9ce844467478769526b3718930e.tar.gz",
+      "digest": "sha256:c6db48452dc73e33709f3578f8737effa457c9ce844467478769526b3718930e"
     },
     {
       "name": "package-github-dwh-blue",
@@ -121,32 +135,88 @@
       "digest": "sha256:336b5c3ae320f4701003fbb03e1cf4703eb44c5304d319c6b0f0d1956c5a865e"
     },
     {
+      "name": "package-k3s-blue",
+      "type": "archive",
+      "description": "Creates and operates a secure single-node K3s server on Hetzner Cloud with Blue, OpenTofu, Ansible, Flux CD, and a public Git deployment repository. Use when initializing a K3s project, writing colors.yml, building or dry-running infrastructure, provisioning or destroying the server, configuring Flux, or invoking kubectl.",
+      "url": "/.well-known/agent-skills/package-k3s-blue-e912e5f156bc4cd53e6ee5faaab300e68070798c89c5e566010ced97e7c6c364.tar.gz",
+      "digest": "sha256:e912e5f156bc4cd53e6ee5faaab300e68070798c89c5e566010ced97e7c6c364"
+    },
+    {
       "name": "package-k3s-green",
       "type": "archive",
       "description": "Creates and operates a secure single-node K3s server on Hetzner Cloud with Green, OpenTofu, Ansible, Flux CD, and a public Git deployment repository. Use when initializing a K3s project, writing colors.yml, building or dry-running infrastructure, provisioning or destroying the server, configuring Flux, or invoking kubectl.",
-      "url": "/.well-known/agent-skills/package-k3s-green-5edb902283f6dbee4f0f39171431354dd15b67dd572df28b7ba4b89c2ab99baa.tar.gz",
-      "digest": "sha256:5edb902283f6dbee4f0f39171431354dd15b67dd572df28b7ba4b89c2ab99baa"
+      "url": "/.well-known/agent-skills/package-k3s-green-3ad95811db76ceb0d7660c5f6762a570baf8b52827ca656cd7f9f537a73e1d7b.tar.gz",
+      "digest": "sha256:3ad95811db76ceb0d7660c5f6762a570baf8b52827ca656cd7f9f537a73e1d7b"
+    },
+    {
+      "name": "package-k3s-red",
+      "type": "archive",
+      "description": "Creates and operates a secure single-node K3s server on Hetzner Cloud with Red, OpenTofu, Ansible, Flux CD, and a public Git deployment repository. Use when initializing a K3s project, writing colors.yml, building or dry-running infrastructure, provisioning or destroying the server, configuring Flux, or invoking kubectl.",
+      "url": "/.well-known/agent-skills/package-k3s-red-a7259c7f163d4d80849a9f820326c6f44ec33386f5dfe3e5ff319cc4c641603c.tar.gz",
+      "digest": "sha256:a7259c7f163d4d80849a9f820326c6f44ec33386f5dfe3e5ff319cc4c641603c"
+    },
+    {
+      "name": "package-k8s-blue",
+      "type": "archive",
+      "description": "Build and operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Blue, Flannel, DigitalOcean CCM, Flux, ExternalDNS, cert-manager, and acceptance.",
+      "url": "/.well-known/agent-skills/package-k8s-blue-edc782e88868a7385ce4ad942764654004f9f7951420231e8832e12ff3be0b4e.tar.gz",
+      "digest": "sha256:edc782e88868a7385ce4ad942764654004f9f7951420231e8832e12ff3be0b4e"
     },
     {
       "name": "package-k8s-green",
       "type": "archive",
       "description": "Build and operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Green, Flannel, DigitalOcean CCM, Flux, ExternalDNS, cert-manager, and acceptance.",
-      "url": "/.well-known/agent-skills/package-k8s-green-12e14880a394bcf4d3309afda234061d0bbda3ef60ef7b3d4d029014462486c6.tar.gz",
-      "digest": "sha256:12e14880a394bcf4d3309afda234061d0bbda3ef60ef7b3d4d029014462486c6"
+      "url": "/.well-known/agent-skills/package-k8s-green-bedfad76521359b08c72f407e0591922ffc0ee958e16e0c27972ee2515ba6577.tar.gz",
+      "digest": "sha256:bedfad76521359b08c72f407e0591922ffc0ee958e16e0c27972ee2515ba6577"
+    },
+    {
+      "name": "package-k8s-red",
+      "type": "archive",
+      "description": "Build and operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Red, Flannel, DigitalOcean CCM, Flux, ExternalDNS, cert-manager, and acceptance.",
+      "url": "/.well-known/agent-skills/package-k8s-red-0d4a0b0f3ec08252434ad79cab1ef9e4cef63ee5e488b9d876ba5f3fb483561f.tar.gz",
+      "digest": "sha256:0d4a0b0f3ec08252434ad79cab1ef9e4cef63ee5e488b9d876ba5f3fb483561f"
+    },
+    {
+      "name": "package-mysql-agy-blue",
+      "type": "archive",
+      "description": "A 3-node MySQL Group Replication high-availability cluster on DigitalOcean with continuous point-in-time recovery to Cloudflare R2.",
+      "url": "/.well-known/agent-skills/package-mysql-agy-blue-d1af628aa158043b0e961f7a7c3c1f2a6bed8d14fcd88654bafab8f15b820f5c.tar.gz",
+      "digest": "sha256:d1af628aa158043b0e961f7a7c3c1f2a6bed8d14fcd88654bafab8f15b820f5c"
     },
     {
       "name": "package-mysql-agy-green",
       "type": "archive",
       "description": "A 3-node MySQL Group Replication high-availability cluster on DigitalOcean with continuous point-in-time recovery to Cloudflare R2.",
-      "url": "/.well-known/agent-skills/package-mysql-agy-green-8b280f013f6b9ed0c8218bb1069d142b3591ac6474df4c77babf3332b05563c6.tar.gz",
-      "digest": "sha256:8b280f013f6b9ed0c8218bb1069d142b3591ac6474df4c77babf3332b05563c6"
+      "url": "/.well-known/agent-skills/package-mysql-agy-green-fc983b487a6dd47f36ddf4ebfdcde17a1339af8b181b9fab6b7aae83cc880b58.tar.gz",
+      "digest": "sha256:fc983b487a6dd47f36ddf4ebfdcde17a1339af8b181b9fab6b7aae83cc880b58"
+    },
+    {
+      "name": "package-mysql-agy-red",
+      "type": "archive",
+      "description": "A 3-node MySQL Group Replication high-availability cluster on DigitalOcean with continuous point-in-time recovery to Cloudflare R2.",
+      "url": "/.well-known/agent-skills/package-mysql-agy-red-ff398799f69a88f675f7de6b462a870e2d44f943053f1dc4a1fefeb5133941ac.tar.gz",
+      "digest": "sha256:ff398799f69a88f675f7de6b462a870e2d44f943053f1dc4a1fefeb5133941ac"
+    },
+    {
+      "name": "package-mysql-ha-blue",
+      "type": "archive",
+      "description": "Build and operate a three-member MySQL Group Replication cluster on DigitalOcean with Blue — automatic failover onto a reserved IP, daily snapshots and continuous binary-log archiving to Cloudflare R2, and a scheduled verified restore.",
+      "url": "/.well-known/agent-skills/package-mysql-ha-blue-ca9da1879e98cbaada9bf9f3078f4173e2c1f9a672b7b9c75eb86c7eae6e8008.tar.gz",
+      "digest": "sha256:ca9da1879e98cbaada9bf9f3078f4173e2c1f9a672b7b9c75eb86c7eae6e8008"
     },
     {
       "name": "package-mysql-ha-green",
       "type": "archive",
       "description": "Build and operate a three-member MySQL Group Replication cluster on DigitalOcean with Green — automatic failover onto a reserved IP, daily snapshots and continuous binary-log archiving to Cloudflare R2, and a scheduled verified restore.",
-      "url": "/.well-known/agent-skills/package-mysql-ha-green-926707b88b2be1728028846c987b89fbdd06a9a4475ae09b231261d9c351a423.tar.gz",
-      "digest": "sha256:926707b88b2be1728028846c987b89fbdd06a9a4475ae09b231261d9c351a423"
+      "url": "/.well-known/agent-skills/package-mysql-ha-green-3db253f72531ca952d9fa8a9f5f4f23a914f97f59949174a3b07d19536b1bd02.tar.gz",
+      "digest": "sha256:3db253f72531ca952d9fa8a9f5f4f23a914f97f59949174a3b07d19536b1bd02"
+    },
+    {
+      "name": "package-mysql-ha-red",
+      "type": "archive",
+      "description": "Build and operate a three-member MySQL Group Replication cluster on DigitalOcean with Red — automatic failover onto a reserved IP, daily snapshots and continuous binary-log archiving to Cloudflare R2, and a scheduled verified restore.",
+      "url": "/.well-known/agent-skills/package-mysql-ha-red-9ecc35f577bf84bdcf8093d1d08ccbda89738ded94835a6f5d45bab1dbaf0fe0.tar.gz",
+      "digest": "sha256:9ecc35f577bf84bdcf8093d1d08ccbda89738ded94835a6f5d45bab1dbaf0fe0"
     },
     {
       "name": "package-netbird-blue",
@@ -191,25 +261,67 @@
       "digest": "sha256:cbc96a2ac0aba9faad5f855fcbcc592b2f9c2732744abdde08943c458ed20ee1"
     },
     {
+      "name": "package-postgres-agy-blue",
+      "type": "archive",
+      "description": "Build and operate a three-node PostgreSQL 17 failover cluster on DigitalOcean with Patroni, colocated etcd v3, HAProxy client routing, Cloudflare DNS, pgBackRest backups to Cloudflare R2, heartbeat streaming, and verified restore check.",
+      "url": "/.well-known/agent-skills/package-postgres-agy-blue-8fa8dee6b98e45ae5323e3409a06688555f5c2675516a11aca9315d61e4681c9.tar.gz",
+      "digest": "sha256:8fa8dee6b98e45ae5323e3409a06688555f5c2675516a11aca9315d61e4681c9"
+    },
+    {
       "name": "package-postgres-agy-green",
       "type": "archive",
       "description": "Build and operate a three-node PostgreSQL 17 failover cluster on DigitalOcean with Patroni, colocated etcd v3, HAProxy client routing, Cloudflare DNS, pgBackRest backups to Cloudflare R2, heartbeat streaming, and verified restore check.",
-      "url": "/.well-known/agent-skills/package-postgres-agy-green-7bb893cf787aae3814b43931e588fe30717a44ff36e5db5748583a02a44a2ef9.tar.gz",
-      "digest": "sha256:7bb893cf787aae3814b43931e588fe30717a44ff36e5db5748583a02a44a2ef9"
+      "url": "/.well-known/agent-skills/package-postgres-agy-green-31864750429816e5630fe34dde0d59959986bee2fcf73c15103799d104f68065.tar.gz",
+      "digest": "sha256:31864750429816e5630fe34dde0d59959986bee2fcf73c15103799d104f68065"
+    },
+    {
+      "name": "package-postgres-agy-red",
+      "type": "archive",
+      "description": "Build and operate a three-node PostgreSQL 17 failover cluster on DigitalOcean with Patroni, colocated etcd v3, HAProxy client routing, Cloudflare DNS, pgBackRest backups to Cloudflare R2, heartbeat streaming, and verified restore check.",
+      "url": "/.well-known/agent-skills/package-postgres-agy-red-e43ec4c6f01cda6110a204452d2e72318ece1935275fc5b7c325c271ffe5874f.tar.gz",
+      "digest": "sha256:e43ec4c6f01cda6110a204452d2e72318ece1935275fc5b7c325c271ffe5874f"
+    },
+    {
+      "name": "package-postgres-ha-blue",
+      "type": "archive",
+      "description": "Provision and operate a three-node PostgreSQL failover cluster on DigitalOcean with Patroni, etcd, HAProxy, Cloudflare DNS, and pgBackRest point-in-time recovery to Cloudflare R2, using Blue.",
+      "url": "/.well-known/agent-skills/package-postgres-ha-blue-acbc16a89f9c8e1e74f1a7109eb8406a0b7cb27f5f21ede71d4212001b6ee1c0.tar.gz",
+      "digest": "sha256:acbc16a89f9c8e1e74f1a7109eb8406a0b7cb27f5f21ede71d4212001b6ee1c0"
     },
     {
       "name": "package-postgres-ha-green",
       "type": "archive",
       "description": "Provision and operate a three-node PostgreSQL failover cluster on DigitalOcean with Patroni, etcd, HAProxy, Cloudflare DNS, and pgBackRest point-in-time recovery to Cloudflare R2, using Green.",
-      "url": "/.well-known/agent-skills/package-postgres-ha-green-72281a375b3d969fa76f51ba98543057795ae7063a2cfb4cc10807061039f8c4.tar.gz",
-      "digest": "sha256:72281a375b3d969fa76f51ba98543057795ae7063a2cfb4cc10807061039f8c4"
+      "url": "/.well-known/agent-skills/package-postgres-ha-green-a44f8541f56516ee3cd7315f9920ffd5bf2d20d96d3260859e0fcf17bfcbd127.tar.gz",
+      "digest": "sha256:a44f8541f56516ee3cd7315f9920ffd5bf2d20d96d3260859e0fcf17bfcbd127"
+    },
+    {
+      "name": "package-postgres-ha-red",
+      "type": "archive",
+      "description": "Provision and operate a three-node PostgreSQL failover cluster on DigitalOcean with Patroni, etcd, HAProxy, Cloudflare DNS, and pgBackRest point-in-time recovery to Cloudflare R2, using Red.",
+      "url": "/.well-known/agent-skills/package-postgres-ha-red-01680172f8a4a546785b6b0f114f0cc99e430568b7dbe79c978f92adfa027c35.tar.gz",
+      "digest": "sha256:01680172f8a4a546785b6b0f114f0cc99e430568b7dbe79c978f92adfa027c35"
+    },
+    {
+      "name": "package-posthog-blue",
+      "type": "archive",
+      "description": "Provisions and operates a single-node PostHog product analytics suite with PostgreSQL 17, ClickHouse 24.8, Redis 7.2, and Caddy on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-posthog-blue-1d03f8c1d9dcb224a1f774908ce335af894a58a9fadf5ad8c9cc4d51348fee9b.tar.gz",
+      "digest": "sha256:1d03f8c1d9dcb224a1f774908ce335af894a58a9fadf5ad8c9cc4d51348fee9b"
     },
     {
       "name": "package-posthog-green",
       "type": "archive",
       "description": "Provisions and operates a single-node PostHog product analytics suite with PostgreSQL 17, ClickHouse 24.8, Redis 7.2, and Caddy on DigitalOcean.",
-      "url": "/.well-known/agent-skills/package-posthog-green-9ba5df55283df84f89e0e5387a69262b1188f436d9fb71dc96e9e31c4d528271.tar.gz",
-      "digest": "sha256:9ba5df55283df84f89e0e5387a69262b1188f436d9fb71dc96e9e31c4d528271"
+      "url": "/.well-known/agent-skills/package-posthog-green-d71cb2ff03c266c2ffd16f624e63150905638d61f800065e3b664bf922835af1.tar.gz",
+      "digest": "sha256:d71cb2ff03c266c2ffd16f624e63150905638d61f800065e3b664bf922835af1"
+    },
+    {
+      "name": "package-posthog-red",
+      "type": "archive",
+      "description": "Provisions and operates a single-node PostHog product analytics suite with PostgreSQL 17, ClickHouse 24.8, Redis 7.2, and Caddy on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-posthog-red-e74ac5c3aa7d30fd7e5409cfab7a5a8e445bfc769f4609fae0b96f81589124ce.tar.gz",
+      "digest": "sha256:e74ac5c3aa7d30fd7e5409cfab7a5a8e445bfc769f4609fae0b96f81589124ce"
     },
     {
       "name": "package-rama-green",
@@ -219,46 +331,130 @@
       "digest": "sha256:50afb1ec447e927ac524c94540fb1e52f908036e815a9eff2ff8cde6ba2ad7eb"
     },
     {
+      "name": "package-restate-blue",
+      "type": "archive",
+      "description": "Provisions and operates production-oriented single-node Restate with a durable TypeScript reference workflow on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-restate-blue-38209d7847467343bede0db27a7bfe2cb59c3c8b65faac59c62d7f02850650df.tar.gz",
+      "digest": "sha256:38209d7847467343bede0db27a7bfe2cb59c3c8b65faac59c62d7f02850650df"
+    },
+    {
       "name": "package-restate-green",
       "type": "archive",
       "description": "Provisions and operates production-oriented single-node Restate with a durable TypeScript reference workflow on DigitalOcean.",
-      "url": "/.well-known/agent-skills/package-restate-green-ef590c3f5551f098b34fad6152cd1ef05b81c1d4b9a1a804363adb81f947ab79.tar.gz",
-      "digest": "sha256:ef590c3f5551f098b34fad6152cd1ef05b81c1d4b9a1a804363adb81f947ab79"
+      "url": "/.well-known/agent-skills/package-restate-green-c961d43f08a832d7d71f85a92defcc69c4be26fb5786e5d21cbb426aa89d0300.tar.gz",
+      "digest": "sha256:c961d43f08a832d7d71f85a92defcc69c4be26fb5786e5d21cbb426aa89d0300"
+    },
+    {
+      "name": "package-restate-red",
+      "type": "archive",
+      "description": "Provisions and operates production-oriented single-node Restate with a durable TypeScript reference workflow on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-restate-red-6011dd11c916d50454be01ea19c2ec3fef2d1281798a705c572233bcf6489174.tar.gz",
+      "digest": "sha256:6011dd11c916d50454be01ea19c2ec3fef2d1281798a705c572233bcf6489174"
+    },
+    {
+      "name": "package-rybbit-blue",
+      "type": "archive",
+      "description": "Provisions and operates a production-oriented single-node Rybbit analytics service with PostgreSQL, ClickHouse, Redis and Caddy on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-rybbit-blue-7236c8e109f84f5d390da7bf075bf0bca639b63fae7bb70aadbc59eb32a8f46d.tar.gz",
+      "digest": "sha256:7236c8e109f84f5d390da7bf075bf0bca639b63fae7bb70aadbc59eb32a8f46d"
     },
     {
       "name": "package-rybbit-green",
       "type": "archive",
       "description": "Provisions and operates a production-oriented single-node Rybbit analytics service with PostgreSQL, ClickHouse, Redis and Caddy on DigitalOcean.",
-      "url": "/.well-known/agent-skills/package-rybbit-green-2d8c76bc8e1d255854f6eb9be187c3f000b7642290e55119b0ccd46d615888d8.tar.gz",
-      "digest": "sha256:2d8c76bc8e1d255854f6eb9be187c3f000b7642290e55119b0ccd46d615888d8"
+      "url": "/.well-known/agent-skills/package-rybbit-green-7eec62bd1f5d8aa4893d3375513662190a366d857bcb978827fa860345295eb8.tar.gz",
+      "digest": "sha256:7eec62bd1f5d8aa4893d3375513662190a366d857bcb978827fa860345295eb8"
+    },
+    {
+      "name": "package-rybbit-red",
+      "type": "archive",
+      "description": "Provisions and operates a production-oriented single-node Rybbit analytics service with PostgreSQL, ClickHouse, Redis and Caddy on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-rybbit-red-d82626c793e58a4d27bcc4dfdc3434c9159d29387bedd8c92393d85a97ec9529.tar.gz",
+      "digest": "sha256:d82626c793e58a4d27bcc4dfdc3434c9159d29387bedd8c92393d85a97ec9529"
+    },
+    {
+      "name": "package-signoz-blue",
+      "type": "archive",
+      "description": "Provision and manage a single-node SigNoz observability stack on Vultr — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — with OpenTofu, Ansible and Cloudflare DNS. Use when asked to deploy, converge, inspect or tear down self-hosted SigNoz, to send OpenTelemetry traces, logs or metrics to a private backend, or to work on a colors.yml for a signoz deployment.",
+      "url": "/.well-known/agent-skills/package-signoz-blue-51c8aaca62842d1fa81d4f2ee4d37f1a0774e8d6167101787a977ad0ce1f96f1.tar.gz",
+      "digest": "sha256:51c8aaca62842d1fa81d4f2ee4d37f1a0774e8d6167101787a977ad0ce1f96f1"
     },
     {
       "name": "package-signoz-green",
       "type": "archive",
       "description": "Provision and manage a single-node SigNoz observability stack on Vultr — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — with OpenTofu, Ansible and Cloudflare DNS. Use when asked to deploy, converge, inspect or tear down self-hosted SigNoz, to send OpenTelemetry traces, logs or metrics to a private backend, or to work on a colors.yml for a signoz deployment.",
-      "url": "/.well-known/agent-skills/package-signoz-green-0a55914e0ee47a7362827a65769dca563dc8f64b786668a60e8e7cca6577ab8f.tar.gz",
-      "digest": "sha256:0a55914e0ee47a7362827a65769dca563dc8f64b786668a60e8e7cca6577ab8f"
+      "url": "/.well-known/agent-skills/package-signoz-green-74ce967a8d7b765591842db079f8ee21aa31cf6f3a98d3cf899ae3fc2cc05af7.tar.gz",
+      "digest": "sha256:74ce967a8d7b765591842db079f8ee21aa31cf6f3a98d3cf899ae3fc2cc05af7"
+    },
+    {
+      "name": "package-signoz-red",
+      "type": "archive",
+      "description": "Provision and manage a single-node SigNoz observability stack on Vultr — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — with OpenTofu, Ansible and Cloudflare DNS. Use when asked to deploy, converge, inspect or tear down self-hosted SigNoz, to send OpenTelemetry traces, logs or metrics to a private backend, or to work on a colors.yml for a signoz deployment.",
+      "url": "/.well-known/agent-skills/package-signoz-red-165ed69f9b24808a9bec376946da6801e434fdebdb85f386ba552c43cffc863b.tar.gz",
+      "digest": "sha256:165ed69f9b24808a9bec376946da6801e434fdebdb85f386ba552c43cffc863b"
+    },
+    {
+      "name": "package-temporal-blue",
+      "type": "archive",
+      "description": "Provision and operate a production-oriented single-machine Temporal deployment on DigitalOcean using Blue.",
+      "url": "/.well-known/agent-skills/package-temporal-blue-55ffc4c8ed000dae13a3de882835df41c83b32efc8b39571ea15c1afe3300e64.tar.gz",
+      "digest": "sha256:55ffc4c8ed000dae13a3de882835df41c83b32efc8b39571ea15c1afe3300e64"
     },
     {
       "name": "package-temporal-green",
       "type": "archive",
       "description": "Provision and operate a production-oriented single-machine Temporal deployment on DigitalOcean using Green.",
-      "url": "/.well-known/agent-skills/package-temporal-green-3bb2aa67ee76b86f95229c12e40108f3f1a45b9e59626f3b188b24c3433c4f5a.tar.gz",
-      "digest": "sha256:3bb2aa67ee76b86f95229c12e40108f3f1a45b9e59626f3b188b24c3433c4f5a"
+      "url": "/.well-known/agent-skills/package-temporal-green-9b2cf9bde743b6b8388911a9897267f3a1a4f5865f759e61d7c0fa09d7950842.tar.gz",
+      "digest": "sha256:9b2cf9bde743b6b8388911a9897267f3a1a4f5865f759e61d7c0fa09d7950842"
+    },
+    {
+      "name": "package-temporal-red",
+      "type": "archive",
+      "description": "Provision and operate a production-oriented single-machine Temporal deployment on DigitalOcean using Red.",
+      "url": "/.well-known/agent-skills/package-temporal-red-acf343d72e2e5f9ce57722cb8e235c782722c375f99fbf8940be7fd74b6034e2.tar.gz",
+      "digest": "sha256:acf343d72e2e5f9ce57722cb8e235c782722c375f99fbf8940be7fd74b6034e2"
+    },
+    {
+      "name": "package-umami-blue",
+      "type": "archive",
+      "description": "Provisions and operates production-oriented single-node Umami web analytics with PostgreSQL and Caddy on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-umami-blue-8b08cdec66728728a3fbe94adf71f5af79ccc29d938f7d86775044b4bbdde0c1.tar.gz",
+      "digest": "sha256:8b08cdec66728728a3fbe94adf71f5af79ccc29d938f7d86775044b4bbdde0c1"
     },
     {
       "name": "package-umami-green",
       "type": "archive",
       "description": "Provisions and operates production-oriented single-node Umami web analytics with PostgreSQL and Caddy on DigitalOcean.",
-      "url": "/.well-known/agent-skills/package-umami-green-814e5ed7225cf7546b368d4ed25efde4777343303655da286a0bca7a065f3134.tar.gz",
-      "digest": "sha256:814e5ed7225cf7546b368d4ed25efde4777343303655da286a0bca7a065f3134"
+      "url": "/.well-known/agent-skills/package-umami-green-9c516ea41db769794d0615c643e1ba08b9e546a3e9fef7f6f5184ef4184c251f.tar.gz",
+      "digest": "sha256:9c516ea41db769794d0615c643e1ba08b9e546a3e9fef7f6f5184ef4184c251f"
+    },
+    {
+      "name": "package-umami-red",
+      "type": "archive",
+      "description": "Provisions and operates production-oriented single-node Umami web analytics with PostgreSQL and Caddy on DigitalOcean.",
+      "url": "/.well-known/agent-skills/package-umami-red-5416c33763f00d69b2a907e039e443dd4bbfd188c77e563cf49740b222ebdbca.tar.gz",
+      "digest": "sha256:5416c33763f00d69b2a907e039e443dd4bbfd188c77e563cf49740b222ebdbca"
+    },
+    {
+      "name": "package-vaultwarden-blue",
+      "type": "archive",
+      "description": "Provisions a Basecamp ONCE server and deploys Vaultwarden with Litestream replication to Cloudflare R2. Use when building, dry-running, creating, recovering, or deleting a Vaultwarden deployment managed by Colors.",
+      "url": "/.well-known/agent-skills/package-vaultwarden-blue-d65ebb69f1310c4d510bd98a0d1dcd7cced15cfd9b52afbb345e79d857ad8d00.tar.gz",
+      "digest": "sha256:d65ebb69f1310c4d510bd98a0d1dcd7cced15cfd9b52afbb345e79d857ad8d00"
     },
     {
       "name": "package-vaultwarden-green",
       "type": "archive",
       "description": "Provisions a Basecamp ONCE server and deploys Vaultwarden with Litestream replication to Cloudflare R2. Use when building, dry-running, creating, recovering, or deleting a Vaultwarden deployment managed by Colors.",
-      "url": "/.well-known/agent-skills/package-vaultwarden-green-2aeef882f0ffcd7838c4039df24dbff9336796c57a1634589a0cbda9cf00b707.tar.gz",
-      "digest": "sha256:2aeef882f0ffcd7838c4039df24dbff9336796c57a1634589a0cbda9cf00b707"
+      "url": "/.well-known/agent-skills/package-vaultwarden-green-01360130981f9a3ce8c8c730e46583cd394759bf7b6899ab970818143ac43947.tar.gz",
+      "digest": "sha256:01360130981f9a3ce8c8c730e46583cd394759bf7b6899ab970818143ac43947"
+    },
+    {
+      "name": "package-vaultwarden-red",
+      "type": "archive",
+      "description": "Provisions a Basecamp ONCE server and deploys Vaultwarden with Litestream replication to Cloudflare R2. Use when building, dry-running, creating, recovering, or deleting a Vaultwarden deployment managed by Colors.",
+      "url": "/.well-known/agent-skills/package-vaultwarden-red-fca0d80d0c141997d41b61246be4bf6521fdae9e44a53c22486f525dacbf60fd.tar.gz",
+      "digest": "sha256:fca0d80d0c141997d41b61246be4bf6521fdae9e44a53c22486f525dacbf60fd"
     },
     {
       "name": "package-walter-green",
@@ -268,11 +464,25 @@
       "digest": "sha256:f83d886e6dfe3a7bafae17722ccab3d3239470ef73762dfdce68131772022d14"
     },
     {
+      "name": "package-wavehouse-blue",
+      "type": "archive",
+      "description": "Provisions a public WaveHouse analytics demo — ClickHouse, the WaveHouse gateway, and the live GitHub stats dashboard — on one Vultr instance with Blue.",
+      "url": "/.well-known/agent-skills/package-wavehouse-blue-ad3f82438691fb5983903c4a922351a8358ddd1943e36ef0d90b6e531673bf13.tar.gz",
+      "digest": "sha256:ad3f82438691fb5983903c4a922351a8358ddd1943e36ef0d90b6e531673bf13"
+    },
+    {
       "name": "package-wavehouse-green",
       "type": "archive",
       "description": "Provisions a public WaveHouse analytics demo — ClickHouse, the WaveHouse gateway, and the live GitHub stats dashboard — on one Vultr instance.",
-      "url": "/.well-known/agent-skills/package-wavehouse-green-ee77fb0ee40e1898699544359c0d3ad2d3c506410b25a81c814abfd8d0b613b4.tar.gz",
-      "digest": "sha256:ee77fb0ee40e1898699544359c0d3ad2d3c506410b25a81c814abfd8d0b613b4"
+      "url": "/.well-known/agent-skills/package-wavehouse-green-30928dee298bd5c3538b812a80c77f3a9d9cea595bd1e00c377af58ab1303c13.tar.gz",
+      "digest": "sha256:30928dee298bd5c3538b812a80c77f3a9d9cea595bd1e00c377af58ab1303c13"
+    },
+    {
+      "name": "package-wavehouse-red",
+      "type": "archive",
+      "description": "Provisions a public WaveHouse analytics demo — ClickHouse, the WaveHouse gateway, and the live GitHub stats dashboard — on one Vultr instance with Red.",
+      "url": "/.well-known/agent-skills/package-wavehouse-red-551ccd6bae996952bc5b5e92d184386fdccecf1050e848225f881cb6ba5d841d.tar.gz",
+      "digest": "sha256:551ccd6bae996952bc5b5e92d184386fdccecf1050e848225f881cb6ba5d841d"
     },
     {
       "name": "posthog-single-node",

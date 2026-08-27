@@ -358,7 +358,7 @@ export const k8s = {
   heading: "K8s: a kubeadm cluster on DigitalOcean, built with Colors",
   lede: "K8s is a Package Skill built with Colors. It provisions a two-node kubeadm cluster in a deployment-owned DigitalOcean VPC, installs pinned Flannel, DigitalOcean cloud-controller and Flux releases, and reconciles applications from a public Git repository.",
   runtimeNote:
-    "K8s ships in **green** alone. Its launcher, desired state, validation, dry-run boundary, lifecycle graph, and guarded deletion use the same Colors SDK contracts as the other Package Skills.",
+    "K8s ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Its launcher, desired state, validation, dry-run boundary, lifecycle graph, and guarded deletion use the same Colors SDK contracts as the other Package Skills.",
   steps: [
     {
       title: "Read desired state",
@@ -408,7 +408,7 @@ export const k3s = {
   heading: "K3s: a GitOps Kubernetes server, built with Colors",
   lede: "K3s is a Package Skill built with Colors. It provisions one Hetzner Cloud VPS behind a default-deny firewall, installs pinned K3s and Flux releases, and continuously reconciles a public Git repository without exposing the Kubernetes API.",
   runtimeNote:
-    "K3s ships in **green** alone. Its launcher, desired state, dry-run boundary, and lifecycle graph use the same Colors SDK contracts as a three-colour package.",
+    "K3s ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Its launcher, desired state, dry-run boundary, and lifecycle graph use the same Colors SDK contracts in every colour.",
   steps: [
     {
       title: "Read desired state",
@@ -518,7 +518,7 @@ export const umami = {
   heading: "Umami: single-node web analytics, built with Colors",
   lede: "Umami is a Package Skill built with Colors. It provisions one DigitalOcean droplet running Umami web analytics with colocated PostgreSQL 17 behind Caddy, with restore-verified backups to Cloudflare R2.",
   runtimeNote:
-    "Umami ships in **green** alone. Only Caddy's 80/443 are public; PostgreSQL and Umami's own port stay on the private Compose network.",
+    "Umami ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Only Caddy's 80/443 are public; PostgreSQL and Umami's own port stay on the private Compose network.",
   steps: [
     {
       title: "Read desired state",
@@ -568,7 +568,7 @@ export const rybbit = {
   heading: "Rybbit: hybrid OLTP and columnar analytics, built with Colors",
   lede: "Rybbit is a Package Skill built with Colors. It provisions one DigitalOcean droplet pairing PostgreSQL 17 for metadata and authentication with ClickHouse for columnar events, plus Redis and Caddy.",
   runtimeNote:
-    "Rybbit ships in **green** alone. Only Caddy's 80/443 are public; PostgreSQL, ClickHouse, Redis and the Rybbit backend and client ports stay private.",
+    "Rybbit ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Only Caddy's 80/443 are public; PostgreSQL, ClickHouse, Redis and the Rybbit backend and client ports stay private.",
   steps: [
     {
       title: "Read desired state",
@@ -618,7 +618,7 @@ export const posthog = {
   heading: "PostHog: a product analytics suite on one machine, built with Colors",
   lede: "PostHog is a Package Skill built with Colors. It provisions one DigitalOcean droplet running the PostHog application, ClickHouse with embedded Keeper, Kafka, Temporal, a Rust capture service and a plugin server — the tiers PostHog cannot run without, reduced to a single node.",
   runtimeNote:
-    "PostHog ships in **green** alone. Only Caddy's 80/443 are public; the ingestion path from capture through Kafka to ClickHouse stays on the private Compose network.",
+    "PostHog ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Only Caddy's 80/443 are public; the ingestion path from capture through Kafka to ClickHouse stays on the private Compose network.",
   steps: [
     {
       title: "Read desired state",
@@ -778,7 +778,7 @@ export const restate = {
   heading: "Restate: durable workflows on one server, built with Colors",
   lede: "Restate is a Package Skill built with Colors. It provisions a production-oriented single-node Restate server and TypeScript reference application on DigitalOcean, with private service ports, public TLS, durable workflow recovery, and off-server backups.",
   runtimeNote:
-    "Restate ships in **green** alone. Its acceptance workflow deliberately retries an activity and reboots the complete Droplet during a durable delay before verifying the final result.",
+    "Restate ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Its acceptance workflow deliberately retries an activity and reboots the complete Droplet during a durable delay before verifying the final result.",
   steps: [
     {
       title: "Read desired state",
@@ -877,7 +877,7 @@ export const temporal = {
   heading: "Temporal: durable workflows on one production server, built with Colors",
   lede: "Temporal is a Package Skill built with Colors. It provisions one DigitalOcean Droplet running PostgreSQL, all four Temporal Server roles, a TypeScript reference API and worker, and Caddy with public TLS.",
   runtimeNote:
-    "Temporal ships in **green** alone. The reference workflow uses a durable timer, retries an activity twice, rejects duplicate IDs, and returns a deterministic result after service or whole-Droplet restarts.",
+    "Temporal ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. The reference workflow uses a durable timer, retries an activity twice, rejects duplicate IDs, and returns a deterministic result after service or whole-Droplet restarts.",
   steps: [
     {
       title: "Read desired state",
@@ -927,7 +927,7 @@ export const vaultwarden = {
   heading: "Vaultwarden: a recoverable password manager, built with Colors",
   lede: "Vaultwarden is a Package Skill built with Colors. It deploys the pinned public Vaultwarden image on a Basecamp ONCE server, sends the initial owner invitation, and continuously replicates SQLite to Cloudflare R2 for automatic recovery.",
   runtimeNote:
-    "Vaultwarden ships in **green** alone. The public image needs no GitHub access; an operator-owned repository can opt into ONCE deployment credentials. Public signup and the steady-state admin endpoint stay disabled.",
+    "Vaultwarden ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. The public image needs no GitHub access; an operator-owned repository can opt into ONCE deployment credentials. Public signup and the steady-state admin endpoint stay disabled.",
   steps: [
     {
       title: "Read desired state",
@@ -1306,7 +1306,7 @@ export const wavehouse = {
   heading: "WaveHouse: live GitHub analytics on one server, built with Colors",
   lede: "WaveHouse is a Package Skill built with Colors. It provisions a public analytics demo on Vultr — ClickHouse, the WaveHouse real-time gateway, and the project's live GitHub stats dashboard — behind Caddy TLS and Cloudflare, with history backfilled from the GitHub API and a poller streaming new events over SSE.",
   runtimeNote:
-    "WaveHouse ships in **green** alone. The dashboard is the upstream project's own page served same-origin with the `/v1` API, so the browser SDK needs no configuration; see it live at [stats.bigconfig.space](https://stats.bigconfig.space).",
+    "WaveHouse ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. The dashboard is the upstream project's own page served same-origin with the `/v1` API, so the browser SDK needs no configuration; see it live at [stats.bigconfig.space](https://stats.bigconfig.space).",
   steps: [
     {
       title: "Read desired state",
@@ -1456,7 +1456,7 @@ export const signoz = {
   heading: "SigNoz: a self-hosted OpenTelemetry backend on one server, built with Colors",
   lede: "SigNoz is a Package Skill built with Colors. It provisions the SigNoz observability stack on a single Vultr instance \u2014 ClickHouse and ClickHouse Keeper for telemetry, a Postgres metastore for dashboards and alert rules, the schema migrator, the SigNoz application, and the signoz-otel-collector ingester \u2014 behind Caddy TLS and Cloudflare, with traces, logs, and metrics arriving over OTLP on the same host that serves the UI.",
   runtimeNote:
-    "SigNoz ships in **green** alone. One hostname carries both halves: the UI and OTLP/HTTP ingestion share port 443, so an exporter needs no endpoint beyond `https://<host>` and 4317/4318 never leave loopback.",
+    "SigNoz ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. One hostname carries both halves: the UI and OTLP/HTTP ingestion share port 443, so an exporter needs no endpoint beyond `https://<host>` and 4317/4318 never leave loopback.",
   steps: [
     {
       title: "Read desired state",

@@ -17,6 +17,12 @@ keywords:
   - Cloudflare
   - self-hosted
 package-skills:
+  - name: package-signoz-red
+    path: skills/package-signoz-red/SKILL.md
+    runtime: red
   - name: package-signoz-green
     path: skills/package-signoz-green/SKILL.md
     runtime: green
+  - name: package-signoz-blue
+    path: skills/package-signoz-blue/SKILL.md
+    runtime: blue

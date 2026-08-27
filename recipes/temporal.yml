@@ -14,6 +14,12 @@ keywords:
   - self-hosted
 featured: /featured#temporal
 package-skills:
+  - name: package-temporal-red
+    path: skills/package-temporal-red/SKILL.md
+    runtime: red
   - name: package-temporal-green
     path: skills/package-temporal-green/SKILL.md
     runtime: green
+  - name: package-temporal-blue
+    path: skills/package-temporal-blue/SKILL.md
+    runtime: blue

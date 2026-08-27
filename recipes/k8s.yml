@@ -11,6 +11,12 @@ keywords:
   - cert-manager
 featured: /featured#k8s
 package-skills:
+  - name: package-k8s-red
+    path: skills/package-k8s-red/SKILL.md
+    runtime: red
   - name: package-k8s-green
     path: skills/package-k8s-green/SKILL.md
     runtime: green
+  - name: package-k8s-blue
+    path: skills/package-k8s-blue/SKILL.md
+    runtime: blue

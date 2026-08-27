@@ -18,6 +18,12 @@ keywords:
   - Cloudflare R2
   - self-hosted
 package-skills:
+  - name: package-postgres-ha-red
+    path: skills/package-postgres-ha-red/SKILL.md
+    runtime: red
   - name: package-postgres-ha-green
     path: skills/package-postgres-ha-green/SKILL.md
     runtime: green
+  - name: package-postgres-ha-blue
+    path: skills/package-postgres-ha-blue/SKILL.md
+    runtime: blue

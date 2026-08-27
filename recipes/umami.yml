@@ -11,6 +11,12 @@ keywords:
   - Cloudflare R2
 featured: /featured#umami
 package-skills:
+  - name: package-umami-red
+    path: skills/package-umami-red/SKILL.md
+    runtime: red
   - name: package-umami-green
     path: skills/package-umami-green/SKILL.md
     runtime: green
+  - name: package-umami-blue
+    path: skills/package-umami-blue/SKILL.md
+    runtime: blue

@@ -14,6 +14,12 @@ keywords:
   - Cloudflare
   - self-hosted
 package-skills:
+  - name: package-wavehouse-red
+    path: skills/package-wavehouse-red/SKILL.md
+    runtime: red
   - name: package-wavehouse-green
     path: skills/package-wavehouse-green/SKILL.md
     runtime: green
+  - name: package-wavehouse-blue
+    path: skills/package-wavehouse-blue/SKILL.md
+    runtime: blue

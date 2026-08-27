@@ -17,6 +17,12 @@ keywords:
   - Cloudflare R2
   - self-hosted
 package-skills:
+  - name: package-mysql-ha-red
+    path: skills/package-mysql-ha-red/SKILL.md
+    runtime: red
   - name: package-mysql-ha-green
     path: skills/package-mysql-ha-green/SKILL.md
     runtime: green
+  - name: package-mysql-ha-blue
+    path: skills/package-mysql-ha-blue/SKILL.md
+    runtime: blue

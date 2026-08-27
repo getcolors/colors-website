@@ -13,6 +13,12 @@ keywords:
   - backup
   - self-hosted
 package-skills:
+  - name: package-vaultwarden-red
+    path: skills/package-vaultwarden-red/SKILL.md
+    runtime: red
   - name: package-vaultwarden-green
     path: skills/package-vaultwarden-green/SKILL.md
     runtime: green
+  - name: package-vaultwarden-blue
+    path: skills/package-vaultwarden-blue/SKILL.md
+    runtime: blue

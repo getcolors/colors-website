@@ -13,6 +13,12 @@ keywords:
   - backup
   - self-hosted
 package-skills:
+  - name: package-restate-red
+    path: skills/package-restate-red/SKILL.md
+    runtime: red
   - name: package-restate-green
     path: skills/package-restate-green/SKILL.md
     runtime: green
+  - name: package-restate-blue
+    path: skills/package-restate-blue/SKILL.md
+    runtime: blue

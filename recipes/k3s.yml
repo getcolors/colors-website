@@ -10,6 +10,12 @@ keywords:
   - containers
 featured: /featured#k3s
 package-skills:
+  - name: package-k3s-red
+    path: skills/package-k3s-red/SKILL.md
+    runtime: red
   - name: package-k3s-green
     path: skills/package-k3s-green/SKILL.md
     runtime: green
+  - name: package-k3s-blue
+    path: skills/package-k3s-blue/SKILL.md
+    runtime: blue

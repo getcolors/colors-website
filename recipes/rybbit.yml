@@ -12,6 +12,12 @@ keywords:
   - DigitalOcean
 featured: /featured#rybbit
 package-skills:
+  - name: package-rybbit-red
+    path: skills/package-rybbit-red/SKILL.md
+    runtime: red
   - name: package-rybbit-green
     path: skills/package-rybbit-green/SKILL.md
     runtime: green
+  - name: package-rybbit-blue
+    path: skills/package-rybbit-blue/SKILL.md
+    runtime: blue
