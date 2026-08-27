@@ -1,0 +1,17 @@
+type: context
+name: Rybbit Single-Node
+repository: getcolors/skills
+summary: Verified six-container topology, provider-independent converge seam, restore-proven ClickHouse backups, and a 30-entry failure catalogue for self-hosted single-node Rybbit analytics.
+keywords:
+  - rybbit
+  - self-hosted analytics
+  - clickhouse backup
+  - caddy
+  - trusted_proxies
+  - events accepted but not stored
+  - stale container configuration
+  - http/3
+companion: getcolors/rybbit
+context-skills:
+  - name: rybbit-single-node
+    path: rybbit-single-node/SKILL.md
