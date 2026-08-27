@@ -10,11 +10,11 @@
     },
     "clickhouse": {
       "ref": "main",
-      "sha": "f197b6f59dd70b80bd4b8b42c29992b32d047af5"
+      "sha": "56a38a81ae18df760aac41cfd6214877deb8a941"
     },
     "clickstack": {
       "ref": "main",
-      "sha": "01ee9e2e53824182a78035af684ac276b898c4f5"
+      "sha": "8ffea2c8c9281f5aaf4a93ae5bfd0f5057ed37e8"
     },
     "dbos": {
       "ref": "main",

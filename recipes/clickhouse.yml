@@ -13,6 +13,12 @@ keywords:
   - Hetzner
 featured: /featured#clickhouse
 package-skills:
+  - name: package-clickhouse-red
+    path: skills/package-clickhouse-red/SKILL.md
+    runtime: red
   - name: package-clickhouse-green
     path: skills/package-clickhouse-green/SKILL.md
     runtime: green
+  - name: package-clickhouse-blue
+    path: skills/package-clickhouse-blue/SKILL.md
+    runtime: blue

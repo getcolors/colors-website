@@ -65,18 +65,46 @@
       "digest": "sha256:317d36e103facade3f23a2a84461a977cbc70d9e93c3634860cf51b2956764b7"
     },
     {
+      "name": "package-clickhouse-blue",
+      "type": "archive",
+      "description": "Provision and operate a private replicated ClickHouse cluster, Metabase, WireGuard, Cloudflare DNS, and local dbt on Hetzner with Blue.",
+      "url": "/.well-known/agent-skills/package-clickhouse-blue-387ac64bdadcc7c5ee7dd565519d64f6ab702754eefc01633b5bfc6750be6b2c.tar.gz",
+      "digest": "sha256:387ac64bdadcc7c5ee7dd565519d64f6ab702754eefc01633b5bfc6750be6b2c"
+    },
+    {
       "name": "package-clickhouse-green",
       "type": "archive",
       "description": "Provision and operate a private replicated ClickHouse cluster, Metabase, WireGuard, Cloudflare DNS, and local dbt on Hetzner with Green.",
-      "url": "/.well-known/agent-skills/package-clickhouse-green-a3ab55343de9d544450a4e8fa05154fd3ed798aeb8057f4b6bd81faa666326ab.tar.gz",
-      "digest": "sha256:a3ab55343de9d544450a4e8fa05154fd3ed798aeb8057f4b6bd81faa666326ab"
+      "url": "/.well-known/agent-skills/package-clickhouse-green-3fb1e219698b888961223fb090401383288653ba90522f57817179d2d4e8b921.tar.gz",
+      "digest": "sha256:3fb1e219698b888961223fb090401383288653ba90522f57817179d2d4e8b921"
+    },
+    {
+      "name": "package-clickhouse-red",
+      "type": "archive",
+      "description": "Provision and operate a private replicated ClickHouse cluster, Metabase, WireGuard, Cloudflare DNS, and local dbt on Hetzner with Red.",
+      "url": "/.well-known/agent-skills/package-clickhouse-red-d920ef45055614467af9b2f8624f13aaaafdd6bca154e3fbcfca54f930c3be5f.tar.gz",
+      "digest": "sha256:d920ef45055614467af9b2f8624f13aaaafdd6bca154e3fbcfca54f930c3be5f"
+    },
+    {
+      "name": "package-clickstack-blue",
+      "type": "archive",
+      "description": "Provisions ClickStack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — as a single-server observability stack on one Vultr instance.",
+      "url": "/.well-known/agent-skills/package-clickstack-blue-779e3e2f169fc81fcc7d31fbd1f7bfb3c3a39e05606f33a4588c672f9543b243.tar.gz",
+      "digest": "sha256:779e3e2f169fc81fcc7d31fbd1f7bfb3c3a39e05606f33a4588c672f9543b243"
     },
     {
       "name": "package-clickstack-green",
       "type": "archive",
       "description": "Provisions ClickStack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — as a single-server observability stack on one Vultr instance.",
-      "url": "/.well-known/agent-skills/package-clickstack-green-5f96165973ffe2c3c562fd3ebbb5427d2c46a7a80104570591f8219b216fe700.tar.gz",
-      "digest": "sha256:5f96165973ffe2c3c562fd3ebbb5427d2c46a7a80104570591f8219b216fe700"
+      "url": "/.well-known/agent-skills/package-clickstack-green-6ab4a991480d090ed6bddb54f17bdc7d64292bac31b2e961868b7e9ef7bf919d.tar.gz",
+      "digest": "sha256:6ab4a991480d090ed6bddb54f17bdc7d64292bac31b2e961868b7e9ef7bf919d"
+    },
+    {
+      "name": "package-clickstack-red",
+      "type": "archive",
+      "description": "Provisions ClickStack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — as a single-server observability stack on one Vultr instance.",
+      "url": "/.well-known/agent-skills/package-clickstack-red-258673a93594e9061847d22fee359ffa67c25c9ceb4a7ae535f3e5fadcf98b63.tar.gz",
+      "digest": "sha256:258673a93594e9061847d22fee359ffa67c25c9ceb4a7ae535f3e5fadcf98b63"
     },
     {
       "name": "package-dbos-green",

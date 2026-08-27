@@ -16,6 +16,12 @@ keywords:
   - Cloudflare
   - self-hosted
 package-skills:
+  - name: package-clickstack-red
+    path: skills/package-clickstack-red/SKILL.md
+    runtime: red
   - name: package-clickstack-green
     path: skills/package-clickstack-green/SKILL.md
     runtime: green
+  - name: package-clickstack-blue
+    path: skills/package-clickstack-blue/SKILL.md
+    runtime: blue
