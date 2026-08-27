@@ -169,5 +169,7 @@ const rowKeywords = (repository: OwnerRepository) =>
   .source-row .installs { color: var(--muted); font: 13px var(--mono); text-align: right; }
   .empty { padding: 40px 20px; color: var(--muted); text-align: center; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
-  @media (max-width: 700px) { .finder { align-items: stretch; flex-direction: column; } .search { max-width: none; } }
+  /* flex-basis must reset with the axis flip: .search's 320px basis means
+     width in the row layout, but height once .finder is a column. */
+  @media (max-width: 700px) { .finder { align-items: stretch; flex-direction: column; } .search { max-width: none; flex-basis: auto; } }
 </style>
