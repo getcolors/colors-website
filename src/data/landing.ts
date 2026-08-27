@@ -668,7 +668,7 @@ export const airflow = {
   heading: "Airflow: a production scheduler, built with Colors",
   lede: "Airflow is a Package Skill built with Colors. It provisions one VPS running Apache Airflow with LocalExecutor, host Postgres, continuous WAL-G backups, Caddy authentication and TLS, and a private GitHub repository that deploys DAGs over a confined rsync key.",
   runtimeNote:
-    "Airflow ships in **green** alone. Its launcher, desired state, dry-run boundary, and lifecycle graph use the same Colors SDK contracts as the other Package Skills.",
+    "Airflow ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity by its own three-colour harness. Its launcher, desired state, dry-run boundary, and lifecycle graph use the same Colors SDK contracts as the other Package Skills.",
   steps: [
     {
       title: "Read desired state",
@@ -1508,7 +1508,7 @@ export const netbird = {
   heading: "NetBird: a self-hosted zero-trust network and its identity provider, built with Colors",
   lede: "NetBird is a Package Skill built with Colors. It provisions a self-hosted NetBird control plane on a single Vultr instance — Traefik, the combined `netbird-server` carrying management, signal, relay and STUN, the dashboard, and Authentik with its Postgres and Redis — behind Cloudflare and Let's Encrypt, with SSO through Authentik and encrypted nightly backups to R2.",
   runtimeNote:
-    "NetBird ships in **green** alone. Management, signal, relay and STUN are one process multiplexed behind Traefik on 443, so the firewall opens 22, 80, 443 and a single UDP port — and nothing else.",
+    "NetBird ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Management, signal, relay and STUN are one process multiplexed behind Traefik on 443, so the firewall opens 22, 80, 443 and a single UDP port — and nothing else.",
   steps: [
     {
       title: "Read desired state",
@@ -1560,7 +1560,7 @@ export const agentNetwork = {
   heading: "Agent Network: keyless LLM access an isolated agent cannot escape, built with Colors",
   lede: "Agent Network is a Package Skill built with Colors. It provisions a minimal NetBird Agent Network demo on a single Vultr instance — Traefik, the combined `netbird-server`, the dashboard in agent-network view, the private reverse proxy — and an agent container running headless Claude Code on an internal Docker network with no internet route. The agent holds no API key: its only path to an LLM is the generated tunnel-only endpoint, where every request carries its peer identity, passes a model allowlist and per-day budget caps, and lands attributed in the access log.",
   runtimeNote:
-    "Agent Network ships in **green** alone. The isolation is the demo: an internal Docker network doubled by port-scoped DOCKER-USER rules, with acceptance proving the negative space — raw-TCP probes that must fail beside a control probe that must succeed — after a real Docker restart and a real reboot.",
+    "Agent Network ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. The isolation is the demo: an internal Docker network doubled by port-scoped DOCKER-USER rules, with acceptance proving the negative space — raw-TCP probes that must fail beside a control probe that must succeed — after a real Docker restart and a real reboot.",
   steps: [
     {
       title: "Read desired state",
