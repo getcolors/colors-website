@@ -5,7 +5,7 @@ import { postFor } from "~/data/blog";
 
 const title = "How a Package Skill Gets Made — Colors";
 const description =
-  "Three clipped YouTube transcripts became a live, adversarially reviewed NetBird Agent Network deployment, then a knowledge skill that makes the next run cheaper. The six-step workflow, with the failures left in.";
+  "Three clipped YouTube transcripts became a live, adversarially reviewed NetBird Agent Network deployment, then a Context Skill that makes the next run cheaper. The six-step workflow, with the failures left in.";
 const path = "/blog/how-a-package-skill-gets-made";
 
 const post = postFor(path);
@@ -14,7 +14,7 @@ const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
 const absolute = (target: string) => new URL(target, SITE_URL).toString();
 const image = "/og-how-a-package-skill-gets-made-v2.png";
 const imageAlt =
-  "Infographic of the six steps: clip the sources with the Obsidian Web Clipper, load the claudex-loop and create-package-skill skills, describe and correct the desired package, provide credentials with one fake key, let the loop build it through adversarial plan review, converges and fresh-diff inspection, and distill the lessons into the agent-network-single-node knowledge skill.";
+  "Infographic of the six steps: clip the sources with the Obsidian Web Clipper, load the claudex-loop and create-package-skill skills, describe and correct the desired package, provide credentials with one fake key, let the loop build it through adversarial plan review, converges and fresh-diff inspection, and distill the lessons into the agent-network-single-node Context Skill.";
 
 const publishDate = post.date;
 const readTime = post.readTime;
@@ -89,13 +89,13 @@ const structuredData = {
       />
     </figure>
 
-    <div class="steps panel" role="img" aria-label="The six steps as a pipeline: clip the sources (human), load two skills (human), describe the package under interrogation (both), provide credentials (human), build under adversarial review (agent), distill the lessons into a knowledge skill (agent).">
+    <div class="steps panel" role="img" aria-label="The six steps as a pipeline: clip the sources (human), load two skills (human), describe the package under interrogation (both), provide credentials (human), build under adversarial review (agent), distill the lessons into a Context Skill (agent).">
       <div class="row"><span class="who mono you">you</span><span class="what">1 · clip the sources into the workspace: transcripts, docs, manuals</span></div>
       <div class="row"><span class="who mono you">you</span><span class="what">2 · load two skills: <code>claudex-loop</code> + <code>create-package-skill</code></span></div>
       <div class="row"><span class="who mono both">both</span><span class="what">3 · describe the desired Package Skill, under interrogation</span></div>
       <div class="row"><span class="who mono you">you</span><span class="what">4 · provide the credentials, one of them deliberately fake</span></div>
       <div class="row"><span class="who mono agt">agent</span><span class="what">5 · build: adversarial review, eight converges, catalog, push</span></div>
-      <div class="row"><span class="who mono agt">agent</span><span class="what">6 · distill the lessons into a knowledge skill for the next run</span></div>
+      <div class="row"><span class="who mono agt">agent</span><span class="what">6 · distill the lessons into a Context Skill for the next run</span></div>
       <div class="steps-note mono">human effort concentrates in steps 1–4 · the agent's in 5–6 · the loop reviews itself with a rival model</div>
     </div>
 
@@ -261,8 +261,8 @@ agent-network-smoke: FAIL: the keyless call neither completed nor returned the u
       <h2>6 · Distill the lessons</h2>
       <p>
         The last step is the one most workflows skip. Everything the build learned the hard way got
-        distilled into a knowledge
-        skill, <a href="https://github.com/getcolors/skills/tree/main/agent-network-single-node" target="_blank" rel="noopener noreferrer"><code>agent-network-single-node</code></a>:
+        distilled into a Context
+        Skill, <a href="https://github.com/getcolors/skills/tree/main/agent-network-single-node" target="_blank" rel="noopener noreferrer"><code>agent-network-single-node</code></a>:
         the defective ACME and its rate-limit trap, the endpoint-minting API contract the docs get wrong,
         the hairpin, the Traefik network pinning, the credential crash windows, and the acceptance gates
         that would have lied. It holds a symptom-indexed failure catalogue, the API contract as the source
