@@ -2,7 +2,11 @@
   "repositories": {
     "agent-network": {
       "ref": "main",
-      "sha": "6929666fa46f8ca5dcbac05bbca19fc278d22064"
+      "sha": "7f44741d6ed329f84e25c70fef41ccd548702529"
+    },
+    "agent-network-k8s": {
+      "ref": "main",
+      "sha": "65e74179885a3ad25ac302688b9a67bec5a34453"
     },
     "airflow": {
       "ref": "main",
@@ -10,15 +14,15 @@
     },
     "clickhouse": {
       "ref": "main",
-      "sha": "45ce468541f5c11dc20ba89a35575dfe6368bcc0"
+      "sha": "5e1acc1f63a93b42f59bc9c4122250a164703b62"
     },
     "clickstack": {
       "ref": "main",
-      "sha": "8ffea2c8c9281f5aaf4a93ae5bfd0f5057ed37e8"
+      "sha": "2cdd5301f42ddcb15d517d7288a45b0c1066d105"
     },
     "dbos": {
       "ref": "main",
-      "sha": "b62fd5cf052acd6d52c8a7adc67c7a433fcac144"
+      "sha": "81156c96f707abe02881fd9ca619927905e1c01b"
     },
     "github-dwh": {
       "ref": "main",
@@ -26,23 +30,23 @@
     },
     "k3s": {
       "ref": "main",
-      "sha": "078939aa305ee3129706084987966165a5c43ba8"
+      "sha": "4cb2156e07f7a29b6f2e57d803256b9a4459e014"
     },
     "k8s": {
       "ref": "main",
-      "sha": "30513c4491dd222c8514fe4436cb159d33542b37"
+      "sha": "9ba1b3f4811543446bb9efbc1f741418790250a1"
     },
     "mysql-agy": {
       "ref": "main",
-      "sha": "374b7b10635bdd7143d724e19a7b6a12b133cc8a"
+      "sha": "cd81c94053906add50ae16ce2bad551fe4497c0f"
     },
     "mysql-ha": {
       "ref": "main",
-      "sha": "89668a75e781b448df80a0c12750f3969ca30e86"
+      "sha": "90190b6f16ec6886e226dd1b49dd128a8e642a92"
     },
     "netbird": {
       "ref": "main",
-      "sha": "5aa92770f281e5a237fd2bed9a30be33c22da68f"
+      "sha": "9443139e1be41f6a9fc760315d2f12d526544f38"
     },
     "once": {
       "ref": "main",
@@ -50,15 +54,15 @@
     },
     "postgres-agy": {
       "ref": "main",
-      "sha": "1494e0d9f42285b0f889350e502e62f297d54b74"
+      "sha": "2e2a5b932d1dde13c8de6e188e9c3e7704cd9df8"
     },
     "postgres-ha": {
       "ref": "main",
-      "sha": "4af992fabe995e7cb98619a5f2086324812da357"
+      "sha": "2723ef55bb8cd287a6c5d6ff618872df0b44397a"
     },
     "posthog": {
       "ref": "main",
-      "sha": "7e7b0fc5d9d8aac54730b730fcc756c04ad5dadf"
+      "sha": "6ccbd53ffda265b1180b776b36b29576f3c5459c"
     },
     "rama": {
       "ref": "main",
@@ -66,39 +70,39 @@
     },
     "restate": {
       "ref": "main",
-      "sha": "f20eca03426ed14d38f62096a44fd5cee0ffcb89"
+      "sha": "d932653f58d793c9fddb7b1c5c9ee2d7652ae008"
     },
     "rybbit": {
       "ref": "main",
-      "sha": "f1f54428da455ea46a357f4a1b85608ab163aaf3"
+      "sha": "a2908d869c756d37fd45816cf56be24b70f9dc0f"
     },
     "signoz": {
       "ref": "main",
-      "sha": "dc6102eb2533704563425e55c819828a31f308e2"
+      "sha": "5adc9100cdb6407018023b5772373f976a7394bc"
     },
     "skills": {
       "ref": "main",
-      "sha": "53cc51a1c4a2a3fbe1cba7125a649bf928e915e6"
+      "sha": "120cba4a300d9cbb6245a39565c0a8c96c3a9aee"
     },
     "temporal": {
       "ref": "main",
-      "sha": "e3578a8db2a6747d27505d183015a64210b976d9"
+      "sha": "7900ce1b97edf41bd2257948de52b51c95efefb8"
     },
     "umami": {
       "ref": "main",
-      "sha": "674a0ab8735d0dcf98807c90a1deeab64b1ce0fe"
+      "sha": "ff355a7a1c8cc204b0f8c8d4244d8072bc8b3892"
     },
     "vaultwarden": {
       "ref": "main",
-      "sha": "0a1724084a7ff6ed19f4e451d1218c596c193403"
+      "sha": "caa93ce2e4aec0a1a7ecd31a58011b496bf77a91"
     },
     "walter": {
       "ref": "main",
-      "sha": "750e344cbfe64039af590d4c5662aaffdb02f39b"
+      "sha": "847eb5b31422a9bb5fa609e0d3b75ec2d2642edd"
     },
     "wavehouse": {
       "ref": "main",
-      "sha": "729c45acc7e7d00051af03cccd954a5c2aae4936"
+      "sha": "663a4c1478fa081b07d76b96f83eea537d285c60"
     }
   },
   "skills": [

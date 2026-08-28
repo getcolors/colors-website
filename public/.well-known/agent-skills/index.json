@@ -2,6 +2,13 @@
   "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
   "skills": [
     {
+      "name": "agent-network-kubernetes",
+      "type": "archive",
+      "description": "Everything a NetBird Agent Network on Kubernetes needs that the single-node build will not tell you — the two-pod netstack/SOCKS5 application (no TUN, no capabilities) whose isolation is NetworkPolicy probed from both sides, and the 0.77.1 client facts only a live VKE converge surfaces. Use on these symptoms - the client binds /var/run/netbird.sock or dials api.netbird.io forever whatever the flags say (service run silently ignores --daemon-addr and --log-file; use NB_* env); \"get current user\" requires cgo or $USER; no proxy peer in /api/peers though the proxy runs (it is an embedded peer - read the client's network map); the keyless endpoint dies after every reverse-proxy restart (its overlay address churns and stale registrations linger); server crashloop \"illegal base64 data at input byte 40\" or \"could not initialize geolocation service\"; lego checksum FAILED on arm64; an isolated pod that \"has an IPv6 default route\" on VKE. Full symptom index at the top of the body.",
+      "url": "/.well-known/agent-skills/agent-network-kubernetes-70e0c037d1312dc49839bdbf23e6313856ef5f34cf7edfe341857beb2f88a811.tar.gz",
+      "digest": "sha256:70e0c037d1312dc49839bdbf23e6313856ef5f34cf7edfe341857beb2f88a811"
+    },
+    {
       "name": "agent-network-single-node",
       "type": "archive",
       "description": "Everything a single-node NetBird Agent Network deployment needs that the docs and the quickstart installer will not tell you - the four-container gateway stack plus one network-isolated agent, the endpoint that is minted by POSTing the settings resource and not by connecting a provider, the reverse proxy whose per-name ACME is defective on 0.77.1 (\"no viable challenge type found\") and burns Let's Encrypt rate limits while failing, and the acceptance gates that prove an isolation claim instead of assuming it. Use this whenever the user mentions NetBird Agent Network, a keyless or identity-gated LLM endpoint, the netbird reverse proxy, or an AI agent that must not reach the internet - even if they do not say \"single-node\". Also use it on these symptoms - an endpoint hostname with HTTP 000 or no certificate, 422 \"is not a known catalog provider\", llm_policy.model_blocked or model_not_routable, or an isolated container escaping after a Docker restart. The full symptom index is at the top of the body.",
@@ -19,8 +26,8 @@
       "name": "create-package-skill",
       "type": "skill-md",
       "description": "Use when asked to create a getcolors Package Skill and a deployment that uses it, including desired-state configuration, provider credentials, GitHub repositories, provisioning, or end-to-end deployment.",
-      "url": "/.well-known/agent-skills/create-package-skill-ffdec3d1bc1b07052a7085e0d237feb6869e93918b858fbefd9f556a364609fa/SKILL.md",
-      "digest": "sha256:ffdec3d1bc1b07052a7085e0d237feb6869e93918b858fbefd9f556a364609fa"
+      "url": "/.well-known/agent-skills/create-package-skill-6cfc3199e4fdd846cc69f6b65bd7cdf9630b027f87d590f9dd74a3f2c83371c0/SKILL.md",
+      "digest": "sha256:6cfc3199e4fdd846cc69f6b65bd7cdf9630b027f87d590f9dd74a3f2c83371c0"
     },
     {
       "name": "package-agent-network-blue",
@@ -35,6 +42,27 @@
       "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
       "url": "/.well-known/agent-skills/package-agent-network-green-a608f96fe91765b5f34a00e8d18de2d98288f04df0d4be7b617d2e03de191329.tar.gz",
       "digest": "sha256:a608f96fe91765b5f34a00e8d18de2d98288f04df0d4be7b617d2e03de191329"
+    },
+    {
+      "name": "package-agent-network-k8s-blue",
+      "type": "archive",
+      "description": "Provision and manage a NetBird Agent Network demo on Vultr Kubernetes Engine from declarative desired state — a keyless, policy-gated LLM endpoint and a two-pod application, the NetBird client in netstack/SOCKS5 mode plus a network-isolated agent pod running headless Claude Code. Use when asked to deploy, converge, inspect or delete an Agent Network on Kubernetes, a keyless LLM gateway demo on VKE, or an isolated AI-agent sandbox with identity-based model access and NetworkPolicy-enforced egress.",
+      "url": "/.well-known/agent-skills/package-agent-network-k8s-blue-1866997f2d931feeef9dada262377757bc24da9e9d989c00ae0c38193445acf9.tar.gz",
+      "digest": "sha256:1866997f2d931feeef9dada262377757bc24da9e9d989c00ae0c38193445acf9"
+    },
+    {
+      "name": "package-agent-network-k8s-green",
+      "type": "archive",
+      "description": "Provision and manage a NetBird Agent Network demo on Vultr Kubernetes Engine from declarative desired state — a keyless, policy-gated LLM endpoint and a two-pod application, the NetBird client in netstack/SOCKS5 mode plus a network-isolated agent pod running headless Claude Code. Use when asked to deploy, converge, inspect or delete an Agent Network on Kubernetes, a keyless LLM gateway demo on VKE, or an isolated AI-agent sandbox with identity-based model access and NetworkPolicy-enforced egress.",
+      "url": "/.well-known/agent-skills/package-agent-network-k8s-green-d3b0c8399e8391ea43bef20c34dc258d6ba1f6411e88939aa766722fdbdd8d29.tar.gz",
+      "digest": "sha256:d3b0c8399e8391ea43bef20c34dc258d6ba1f6411e88939aa766722fdbdd8d29"
+    },
+    {
+      "name": "package-agent-network-k8s-red",
+      "type": "archive",
+      "description": "Provision and manage a NetBird Agent Network demo on Vultr Kubernetes Engine from declarative desired state — a keyless, policy-gated LLM endpoint and a two-pod application, the NetBird client in netstack/SOCKS5 mode plus a network-isolated agent pod running headless Claude Code. Use when asked to deploy, converge, inspect or delete an Agent Network on Kubernetes, a keyless LLM gateway demo on VKE, or an isolated AI-agent sandbox with identity-based model access and NetworkPolicy-enforced egress.",
+      "url": "/.well-known/agent-skills/package-agent-network-k8s-red-7f45dc13674c7ac752745777618557148ac6d5bc5c14a3c9e440360781e4dc3d.tar.gz",
+      "digest": "sha256:7f45dc13674c7ac752745777618557148ac6d5bc5c14a3c9e440360781e4dc3d"
     },
     {
       "name": "package-agent-network-red",
@@ -460,8 +488,8 @@
       "name": "package-walter-green",
       "type": "archive",
       "description": "Creates and operates a remote development machine with Green, OpenTofu and Ansible, and powers it off and on to stop paying for it while you sleep. Use when initializing a walter project, generating colors.yml, selecting a compute or state provider, building or dry-running configuration, provisioning or destroying the machine, or stopping and starting it.",
-      "url": "/.well-known/agent-skills/package-walter-green-f83d886e6dfe3a7bafae17722ccab3d3239470ef73762dfdce68131772022d14.tar.gz",
-      "digest": "sha256:f83d886e6dfe3a7bafae17722ccab3d3239470ef73762dfdce68131772022d14"
+      "url": "/.well-known/agent-skills/package-walter-green-5e6dc9f7debac6ecb74bd424f8550f032f1f3272d503acb96f1663adb22e12b1.tar.gz",
+      "digest": "sha256:5e6dc9f7debac6ecb74bd424f8550f032f1f3272d503acb96f1663adb22e12b1"
     },
     {
       "name": "package-wavehouse-blue",
