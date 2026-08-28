@@ -1,0 +1,25 @@
+type: context
+name: Agent Network DigitalOcean Kubernetes
+repository: getcolors/skills
+summary: Verified traps and acceptance doctrine for NetBird Agent Network on DigitalOcean Kubernetes, distilled from a live DOKS build - platform-allocated subnets that are not the documented 10.244.0.0/16 default, DOCR's account-scoped adopt-or-create registries with registry-wide credentials, and the Ready-versus-gateway-reachable timing traps.
+keywords:
+  - netbird
+  - agent network
+  - kubernetes
+  - doks
+  - digitalocean
+  - docr
+  - cilium
+  - networkpolicy
+  - 10.244.0.0/16
+  - namespaces not found
+  - dry-run=server
+  - 502 after rollout
+  - manifest_digest
+  - loadBalancerSourceRanges
+  - kube_config raw_config
+  - isolation
+companion: getcolors/agent-network-doks
+context-skills:
+  - name: agent-network-doks
+    path: agent-network-doks/SKILL.md
