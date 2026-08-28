@@ -56,6 +56,8 @@ import {
   netbirdInstallCmd,
   agentNetwork,
   agentNetworkInstallCmd,
+  agentNetworkK8s,
+  agentNetworkK8sInstallCmd,
 } from "~/data/landing";
 
 const title = "Featured — Colors";
@@ -85,6 +87,7 @@ const featuredPackageSkills = [
   { label: "SigNoz", href: "#signoz" },
   { label: "NetBird", href: "#netbird" },
   { label: "Agent Network", href: "#agent-network" },
+  { label: "Agent Network K8s", href: "#agent-network-k8s" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1908,6 +1911,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{agentNetwork.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENT NETWORK K8S -->
+      <div class="sec" id="agent-network-k8s">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{agentNetworkK8s.eyebrow}</div>
+          <SectionHeading id="agent-network-k8s" title={agentNetworkK8s.heading} />
+          <p class="sec-lede sec-lede-wide">{agentNetworkK8s.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={agentNetworkK8sInstallCmd} id="featured-agent-network-k8s-install" />
+            <span class="install-note" set:html={html(agentNetworkK8s.runtimeNote)} />
+            <ResourceLinks docsUrl={agentNetworkK8s.docsUrl} repoUrl={agentNetworkK8s.repoUrl} catalogUrl="/getcolors/agent-network-k8s" />
+          </div>
+
+          <div class="grid-5">
+            {agentNetworkK8s.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{agentNetworkK8s.dagCaption}</div>
+            <div class="dag">
+              {agentNetworkK8s.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{agentNetworkK8s.dagNote}</p>
           </div>
         </div>
       </div>
