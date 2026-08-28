@@ -202,9 +202,9 @@ is not a known catalog provider         → agent-network-single-node</code></pr
         standard: <a href="/getcolors/skills/agent-network-single-node"><code>agent-network-single-node</code></a>, <a href="/getcolors/skills/posthog-single-node"><code>posthog-single-node</code></a>, and <a href="/getcolors/skills/rybbit-single-node"><code>rybbit-single-node</code></a>. Loading one is
         one command; they are used, never installed:
       </p>
-      <pre><code>npx skills use getcolors/skills@rybbit-single-node     # load one for this request
-npx skills use getcolors/skills@create-context-skill   # distill your own verified build
-npx skills add getcolors/skills@submit-context-skill   # submit yours to the catalog</code></pre>
+      <pre><code>npx skills use "https://github.com/getcolors/skills" --skill "rybbit-single-node"     # load one for this request
+npx skills use "https://github.com/getcolors/skills" --skill "create-context-skill"   # distill your own verified build
+npx skills add "https://github.com/getcolors/skills" --skill "submit-context-skill"   # submit yours to the catalog</code></pre>
       <p>
         The second command is the distillation workflow — five phases from harvesting verbatim failures
         while the session still holds them to proving the result

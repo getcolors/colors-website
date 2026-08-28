@@ -11,8 +11,10 @@ import {
   colorsYml,
   createContextSkill,
   createContextSkillCmd,
+  createContextSkillPrompt,
   createPackageSkill,
   createPackageSkillCmd,
+  createPackageSkillPrompt,
   difference,
   hero,
   html,
@@ -23,8 +25,10 @@ import {
   skillMatrix,
   submitContextSkill,
   submitContextSkillCmd,
+  submitContextSkillPrompt,
   submitPackageSkill,
   submitPackageSkillCmd,
+  submitPackageSkillPrompt,
   trust,
   workflow,
 } from "~/data/landing";
@@ -927,7 +931,7 @@ const yamlTheme = {
           <p class="sec-lede sec-lede-wide">{createPackageSkill.lede}</p>
 
           <div class="sec-install">
-            <InstallBox command={createPackageSkillCmd} id="create-package-skill-install" />
+            <InstallBox command={createPackageSkillCmd} prompt={createPackageSkillPrompt} id="create-package-skill-install" />
             <span class="install-note" set:html={html(createPackageSkill.useNote)} />
             <ResourceLinks docsUrl={createPackageSkill.docsUrl} repoUrl={createPackageSkill.repoUrl} />
           </div>
@@ -952,7 +956,7 @@ const yamlTheme = {
           <p class="sec-lede sec-lede-wide">{submitPackageSkill.lede}</p>
 
           <div class="sec-install">
-            <InstallBox command={submitPackageSkillCmd} id="submit-package-skill-install" />
+            <InstallBox command={submitPackageSkillCmd} prompt={submitPackageSkillPrompt} id="submit-package-skill-install" />
             <span class="install-note" set:html={html(submitPackageSkill.useNote)} />
             <ResourceLinks docsUrl={submitPackageSkill.docsUrl} repoUrl={submitPackageSkill.repoUrl} />
           </div>
@@ -977,7 +981,7 @@ const yamlTheme = {
           <p class="sec-lede sec-lede-wide">{createContextSkill.lede}</p>
 
           <div class="sec-install">
-            <InstallBox command={createContextSkillCmd} id="create-context-skill-install" />
+            <InstallBox command={createContextSkillCmd} prompt={createContextSkillPrompt} id="create-context-skill-install" />
             <span class="install-note" set:html={html(createContextSkill.useNote)} />
             <ResourceLinks docsUrl={createContextSkill.docsUrl} repoUrl={createContextSkill.repoUrl} />
           </div>
@@ -1002,7 +1006,7 @@ const yamlTheme = {
           <p class="sec-lede sec-lede-wide">{submitContextSkill.lede}</p>
 
           <div class="sec-install">
-            <InstallBox command={submitContextSkillCmd} id="submit-context-skill-install" />
+            <InstallBox command={submitContextSkillCmd} prompt={submitContextSkillPrompt} id="submit-context-skill-install" />
             <span class="install-note" set:html={html(submitContextSkill.useNote)} />
             <ResourceLinks docsUrl={submitContextSkill.docsUrl} repoUrl={submitContextSkill.repoUrl} />
           </div>

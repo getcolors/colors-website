@@ -209,11 +209,12 @@ Context Skill is distilled knowledge from a verified build, defined
 normatively by the workspace's `standards/context-skill.md`; its recipe lists
 `context-skills` entries instead of `package-skills` (no runtimes, no
 `package-` prefix) and may name a `companion:` product repository, rendered
-as a link in both directions. Context Skills are loaded with
-`npx skills use`, never installed — their pages pass `rewrite={false}` to
-`InstallBox` so the Command tab does not rewrite `use` to `add`. On `/skills`
-they render as a separate section below the Package Skill cards, covered by
-the same search.
+as a link in both directions. An agent loads a Context Skill on demand with
+`npx skills use`, same as any Agent Skill, but `InstallBox` shows that verb
+only on the Prompt tab — the Command tab reads `npx skills add` for every
+skill kind, package or context alike, so the copy button always offers the
+same verb. On `/skills` Context Skills render as a separate section below the
+Package Skill cards, covered by the same search.
 
 The generated hierarchy is `/skills`, `/{owner}`,
 `/{owner}/{repository}`, and `/{owner}/{repository}/{skill}` for both skill
@@ -522,9 +523,12 @@ rename rule above still applies to changing the artwork at a fixed host.
   hand-kept copies until 2026-07-30.
 
   Create Package Skill has its own command,
-  `npx skills use getcolors/skills@create-package-skill`, in `landing.ts`. It is
-  an Agent Skill fetched for the agent's next request, not a Package Skill
-  installed into a deployment.
+  `npx skills use "https://github.com/getcolors/skills" --skill "create-package-skill"`,
+  in `landing.ts`. It is an Agent Skill fetched for the agent's next request,
+  not a Package Skill installed into a deployment. The site advertises the
+  `--skill` flag form everywhere — never the `owner/repo@skill` shorthand — and
+  each workflow skill's `*Cmd` constant has a sibling `*Prompt` export that the
+  landing page passes to `InstallBox`.
 
   The second Once copy is the one that bites. It is not on any page, so it does not
   show up when you grep the rendered site, no build step reads it, and a wrong

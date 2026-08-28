@@ -225,7 +225,10 @@ export const skillMatrix = {
 };
 
 export const createPackageSkillCmd =
-  "npx skills use getcolors/skills@create-package-skill";
+  'npx skills use "https://github.com/getcolors/skills" --skill "create-package-skill"';
+
+export const createPackageSkillPrompt =
+  `Run \`${createPackageSkillCmd}\` and read its complete output, redirecting it to a temporary file first if necessary. It is a phased workflow that begins with conversation only: your first reply asks the user for the Package Skill folder name and the deployment suffix, then settles scope, credentials, cost, and authorization. Create no files, write no plan, and run no state-changing command until the workflow's own phase gates say so.`;
 
 export const createPackageSkill = {
   eyebrow: "Agent Skill",
@@ -252,7 +255,10 @@ export const createPackageSkill = {
 };
 
 export const submitPackageSkillCmd =
-  "npx skills add getcolors/skills@submit-package-skill";
+  'npx skills add "https://github.com/getcolors/skills" --skill "submit-package-skill"';
+
+export const submitPackageSkillPrompt =
+  `Run \`${submitPackageSkillCmd.replace(/^npx skills add\b/, "npx skills use")}\` and read its complete output, redirecting it to a temporary file first if necessary. It validates an existing Package Skill and adds it to the getcolors.ai Catalog. Validate fully and prepare the recipe, but branch, commit, push, and open the pull request only with the user's explicit authorization.`;
 
 export const submitPackageSkill = {
   eyebrow: "Agent Skill",
@@ -280,9 +286,12 @@ export const submitPackageSkill = {
 
 // `use`, not `add`, matching createPackageSkillCmd: the markdown twin fences
 // this verbatim, and create-package-skill's "Optional distillation" section
-// advertises the same `use` form. InstallBox derives both tabs either way.
+// advertises the same `use` verb. InstallBox derives both tabs either way.
 export const createContextSkillCmd =
-  "npx skills use getcolors/skills@create-context-skill";
+  'npx skills use "https://github.com/getcolors/skills" --skill "create-context-skill"';
+
+export const createContextSkillPrompt =
+  `Run \`${createContextSkillCmd}\` and read its complete output, redirecting it to a temporary file first if necessary. Its input is a completed, verified build whose acceptance gates passed — ideally the one still in this session, whose verbatim failures, deviations, and pinned versions have not yet decayed. Distill only knowledge bought from converging against the real platform; if no verified build exists here, say so and stop rather than writing from research or documentation.`;
 
 export const createContextSkill = {
   eyebrow: "Agent Skill",
@@ -309,7 +318,10 @@ export const createContextSkill = {
 };
 
 export const submitContextSkillCmd =
-  "npx skills add getcolors/skills@submit-context-skill";
+  'npx skills add "https://github.com/getcolors/skills" --skill "submit-context-skill"';
+
+export const submitContextSkillPrompt =
+  `Run \`${submitContextSkillCmd.replace(/^npx skills add\b/, "npx skills use")}\` and read its complete output, redirecting it to a temporary file first if necessary. It validates a Context Skill against the Context Skill Standard and adds its \`type: context\` recipe to the getcolors.ai Catalog. Validate fully and prepare the recipe, but branch, commit, push, and open the pull request only with the user's explicit authorization.`;
 
 export const submitContextSkill = {
   eyebrow: "Agent Skill",

@@ -380,7 +380,7 @@ export const loadCatalog = () => {
             sourceUrl: `https://github.com/${recipe.repository}/blob/${recipe.branch}/${entry.path}`,
             skillsShUrl: stats.url,
             installCommand: `npx skills add https://github.com/${recipe.repository} --skill ${entry.name}`,
-            prompt: `Run \`npx skills use "https://github.com/${recipe.repository}" --skill "${entry.name}"\` and follow the generated Package Skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary. Resolve relative paths from the supporting-files directory it provides.`,
+            prompt: `Run \`npx skills use "https://github.com/${recipe.repository}" --skill "${entry.name}"\` and follow the generated Package Skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary, and resolve relative paths from the supporting-files directory it names. This skill reconciles real infrastructure to desired state: stay on the safe verbs — \`build\` and \`create --dry-run\` — until the user explicitly authorizes a converge that creates paid resources.`,
           };
         };
         const packageSkills = await Promise.all(
@@ -397,8 +397,7 @@ export const loadCatalog = () => {
               ...shared,
               kind: "context",
               companion: recipe.companion,
-              installCommand: `npx skills use ${recipe.repository}@${entry.name}`,
-              prompt: `Run \`npx skills use "${recipe.repository}@${entry.name}"\` and read the Context Skill's complete output before continuing. It carries symptom-indexed traps and acceptance doctrine verified against a running deployment.`,
+              prompt: `Run \`npx skills use "https://github.com/${recipe.repository}" --skill "${entry.name}"\` and read the Context Skill's complete output before continuing, redirecting it to a temporary file first if necessary. It is reference, not a workflow: symptom-indexed traps, contracts, and acceptance doctrine verified against a running deployment. Match your symptoms against its index before debugging from first principles, and hold your build to its acceptance gates instead of assuming success.`,
             };
           }),
         );

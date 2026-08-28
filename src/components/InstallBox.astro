@@ -3,16 +3,15 @@ interface Props {
   command: string;
   id?: string;
   prompt?: string;
-  // Context Skills are loaded with `npx skills use`, never installed; pass
-  // false to keep the command verbatim instead of rewriting use -> add.
-  rewrite?: boolean;
 }
 
-const { command, id: providedId, prompt: providedPrompt, rewrite = true } = Astro.props;
+const { command, id: providedId, prompt: providedPrompt } = Astro.props;
 const id = providedId ?? `install-${command.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}`;
-const installCommand = rewrite ? command.replace(/^npx skills use\b/, "npx skills add") : command;
+// The Command tab always reads `add`, the Prompt tab always reads `use` —
+// for every skill kind, regardless of which verb the caller's command uses.
+const installCommand = command.replace(/^npx skills use\b/, "npx skills add");
 const promptCommand = command.replace(/^npx skills add\b/, "npx skills use");
-const prompt = providedPrompt ?? `Run \`${promptCommand}\` and follow the generated skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary. Resolve relative paths from the supporting-files directory it provides.`;
+const prompt = providedPrompt ?? `Run \`${promptCommand}\` and follow the generated skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary, and resolve relative paths from the supporting-files directory it names. The skill reconciles real infrastructure to desired state: stay on the safe verbs — \`build\` and \`create --dry-run\` — until the user explicitly authorizes a converge that creates paid resources.`;
 const panelId = `${id}-panel`;
 ---
 

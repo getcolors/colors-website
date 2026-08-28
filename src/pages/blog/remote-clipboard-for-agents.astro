@@ -218,7 +218,7 @@ ssh walter-vultr 'nc -U /tmp/clipboard.sock &lt;/dev/null &gt; /tmp/t.png; file 
         None of this is clever. pngpaste, socat, launchd, a <code>-R</code> forward and <code>nc</code> are all older than the agents using them. The useful part is the wiring, and the two places where a reasonable configuration reported success while doing nothing: a LaunchAgent that lost a two-second race to an encrypted volume, and an ssh option that was correct in the wrong file. Both fixes are now in desired state, one in a plist and one in walter, which is the only place a fix like this stays fixed.
       </p>
       <p>
-        The skill is in <a href="https://github.com/getcolors/skills/tree/main/clipboard-screenshot" target="_blank" rel="noopener noreferrer">getcolors/skills</a>; <code>npx skills use getcolors/skills@clipboard-screenshot</code> hands it to your agent. The server side of the recipe is what every machine provisioned by <a href="https://github.com/getcolors/walter" target="_blank" rel="noopener noreferrer">walter</a> gets by default. The Mac side is the plist above, and the one line that matters in it is <code>wait4path</code>.
+        The skill is in <a href="https://github.com/getcolors/skills/tree/main/clipboard-screenshot" target="_blank" rel="noopener noreferrer">getcolors/skills</a>; <code>npx skills use "https://github.com/getcolors/skills" --skill "clipboard-screenshot"</code> hands it to your agent. The server side of the recipe is what every machine provisioned by <a href="https://github.com/getcolors/walter" target="_blank" rel="noopener noreferrer">walter</a> gets by default. The Mac side is the plist above, and the one line that matters in it is <code>wait4path</code>.
       </p>
     </article>
   </div>
