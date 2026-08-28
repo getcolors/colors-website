@@ -1,0 +1,23 @@
+type: context
+name: Agent Network Kubernetes
+repository: getcolors/skills
+summary: Verified traps and acceptance doctrine for NetBird Agent Network on Kubernetes, distilled from a live VKE build - the unprivileged netstack/SOCKS5 client the flags will not configure, the embedded proxy peer whose overlay address churns, and isolation probed from both sides of the listener.
+keywords:
+  - netbird
+  - agent network
+  - kubernetes
+  - vke
+  - netstack
+  - socks5
+  - networkpolicy
+  - listen unix /var/run/netbird.sock
+  - get current user requires cgo
+  - api.netbird.io i/o timeout
+  - illegal base64 data at input byte 40
+  - could not initialize geolocation service
+  - no proxy peer
+  - isolation
+companion: getcolors/agent-network-k8s
+context-skills:
+  - name: agent-network-kubernetes
+    path: agent-network-kubernetes/SKILL.md
