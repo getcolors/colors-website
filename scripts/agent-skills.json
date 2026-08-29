@@ -4,6 +4,10 @@
       "ref": "main",
       "sha": "7f44741d6ed329f84e25c70fef41ccd548702529"
     },
+    "agent-network-doks": {
+      "ref": "main",
+      "sha": "8b0192571569186ed17dcc239097ef1b96324bc3"
+    },
     "agent-network-k8s": {
       "ref": "main",
       "sha": "65e74179885a3ad25ac302688b9a67bec5a34453"
@@ -82,7 +86,7 @@
     },
     "skills": {
       "ref": "main",
-      "sha": "120cba4a300d9cbb6245a39565c0a8c96c3a9aee"
+      "sha": "5444bb3c22f7e6c3f4d7362b6f9de458224880de"
     },
     "temporal": {
       "ref": "main",

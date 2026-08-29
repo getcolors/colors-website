@@ -1679,10 +1679,8 @@ export const agentNetworkDoks = {
   repoUrl: "https://github.com/getcolors/agent-network-doks",
   heading: "Agent Network DOKS: the keyless, isolated agent on DigitalOcean Kubernetes",
   lede: "Agent Network DOKS is a Package Skill built with Colors. It provisions the NetBird Agent Network demo on a DigitalOcean Kubernetes cluster — Traefik behind a TCP-mode regional Load Balancer, the combined `netbird-server` on a CSI volume, the dashboard in agent-network view, the private reverse proxy — and the two-pod application: the NetBird client in netstack/SOCKS5 mode (userspace WireGuard — no TUN device, no capabilities) and an agent pod running headless Claude Code whose only network egress, enforced by a default-deny NetworkPolicy, is that SOCKS5 listener. The agent holds no API key, no ServiceAccount token, and no DNS: its one road to an LLM is the tunnel-only endpoint, where every request carries its peer identity, passes a model allowlist and per-day budget caps, and lands attributed in the access log.",
-  // Green-only, like Walter — say so plainly rather than let the tri-colour
-  // parity pitch imply a red and blue that do not exist.
   runtimeNote:
-    "Agent Network DOKS ships in **green** alone — a Package Skill picks the runtime that suits it. In place of a cross-colour parity harness, its golden suite renders the fixture across both state backends and diffs byte for byte. The isolation claim is probed from **both sides** of the SOCKS5 listener under `restricted` Pod Security, and a Cilium canary proves NetworkPolicy enforcement on the actual cluster before any secret enters it.",
+    "Agent Network DOKS ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity by its own three-colour harness across both state backends. The isolation claim is probed from **both sides** of the SOCKS5 listener under `restricted` Pod Security, and a Cilium canary proves NetworkPolicy enforcement on the actual cluster before any secret enters it.",
   steps: [
     {
       title: "Read desired state",

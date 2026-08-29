@@ -28,6 +28,12 @@ keywords:
   - self-hosted
 
 package-skills:
+  - name: package-agent-network-doks-red
+    path: skills/package-agent-network-doks-red/SKILL.md
+    runtime: red
   - name: package-agent-network-doks-green
     path: skills/package-agent-network-doks-green/SKILL.md
     runtime: green
+  - name: package-agent-network-doks-blue
+    path: skills/package-agent-network-doks-blue/SKILL.md
+    runtime: blue

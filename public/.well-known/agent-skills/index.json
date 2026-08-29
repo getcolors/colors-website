@@ -2,6 +2,13 @@
   "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
   "skills": [
     {
+      "name": "agent-network-doks",
+      "type": "archive",
+      "description": "The DigitalOcean distance from the VKE-verified NetBird Agent Network on Kubernetes - what only a live DOKS converge surfaces. Use on these symptoms - pod IPs in 10.110.x and ClusterIPs in 10.111.x though every doc says DOKS pods default to 10.244.0.0/16, so trusted-proxy CIDRs rendered from that assumption are silently wrong; ''Error from server (NotFound) ... namespaces not found'' from kubectl apply --dry-run=server on a multi-doc file whose first document creates that namespace; ''curl (22) ... 502'' on the first management call right after rollout status says the restarted server is Ready; a SOCKS5 positive control probe failing minutes after the client pod rolled while the identical probe answers later; DOCR refusing a second registry (account-scoped, tier-limited, subscription account-global); reading a pushed image digest back through the DO API tags manifest_digest; HTML-escaped quotes in rendered YAML manifests; kube_config[0].raw_config vs a base64 kubeconfig string. Full symptom index in the body.",
+      "url": "/.well-known/agent-skills/agent-network-doks-117aa90c9046ce223bd6c94419fdc7ca49c320ab6c1e7095841db298f0ce44ec.tar.gz",
+      "digest": "sha256:117aa90c9046ce223bd6c94419fdc7ca49c320ab6c1e7095841db298f0ce44ec"
+    },
+    {
       "name": "agent-network-kubernetes",
       "type": "archive",
       "description": "Everything a NetBird Agent Network on Kubernetes needs that the single-node build will not tell you — the two-pod netstack/SOCKS5 application (no TUN, no capabilities) whose isolation is NetworkPolicy probed from both sides, and the 0.77.1 client facts only a live VKE converge surfaces. Use on these symptoms - the client binds /var/run/netbird.sock or dials api.netbird.io forever whatever the flags say (service run silently ignores --daemon-addr and --log-file; use NB_* env); \"get current user\" requires cgo or $USER; no proxy peer in /api/peers though the proxy runs (it is an embedded peer - read the client's network map); the keyless endpoint dies after every reverse-proxy restart (its overlay address churns and stale registrations linger); server crashloop \"illegal base64 data at input byte 40\" or \"could not initialize geolocation service\"; lego checksum FAILED on arm64; an isolated pod that \"has an IPv6 default route\" on VKE. Full symptom index at the top of the body.",
@@ -35,6 +42,27 @@
       "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
       "url": "/.well-known/agent-skills/package-agent-network-blue-e6729d9a300c3f390508f02d0c44feac9726860dc8df7ac6d922d42a5f9b04c2.tar.gz",
       "digest": "sha256:e6729d9a300c3f390508f02d0c44feac9726860dc8df7ac6d922d42a5f9b04c2"
+    },
+    {
+      "name": "package-agent-network-doks-blue",
+      "type": "archive",
+      "description": "Provision and manage a NetBird Agent Network demo on DigitalOcean Kubernetes (DOKS) from declarative desired state — a keyless, policy-gated LLM endpoint and a two-pod application, the NetBird client in netstack/SOCKS5 mode plus a network-isolated agent pod running headless Claude Code. Use when asked to deploy, converge, inspect or delete an Agent Network on Kubernetes, a keyless LLM gateway demo on DOKS, or an isolated AI-agent sandbox with identity-based model access and NetworkPolicy-enforced egress.",
+      "url": "/.well-known/agent-skills/package-agent-network-doks-blue-bb515d76c4d978dad987963dbdf64df5a411a7f46db73c01df60dff726230af7.tar.gz",
+      "digest": "sha256:bb515d76c4d978dad987963dbdf64df5a411a7f46db73c01df60dff726230af7"
+    },
+    {
+      "name": "package-agent-network-doks-green",
+      "type": "archive",
+      "description": "Provision and manage a NetBird Agent Network demo on DigitalOcean Kubernetes (DOKS) from declarative desired state — a keyless, policy-gated LLM endpoint and a two-pod application, the NetBird client in netstack/SOCKS5 mode plus a network-isolated agent pod running headless Claude Code. Use when asked to deploy, converge, inspect or delete an Agent Network on Kubernetes, a keyless LLM gateway demo on DOKS, or an isolated AI-agent sandbox with identity-based model access and NetworkPolicy-enforced egress.",
+      "url": "/.well-known/agent-skills/package-agent-network-doks-green-f8c0fcd8df62c68f6c1131a23a19e2514052c78761fb360bd0aa15a434d87b5b.tar.gz",
+      "digest": "sha256:f8c0fcd8df62c68f6c1131a23a19e2514052c78761fb360bd0aa15a434d87b5b"
+    },
+    {
+      "name": "package-agent-network-doks-red",
+      "type": "archive",
+      "description": "Provision and manage a NetBird Agent Network demo on DigitalOcean Kubernetes (DOKS) from declarative desired state — a keyless, policy-gated LLM endpoint and a two-pod application, the NetBird client in netstack/SOCKS5 mode plus a network-isolated agent pod running headless Claude Code. Use when asked to deploy, converge, inspect or delete an Agent Network on Kubernetes, a keyless LLM gateway demo on DOKS, or an isolated AI-agent sandbox with identity-based model access and NetworkPolicy-enforced egress.",
+      "url": "/.well-known/agent-skills/package-agent-network-doks-red-bd1062987e880d52c6b532c1367163c695c7b9ef6cbb6aeca13b4f958c602ca1.tar.gz",
+      "digest": "sha256:bd1062987e880d52c6b532c1367163c695c7b9ef6cbb6aeca13b4f958c602ca1"
     },
     {
       "name": "package-agent-network-green",
