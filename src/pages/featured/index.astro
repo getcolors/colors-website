@@ -58,6 +58,8 @@ import {
   agentNetworkInstallCmd,
   agentNetworkK8s,
   agentNetworkK8sInstallCmd,
+  agentNetworkDoks,
+  agentNetworkDoksInstallCmd,
 } from "~/data/landing";
 
 const title = "Featured — Colors";
@@ -88,6 +90,7 @@ const featuredPackageSkills = [
   { label: "NetBird", href: "#netbird" },
   { label: "Agent Network", href: "#agent-network" },
   { label: "Agent Network K8s", href: "#agent-network-k8s" },
+  { label: "Agent Network DOKS", href: "#agent-network-doks" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1949,6 +1952,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{agentNetworkK8s.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENT NETWORK DOKS -->
+      <div class="sec" id="agent-network-doks">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{agentNetworkDoks.eyebrow}</div>
+          <SectionHeading id="agent-network-doks" title={agentNetworkDoks.heading} />
+          <p class="sec-lede sec-lede-wide">{agentNetworkDoks.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={agentNetworkDoksInstallCmd} id="featured-agent-network-doks-install" />
+            <span class="install-note" set:html={html(agentNetworkDoks.runtimeNote)} />
+            <ResourceLinks docsUrl={agentNetworkDoks.docsUrl} repoUrl={agentNetworkDoks.repoUrl} catalogUrl="/getcolors/agent-network-doks" />
+          </div>
+
+          <div class="grid-5">
+            {agentNetworkDoks.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{agentNetworkDoks.dagCaption}</div>
+            <div class="dag">
+              {agentNetworkDoks.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{agentNetworkDoks.dagNote}</p>
           </div>
         </div>
       </div>

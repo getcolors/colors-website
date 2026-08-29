@@ -1671,6 +1671,64 @@ export const agentNetworkK8s = {
     "Deploy applies the edge and the proxy but deliberately does not await them — both mount the TLS Secret the certificate stage issues after DNS points at the load balancer — and their readiness is claimed only once it exists. Delete tears down in-cluster first (workloads, CSI volumes, the load balancer, each confirmed absent at the provider) because those are Kubernetes-managed and invisible to the infrastructure state. No backups, deliberately — the deployment is disposable, and a later create regenerates the endpoint hostname and every peer identity.",
 };
 
+export const agentNetworkDoksInstallCmd = "npx skills use getcolors/agent-network-doks";
+
+export const agentNetworkDoks = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/agent-network-doks/",
+  repoUrl: "https://github.com/getcolors/agent-network-doks",
+  heading: "Agent Network DOKS: the keyless, isolated agent on DigitalOcean Kubernetes",
+  lede: "Agent Network DOKS is a Package Skill built with Colors. It provisions the NetBird Agent Network demo on a DigitalOcean Kubernetes cluster — Traefik behind a TCP-mode regional Load Balancer, the combined `netbird-server` on a CSI volume, the dashboard in agent-network view, the private reverse proxy — and the two-pod application: the NetBird client in netstack/SOCKS5 mode (userspace WireGuard — no TUN device, no capabilities) and an agent pod running headless Claude Code whose only network egress, enforced by a default-deny NetworkPolicy, is that SOCKS5 listener. The agent holds no API key, no ServiceAccount token, and no DNS: its one road to an LLM is the tunnel-only endpoint, where every request carries its peer identity, passes a model allowlist and per-day budget caps, and lands attributed in the access log.",
+  // Green-only, like Walter — say so plainly rather than let the tri-colour
+  // parity pitch imply a red and blue that do not exist.
+  runtimeNote:
+    "Agent Network DOKS ships in **green** alone — a Package Skill picks the runtime that suits it. In place of a cross-colour parity harness, its golden suite renders the fixture across both state backends and diffs byte for byte. The isolation claim is probed from **both sides** of the SOCKS5 listener under `restricted` Pod Security, and a Cilium canary proves NetworkPolicy enforcement on the actual cluster before any secret enters it.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It names the public host and its wildcard, the claimed models with their prices, the guardrail allowlist, the per-day policy caps and the account-wide ceiling, the DOKS version slug and node pool, and every image by tag and digest. The cluster subnets appear nowhere — they are outputs, read back from the API. It carries no key material and no secret.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Kubernetes manifests, the NetworkPolicy matrix, and every converge script, then runs `create --dry-run` before contacting providers or the cluster. Build and dry-run need no credentials; the pinned DOKS version slug is checked against the live supported list while failing is still free.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the DOKS cluster and the container registry — created and profile-named, or adopted by name behind a tier-aware capacity preflight — with asymmetric rotated credentials: the write credential exists only while kaniko builds, and the read-only pull credential is re-applied each converge. kubectl converges the gateway, kaniko builds the agent image in-cluster from a streamed, content-addressed context, and the deploy consumes only the digest read back from the registry. DNS goes to the load balancer, and one lego DNS-01 order carries both SANs — the base name and its wildcard.",
+    },
+    {
+      title: "Enroll the two-pod application",
+      body: "The control plane is reconciled headlessly — admin account, endpoint, provider, guardrail, policy, global limit — and the client enrolls with a single-use setup key streamed over `exec` stdin into memory-backed storage, never a Kubernetes Secret. The reverse proxy is an embedded peer invisible to the peers API, so its overlay address is read from the enrolled client's own network map and reconciled whenever a restart mints a new one.",
+    },
+    {
+      title: "Prove the claim",
+      body: "Acceptance probes the negative space from both sides of the listener: the agent reaches nothing directly, and CONNECTs through the SOCKS5 pod reach only the proxy's overlay address. The load-balancer firewall is verified through the DigitalOcean API — an open deployment cannot prove denial by probing. Both denial classes land at zero upstream cost, an outside caller gets exactly the pre-identity 403, and the whole claim is re-proven after pod deletes, gateway restarts, and a node drain. A deliberately fake provider key is a supported mode — the relayed upstream 401 proves the path with nothing billable.",
+    },
+  ],
+  dagCaption: "Agent Network DOKS — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "deploy" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "certificate" },
+    { kind: "edge" },
+    { kind: "node", label: "bootstrap" },
+    { kind: "edge" },
+    { kind: "node", label: "agent" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `deploy` → `dns` → `certificate` → `bootstrap` → `agent` → `acceptance`.",
+  dagNote:
+    "Deploy applies the edge and the proxy but deliberately does not await them — both mount the TLS Secret the certificate stage issues after DNS points at the load balancer — and their readiness is claimed only once it exists. Delete tears down in-cluster first (workloads, CSI volumes, the load balancer, each confirmed absent at the provider) because those are Kubernetes-managed and invisible to the infrastructure state; an adopted registry survives, with exactly the deployment's own repository deleted. No backups, deliberately — the deployment is disposable, and a later create regenerates the endpoint hostname and every peer identity.",
+};
+
 export const footer = {
   name: "Colors",
   links: [
