@@ -48,6 +48,10 @@
       "ref": "main",
       "sha": "90190b6f16ec6886e226dd1b49dd128a8e642a92"
     },
+    "neon": {
+      "ref": "main",
+      "sha": "87c009549a928fdf1f9dc135f9740c3baa5782d7"
+    },
     "netbird": {
       "ref": "main",
       "sha": "9443139e1be41f6a9fc760315d2f12d526544f38"

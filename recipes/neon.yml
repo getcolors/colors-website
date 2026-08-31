@@ -1,0 +1,27 @@
+name: Neon
+repository: getcolors/neon
+summary: Operate self-hosted Neon serverless Postgres — the storage broker, the pageserver, one safekeeper, and a Postgres 17 compute node, with layers and WAL in Cloudflare R2 — on a loopback-only Vultr instance reached over an SSH tunnel.
+featured: /featured#neon
+keywords:
+  - Neon
+  - serverless Postgres
+  - PostgreSQL
+  - pageserver
+  - safekeeper
+  - compute_ctl
+  - storage compute separation
+  - Cloudflare R2
+  - WAL
+  - Vultr
+  - SSH tunnel
+  - self-hosted
+package-skills:
+  - name: package-neon-red
+    path: skills/package-neon-red/SKILL.md
+    runtime: red
+  - name: package-neon-green
+    path: skills/package-neon-green/SKILL.md
+    runtime: green
+  - name: package-neon-blue
+    path: skills/package-neon-blue/SKILL.md
+    runtime: blue

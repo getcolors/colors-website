@@ -282,6 +282,27 @@
       "digest": "sha256:9ecc35f577bf84bdcf8093d1d08ccbda89738ded94835a6f5d45bab1dbaf0fe0"
     },
     {
+      "name": "package-neon-blue",
+      "type": "archive",
+      "description": "Provision and manage self-hosted Neon serverless Postgres on one Vultr instance — the storage broker, the pageserver, a safekeeper, and a compute node, with Cloudflare R2 as the remote storage for layers and WAL — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted Neon, to run storage/compute-separated Postgres with S3-durable data, or to work on a colors.yml for a neon deployment.",
+      "url": "/.well-known/agent-skills/package-neon-blue-e1dff4658646493aeef91f7c64053a11e0863d748403424f51798b240e905aae.tar.gz",
+      "digest": "sha256:e1dff4658646493aeef91f7c64053a11e0863d748403424f51798b240e905aae"
+    },
+    {
+      "name": "package-neon-green",
+      "type": "archive",
+      "description": "Provision and manage self-hosted Neon serverless Postgres on one Vultr instance — the storage broker, the pageserver, a safekeeper, and a compute node, with Cloudflare R2 as the remote storage for layers and WAL — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted Neon, to run storage/compute-separated Postgres with S3-durable data, or to work on a colors.yml for a neon deployment.",
+      "url": "/.well-known/agent-skills/package-neon-green-e79831a926a7305a950669eac56f5faedc5ad540dacde7fb7975eaf6bf51a6c0.tar.gz",
+      "digest": "sha256:e79831a926a7305a950669eac56f5faedc5ad540dacde7fb7975eaf6bf51a6c0"
+    },
+    {
+      "name": "package-neon-red",
+      "type": "archive",
+      "description": "Provision and manage self-hosted Neon serverless Postgres on one Vultr instance — the storage broker, the pageserver, a safekeeper, and a compute node, with Cloudflare R2 as the remote storage for layers and WAL — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted Neon, to run storage/compute-separated Postgres with S3-durable data, or to work on a colors.yml for a neon deployment.",
+      "url": "/.well-known/agent-skills/package-neon-red-75c6eadf135c213fdd0f4d71592f4b20126f9695629d97496b8497ac7fbdc218.tar.gz",
+      "digest": "sha256:75c6eadf135c213fdd0f4d71592f4b20126f9695629d97496b8497ac7fbdc218"
+    },
+    {
       "name": "package-netbird-blue",
       "type": "archive",
       "description": "Provision and manage a self-hosted NetBird control plane with Authentik as its identity provider on a single Vultr instance, from declarative desired state. Use when asked to deploy, converge, inspect, back up, restore or delete a NetBird zero-trust network, a self-hosted WireGuard control plane, or a NetBird instance with SSO/MFA.",

@@ -60,6 +60,8 @@ import {
   agentNetworkK8sInstallCmd,
   agentNetworkDoks,
   agentNetworkDoksInstallCmd,
+  neon,
+  neonInstallCmd,
 } from "~/data/landing";
 
 const title = "Featured — Colors";
@@ -91,6 +93,7 @@ const featuredPackageSkills = [
   { label: "Agent Network", href: "#agent-network" },
   { label: "Agent Network K8s", href: "#agent-network-k8s" },
   { label: "Agent Network DOKS", href: "#agent-network-doks" },
+  { label: "Neon", href: "#neon" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -1990,6 +1993,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{agentNetworkDoks.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEON -->
+      <div class="sec" id="neon">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{neon.eyebrow}</div>
+          <SectionHeading id="neon" title={neon.heading} />
+          <p class="sec-lede sec-lede-wide">{neon.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={neonInstallCmd} id="featured-neon-install" />
+            <span class="install-note" set:html={html(neon.runtimeNote)} />
+            <ResourceLinks docsUrl={neon.docsUrl} repoUrl={neon.repoUrl} catalogUrl="/getcolors/neon" />
+          </div>
+
+          <div class="grid-5">
+            {neon.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{neon.dagCaption}</div>
+            <div class="dag">
+              {neon.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{neon.dagNote}</p>
           </div>
         </div>
       </div>

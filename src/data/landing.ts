@@ -1727,6 +1727,56 @@ export const agentNetworkDoks = {
     "Deploy applies the edge and the proxy but deliberately does not await them — both mount the TLS Secret the certificate stage issues after DNS points at the load balancer — and their readiness is claimed only once it exists. Delete tears down in-cluster first (workloads, CSI volumes, the load balancer, each confirmed absent at the provider) because those are Kubernetes-managed and invisible to the infrastructure state; an adopted registry survives, with exactly the deployment's own repository deleted. No backups, deliberately — the deployment is disposable, and a later create regenerates the endpoint hostname and every peer identity.",
 };
 
+export const neonInstallCmd = "npx skills use getcolors/neon";
+
+export const neon = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/neon/",
+  repoUrl: "https://github.com/getcolors/neon",
+  heading: "Neon: self-hosted serverless Postgres with its storage in R2, built with Colors",
+  lede: "Neon is a Package Skill built with Colors. It provisions self-hosted Neon \u2014 Postgres with storage and compute separated \u2014 on a single Vultr instance: the storage broker, the pageserver, one safekeeper, and a Postgres 17 compute node under compute_ctl, with pageserver layers and safekeeper WAL uploaded to Cloudflare R2 under the deployment's own prefix. The R2 prefix plus the tenant and timeline ids in colors.yml are the database: a rebuilt host re-attaches the same identities and rehydrates from R2.",
+  runtimeNote:
+    "Neon ships in all three colours \u2014 **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Nothing is published beyond loopback: the firewall opens **22 only**, and the supported client path is an SSH tunnel through the `~/.ssh/config` alias the package writes.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It names the two digest-pinned images, the Postgres major, the 32-hex tenant and timeline identities, the application database and role, the R2 endpoint and bucket, and the Vultr and state-backend boundary. It carries no key material and no secret.",
+    },
+    {
+      title: "Own the machine keypair",
+      body: "With no `vultr-ssh-keys` in desired state the package generates `~/.ssh/<profile>`, registers it as the Vultr account key named for the profile, and writes the matching `~/.ssh/config` block \u2014 the alias the converge, the client tunnel, and the acceptance probe all ride.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose, and compute-spec files, then runs `create --dry-run` before contacting providers or the server. Build and dry-run need no credentials and never read `~/.ssh`.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the instance and a firewall open only on 22; Ansible converges the storage tier, reconciles the tenant and timeline against R2 behind two-phase ownership markers and a monotonic generation counter, mints SCRAM credentials on the host, and only then starts the compute node \u2014 recreate-only by doctrine.",
+    },
+    {
+      title: "Prove it works",
+      body: "Acceptance asks the system what it has: a SQL round-trip, a wrong password refused, a passwordless connection refused, privilege escalation refused, a **new** WAL segment in R2 beyond a pre-switch baseline \u2014 and, from the workstation, the same probe through the SSH tunnel itself.",
+    },
+  ],
+  dagCaption: "Neon \u2014 CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` \u2192 `infrastructure` \u2192 `ssh-config` \u2192 `ansible` \u2192 `acceptance`.",
+  dagNote:
+    "There is no dns stage on purpose: nothing in this package is reachable by name. Delete removes the `~/.ssh/config` block before the compute destroy and the keypair after it \u2014 and leaves the R2 data in place, because that prefix is the database, not a byproduct.",
+};
+
 export const footer = {
   name: "Colors",
   links: [
