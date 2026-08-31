@@ -1,0 +1,19 @@
+type: context
+name: Neon Single-Node
+repository: getcolors/skills
+summary: Verified topology, compute-spec auth contract, Cloudflare R2 remote-storage traps, honestly measured single-node RPO, and rehearsed recovery doctrine for self-hosted Neon serverless Postgres on one machine.
+keywords:
+  - neon
+  - self-hosted neon
+  - pageserver
+  - safekeeper
+  - compute_ctl
+  - Permission denied (os error 13)
+  - .s.PGSQL.55433.lock
+  - compiled without testing APIs
+  - remote_consistent_lsn
+  - cloudflare r2
+companion: getcolors/neon
+context-skills:
+  - name: neon-single-node
+    path: neon-single-node/SKILL.md

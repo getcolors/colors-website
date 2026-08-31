@@ -37,6 +37,13 @@
       "digest": "sha256:6cfc3199e4fdd846cc69f6b65bd7cdf9630b027f87d590f9dd74a3f2c83371c0"
     },
     {
+      "name": "neon-single-node",
+      "type": "archive",
+      "description": "Everything a single-node self-hosted Neon (serverless Postgres) deployment needs that the docs and the dev docker-compose will not tell you - compute_ctl dying with a bare \"Permission denied (os error 13)\" on a root-owned spec, \"File exists (os error 17)\" when a volume sits on pgdata, the stale /tmp/.s.PGSQL.55433.lock that crash-loops every restart until the container is recreated, the /checkpoint API answering \"compiled without testing APIs\" on release images, remote_consistent_lsn reading 0/0 right after any restart, and Cloudflare R2 remote storage that works only once rclone stops trying to create the bucket (AccessDenied 403 on writes a scoped token should allow, NotImplemented 501 from rcat). Use whenever the user self-hosts Neon - pageserver, safekeeper, storage broker, compute node - on one machine, wires Neon to S3-compatible or R2 storage, asks how durable a single Neon node really is, or hits any symptom above. Full symptom index at the top of the body.",
+      "url": "/.well-known/agent-skills/neon-single-node-65ffca1f4f2032e26124635b05de03acb8f9ef17743341e315173c848a19032e.tar.gz",
+      "digest": "sha256:65ffca1f4f2032e26124635b05de03acb8f9ef17743341e315173c848a19032e"
+    },
+    {
       "name": "package-agent-network-blue",
       "type": "archive",
       "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
