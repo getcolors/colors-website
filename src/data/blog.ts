@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "The Docs Stop Where Operations Begin",
+    slug: "/blog/neon-self-hosting",
+    date: "August 31, 2026",
+    isoDate: "2026-08-31T18:00:00Z",
+    readTime: "9 min read",
+    category: "Field Report",
+    runtime: "Neon · Vultr · Cloudflare R2",
+    summary:
+      "Neon's engine is open source and genuinely good; its self-hosting story is a development fixture, and since July 2025 there is no versioned release to pin. We deployed it for real, measured the actual single-node durability bound, and left a Package Skill and a Context Skill behind as the starting point upstream doesn't ship.",
+    image: "/images/neon-self-hosting-infographic-v1.png",
+    tags: ["Field Report", "Neon", "PostgreSQL", "Cloudflare R2", "Package Skills", "Context Skills"],
+  },
+  {
     title: "The Skill Your Build Leaves Behind",
     slug: "/blog/context-skills",
     date: "August 27, 2026",

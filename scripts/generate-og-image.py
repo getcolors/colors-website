@@ -392,6 +392,11 @@ context_skill_count = sum(len(recipe[4]) for recipe in catalog_recipes if recipe
 # fifth exception to "og-*.png are generated". The generated v1 text card it
 # replaced never shipped; the version suffix follows the rule pre-emptively.
 
+# og-neon-self-hosting-v2.png is the article's supplied infographic fitted
+# without cropping onto the standard 1200x630 white social-card canvas. The
+# original 2752x1536 artwork remains the in-article figure under public/images/.
+# (The generated v1 text card never shipped; the suffix follows the rule.)
+
 render_post_card(
     "og-gemini-3-7-flash-benchmark-v1.png",
     "Benchmark · Gemini 3.7 Flash",

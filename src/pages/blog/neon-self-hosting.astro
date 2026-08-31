@@ -1,0 +1,290 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "The Docs Stop Where Operations Begin — Colors";
+const description = "Neon is open source and its architecture is genuinely good. Its self-hosting story is a development fixture, and upstream stopped cutting versioned releases in July 2025. We built it for real, measured what the docs don't say — including how durable one node actually is — and left two skills behind as the starting point.";
+const path = "/blog/neon-self-hosting";
+
+const post = postFor(path);
+const image = "/og-neon-self-hosting-v2.png";
+const imageAlt =
+  "Neon self-hosting: the docs stop where operations begin — caution tape across the " +
+  "headline, and the note that we built it, measured what the docs don't say, and left " +
+  "two skills to get you started.";
+
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (p: string) => new URL(p, SITE_URL).toString();
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "The Docs Stop Where Operations Begin",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "Neon" },
+    { "@type": "Thing", name: "PostgreSQL" },
+    { "@type": "Thing", name: "Self-hosting" },
+    { "@type": "Thing", name: "Cloudflare R2" },
+    { "@type": "Thing", name: "Package Skills" },
+    { "@type": "Thing", name: "Context Skills" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Self-Hosting Neon" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Field Report &amp; Operations</p>
+      <h1>The Docs Stop Where Operations Begin</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">Neon · Vultr · Cloudflare R2</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+      </div>
+      <p class="lede">Neon separates Postgres into stateless compute and S3-backed storage, and the whole engine is open source. What the repository does not contain is a self-hosting story: there is a development compose file where the operator documentation should be, and since July 2025 there is not even a versioned release to pin. We deployed it for real — auth, durability, recovery, rotation — and wrote down everything the build paid for. This is that report, and the two skills it left behind.</p>
+    </header>
+
+    <figure class="hero-figure">
+      <img
+        src="/images/neon-self-hosting-infographic-v1.png"
+        alt="Neon self-hosting: the docs stop where operations begin. We built it, measured what the docs don't say, and left two skills — a Package Skill and a Context Skill — to get you started."
+        width="2752"
+        height="1536"
+        loading="eager"
+      />
+      <figcaption class="mono">the compose file gets you a stack that runs; nothing tells you how far that is from a deployment you can trust</figcaption>
+    </figure>
+
+    <div class="panel summary-card">
+      <div class="card-label">What we found</div>
+      <p>The distance between Neon's <code>docker-compose/</code> and an operated deployment is real, measurable, and nowhere written down. Crossing it took fifteen converges against a live host, and the load-bearing facts came from the pinned source and live probes, not from prose.</p>
+      <ul class="summary-list">
+        <li><strong>The compose example is a development fixture</strong> — MinIO, trust auth, floating <code>latest</code> tags, <code>fsync=off</code>, a committed signing keypair.</li>
+        <li><strong>There is nothing to pin.</strong> Upstream moved to untagged continuous deployment in July 2025; the last deliberate release pairing has to be excavated from git tags.</li>
+        <li><strong>The compute spec is the auth system</strong> — undocumented, and readable only in the pinned source.</li>
+        <li><strong>Single-node durability is not what you would guess</strong>: a fresh safekeeper cannot serve its offloaded WAL back. We measured the real recovery bound instead of assuming one.</li>
+      </ul>
+    </div>
+
+    <article class="content-body">
+      <h2>1. What upstream actually gives you</h2>
+      <p>Let's be precise, because "the documentation is zero" would be false. The repository carries an 83-line <code>docs/docker.md</code>, a working <code>docker-compose/</code> example, and some twenty architecture documents on the pageserver's internals. The architecture docs are excellent — for contributors. The compose example works — as a development fixture. It runs MinIO as the object store, three safekeepers on one machine, <code>cloud_admin</code> with trust authentication, <code>latest</code> image tags, <code>fsync=off</code> in the compute spec, and a signing keypair committed to the repository. Its startup script even loses its own <code>--dev</code> flag to a missing line continuation, which tells you how it is tested: as a fixture, not as a product.</p>
+      <p>None of this is a criticism of Neon's priorities. Neon-the-company documents Neon-the-cloud-service, which is where its operational knowledge pays their bills; publishing the engine at all is a gift. But it leaves a specific, unglamorous gap: nothing in the repository tells you how to run this with credentials, how durable one node actually is, how to recover one, or how to upgrade one. The docs stop exactly where operations begin.</p>
+
+      <h2>2. You cannot even pin it</h2>
+      <p>The first operational question — <em>which version?</em> — already has no documented answer. Upstream cut its last versioned releases in July 2025 and moved to untagged continuous deployment. Docker Hub is stale; <code>ghcr.io</code> is canonical, and its <code>latest</code> resolves to a CI build, not to any release. The storage and compute images version on <em>separate trains</em> with separate numbering, so there is no shared release number to match. The last pairing upstream deliberately shipped — storage <code>release-9129</code>, compute <code>release-compute-9073</code> — has to be excavated from git tags.</p>
+      <p>Two rules fall out, and both were learned the hard way. Pin both images by tag <em>and</em> digest, because the floating tags move under you. And read <code>docker-compose/</code> at the pinned tag, never at <code>main</code>: a year of drift separates them, including the compute configuration layout. Our package's validation refuses an undigested image for exactly this reason.</p>
+
+      <h2>3. The compute spec is the auth system</h2>
+      <p>The dev fixture runs with trust authentication, and no document explains how to run with anything else. The answer lives in the compute spec — the JSON file <code>compute_ctl</code> boots Postgres from — and we got it by reading the pinned source: <code>cluster.roles[].encrypted_password</code> accepts a SCRAM-SHA-256 verifier string directly, <code>cluster.databases[]</code> creates your database, and <code>compute_ctl</code> renders <code>pg_hba.conf</code> itself — trust on the container's own loopback, password auth for everything else. Connections from the host arrive via the Docker bridge gateway, so they do hit the password rule. Generate the verifier once and store it: the salt is random, so regenerating it per converge makes the spec non-deterministic and needlessly recreates the database container every run.</p>
+      <p>Around that spec sit three traps whose error messages name nothing useful, so here they are verbatim:</p>
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">What you see</th>
+              <th style="text-align: left;">What it means</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>Error: Permission denied (os error 13)</code> — two lines of log, container restart-loops</td><td>The compute container runs as uid 1000, not root. A root-owned <code>0600</code> spec is unreadable to it — and every writer of that file, including any rotation rollback path, has to preserve <code>1000:1000</code> ownership.</td></tr>
+            <tr><td><code>could not start the compute node: File exists (os error 17)</code></td><td>A volume sits on the pgdata path. <code>compute_ctl</code> insists on creating pgdata itself; compute local state is a disposable projection of the storage tier, so mount nothing there.</td></tr>
+            <tr><td><code>FATAL: lock file "/tmp/.s.PGSQL.55433.lock" already exists</code> after a reboot, forever</td><td>The container's writable <code>/tmp</code> preserves the stale postgres lock across restarts. Mount a tmpfs on <code>/tmp</code>, and treat the compute container as recreate-only — which is also how spec changes apply, since roles are reconciled at startup only.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>4. Durability, measured instead of assumed</h2>
+      <p>Point the pageserver and safekeeper at Cloudflare R2 and the uploads genuinely work: layer files, <code>initdb.tar.zst</code>, and 16&nbsp;MB WAL segments all land under your prefix, and this is the part of Neon's design that earns the enthusiasm. The natural conclusion — <em>WAL is continuously archived to S3, so losing the machine costs seconds of data</em> — is the one we went in with. It is wrong, and we found out by rehearsing recovery on the live deployment rather than writing the runbook from intuition.</p>
+      <p>What the rehearsals showed: wipe the pageserver's local state on a surviving host and everything comes back — it re-attaches from R2 at the next generation and the still-running safekeeper replays WAL to the latest byte. We deleted 38&nbsp;MB of local state and read every row back. Delete the safekeeper's volume instead and it also rejoins cleanly. But a <em>fresh</em> safekeeper cannot serve its own offloaded WAL back — so on full host loss, what you recover is what the pageserver had uploaded, and layer uploads follow its checkpoint cadence. The honest single-node recovery point is <strong>the activity since the last checkpoint upload — minutes, not seconds</strong>. Write that in your runbook instead of the comforting version.</p>
+      <p>Two instrument readings to distrust while verifying any of this: <code>remote_consistent_lsn</code> reads <code>0/0</code> right after any restart or fresh attach even when R2 holds a complete copy, and the <code>/checkpoint</code> API that would force an upload answers <code>Cannot run timeline checkpoint because pageserver was compiled without testing APIs</code> on release images. The way to prove uploads are live is to close a WAL segment with <code>pg_switch_wal()</code> and require a <em>new</em> object beyond a pre-switch listing — an old object satisfying the check would let a broken uploader hide indefinitely.</p>
+
+      <h2>5. The starting point</h2>
+      <p>Everything above, plus the parts this article skips, now exists in two forms — which is what "a starting point" means concretely.</p>
+      <p>The <a href="/getcolors/neon">neon Package Skill</a> is the tested implementation: one Vultr instance carrying the storage broker, the pageserver, one safekeeper and a Postgres 17 compute, everything bound to loopback, the firewall open on port 22 alone, layers and WAL in R2 under the deployment's own prefix. Its acceptance asks the system what it has — a SQL round-trip, a wrong password refused, a passwordless connection refused, a new WAL segment in R2 — and then runs the same probe from the operator's workstation through the SSH tunnel that is the supported client path. It ships in <a href="/featured#neon">all three colours</a>, rendering byte-identical artifacts from one <code>colors.yml</code>.</p>
+      <p>The <a href="/getcolors/skills/neon-single-node">neon-single-node Context Skill</a> is the knowledge, routed by symptom: the verbatim failure catalogue behind the table above, the release archaeology, the acceptance doctrine, and the pinned version set with its retest conditions. If your agent is staring at <code>Permission denied (os error 13)</code> with no filename, that string routes to the entry that explains it.</p>
+      <p>One honesty clause, because it is the point of the whole exercise: these claims are true at the pinned versions and unknown after them. The pins are the July-2025 pairing; the Context Skill's <code>pins.md</code> says exactly what to re-verify when they move. Neither skill is affiliated with Neon — and the strongest advertisement for Neon here is one of our own rehearsals: we destroyed the storage engine's entire local state on a live database and the architecture handed every row back.</p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-block: 24px 80px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    max-width: 780px;
+    margin-bottom: 8px;
+  }
+  .post-header h1 {
+    font-size: 40px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 10px 0 16px;
+  }
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .meta-date,
+  .meta-readtime {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .dot {
+    color: var(--muted);
+  }
+  .lede {
+    font-size: 18.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .hero-figure {
+    max-width: 780px;
+    margin: 32px 0 8px;
+  }
+  .hero-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .hero-figure figcaption {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  .summary-card {
+    max-width: 780px;
+    margin: 28px 0 8px;
+    padding: 22px 24px;
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .summary-card p {
+    margin: 0 0 14px;
+    font-size: 15.5px;
+    line-height: 1.65;
+  }
+  .summary-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .summary-list li {
+    margin-bottom: 8px;
+  }
+  .content-body {
+    max-width: 780px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul, .content-body ol {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 8px;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin: 28px 0;
+    padding: 0;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .data-table th {
+    background: var(--surface);
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+    vertical-align: top;
+  }
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+  .data-table tr:hover td {
+    background: var(--surface);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+</style>
