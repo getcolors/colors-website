@@ -66,7 +66,7 @@ export const posts: Post[] = [
     runtime: "Context Skills",
     summary:
       "Introducing Context Skills: knowledge distilled from a verified build, routed by the error on your screen, honest about what verified it. Three are live in the Skills Catalog, with one workflow to create them and another to submit yours.",
-    image: "/images/context-skills-infographic-v1.png",
+    image: "/images/context-skills-card-v1.png",
     tags: ["Announcement", "Context Skills", "Agent Skills", "Agentic DevOps", "Knowledge", "Catalog"],
   },
   {
