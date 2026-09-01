@@ -1,0 +1,17 @@
+name: AutoMQ
+repository: getcolors/automq
+summary: Operate a three-node AutoMQ cluster on Vultr — Kafka-compatible brokers whose storage tier is Cloudflare R2, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.
+featured: /featured#automq
+keywords:
+  - AutoMQ
+  - Kafka
+  - streaming
+  - message broker
+  - KRaft
+  - object storage
+  - Cloudflare R2
+  - Vultr
+package-skills:
+  - name: package-automq-green
+    path: skills/package-automq-green/SKILL.md
+    runtime: green

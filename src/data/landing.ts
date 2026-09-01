@@ -1777,6 +1777,58 @@ export const neon = {
     "There is no dns stage on purpose: nothing in this package is reachable by name. Delete removes the `~/.ssh/config` block before the compute destroy and the keypair after it \u2014 and leaves the R2 data in place, because that prefix is the database, not a byproduct.",
 };
 
+export const automqInstallCmd = "npx skills use getcolors/automq";
+
+export const automq = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/automq/",
+  repoUrl: "https://github.com/getcolors/automq",
+  heading: "AutoMQ: a Kafka cluster whose disks are object storage, built with Colors",
+  lede: "AutoMQ is a Package Skill built with Colors. It provisions three AutoMQ 1.7.4 nodes on Vultr \u2014 the Apache Kafka 3.9.1 wire protocol, both KRaft roles on every node \u2014 with Cloudflare R2 as the storage tier rather than replicated local disks. A produce is acknowledged once the record is in R2, which is why every topic is replication factor 1 and why losing a broker loses no bytes. The three nodes buy the controller quorum, partition failover and throughput; they do not buy copies.",
+  runtimeNote:
+    "Green only. The public endpoint on **9092** is `SASL_SSL` with **SCRAM-SHA-512** and a `StandardAuthorizer` ACL set, because a port facing the internet is not gated by a firewall and authentication is not authorization. The controller quorum and inter-broker replication never leave a Vultr VPC.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It names the digest-pinned image, the node count, the cluster id that is also the object namespace, the bootstrap and broker hostnames, the two R2 buckets, and the VPC and firewall boundary. It carries no key material and no secret.",
+    },
+    {
+      title: "Adopt storage, never create it",
+      body: "AutoMQ writes hash-prefixed keys at the bucket root and supports no path prefix, so a bucket belongs to one cluster outright. Adoption proves emptiness by paginating the whole bucket, claims ownership with a conditional create, and carries one transaction id across both buckets \u2014 so a half-adopted pair resumes and a mismatched one fails.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Cloudflare records, Ansible, Compose and broker configuration, then runs `create --dry-run` before contacting providers. Build and dry-run need no credentials and never read `~/.ssh`.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the VPC, the firewall and three instances; Ansible opens the host firewall the image ships enabled, issues one certificate from node 0 alone, formats the quorum with identical SCRAM bootstrap records, and starts the brokers.",
+    },
+    {
+      title: "Prove it works",
+      body: "Six gates on the hosts and seven from the workstation, including a failover targeted at a partition **because** the killed broker leads it \u2014 a generic round trip over six partitions can pass without ever touching the broker it killed.",
+    },
+  ],
+  dagCaption: "AutoMQ \u2014 CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` \u2192 `infrastructure` \u2192 `ssh-config` \u2192 `dns` \u2192 `ansible` \u2192 `acceptance`.",
+  dagNote:
+    "DNS comes before convergence because every broker advertises a name that must already resolve, and the certificate is issued for those names during the play. Delete unwinds the other way and stops at the storage: the buckets hold the cluster\u2019s data, so an accidental delete stays recoverable.",
+};
+
 export const footer = {
   name: "Colors",
   links: [

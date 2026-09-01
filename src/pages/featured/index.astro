@@ -62,6 +62,8 @@ import {
   agentNetworkDoksInstallCmd,
   neon,
   neonInstallCmd,
+  automq,
+  automqInstallCmd,
 } from "~/data/landing";
 
 const title = "Featured — Colors";
@@ -94,6 +96,7 @@ const featuredPackageSkills = [
   { label: "Agent Network K8s", href: "#agent-network-k8s" },
   { label: "Agent Network DOKS", href: "#agent-network-doks" },
   { label: "Neon", href: "#neon" },
+  { label: "AutoMQ", href: "#automq" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -2031,6 +2034,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{neon.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTOMQ -->
+      <div class="sec" id="automq">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-green">{automq.eyebrow}</div>
+          <SectionHeading id="automq" title={automq.heading} />
+          <p class="sec-lede sec-lede-wide">{automq.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={automqInstallCmd} id="featured-automq-install" />
+            <span class="install-note" set:html={html(automq.runtimeNote)} />
+            <ResourceLinks docsUrl={automq.docsUrl} repoUrl={automq.repoUrl} catalogUrl="/getcolors/automq" />
+          </div>
+
+          <div class="grid-5">
+            {automq.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{automq.dagCaption}</div>
+            <div class="dag">
+              {automq.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{automq.dagNote}</p>
           </div>
         </div>
       </div>

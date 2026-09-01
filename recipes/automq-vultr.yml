@@ -1,0 +1,22 @@
+type: context
+name: AutoMQ Multi-Node
+repository: getcolors/skills
+summary: Verified traps, listener and SCRAM contract, storage-ownership rules, and acceptance doctrine for a multi-node AutoMQ cluster whose storage tier is object storage — including the two firewalls in front of every Vultr node and the genesis mistake that leaves a cluster unable to authenticate anyone.
+keywords:
+  - automq
+  - kafka
+  - kraft
+  - object storage
+  - replication factor 1
+  - vultr
+  - ufw
+  - waiting for the controller to acknowledge that we are caught up
+  - we still don't know the high water mark
+  - invalid credentials with SASL mechanism SCRAM-SHA-512
+  - Could not find a 'KafkaServer' or 'external.KafkaServer' entry
+  - error creating VPC 2.0
+  - CandidateState
+companion: getcolors/automq
+context-skills:
+  - name: automq-vultr
+    path: automq-vultr/SKILL.md
