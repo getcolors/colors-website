@@ -40,7 +40,7 @@ export const posts: Post[] = [
     runtime: "AutoMQ · Vultr · Cloudflare R2",
     summary:
       "A three-node AutoMQ cluster whose disks are object storage took twenty-three converge runs. In most of the failures the cluster was healthy: the firewall passed ping while dropping every TCP connection, a marker claimed work that never happened, and three of our own acceptance gates were wrong — one of them reporting data loss that never occurred.",
-    image: "/og-automq-acceptance-gates-v1.png",
+    image: "/images/automq-acceptance-gates-infographic-v1.png",
     tags: ["Field Report", "AutoMQ", "Kafka", "Acceptance", "Object Storage", "Vultr"],
   },
   {

@@ -425,13 +425,13 @@ render_post_card(
 # not generated here — the one exception to "og-*.png are generated". Replacing
 # it means bumping the version suffix, same as generated cards.
 
-render_post_card(
-    "og-automq-acceptance-gates-v1.png",
-    "Field report · Acceptance",
-    "The cluster was fine",
-    "Twenty-three converge runs for a Kafka cluster on object storage, and most of the failures were our own instruments.",
-    "/blog/automq-acceptance-gates",
-)
+# og-automq-acceptance-gates-v2.png is the article's supplied infographic fitted
+# without cropping onto the standard 1200x630 canvas, not generated here. It
+# pads with the artwork's own near-black background (22, 24, 27) rather than the
+# white the other supplied cards use: this artwork is dark, so white bars would
+# read as a rendering fault rather than as canvas. The original 2752x1536
+# artwork remains the in-article figure under public/images/. The generated v1
+# text card it replaced is retired.
 
 render_post_card(
     "og-remote-clipboard-for-agents-v1.png",

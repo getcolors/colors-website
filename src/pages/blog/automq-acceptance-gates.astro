@@ -9,10 +9,12 @@ const description =
 const path = "/blog/automq-acceptance-gates";
 
 const post = postFor(path);
-const image = "/og-automq-acceptance-gates-v1.png";
+const image = "/og-automq-acceptance-gates-v2.png";
 const imageAlt =
-  "The Cluster Was Fine — a field report on building a three-node AutoMQ cluster on Vultr, " +
-  "and on acceptance gates that were wrong in both directions.";
+  "We built a three-node AutoMQ cluster whose disks are object storage. It took twenty-three " +
+  "converge runs, and in most of the failures the cluster was healthy — a firewall passed ping " +
+  "while dropping TCP, a marker claimed work that never happened, and three of our own " +
+  "acceptance gates were wrong.";
 
 const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
 const absolute = (p: string) => new URL(p, SITE_URL).toString();
@@ -72,6 +74,17 @@ const structuredData = {
       </div>
       <p class="lede">We built a three-node AutoMQ cluster — the Kafka wire protocol, with object storage where the replicated disks would be — and it took twenty-three converge runs to get a clean one. That number is the interesting part. In most of those failures the cluster was healthy: the network passed <code>ping</code> while dropping every TCP connection, a marker claimed work that had never happened, and three of our own acceptance gates were simply wrong. One of them reported catastrophic data loss that had not occurred. This is what that teaches about writing the things that tell you a deployment works.</p>
     </header>
+
+    <figure class="hero-figure">
+      <img
+        src="/images/automq-acceptance-gates-infographic-v1.png"
+        alt="We built a three-node AutoMQ cluster whose disks are object storage. It took twenty-three converge runs, and in most of the failures the cluster was healthy — a firewall passed ping while dropping TCP, a marker claimed work that never happened, and three of our own acceptance gates were wrong."
+        width="2752"
+        height="1536"
+        loading="eager"
+      />
+      <figcaption class="mono">twenty-three converge runs; the cluster was healthy through most of the failures</figcaption>
+    </figure>
 
     <div class="panel summary-card">
       <div class="card-label">What we found</div>
@@ -282,6 +295,22 @@ not yet supported when communicating directly with the controller quorum.</code>
     background: var(--surface);
     border: 1px solid var(--line);
     color: var(--code-ink);
+  }
+  .hero-figure {
+    margin: 32px 0 40px;
+  }
+  .hero-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .hero-figure figcaption {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.5;
   }
   pre {
     background: var(--surface);
