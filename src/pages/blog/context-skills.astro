@@ -16,9 +16,9 @@ const post = postFor(path);
 // does not leave the structured data advertising production.
 const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
 const absolute = (target: string) => new URL(target, SITE_URL).toString();
-const image = "/og-context-skills-v2.png";
+const image = "/og-context-skills-v3.png";
 const imageAlt =
-  "Four-panel infographic: an agent without a Context Skill spends eight commits rediscovering known failures while one with it uses 4.4× fewer tool calls; the three skill kinds — Agent Skill (procedure), Package Skill (program), Context Skill (judgement); the key principles — routed by the error on your screen, no second copy of companion files; and the workflow from verified build through skills-ref validate and evals to the catalog's three live skills.";
+  "Social card on a dark charcoal field: the headline \"Introducing Context Skills: knowledge distilled from a verified build\", with \"Context Skills\" and \"a verified build\" set in orange, above the article's summary — routed by the error on your screen, honest about what verified it, three live in the Skills Catalog with one workflow to create them and another to submit yours. At the right an isometric stack of servers is wired to three cloud nodes and a terminal window showing a GET `/errors/500` request and a Symptom to Cause to Fix status line, with a Read the article button beneath.";
 
 const publishDate = post.date;
 const readTime = post.readTime;

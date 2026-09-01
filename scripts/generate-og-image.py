@@ -387,10 +387,11 @@ catalog_recipes = recipes()
 package_recipes = [recipe for recipe in catalog_recipes if recipe[0] == "package"]
 all_skills = sum(len(recipe[4]) for recipe in package_recipes)
 context_skill_count = sum(len(recipe[4]) for recipe in catalog_recipes if recipe[0] == "context")
-# og-context-skills-v2.png is the article's own infographic letterboxed to
-# 1200x630 on the artwork's rgb(209,210,213) border, not generated here — the
-# fifth exception to "og-*.png are generated". The generated v1 text card it
-# replaced never shipped; the version suffix follows the rule pre-emptively.
+# og-context-skills-v3.png is a supplied dark promotional card, cropped
+# centrally from 2752x1536 to 1200x630 and re-encoded to strip an inverted gAMA
+# chunk, not generated here — the fifth exception to "og-*.png are generated".
+# It replaced v2, the article's own infographic letterboxed on the artwork's
+# rgb(209,210,213) border; the generated v1 text card never shipped.
 
 # og-neon-self-hosting-v2.png is the article's supplied infographic fitted
 # without cropping onto the standard 1200x630 white social-card canvas. The
