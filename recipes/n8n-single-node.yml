@@ -1,0 +1,21 @@
+type: context
+name: n8n Single-Node
+repository: getcolors/skills
+summary: The n8n 2.x keys and defaults every guide still gets wrong, the encryption key n8n persists on first boot, the API that redacts credential values so decryption can only be proven by using them, and an acceptance doctrine written after a converge reported success with zero gates executed.
+keywords:
+  - n8n
+  - self-hosted n8n
+  - N8N_WEBHOOK_URL
+  - Mismatching encryption keys
+  - Database is not ready
+  - Workflow must be archived before it can be deleted
+  - triggerToStartFrom
+  - N8N_ENCRYPTION_KEY
+  - task runner
+  - server version mismatch
+  - failed at splitting arguments
+  - credential decryption
+companion: getcolors/n8n
+context-skills:
+  - name: n8n-single-node
+    path: n8n-single-node/SKILL.md

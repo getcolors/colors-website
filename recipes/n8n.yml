@@ -1,0 +1,22 @@
+name: n8n
+repository: getcolors/n8n
+summary: Operate self-hosted n8n workflow automation on one Vultr instance — the n8n server, an external task runner, and Caddy TLS — backed by a colocated self-hosted Neon whose Postgres layers and WAL live in Cloudflare R2.
+featured: /featured#n8n
+keywords:
+  - n8n
+  - workflow automation
+  - self-hosted n8n
+  - webhooks
+  - task runner
+  - PostgreSQL
+  - Neon
+  - serverless Postgres
+  - storage compute separation
+  - Cloudflare R2
+  - Caddy
+  - Vultr
+  - single node
+package-skills:
+  - name: package-n8n-green
+    path: skills/package-n8n-green/SKILL.md
+    runtime: green

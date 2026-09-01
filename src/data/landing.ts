@@ -1727,6 +1727,58 @@ export const agentNetworkDoks = {
     "Deploy applies the edge and the proxy but deliberately does not await them — both mount the TLS Secret the certificate stage issues after DNS points at the load balancer — and their readiness is claimed only once it exists. Delete tears down in-cluster first (workloads, CSI volumes, the load balancer, each confirmed absent at the provider) because those are Kubernetes-managed and invisible to the infrastructure state; an adopted registry survives, with exactly the deployment's own repository deleted. No backups, deliberately — the deployment is disposable, and a later create regenerates the endpoint hostname and every peer identity.",
 };
 
+export const n8nInstallCmd = "npx skills use getcolors/n8n";
+
+export const n8n = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/n8n/",
+  repoUrl: "https://github.com/getcolors/n8n",
+  heading: "n8n: workflow automation whose database is object storage, built with Colors",
+  lede: "n8n is a Package Skill built with Colors. It provisions n8n 2.36.9 on a single Vultr instance \u2014 the n8n server, an external task runner isolating Code nodes, and Caddy terminating TLS \u2014 backed not by a colocated Postgres but by a colocated self-hosted Neon, so the durable copy of every workflow, credential and execution lives in Cloudflare R2 rather than on the instance's disk. Seven containers, one Compose project, and only the proxy publishes beyond loopback.",
+  runtimeNote:
+    "n8n ships in **green**. The storage tier is not reimplemented: this package SHA-pins `getcolors/neon` and renders that package's templates straight off the classpath, so **no copy of the storage tier exists here to drift** \u2014 n8n's services arrive as a Compose override installed beside the upstream file, which is what lets every unchanged upstream command operate on the one merged project.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It carries the digest-pinned n8n, runner, Caddy and Neon images, the 32-hex tenant and timeline identities, the public hostname, retention and concurrency bounds, and declared soak thresholds. It holds no key material \u2014 and it speaks the storage tier's key vocabulary, because those templates are rendered from a pin rather than copied.",
+    },
+    {
+      title: "Refuse what fails later",
+      body: "Validation reports every problem at once and encodes traps as rules: a runner image whose version differs from the n8n image, the deprecated `WEBHOOK_URL` spelling, binary data left in memory, an unbounded concurrency limit, and Cloudflare-only ingress without a proxied record \u2014 which would otherwise pass the converge and fail hours later with no certificate.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose and Caddy files, then walks the DAG with every side effect skipped. Build and dry-run need no credentials, and an offline `--syntax-check` over the rendered playbooks catches the whole class of failures that only appear at Ansible load time.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the instance, a DNS record, and a firewall whose HTTP rules resolve to Cloudflare's published ranges; Ansible converges the storage tier through the imported upstream play, then n8n's own \u2014 and claims the owner account over the internal network **before** the public name resolves, closing the window in which an unauthenticated setup screen hands the instance to whoever finds it first.",
+    },
+    {
+      title: "Prove it works",
+      body: "Seventeen gates ask the system what it has: a workflow created through the public API and read back **out of Neon**, a new WAL segment in R2 beyond a pre-switch baseline, liveness and readiness separately, the generated webhook URL exactly, and a Code node that actually **executes** on the external runner \u2014 because a runner reports connected long before it has run a task.",
+    },
+  ],
+  dagCaption: "n8n \u2014 CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` \u2192 `infrastructure` \u2192 `dns` \u2192 `ssh-config` \u2192 `ansible` \u2192 `acceptance`.",
+  dagNote:
+    "`dns` comes before the converge, not after: Caddy provisions its certificate over ACME on first start, and the HTTP-01 challenge needs the name to already resolve. Delete reverses it \u2014 the record goes before the compute destroy, so nothing resolves to an address that has stopped answering.",
+};
+
 export const neonInstallCmd = "npx skills use getcolors/neon";
 
 export const neon = {

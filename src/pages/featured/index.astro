@@ -60,6 +60,8 @@ import {
   agentNetworkK8sInstallCmd,
   agentNetworkDoks,
   agentNetworkDoksInstallCmd,
+  n8n,
+  n8nInstallCmd,
   neon,
   neonInstallCmd,
   automq,
@@ -96,6 +98,7 @@ const featuredPackageSkills = [
   { label: "Agent Network K8s", href: "#agent-network-k8s" },
   { label: "Agent Network DOKS", href: "#agent-network-doks" },
   { label: "Neon", href: "#neon" },
+  { label: "n8n", href: "#n8n" },
   { label: "AutoMQ", href: "#automq" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
@@ -2034,6 +2037,43 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{neon.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec" id="n8n">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{n8n.eyebrow}</div>
+          <SectionHeading id="n8n" title={n8n.heading} />
+          <p class="sec-lede sec-lede-wide">{n8n.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={n8nInstallCmd} id="featured-n8n-install" />
+            <span class="install-note" set:html={html(n8n.runtimeNote)} />
+            <ResourceLinks docsUrl={n8n.docsUrl} repoUrl={n8n.repoUrl} catalogUrl="/getcolors/n8n" />
+          </div>
+
+          <div class="grid-5">
+            {n8n.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{n8n.dagCaption}</div>
+            <div class="dag">
+              {n8n.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{n8n.dagNote}</p>
           </div>
         </div>
       </div>
