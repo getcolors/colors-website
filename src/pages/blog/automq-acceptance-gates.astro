@@ -108,7 +108,7 @@ const structuredData = {
         </table>
       </div>
       <p>A Vultr node sits behind <em>two</em> firewalls. The provider's firewall group is the one you think about, and it does filter the private interface — but opening it changed nothing, which is what sent us looking further. The second is <code>ufw</code>, which the Vultr Ubuntu image ships <strong>enabled</strong>, with exactly one rule:</p>
-      <pre class="code-block mono"><code>Status: active
+      <pre><code>Status: active
 Default: deny (incoming), allow (outgoing), deny (routed)
 22/tcp                     ALLOW IN    Anywhere</code></pre>
       <p>That is the entire allowlist. It passes ICMP — hence the healthy-looking pings — and drops every inter-node TCP connection, so the controllers never exchange a vote. It would also have silently blocked the public Kafka port, which we would have discovered later and blamed on something else.</p>
@@ -116,15 +116,15 @@ Default: deny (incoming), allow (outgoing), deny (routed)
 
       <h2>3. A marker is not evidence</h2>
       <p>The most expensive failure produced an error that pointed nowhere near its cause. Every SASL principal stopped authenticating at once — including ones nothing had touched:</p>
-      <pre class="code-block mono"><code>org.apache.kafka.common.errors.SaslAuthenticationException: Authentication failed
+      <pre><code>org.apache.kafka.common.errors.SaslAuthenticationException: Authentication failed
 during authentication due to invalid credentials with SASL mechanism SCRAM-SHA-512</code></pre>
       <p>The obvious hypotheses were all wrong, and ruling them out was worth the time. The secret bundle was byte-identical on all three nodes. The salted-password derivation was correct — we proved it by formatting two scratch directories, one with an explicit <code>saltedpassword</code> and one letting Kafka derive it from the plaintext and the same salt, then decoding both metadata checkpoints and comparing: identical <code>storedKey</code>, identical <code>serverKey</code>.</p>
       <p>What was actually true is that the cluster's metadata log contained no credential records at all:</p>
-      <pre class="code-block mono"><code>kafka-dump-log.sh --cluster-metadata-decoder \
+      <pre><code>kafka-dump-log.sh --cluster-metadata-decoder \
   --files /var/lib/automq/metadata/bootstrap.checkpoint | grep -c USER_SCRAM_CREDENTIAL_RECORD
 # 0 → this cluster can never authenticate anyone</code></pre>
       <p>An earlier converge had <em>claimed</em> a "genesis" marker and then failed during the format that was supposed to follow it. Every later run asked "has genesis been claimed?", got yes, and formatted its nodes <strong>without</strong> bootstrap credentials. The cluster was permanently unable to hold a credential, and re-running could never fix it — the one repair path you would reach for is closed:</p>
-      <pre class="code-block mono"><code>org.apache.kafka.common.errors.UnsupportedEndpointTypeException: This Admin API is
+      <pre><code>org.apache.kafka.common.errors.UnsupportedEndpointTypeException: This Admin API is
 not yet supported when communicating directly with the controller quorum.</code></pre>
       <p>The rule we took out of it is short enough to apply everywhere: <strong>a marker may record that something happened; only evidence that it happened may decide what to do next.</strong> "Has this cluster been initialized?" is now answered by whether any node carries a <em>format-complete</em> record — an artifact written after the work, not a flag written before it. The same principle makes that per-node record two-phase, <code>intent</code> then <code>complete</code>: without the split, a converge killed mid-format is indistinguishable from a lost disk on the next run, and those two demand opposite responses.</p>
 
@@ -133,7 +133,7 @@ not yet supported when communicating directly with the controller quorum.</code>
       <p><strong>The gate that passes once.</strong> It created a topic, produced 500 records, consumed 500 from the beginning, and compared. Perfect on a fresh cluster. On the second converge it read the <em>previous</em> run's records and failed. Gates run on every converge against a cluster that keeps its data, so anything counting absolute totals is a first-run demonstration rather than a gate — and the first run is the one you watch, which is exactly why the defect survives review.</p>
       <p><strong>The gate that assumes placement.</strong> The failover test killed "node 2". After an earlier failover, leadership had drifted and node 2 led none of the six partitions, so a completely healthy cluster produced <code>no partition of colors-failover is led by node 2</code>. The gate now reads the leadership map and derives its victim from it, which is also a better test.</p>
       <p><strong>The gate that cries catastrophe.</strong> This one is worth dwelling on. It reported:</p>
-      <pre class="code-block mono"><code>FAIL — only 0 of 100 pre-failure records survived</code></pre>
+      <pre><code>FAIL — only 0 of 100 pre-failure records survived</code></pre>
       <p>That is the most alarming sentence this deployment can produce: it claims an object-store-backed system lost acknowledged writes. It was false. Checked directly, seconds later, the partition held all 101 records — the hundred written before the kill plus the one written during the outage. The gate had read the partition <em>once</em>, immediately after its leader was killed, while it was still being reassigned; the fetch failed, stderr was suppressed, <code>grep -c</code> counted zero, and transient unavailability was reported as permanent loss.</p>
       <p>Which yields the rule we would most like other people to steal: <strong>a gate asserting a catastrophic outcome needs more evidence than one asserting success, not less.</strong> "Not readable yet" and "gone" are indistinguishable from a single read taken at the wrong moment, and only one of them is an emergency. The survival check now retries and keeps the best observation, and the setup step — did the produce actually succeed? — is verified rather than assumed, because an unverified produce would make the same gate claim data loss for records that were never written.</p>
 
@@ -156,19 +156,149 @@ not yet supported when communicating directly with the controller quorum.</code>
 </CatalogLayout>
 
 <style>
-  .code-block {
-    padding: 16px 18px;
+  .post-page {
+    padding-block: 24px 80px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 8px;
+  }
+  .post-header h1 {
+    font-size: 40px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 10px 0 16px;
+  }
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .meta-date,
+  .meta-readtime {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .dot {
+    color: var(--muted);
+  }
+  .lede {
+    font-size: 18.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .summary-card {
+    margin: 28px 0 8px;
+    padding: 22px 24px;
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .summary-card p {
+    margin: 0 0 14px;
+    font-size: 15.5px;
+    line-height: 1.65;
+  }
+  .summary-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .summary-list li {
+    margin-bottom: 8px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul, .content-body ol {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 8px;
+  }
+  .table-wrap {
     overflow-x: auto;
+    margin: 28px 0;
+    padding: 0;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .data-table th {
+    background: var(--surface);
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+    vertical-align: top;
+  }
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+  .data-table tr:hover td {
+    background: var(--surface);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+  pre {
+    background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 8px;
-    background: var(--soft);
-    font-size: 13px;
-    line-height: 1.6;
-    margin: 18px 0;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 24px;
   }
-  .code-block code {
+  pre code {
     background: none;
+    border: none;
     padding: 0;
-    white-space: pre;
+    font-size: inherit;
+    color: var(--code-ink);
   }
 </style>
