@@ -52,6 +52,10 @@
       "ref": "main",
       "sha": "90190b6f16ec6886e226dd1b49dd128a8e642a92"
     },
+    "n8n": {
+      "ref": "main",
+      "sha": "e285f58d38f49e00a7ba0217dbbff88efd304f1c"
+    },
     "neon": {
       "ref": "main",
       "sha": "87c009549a928fdf1f9dc135f9740c3baa5782d7"
