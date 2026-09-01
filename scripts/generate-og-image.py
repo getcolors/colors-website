@@ -459,16 +459,14 @@ render_post_card(
 # to "og-*.png are generated". The generated v1 text card it replaced never
 # shipped; the version suffix follows the rule pre-emptively.
 
-# The n8n field report. 614 ms is the measured duration of the converge that
-# reported success with zero application gates executed; 7950 is the soak's
-# execution count, reproduced across two runs.
-render_post_card(
-    "og-n8n-green-run-v1.png",
-    "Field Report \u00b7 n8n \u00b7 Neon \u00b7 Vultr",
-    "The converge passed in 614 ms. Nothing had been checked.",
-    "n8n on a database made of object storage: 7950 executions at p99 80 ms, and four gates that lied.",
-    "/blog/n8n-green-run",
-)
+# og-n8n-green-run-v2.png is the article's supplied card artwork fitted to
+# 1200x630, not generated here — the fifth exception to "og-*.png are generated".
+# The artwork's background is a slate gradient rather than a flat colour, so the
+# 35/36px side bars are filled by replicating the edge columns (sharp's
+# extendWith: "copy") instead of by a single pad colour: a flat fill would band
+# visibly against the gradient. "Fit, never crop" is preserved. The full
+# 2752x1536 original is the blog index card under public/images/. The generated
+# v1 text card it replaced is retired.
 
 render_post_card(
     "og-posthog-skill-benchmark-v1.png",

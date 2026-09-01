@@ -8,11 +8,11 @@ const description = "We put n8n's database on object storage — a colocated sel
 const path = "/blog/n8n-green-run";
 
 const post = postFor(path);
-const image = "/og-n8n-green-run-v1.png";
+const image = "/og-n8n-green-run-v2.png";
 const imageAlt =
-  "The converge passed in 614 milliseconds and nothing had been checked — n8n on a " +
-  "database made of object storage: 7950 executions at p99 80 ms, and four gates " +
-  "that lied.";
+  "The converge passed in 614 milliseconds — n8n on a database made of object " +
+  "storage: 7950 executions in five minutes at a p99 of 80 ms, sixteen converges, " +
+  "and the most useful failures sitting in our own acceptance gates.";
 
 const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
 const absolute = (p: string) => new URL(p, SITE_URL).toString();
@@ -58,40 +58,40 @@ const structuredData = {
   <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <div class="wrap post-page">
     <div class="breadcrumb-bar">
-      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Self-Hosting Neon" }]} />
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "n8n on Object Storage" }]} />
     </div>
 
     <header class="post-header">
       <p class="eyebrow section-label">Field Report &amp; Operations</p>
       <h1>The Converge Passed in 614 Milliseconds</h1>
       <div class="post-meta">
-        <span class="runtime runtime-blue">Neon · Vultr · Cloudflare R2</span>
+        <span class="runtime runtime-blue">n8n · Neon · Vultr · Cloudflare R2</span>
         <span class="meta-date mono">{publishDate}</span>
         <span class="dot">·</span>
         <span class="meta-readtime mono">{readTime}</span>
       </div>
-      <p class="lede">Neon separates Postgres into stateless compute and S3-backed storage, and the whole engine is open source. What the repository does not contain is a self-hosting story: there is a development compose file where the operator documentation should be, and since July 2025 there is not even a versioned release to pin. We deployed it for real — auth, durability, recovery, rotation — and wrote down everything the build paid for. This is that report, and the two skills it left behind.</p>
+      <p class="lede">A converge that exits zero is not evidence. Ours exited zero in 614 milliseconds with every acceptance gate installed on the host and not one of them executed — and it was the first of four gates that reported success while checking nothing. This is the field report from putting n8n's database on object storage: what sixteen converges cost, what the latency actually was, and the two skills the build left behind.</p>
     </header>
 
     <figure class="hero-figure">
       <img
-        src="/images/neon-self-hosting-infographic-v1.png"
-        alt="Neon self-hosting: the docs stop where operations begin. We built it, measured what the docs don't say, and left two skills — a Package Skill and a Context Skill — to get you started."
-        width="2752"
+        src="/images/n8n-green-run-infographic-v1.png"
+        alt="Summary of the n8n field report in two columns. Performance and benchmarks: self-hosted Neon on object storage handled 7950 executions in five minutes at p95 75 ms and p99 80 ms, so storage/compute separation adds minimal tail latency at this load. Validation and gating lessons: disbelieve acceptance that finishes faster than its own sleeps, prove a credential by using it rather than reading it back, give Docker Compose an unconditional up because changed=0 is a trap, check n8n 2.x defaults against the current reference, encode traps as validator gates, and drill recovery rather than checksums."
+        width="2816"
         height="1536"
         loading="eager"
       />
-      <figcaption class="mono">the compose file gets you a stack that runs; nothing tells you how far that is from a deployment you can trust</figcaption>
+      <figcaption class="mono">the latency question answered itself in one soak; the gates took sixteen converges</figcaption>
     </figure>
 
     <div class="panel summary-card">
       <div class="card-label">What we found</div>
-      <p>The distance between Neon's <code>docker-compose/</code> and an operated deployment is real, measurable, and nowhere written down. Crossing it took fifteen converges against a live host, and the load-bearing facts came from the pinned source and live probes, not from prose.</p>
+      <p>Putting n8n's database on object storage turned out to be the easy half; the tail-latency objection did not survive measurement. What did not survive review were our own acceptance gates. Sixteen converges against a live host, and the load-bearing facts came from the pinned source and live probes, not from prose.</p>
       <ul class="summary-list">
-        <li><strong>The compose example is a development fixture</strong> — MinIO, trust auth, floating <code>latest</code> tags, <code>fsync=off</code>, a committed signing keypair.</li>
-        <li><strong>There is nothing to pin.</strong> Upstream moved to untagged continuous deployment in July 2025; the last deliberate release pairing has to be excavated from git tags.</li>
-        <li><strong>The compute spec is the auth system</strong> — undocumented, and readable only in the pinned source.</li>
-        <li><strong>Single-node durability is not what you would guess</strong>: a fresh safekeeper cannot serve its offloaded WAL back. We measured the real recovery bound instead of assuming one.</li>
+        <li><strong>A green run can prove nothing.</strong> <code>EXIT=0</code> in 614 milliseconds with seventeen gates installed on the host and not one invoked — the smoke script was copied into place and never called.</li>
+        <li><strong>The stack reported healthy with two containers that had never started.</strong> Bring-up lived in a handler, <code>changed=0</code> meant it never fired, and <code>caddy</code> and <code>n8n-runners</code> sat in <code>created</code>.</li>
+        <li><strong>Storage/compute separation costs nothing at this rate</strong>: 7950 executions in five minutes, zero failed, p95 75 ms and p99 80 ms — reproduced twice.</li>
+        <li><strong>The real RPO is the backup interval.</strong> Neon streams WAL to R2 continuously, but a rebuilt safekeeper does not serve that offloaded WAL back. We measured the bound instead of assuming one.</li>
       </ul>
     </div>
 
