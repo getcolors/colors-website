@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "The Cluster Was Fine",
+    slug: "/blog/automq-acceptance-gates",
+    date: "September 1, 2026",
+    isoDate: "2026-09-01T12:00:00Z",
+    readTime: "10 min read",
+    category: "Field Report",
+    runtime: "AutoMQ · Vultr · Cloudflare R2",
+    summary:
+      "A three-node AutoMQ cluster whose disks are object storage took twenty-three converge runs. In most of the failures the cluster was healthy: the firewall passed ping while dropping every TCP connection, a marker claimed work that never happened, and three of our own acceptance gates were wrong — one of them reporting data loss that never occurred.",
+    image: "/og-automq-acceptance-gates-v1.png",
+    tags: ["Field Report", "AutoMQ", "Kafka", "Acceptance", "Object Storage", "Vultr"],
+  },
+  {
     title: "The Docs Stop Where Operations Begin",
     slug: "/blog/neon-self-hosting",
     date: "August 31, 2026",

@@ -426,6 +426,14 @@ render_post_card(
 # it means bumping the version suffix, same as generated cards.
 
 render_post_card(
+    "og-automq-acceptance-gates-v1.png",
+    "Field report · Acceptance",
+    "The cluster was fine",
+    "Twenty-three converge runs for a Kafka cluster on object storage, and most of the failures were our own instruments.",
+    "/blog/automq-acceptance-gates",
+)
+
+render_post_card(
     "og-remote-clipboard-for-agents-v1.png",
     "Architecture · Remote development",
     "Let your remote coding agent see your clipboard",

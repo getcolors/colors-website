@@ -1,0 +1,174 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "The Cluster Was Fine — Colors";
+const description =
+  "We built a three-node AutoMQ cluster whose disks are object storage. It took twenty-three converge runs, and in most of the failures the cluster was healthy — the firewall passed ping while dropping TCP, a marker claimed work that never happened, and three of our own acceptance gates were wrong, one of them screaming about data loss that never occurred.";
+const path = "/blog/automq-acceptance-gates";
+
+const post = postFor(path);
+const image = "/og-automq-acceptance-gates-v1.png";
+const imageAlt =
+  "The Cluster Was Fine — a field report on building a three-node AutoMQ cluster on Vultr, " +
+  "and on acceptance gates that were wrong in both directions.";
+
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (p: string) => new URL(p, SITE_URL).toString();
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "The Cluster Was Fine",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "AutoMQ" },
+    { "@type": "Thing", name: "Apache Kafka" },
+    { "@type": "Thing", name: "Acceptance testing" },
+    { "@type": "Thing", name: "Vultr" },
+    { "@type": "Thing", name: "Cloudflare R2" },
+    { "@type": "Thing", name: "Context Skills" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "The Cluster Was Fine" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Field Report &amp; Operations</p>
+      <h1>The Cluster Was Fine</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-green">AutoMQ · Vultr · Cloudflare R2</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+      </div>
+      <p class="lede">We built a three-node AutoMQ cluster — the Kafka wire protocol, with object storage where the replicated disks would be — and it took twenty-three converge runs to get a clean one. That number is the interesting part. In most of those failures the cluster was healthy: the network passed <code>ping</code> while dropping every TCP connection, a marker claimed work that had never happened, and three of our own acceptance gates were simply wrong. One of them reported catastrophic data loss that had not occurred. This is what that teaches about writing the things that tell you a deployment works.</p>
+    </header>
+
+    <div class="panel summary-card">
+      <div class="card-label">What we found</div>
+      <ul class="summary-list">
+        <li><strong>A Vultr node sits behind two firewalls</strong>, and the one that bit us was <code>ufw</code>, enabled in the image. It passes ICMP, so every diagnostic built on <code>ping</code> says the private network is perfect while no TCP connection survives.</li>
+        <li><strong>A marker is not evidence.</strong> Claiming "genesis" before the work succeeded produced a cluster that could never authenticate anyone — and could not be repaired in place.</li>
+        <li><strong>Acceptance gates fail in both directions.</strong> Ours passed when they should not have, and screamed when nothing was wrong.</li>
+        <li><strong>A second model reading finished, converged code found fourteen more defects</strong> — including one that would have destroyed the cluster's credentials the first time a node was rebuilt.</li>
+      </ul>
+    </div>
+
+    <article class="content-body">
+      <h2>1. Replication factor 1, on purpose</h2>
+      <p>AutoMQ speaks Apache Kafka's protocol — 3.9.1, at the version we pinned — but replaces the replicated local disks with object storage. A produce is acknowledged once the record is in the bucket. That single change moves durability out of the broker, and the visible consequence is a configuration that looks like somebody made a mistake: every topic, including <code>__consumer_offsets</code>, is replication factor 1. Upstream's own <code>server.properties</code> ships it that way.</p>
+      <p>It is not a mistake, and the reflex to "fix" it is expensive: replicas would multiply write amplification and cost without adding durability, because the bytes are already in the object store. What three nodes actually buy is a KRaft controller quorum, partition failover, and throughput.</p>
+      <p>The honest half of that sentence matters more than the marketing half. Durability and availability are different claims. Losing a broker loses no bytes — we killed one and read every pre-failure record back afterwards. But a partition whose leader dies is unwritable until it is reassigned, and since <code>__consumer_offsets</code> is RF=1 too, a consumer group's committed position lives on exactly one broker. Both of those windows are real. We measure them and report the numbers rather than asserting the comfortable version.</p>
+
+      <h2>2. Ping says the network is fine</h2>
+      <p>The longest failure of the build presented like this, and the order matters because only the last line is the cause:</p>
+      <div class="table-wrap panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">What you see</th>
+              <th style="text-align: left;">What it is</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>The broker dies ~60s after start: <code>Received a fatal error while waiting for the controller to acknowledge that we are caught up</code></td><td>A symptom of a symptom. The broker half is blaming itself for something the controller half never achieved.</td></tr>
+            <tr><td>Forever, in the log: <code>the loader is still catching up because we still don't know the high water mark yet</code></td><td>The line everyone chases. It means no metadata is committed, because nothing has been elected.</td></tr>
+            <tr><td><code>Election has timed out … Completed transition to CandidateState(… epoch=53 …)</code></td><td>Every node a perpetual candidate, epoch climbing forever. No node ever receives a vote.</td></tr>
+            <tr><td><code>ping 10.40.0.5</code> → succeeds. Every node listening. Quorum string correct.</td><td>The trap. Everything you would check says the network is healthy.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A Vultr node sits behind <em>two</em> firewalls. The provider's firewall group is the one you think about, and it does filter the private interface — but opening it changed nothing, which is what sent us looking further. The second is <code>ufw</code>, which the Vultr Ubuntu image ships <strong>enabled</strong>, with exactly one rule:</p>
+      <pre class="code-block mono"><code>Status: active
+Default: deny (incoming), allow (outgoing), deny (routed)
+22/tcp                     ALLOW IN    Anywhere</code></pre>
+      <p>That is the entire allowlist. It passes ICMP — hence the healthy-looking pings — and drops every inter-node TCP connection, so the controllers never exchange a vote. It would also have silently blocked the public Kafka port, which we would have discovered later and blamed on something else.</p>
+      <p>The generalisable part is a diagnostic order. <code>ping</code> proves layer 3 and nothing above it. The real test is a raw TCP connection to a listener you stand up yourself — we used a five-line Python listener on a peer — and when that fails, check <code>ufw status</code> on the host <em>before</em> the provider's console, because the host drops the packet after the provider's rules have already let it through.</p>
+
+      <h2>3. A marker is not evidence</h2>
+      <p>The most expensive failure produced an error that pointed nowhere near its cause. Every SASL principal stopped authenticating at once — including ones nothing had touched:</p>
+      <pre class="code-block mono"><code>org.apache.kafka.common.errors.SaslAuthenticationException: Authentication failed
+during authentication due to invalid credentials with SASL mechanism SCRAM-SHA-512</code></pre>
+      <p>The obvious hypotheses were all wrong, and ruling them out was worth the time. The secret bundle was byte-identical on all three nodes. The salted-password derivation was correct — we proved it by formatting two scratch directories, one with an explicit <code>saltedpassword</code> and one letting Kafka derive it from the plaintext and the same salt, then decoding both metadata checkpoints and comparing: identical <code>storedKey</code>, identical <code>serverKey</code>.</p>
+      <p>What was actually true is that the cluster's metadata log contained no credential records at all:</p>
+      <pre class="code-block mono"><code>kafka-dump-log.sh --cluster-metadata-decoder \
+  --files /var/lib/automq/metadata/bootstrap.checkpoint | grep -c USER_SCRAM_CREDENTIAL_RECORD
+# 0 → this cluster can never authenticate anyone</code></pre>
+      <p>An earlier converge had <em>claimed</em> a "genesis" marker and then failed during the format that was supposed to follow it. Every later run asked "has genesis been claimed?", got yes, and formatted its nodes <strong>without</strong> bootstrap credentials. The cluster was permanently unable to hold a credential, and re-running could never fix it — the one repair path you would reach for is closed:</p>
+      <pre class="code-block mono"><code>org.apache.kafka.common.errors.UnsupportedEndpointTypeException: This Admin API is
+not yet supported when communicating directly with the controller quorum.</code></pre>
+      <p>The rule we took out of it is short enough to apply everywhere: <strong>a marker may record that something happened; only evidence that it happened may decide what to do next.</strong> "Has this cluster been initialized?" is now answered by whether any node carries a <em>format-complete</em> record — an artifact written after the work, not a flag written before it. The same principle makes that per-node record two-phase, <code>intent</code> then <code>complete</code>: without the split, a converge killed mid-format is indistinguishable from a lost disk on the next run, and those two demand opposite responses.</p>
+
+      <h2>4. Three gates, three ways to be wrong</h2>
+      <p>Once the infrastructure settled, the failures kept coming — and they were ours. Three separate defects in the acceptance gates, each a different species.</p>
+      <p><strong>The gate that passes once.</strong> It created a topic, produced 500 records, consumed 500 from the beginning, and compared. Perfect on a fresh cluster. On the second converge it read the <em>previous</em> run's records and failed. Gates run on every converge against a cluster that keeps its data, so anything counting absolute totals is a first-run demonstration rather than a gate — and the first run is the one you watch, which is exactly why the defect survives review.</p>
+      <p><strong>The gate that assumes placement.</strong> The failover test killed "node 2". After an earlier failover, leadership had drifted and node 2 led none of the six partitions, so a completely healthy cluster produced <code>no partition of colors-failover is led by node 2</code>. The gate now reads the leadership map and derives its victim from it, which is also a better test.</p>
+      <p><strong>The gate that cries catastrophe.</strong> This one is worth dwelling on. It reported:</p>
+      <pre class="code-block mono"><code>FAIL — only 0 of 100 pre-failure records survived</code></pre>
+      <p>That is the most alarming sentence this deployment can produce: it claims an object-store-backed system lost acknowledged writes. It was false. Checked directly, seconds later, the partition held all 101 records — the hundred written before the kill plus the one written during the outage. The gate had read the partition <em>once</em>, immediately after its leader was killed, while it was still being reassigned; the fetch failed, stderr was suppressed, <code>grep -c</code> counted zero, and transient unavailability was reported as permanent loss.</p>
+      <p>Which yields the rule we would most like other people to steal: <strong>a gate asserting a catastrophic outcome needs more evidence than one asserting success, not less.</strong> "Not readable yet" and "gone" are indistinguishable from a single read taken at the wrong moment, and only one of them is an emergency. The survival check now retries and keeps the best observation, and the setup step — did the produce actually succeed? — is verified rather than assumed, because an unverified produce would make the same gate claim data loss for records that were never written.</p>
+
+      <h2>5. What a cold reader found in working code</h2>
+      <p>Before any code existed, the plan went through five rounds of adversarial review by a different model. That caught two Kafka-level errors that would have failed the first converge, and corrected us on the controller listener — where our own reasoning had been wrong twice in opposite directions.</p>
+      <p>The more surprising pass was the second one. After the cluster was converged and its gates were passing, a fresh session of that model read the finished code cold and found fourteen more defects. Three could not have been caught by any amount of converging, because they only manifest on a future event:</p>
+      <ul class="summary-list">
+        <li><strong>Rebuilding one node would have replaced the cluster's credentials.</strong> The secret bundle was create-once <em>per host</em>, so a rebuilt node 0 would mint fresh passwords and salts and push them over working ones — while the metadata log kept the old. Silent, and unrepairable by the route described in section 3.</li>
+        <li><strong>Configuration changes converged and did nothing.</strong> <code>docker compose up -d</code> does not recreate a container because the <em>contents</em> of a bind-mounted file changed; it compares its own service definition. Listener, ACL, storage and retention edits reported a clean converge while the JVM kept running the old configuration.</li>
+        <li><strong>Two nodes could hold the same restart lease.</strong> An expired lease was replaced unconditionally, so both contenders could read it, both write, and both believe they held it — on combined broker-and-controller nodes, that is a simultaneous restart and a lost majority.</li>
+      </ul>
+      <p>None of these are exotic. They are the ordinary consequences of writing code that works, on the first path through it. The lesson is not "use two models"; it is that <em>a passing converge is evidence about one execution</em>, and quite a lot of what you want to know is about executions you have not run yet.</p>
+
+      <h2>6. The starting point</h2>
+      <p>The final converge ran all five stages green: infrastructure, ssh-config, DNS, convergence, acceptance. Three <code>vc2-4c-8gb</code> nodes in <code>ams</code>, one VPC carrying the quorum and inter-broker traffic, a public <code>SASL_SSL</code> endpoint on 9092 with SCRAM and an ACL authorizer, and two Cloudflare R2 buckets as the storage tier.</p>
+      <p>The <a href="/getcolors/automq">automq Package Skill</a> is the tested implementation, and the <a href="/getcolors/skills/automq-vultr">automq-vultr Context Skill</a> is everything above routed by symptom — seventeen catalogue entries with verbatim error text, so an agent staring at <code>we still don't know the high water mark</code> lands on the firewall entry rather than on Kafka's own troubleshooting.</p>
+      <p>One honesty clause, as always. These claims hold at the pinned versions and are unknown after them; <code>pins.md</code> lists what to re-verify when they move. Four things are named there as untested rather than implied: transactional workloads, sustained throughput, timer-driven certificate renewal, and recovery from real disk loss. Neither skill is affiliated with AutoMQ — and the best thing we can say about the system is that across twenty-three converge runs, nearly every failure was ours rather than its.</p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .code-block {
+    padding: 16px 18px;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--soft);
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 18px 0;
+  }
+  .code-block code {
+    background: none;
+    padding: 0;
+    white-space: pre;
+  }
+</style>
