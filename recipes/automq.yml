@@ -12,6 +12,12 @@ keywords:
   - Cloudflare R2
   - Vultr
 package-skills:
+  - name: package-automq-red
+    path: skills/package-automq-red/SKILL.md
+    runtime: red
   - name: package-automq-green
     path: skills/package-automq-green/SKILL.md
     runtime: green
+  - name: package-automq-blue
+    path: skills/package-automq-blue/SKILL.md
+    runtime: blue

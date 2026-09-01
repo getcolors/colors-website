@@ -23,6 +23,13 @@
       "digest": "sha256:0bb06ce051a143c16b4c7df6642ae26daa4553531906f576286a8d2f72a2c9a7"
     },
     {
+      "name": "automq-vultr",
+      "type": "archive",
+      "description": "Everything a multi-node AutoMQ cluster needs that the docs and the single-node quick start will not tell you - two firewalls in front of every Vultr node (the provider group AND the ufw the image ships enabled, which passes ICMP while dropping inter-node TCP, so ping says the network is fine and the KRaft quorum never elects), SCRAM records that must be bootstrapped at genesis or the cluster can never authenticate anyone, and gates that prove a failover instead of assuming it. Use whenever AutoMQ, a Kafka cluster backed by object storage, KRaft on Vultr, or replication factor 1 comes up. Also on these symptoms - \"waiting for the controller to acknowledge that we are caught up\", endless \"we still don't know the high water mark\", perpetual CandidateState with a climbing epoch, \"Could not find a 'KafkaServer' or 'external.KafkaServer' entry\", \"invalid credentials with SASL mechanism SCRAM-SHA-512\" from every principal, \"error creating VPC 2.0\". Full symptom index in the body.",
+      "url": "/.well-known/agent-skills/automq-vultr-6de8440e011dcc35f280a98948cf3b4396071c93cfa2a79511f6564f30e133ba.tar.gz",
+      "digest": "sha256:6de8440e011dcc35f280a98948cf3b4396071c93cfa2a79511f6564f30e133ba"
+    },
+    {
       "name": "create-context-skill",
       "type": "skill-md",
       "description": "Distill a completed, verified build into a Colors Context Skill conforming to the Context Skill Standard - five required artifacts, symptom-first routing, no working-file copies. Use at the end of a build whose acceptance gates passed, when the user says to distill the lessons, capture what the build learned, or turn converge failures into a skill - or to migrate an existing knowledge skill with assets into conforming shape.",
@@ -126,6 +133,27 @@
       "description": "Creates and operates a single-node Apache Airflow server with Red, OpenTofu and Ansible — Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
       "url": "/.well-known/agent-skills/package-airflow-red-317d36e103facade3f23a2a84461a977cbc70d9e93c3634860cf51b2956764b7.tar.gz",
       "digest": "sha256:317d36e103facade3f23a2a84461a977cbc70d9e93c3634860cf51b2956764b7"
+    },
+    {
+      "name": "package-automq-blue",
+      "type": "archive",
+      "description": "Provision a three-node AutoMQ cluster on Vultr — Kafka-compatible brokers whose storage tier is S3 object storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
+      "url": "/.well-known/agent-skills/package-automq-blue-47d5e6c8a3ea3232170ac0a6b46ed7c2ca47131fff4498e99d20f798114da156.tar.gz",
+      "digest": "sha256:47d5e6c8a3ea3232170ac0a6b46ed7c2ca47131fff4498e99d20f798114da156"
+    },
+    {
+      "name": "package-automq-green",
+      "type": "archive",
+      "description": "Provision a three-node AutoMQ cluster on Vultr — Kafka-compatible brokers whose storage tier is S3 object storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
+      "url": "/.well-known/agent-skills/package-automq-green-347912f0b39f413e0280e191599ea626c72581873e2938dfd6643fbabf663455.tar.gz",
+      "digest": "sha256:347912f0b39f413e0280e191599ea626c72581873e2938dfd6643fbabf663455"
+    },
+    {
+      "name": "package-automq-red",
+      "type": "archive",
+      "description": "Provision a three-node AutoMQ cluster on Vultr — Kafka-compatible brokers whose storage tier is S3 object storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
+      "url": "/.well-known/agent-skills/package-automq-red-cb99e94d5995c6ba2a1ed7e200552ae528a659821817f18c14176c480464788b.tar.gz",
+      "digest": "sha256:cb99e94d5995c6ba2a1ed7e200552ae528a659821817f18c14176c480464788b"
     },
     {
       "name": "package-clickhouse-blue",

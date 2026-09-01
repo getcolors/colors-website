@@ -1838,7 +1838,7 @@ export const automq = {
   heading: "AutoMQ: a Kafka cluster whose disks are object storage, built with Colors",
   lede: "AutoMQ is a Package Skill built with Colors. It provisions three AutoMQ 1.7.4 nodes on Vultr \u2014 the Apache Kafka 3.9.1 wire protocol, both KRaft roles on every node \u2014 with Cloudflare R2 as the storage tier rather than replicated local disks. A produce is acknowledged once the record is in R2, which is why every topic is replication factor 1 and why losing a broker loses no bytes. The three nodes buy the controller quorum, partition failover and throughput; they do not buy copies.",
   runtimeNote:
-    "Green only. The public endpoint on **9092** is `SASL_SSL` with **SCRAM-SHA-512** and a `StandardAuthorizer` ACL set, because a port facing the internet is not gated by a firewall and authentication is not authorization. The controller quorum and inter-broker replication never leave a Vultr VPC.",
+    "AutoMQ ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. The public endpoint on **9092** is `SASL_SSL` with **SCRAM-SHA-512** and a `StandardAuthorizer` ACL set, because a port facing the internet is not gated by a firewall and authentication is not authorization. The controller quorum and inter-broker replication never leave a Vultr VPC.",
   steps: [
     {
       title: "Read desired state",

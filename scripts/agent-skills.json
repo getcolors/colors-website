@@ -16,6 +16,10 @@
       "ref": "main",
       "sha": "82948d32f063e080b7af7d573318fa4b1eff6f35"
     },
+    "automq": {
+      "ref": "main",
+      "sha": "3e443b682aeefd396384ed8c5acfbbf4fa59fa82"
+    },
     "clickhouse": {
       "ref": "main",
       "sha": "5e1acc1f63a93b42f59bc9c4122250a164703b62"
@@ -90,7 +94,7 @@
     },
     "skills": {
       "ref": "main",
-      "sha": "c495a3a171da1c8b1de8c4ad23b2d67d1be20a7e"
+      "sha": "f2c2e946eea0c94b1f61d890decfad0d616fa0a8"
     },
     "temporal": {
       "ref": "main",
