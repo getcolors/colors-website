@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "The Converge Passed in 614 Milliseconds",
+    slug: "/blog/n8n-green-run",
+    date: "September 1, 2026",
+    isoDate: "2026-09-01T16:30:00Z",
+    readTime: "11 min read",
+    category: "Field Report",
+    runtime: "n8n \u00b7 Neon \u00b7 Vultr \u00b7 Cloudflare R2",
+    summary:
+      "We put n8n's database on object storage \u2014 a colocated self-hosted Neon instead of a colocated Postgres \u2014 and it handled 7950 executions in five minutes at a p99 of 80 ms. Getting there took sixteen converges, and the most useful failures were not in the infrastructure. Four of our own acceptance gates were wrong, one reported a green deployment with nothing checked at all, and one accused a correctly hardened host.",
+    image: "/og-n8n-green-run-v1.png",
+    tags: ["Field Report", "n8n", "Neon", "Acceptance", "Object Storage", "Vultr"],
+  },
+  {
     title: "The Cluster Was Fine",
     slug: "/blog/automq-acceptance-gates",
     date: "September 1, 2026",

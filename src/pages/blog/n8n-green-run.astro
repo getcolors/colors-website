@@ -1,0 +1,564 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "The Converge Passed in 614 Milliseconds — Colors";
+const description = "We put n8n's database on object storage — a colocated self-hosted Neon instead of a colocated Postgres — and it handled 7950 executions in five minutes at a p99 of 80 ms. Getting there took sixteen converges, and the most useful failures were in our own acceptance gates: one reported a fully green deployment with nothing checked at all.";
+const path = "/blog/n8n-green-run";
+
+const post = postFor(path);
+const image = "/og-n8n-green-run-v1.png";
+const imageAlt =
+  "The converge passed in 614 milliseconds and nothing had been checked — n8n on a " +
+  "database made of object storage: 7950 executions at p99 80 ms, and four gates " +
+  "that lied.";
+
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (p: string) => new URL(p, SITE_URL).toString();
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "The Converge Passed in 614 Milliseconds",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/favicon.svg"),
+    },
+  },
+  about: [
+    { "@type": "Thing", name: "n8n" },
+    { "@type": "Thing", name: "Workflow automation" },
+    { "@type": "Thing", name: "Neon" },
+    { "@type": "Thing", name: "Acceptance testing" },
+    { "@type": "Thing", name: "Cloudflare R2" },
+    { "@type": "Thing", name: "Context Skills" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Self-Hosting Neon" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Field Report &amp; Operations</p>
+      <h1>The Converge Passed in 614 Milliseconds</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">Neon · Vultr · Cloudflare R2</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+      </div>
+      <p class="lede">Neon separates Postgres into stateless compute and S3-backed storage, and the whole engine is open source. What the repository does not contain is a self-hosting story: there is a development compose file where the operator documentation should be, and since July 2025 there is not even a versioned release to pin. We deployed it for real — auth, durability, recovery, rotation — and wrote down everything the build paid for. This is that report, and the two skills it left behind.</p>
+    </header>
+
+    <figure class="hero-figure">
+      <img
+        src="/images/neon-self-hosting-infographic-v1.png"
+        alt="Neon self-hosting: the docs stop where operations begin. We built it, measured what the docs don't say, and left two skills — a Package Skill and a Context Skill — to get you started."
+        width="2752"
+        height="1536"
+        loading="eager"
+      />
+      <figcaption class="mono">the compose file gets you a stack that runs; nothing tells you how far that is from a deployment you can trust</figcaption>
+    </figure>
+
+    <div class="panel summary-card">
+      <div class="card-label">What we found</div>
+      <p>The distance between Neon's <code>docker-compose/</code> and an operated deployment is real, measurable, and nowhere written down. Crossing it took fifteen converges against a live host, and the load-bearing facts came from the pinned source and live probes, not from prose.</p>
+      <ul class="summary-list">
+        <li><strong>The compose example is a development fixture</strong> — MinIO, trust auth, floating <code>latest</code> tags, <code>fsync=off</code>, a committed signing keypair.</li>
+        <li><strong>There is nothing to pin.</strong> Upstream moved to untagged continuous deployment in July 2025; the last deliberate release pairing has to be excavated from git tags.</li>
+        <li><strong>The compute spec is the auth system</strong> — undocumented, and readable only in the pinned source.</li>
+        <li><strong>Single-node durability is not what you would guess</strong>: a fresh safekeeper cannot serve its offloaded WAL back. We measured the real recovery bound instead of assuming one.</li>
+      </ul>
+    </div>
+
+    <article class="content-body">
+      <p class="lede">
+        n8n stores your workflows, your execution history, and every API
+        credential your automations use. The usual advice is SQLite for a
+        trial and a colocated Postgres for anything real. We tried a third
+        thing: a colocated <strong>self-hosted Neon</strong>, so the durable
+        copy of all of that lives in object storage rather than on the
+        instance's disk.
+      </p>
+
+      <p>
+        The obvious objection is latency. Neon separates storage from compute —
+        a pageserver, a safekeeper, and a stateless Postgres — and n8n writes an
+        execution row per run. Storage/compute separation is supposed to be the
+        wrong shape for that.
+      </p>
+
+      <p>So we measured it rather than arguing about it.</p>
+
+      <pre><code>soak: 7950 executions, 0 failed, 10 workflows
+sql round-trip p95=75ms p99=80ms
+host memory 12%  disk 9%</code></pre>
+
+      <p>
+        Five minutes, roughly twenty-six executions a second, zero failures, on
+        one 8-core box that was also running the entire storage tier. Two
+        independent runs produced identical percentiles. The interesting number
+        is the gap between p95 and p99: <strong>five milliseconds</strong>. At
+        this rate the split adds no visible tail latency at all.
+      </p>
+
+      <p>
+        That is the good news, and it is the least useful thing we learned.
+      </p>
+
+      <h2>1. The green run that proved nothing</h2>
+
+      <p>
+        Getting there took sixteen converges. The one worth writing about is the
+        first one that fully passed.
+      </p>
+
+      <pre><code>&gt;&gt;&gt; :n8n/acceptance (create)
+&lt;&lt;&lt; :n8n/acceptance (614ms)
+EXIT=0</code></pre>
+
+      <p>
+        Every stage green. Acceptance green. And not one application gate had
+        executed.
+      </p>
+
+      <p>
+        The smoke script was written, rendered, installed onto the host — and
+        never called. We had inherited an acceptance <em>step</em> from the
+        storage-tier package we build on, and assumed inheriting the step meant
+        inheriting the gates. It doesn't. That step checks the operator's client
+        path; the server-side gates live in the playbook, and a downstream
+        playbook has to invoke its own.
+      </p>
+
+      <p>
+        What caught it was arithmetic, not insight. The gate suite does a
+        <code>pg_switch_wal()</code> and then waits twenty seconds for the
+        segment to appear in object storage. A suite that finishes in 614
+        milliseconds is not running. The real one takes twenty-six seconds.
+      </p>
+
+      <p class="callout">
+        <strong>Time your acceptance stage, and disbelieve a fast pass.</strong>
+        A test suite that completes faster than its own sleeps has told you
+        nothing, and it has told you nothing in the most reassuring possible
+        voice.
+      </p>
+
+      <h2>2. Three more gates that lied</h2>
+
+      <p>
+        Once the gates ran, they started failing. Six failures — and only two
+        were the infrastructure's fault. The other four were defects in the
+        checks themselves, and each one failed in a different direction.
+      </p>
+
+      <h3>The gate that accused a correct host</h3>
+
+      <p>
+        A gate reported <code>password authentication is ENABLED</code> on a
+        host where sshd plainly had it disabled. The configuration was right;
+        the gate called <code>sshd -T</code> once per assertion, and a transient
+        empty result is indistinguishable from a wrong setting. A second gate
+        checking the same file passed in the same run.
+      </p>
+
+      <p>
+        A gate that can accuse correct configuration is worse than no gate,
+        because it teaches you to disbelieve the suite. Capture the probe once,
+        and make emptiness its own distinct failure.
+      </p>
+
+      <h3>The gate that could never have passed</h3>
+
+      <p>
+        Our restore drill checked that a stored credential still decrypted by
+        reading it back through the API and comparing. It reported that the
+        encryption key had not survived the restore — the most alarming possible
+        result in a recovery test.
+      </p>
+
+      <p>
+        It hadn't. n8n <strong>redacts credential values in API responses</strong>,
+        returning a fixed-length sentinel: 54 characters whether the secret was
+        27 characters or 28. The comparison could never have succeeded, on any
+        instance, with any key.
+      </p>
+
+      <p>
+        The honest test is to <em>use</em> the credential. n8n resolves and
+        decrypts a node's credential at execution time and fails the node if it
+        can't — so the drill now runs a workflow whose HTTP node carries the
+        credential and asserts the execution reaches <code>success</code>.
+      </p>
+
+      <h3>The gate that certified an empty database</h3>
+
+      <p>
+        The same drill reported that the pinned image had booted successfully
+        against the restored data. It had. The restored database was
+        <strong>empty</strong> — <code>pg_restore</code> had failed and we were
+        swallowing its output — and n8n cheerfully ran its own migrations against
+        the blank database and declared itself ready.
+      </p>
+
+      <p>
+        Health is not evidence of content. The drill now asserts the table count
+        first, then the rows.
+      </p>
+
+      <h2>3. The stack was green and two containers had never started</h2>
+
+      <p>
+        A later converge finished with <code>ok=45 changed=0</code>, no failures,
+        and the site down. Two containers sat in Docker state
+        <code>created</code>: started never, by anything.
+      </p>
+
+      <p>
+        An earlier run had failed their health dependency and left them that way.
+        Every run since had changed no file — so the handler that brings the
+        stack up was never notified, and never fired.
+      </p>
+
+      <p class="callout">
+        <strong>A handler expresses "an input changed", not "the world should
+        look like this."</strong> Desired-state convergence needs the enforcing
+        command to run unconditionally. <code>docker compose up -d</code> is
+        idempotent; on a converged host it costs nothing and it is the
+        difference between a green playbook and a running service.
+      </p>
+
+      <p>
+        Only two gates caught it — the certificate check and the one that
+        executes a workflow on the task runner. Every task in the playbook was
+        green. That is the argument for gating <em>end state</em> rather than
+        task outcomes, made about as concretely as it can be made.
+      </p>
+
+      <h2>4. What n8n 2.x actually does</h2>
+
+      <p>
+        A separate category of problem, and the one most likely to bite a reader
+        directly: n8n 2.x moved things that every guide still describes the old
+        way. All of these came from the deployed version's own
+        environment-variable reference, and several contradict n8n's own 2.0
+        breaking-changes page.
+      </p>
+
+      <table>
+        <thead>
+          <tr><th>What you'll read</th><th>What 2.36.9 does</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>WEBHOOK_URL</code> sets the external URL</td><td>Deprecated since 2.35.0 in favour of <code>N8N_WEBHOOK_URL</code></td></tr>
+          <tr><td>A missing <code>DB_POSTGRESDB_*</code> silently falls back to SQLite</td><td>False. SQLite is the default only when <code>DB_TYPE</code> is unset or misspelled</td></tr>
+          <tr><td>2.0 made Code-node environment access secure by default</td><td><code>N8N_BLOCK_ENV_ACCESS_IN_NODE</code> defaults to <code>false</code></td></tr>
+          <tr><td>2.0 defaults task runners to external</td><td><code>N8N_RUNNERS_MODE</code> defaults to <code>internal</code></td></tr>
+          <tr><td>You must enable execution pruning</td><td>Already on: <code>true</code>, 336 h, 10 000 executions</td></tr>
+        </tbody>
+      </table>
+
+      <p>
+        The webhook one is the expensive mistake. With the deprecated key, n8n
+        falls back to its own host and port and hands third parties a URL that
+        never resolves — and webhook URLs given to third parties are effectively
+        permanent.
+      </p>
+
+      <p>
+        Since pruning is already on, the execution table isn't what fills your
+        host. These two are, and both default to the unsafe value:
+        <code>N8N_DEFAULT_BINARY_DATA_MODE</code> defaults to
+        <code>default</code>, which holds binary payloads <em>in memory</em>, and
+        <code>N8N_CONCURRENCY_PRODUCTION_LIMIT</code> defaults to
+        <code>-1</code>, unbounded. A Code node duplicates its payload before and
+        after processing, so peak memory is roughly three times the largest
+        payload times the concurrency bound. That product sizes the machine, not
+        the average workload.
+      </p>
+
+      <h2>5. The one that poisons the disk</h2>
+
+      <p>
+        n8n writes <code>N8N_ENCRYPTION_KEY</code> into its settings file on
+        <strong>first boot</strong> and refuses to start ever after if the
+        environment disagrees:
+      </p>
+
+      <pre><code>Error: Mismatching encryption keys. The encryption key in the settings file
+/home/node/.n8n/config does not match the N8N_ENCRYPTION_KEY env var.</code></pre>
+
+      <p>
+        One bad first boot — a wrong key, or an unrendered template expression
+        that reached the container as a literal string, which is exactly how ours
+        happened — poisons the data directory permanently. And the error appears
+        on the <em>next</em> boot, so by the time you see it the cause has
+        scrolled off.
+      </p>
+
+      <p>
+        Our converge now detects the mismatch and <strong>refuses to repair it</strong>.
+        Deleting the settings file is correct only when the database holds no
+        encrypted credentials; when it does, that file is the only thing that can
+        decrypt them, and removing it destroys them silently. Auto-repair here
+        would be a data-loss bug wearing a helpful face.
+      </p>
+
+      <h2>6. Encode the trap, don't write it down</h2>
+
+      <p>
+        The most uncomfortable finding is about us.
+      </p>
+
+      <p>
+        Ansible splits a shell task's arguments before running anything, counting
+        brace pairs across the whole block — comments included. Two consecutive
+        opening braces anywhere and the playbook won't load. This trap is
+        documented <em>by name</em> in the Context Skill from our previous build.
+        We read that skill during planning. We copied the trap into the plan.
+      </p>
+
+      <p>
+        Then we walked into it while writing a guard whose entire purpose was to
+        detect unrendered template braces — three times, including once where the
+        <em>comment explaining the trap</em> triggered it.
+      </p>
+
+      <p class="callout">
+        <strong>Prose gets read once. A gate runs every time.</strong>
+      </p>
+
+      <p>
+        So the package's validator now refuses the deprecated
+        <code>WEBHOOK_URL</code> spelling by name, refuses a task-runner image
+        whose version differs from the main image, refuses binary data left in
+        memory, refuses an unbounded concurrency limit, and refuses a
+        Cloudflare-only firewall without a proxied DNS record — which would
+        otherwise pass the converge and fail hours later with no certificate,
+        because the ACME challenge arrives from an address the firewall drops.
+      </p>
+
+      <h2>7. Recovery, and the number nobody states</h2>
+
+      <p>
+        Neon uploads WAL to object storage continuously, which reads like
+        continuous backup. It isn't. A rebuilt safekeeper does not recover its
+        offloaded WAL — the walproposer bootstraps it from the compute
+        basebackup instead.
+      </p>
+
+      <p>
+        So losing the whole host falls back to the logical backup set, which
+        makes the backup <em>interval</em> the real recovery point objective. For
+        a system holding live third-party credentials, nightly isn't defensible.
+        Ours runs every six hours, and the dump is small.
+      </p>
+
+      <p>
+        The rehearsal restores both artifacts into an isolated scratch stack,
+        boots the pinned image, and proves four things a checksum cannot: that an
+        operator can actually log in, that the workflows are there, that a stored
+        credential decrypts, and that a binary payload is readable. Whole-host
+        recovery restores the database and the data directory but not the host's
+        generated secrets — so a restore nobody can sign into is not a recovery.
+      </p>
+
+      <h2>What we left behind</h2>
+
+      <p>
+        Two skills, both public. The
+        <a href="/getcolors/n8n">n8n Package Skill</a> converges the whole thing
+        from a single <code>colors.yml</code> — and notably contains no copy of
+        the storage tier at all: it pins the Neon package and renders its
+        templates directly, so there's nothing to drift.
+      </p>
+
+      <p>
+        The <a href="/getcolors/skills/n8n-single-node">n8n Single-Node Context
+        Skill</a> carries the rest: fifteen failures with their verbatim error text,
+        distilled from forty-two recorded during the build, plus the version
+        table above, the pinned set with its retest conditions, and the
+        acceptance doctrine — indexed by the symptom you'd actually paste into
+        a search box.
+      </p>
+
+      <p>
+        The database question turned out to have a boring answer: Neon handles
+        n8n's write pattern with an order of magnitude to spare. The gates were
+        the interesting part. Four of ours were wrong, and the deployment they
+        were guarding was fine the whole time.
+      </p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .post-page {
+    padding-block: 24px 80px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+  .post-header {
+    margin-bottom: 8px;
+  }
+  .post-header h1 {
+    font-size: 40px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 10px 0 16px;
+  }
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .meta-date,
+  .meta-readtime {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .dot {
+    color: var(--muted);
+  }
+  .lede {
+    font-size: 18.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .hero-figure {
+    margin: 32px 0 8px;
+  }
+  .hero-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .hero-figure figcaption {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  .summary-card {
+    margin: 28px 0 8px;
+    padding: 22px 24px;
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .summary-card p {
+    margin: 0 0 14px;
+    font-size: 15.5px;
+    line-height: 1.65;
+  }
+  .summary-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .summary-list li {
+    margin-bottom: 8px;
+  }
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .content-body ul, .content-body ol {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 24px;
+    margin: 0 0 24px;
+  }
+  .content-body li {
+    margin-bottom: 8px;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin: 28px 0;
+    padding: 0;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .data-table th {
+    background: var(--surface);
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+    vertical-align: top;
+  }
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+  .data-table tr:hover td {
+    background: var(--surface);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--code-ink);
+  }
+</style>

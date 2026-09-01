@@ -459,6 +459,17 @@ render_post_card(
 # to "og-*.png are generated". The generated v1 text card it replaced never
 # shipped; the version suffix follows the rule pre-emptively.
 
+# The n8n field report. 614 ms is the measured duration of the converge that
+# reported success with zero application gates executed; 7950 is the soak's
+# execution count, reproduced across two runs.
+render_post_card(
+    "og-n8n-green-run-v1.png",
+    "Field Report \u00b7 n8n \u00b7 Neon \u00b7 Vultr",
+    "The converge passed in 614 ms. Nothing had been checked.",
+    "n8n on a database made of object storage: 7950 executions at p99 80 ms, and four gates that lied.",
+    "/blog/n8n-green-run",
+)
+
 render_post_card(
     "og-posthog-skill-benchmark-v1.png",
     "Benchmark · 2 agents · PostHog",
