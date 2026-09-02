@@ -57,6 +57,21 @@ export const nav = [
   { label: "Blog", href: "/blog" },
 ];
 
+// Site-wide announcement strip rendered by SiteHeader above the nav on every
+// page. Time-bound by construction: SiteHeader hides it once `until` has
+// passed, so a forgotten removal never advertises a finished event — but the
+// strip should still be deleted after the town hall, not left to expire.
+// The blog entry for the event (src/pages/blog/community-town-hall.astro) is
+// the permanent home for the recording and slides; the strip is not.
+export const announcement = {
+  date: "Thu 10 Sep · 17:00 CEST · online",
+  title: "Community Town Hall: the roadmap, the three colours, and a live provisioning demo",
+  href: "/blog/community-town-hall",
+  cta: "Agenda and registration",
+  /** RFC 3339 instant after which the strip is not rendered — the end of the session. */
+  until: "2026-09-10T16:00:00Z",
+};
+
 export const hero = {
   eyebrow: "Open-source deployment packages",
   headline: "From colors.yml to a running server.",
@@ -1886,5 +1901,8 @@ export const footer = {
   links: [
     { href: "https://github.com/getcolors", label: "GitHub" },
     { href: "https://discord.gg/3aQzzrrdFj", label: "Discord" },
+    // The Luma calendar, not a single event: the calendar outlives any one
+    // town hall, so this link never rots.
+    { href: "https://luma.com/colors", label: "Events" },
   ],
 };

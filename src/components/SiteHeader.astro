@@ -1,5 +1,5 @@
 ---
-import { nav } from "~/data/landing";
+import { announcement, nav } from "~/data/landing";
 
 interface Props {
   active?: "featured" | "catalog" | "blog";
@@ -10,7 +10,21 @@ const isCurrent = (href: string) =>
   (active === "featured" && href === "/featured") ||
   (active === "catalog" && href === "/skills") ||
   (active === "blog" && href === "/blog");
+
+// The strip is evaluated at build time: a deploy after `until` renders no
+// strip. It is not a substitute for removing the entry from landing.ts.
+const showAnnouncement = Date.now() < Date.parse(announcement.until);
 ---
+
+{showAnnouncement && (
+  <div class="announcement" role="region" aria-label="Announcement">
+    <a class="announcement-inner" href={announcement.href}>
+      <span class="announcement-date">{announcement.date}</span>
+      <span class="announcement-title">{announcement.title}</span>
+      <span class="announcement-cta">{announcement.cta} →</span>
+    </a>
+  </div>
+)}
 
 <header class="site-header" data-site-header>
   <div class="nav">
@@ -76,10 +90,27 @@ const isCurrent = (href: string) =>
   .nav-links a:hover { color: var(--blue); }
   .nav-links a[aria-current="page"] { color: var(--blue); font-weight: 400; }
   .nav-links a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+  /* The strip is a line of the page, not a banner: page-coloured, one
+     hairline under it, the date set as a mono value in the yaml green the
+     hero uses for values. Only the call to action is blue. */
+  .announcement { background: var(--surface, oklch(97.5% 0.003 260)); border-bottom: 1px solid var(--line, oklch(91% 0.005 260)); font-size: 13.5px; color: var(--ink, oklch(20% 0.01 260)); }
+  .announcement-inner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 20px; max-width: 1120px; margin: 0 auto; padding: 10px 24px; color: inherit; text-decoration: none; }
+  .announcement-date { font-family: var(--mono); font-size: 12px; letter-spacing: 0.01em; color: oklch(45% 0.13 145); white-space: nowrap; }
+  .announcement-title { flex: 1 1 auto; min-width: 0; }
+  .announcement-cta { font-family: var(--mono); font-size: 12px; white-space: nowrap; color: var(--blue, oklch(55% 0.18 260)); }
+  /* Hover follows the site's link convention — colour, never underline: the
+     call to action darkens like every body link, and the title turns blue so
+     the whole band visibly answers, since the whole band is the link. */
+  .announcement-title, .announcement-cta { transition: color 150ms ease; }
+  .announcement-inner:hover .announcement-cta { color: oklch(45% 0.18 260); }
+  .announcement-inner:hover .announcement-title { color: var(--blue, oklch(55% 0.18 260)); }
+  .announcement-inner:focus-visible { outline: 2px solid var(--blue, oklch(55% 0.18 260)); outline-offset: -3px; }
   @media (max-width: 860px) {
     .nav { gap: 20px; padding-block: 20px; }
     .site-header.is-scrolled .nav { padding-block: 12px; }
     .nav-links { gap: 16px; font-size: 13px; }
+    .announcement-inner { padding-block: 8px; gap: 2px 12px; }
+    .announcement-title { flex-basis: 100%; }
   }
-  @media (prefers-reduced-motion: reduce) { .site-header, .nav { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .site-header, .nav, .announcement-title, .announcement-cta { transition: none; } }
 </style>

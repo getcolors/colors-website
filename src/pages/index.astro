@@ -7,6 +7,7 @@ import SeoMeta from "~/components/SeoMeta.astro";
 import StyleGate from "~/components/StyleGate.astro";
 import SiteFooter from "~/components/SiteFooter.astro";
 import SiteHeader from "~/components/SiteHeader.astro";
+import { yamlTheme } from "~/data/yaml-theme";
 import {
   colorsYml,
   createContextSkill,
@@ -35,31 +36,8 @@ import {
 
 const { title, description } = meta;
 
-// Shiki ships with Astro, so highlighting costs no new dependency — but every
-// bundled theme drags in its own palette. This one maps YAML scopes onto the
-// page's own colours instead: keys blue, values green, literals red, the three
-// library accents. Darkened from the accents proper (55/65/60% lightness) for
-// contrast against the panel at 13px.
-//
-// Literal oklch() rather than the var(--red|green|blue) the stylesheet uses:
-// Shiki resolves these at build time into inline style attributes on the
-// spans, with no stylesheet in scope to resolve a custom property against.
-const yamlTheme = {
-  // Shiki puts the theme name on the <pre> as a class; keep it namespaced.
-  name: "colors-yaml",
-  type: "light" as const,
-  settings: [
-    { settings: { foreground: "oklch(35% 0.01 260)" } },
-    {
-      scope: ["entity.name.tag", "support.type.property-name"],
-      settings: { foreground: "oklch(48% 0.16 260)" },
-    },
-    { scope: ["string"], settings: { foreground: "oklch(45% 0.13 145)" } },
-    { scope: ["constant", "keyword"], settings: { foreground: "oklch(50% 0.19 25)" } },
-    { scope: ["punctuation"], settings: { foreground: "oklch(65% 0.01 260)" } },
-    { scope: ["comment"], settings: { foreground: "oklch(60% 0.01 260)" } },
-  ],
-};
+// The hero's YAML theme lives in src/data/yaml-theme.ts, shared with the town
+// hall page. Shiki ships with Astro, so highlighting costs no new dependency.
 ---
 
 <!doctype html>

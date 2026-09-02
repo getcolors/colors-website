@@ -1,0 +1,426 @@
+---
+import { Code } from "astro:components";
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+import { yamlTheme } from "~/data/yaml-theme";
+
+const title = "Colors Community Town Hall, 10 September — Colors";
+const description = "A one-hour online town hall for the people building and running Package Skills: the state of the SDK after the rebrand, how red, green and blue fit together, a live agent-driven provisioning demo, the roadmap proposals, and open Q&A with the maintainers. Thursday 10 September 2026, 17:00 CEST. Free, registration on Luma.";
+const path = "/blog/community-town-hall";
+
+const post = postFor(path);
+const image = "/og-community-town-hall-v1.png";
+const imageAlt =
+  "Colors Community Town Hall, 10 September 2026: roadmap, architecture, a live provisioning " +
+  "demo and open Q&A with the maintainers. Online, free, 17:00 CEST.";
+
+// The one registration link. Luma is where the video link is issued, so the
+// site never carries a meeting URL of its own.
+const registerUrl = "https://luma.com/ci9bek4c";
+const calendarUrl = "https://luma.com/colors";
+
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (p: string) => new URL(p, SITE_URL).toString();
+
+// 15:00 UTC on 2026-09-10 — Berlin is on CEST (UTC+2) in September.
+const startDate = "2026-09-10T17:00:00+02:00";
+const endDate = "2026-09-10T18:00:00+02:00";
+
+// The agenda is the page's spine. Its ids are the values in the desired-state
+// block below and the anchors of the expanded entries, so the block, the
+// agenda and the URL fragments cannot disagree. Order is real: this is the
+// running order of the hour.
+const agenda = [
+  {
+    id: "state-of-colors",
+    title: "State of Colors",
+    body: "What changed since the rebrand, the engine milestones that landed, and how a Package Skill is put together today: one desired-state file, a dry-run boundary, OpenTofu and Ansible you can read, and acceptance gates that prove the deployment rather than assume it.",
+  },
+  {
+    id: "three-colours-one-model",
+    title: "Three colours, one model",
+    body: "How red (TypeScript/Bun), green (Clojure/Babashka) and blue (Python/uv) render byte-identical artifacts from the same colors.yml, and why parity is a test in every package rather than a promise in a README.",
+  },
+  {
+    id: "live-demo",
+    title: "Live demo",
+    body: "An agent provisioning an analytics and application stack from scratch, on a real cloud account: build, dry-run, converge, and the acceptance gates that decide whether it was actually green.",
+  },
+  {
+    id: "roadmap-and-proposals",
+    title: "Roadmap and proposals",
+    body: "Multi-cloud package standards, single-node architectures, and where CI fits in. These are proposals, not commitments, and the point of putting them in front of you is to hear what is missing.",
+  },
+  {
+    id: "open-q-and-a",
+    title: "Open Q&A",
+    body: "Questions, feature proposals and deployment edge cases, straight to the maintainers.",
+  },
+];
+
+// The event, written the way this site writes everything it deploys. The
+// landing hero renders the real colors.yml that runs www.getcolors.ai; this
+// block is the same idea applied to an hour rather than a server. Every
+// value is true, and the agenda list is generated from the array above.
+const eventYml = `profile: community-town-hall
+when: 2026-09-10T17:00:00+02:00
+duration: 1h
+where: online   # link issued on Luma
+price: 0
+register: ${registerUrl}
+
+agenda:
+${agenda.map((item) => `  - ${item.id}`).join("\n")}`;
+
+const times = [
+  { zone: "Berlin", abbr: "CEST", time: "17:00" },
+  { zone: "London", abbr: "BST", time: "16:00" },
+  { zone: "UTC", abbr: "", time: "15:00" },
+  { zone: "New York", abbr: "EDT", time: "11:00" },
+  { zone: "San Francisco", abbr: "PDT", time: "08:00" },
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Event",
+  name: "Colors Community Town Hall: Roadmap, Architecture & Live Demo",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  startDate,
+  endDate,
+  eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+  eventStatus: "https://schema.org/EventScheduled",
+  isAccessibleForFree: true,
+  location: {
+    "@type": "VirtualLocation",
+    url: registerUrl,
+  },
+  organizer: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+  },
+  offers: {
+    "@type": "Offer",
+    url: registerUrl,
+    price: "0",
+    priceCurrency: "EUR",
+    availability: "https://schema.org/InStock",
+    validFrom: post.isoDate,
+  },
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap event-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Community Town Hall" }]} />
+    </div>
+
+    <header class="event-hero">
+      <div class="event-intro">
+        <p class="eyebrow section-label">Community town hall · online · free</p>
+        <h1>One hour with the people who build Colors.</h1>
+        <p class="lede">Where the SDK stands after the rebrand, how the three colours fit together, an agent provisioning a production stack in front of you, the proposals on the roadmap, and the maintainers taking your questions.</p>
+        <div class="event-actions">
+          <a class="register" href={registerUrl} target="_blank" rel="noopener noreferrer">Register on Luma</a>
+          <span class="register-note">Free and open. Luma emails the video link to everyone registered before the session starts.</span>
+        </div>
+      </div>
+      <div class="yml">
+        <div class="yml-caption"># The event, as desired state</div>
+        <Code code={eventYml} lang="yaml" theme={yamlTheme} style="margin:0; background:transparent; line-height:1.7" />
+      </div>
+    </header>
+
+    <section class="when" aria-labelledby="when-heading">
+      <h2 id="when-heading" class="when-label">Thursday, 10 September 2026</h2>
+      <ul class="zones">
+        {times.map((t) => (
+          <li>
+            <span class="zone-time">{t.time}</span>
+            <span class="zone-name">{t.zone}{t.abbr && <span class="zone-abbr"> {t.abbr}</span>}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <article class="content-body">
+      <h2 id="agenda">Agenda</h2>
+      <p class="section-note">In running order. Each key is an item in the block above.</p>
+      <dl class="agenda">
+        {agenda.map((item) => (
+          <div class="agenda-item" id={item.id}>
+            <dt><code class="agenda-key">{item.id}</code></dt>
+            <dd>
+              <strong>{item.title}</strong>
+              <p>{item.body}</p>
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <h2>Who it is for</h2>
+      <ul class="audience">
+        <li><strong>Platform and DevOps engineers</strong> who want a deployment model an agent can drive without a model ever touching a server.</li>
+        <li><strong>Clojure, TypeScript and Python engineers</strong> building their own Package Skills, or porting one to another colour.</li>
+        <li><strong>Contributors</strong> to packages, Context Skills and documentation, and anyone deciding whether to become one.</li>
+      </ul>
+
+      <h2>Before you come</h2>
+      <p>The demo assumes nothing, but the questions are better when the vocabulary is shared. Ten minutes on <a href="/">what a Package Skill is</a>, a look through the <a href="/skills">Skills Catalog</a>, and the two most recent field reports, <a href="/blog/n8n-green-run">The Converge Passed in 614 Milliseconds</a> and <a href="/blog/automq-acceptance-gates">The Cluster Was Fine</a>, cover what the maintainers will take for granted.</p>
+      <p>Bring the deployment you could not get to converge. Edge cases are the most useful thing you can put in front of the people who wrote the gates.</p>
+
+      <h2>Afterwards</h2>
+      <p>The recording and the slides will be posted on this page. Future sessions are announced on the <a href={calendarUrl} target="_blank" rel="noopener noreferrer">Colors calendar on Luma</a> and in <a href="https://discord.gg/3aQzzrrdFj" target="_blank" rel="noopener noreferrer">Discord</a>.</p>
+    </article>
+  </div>
+</CatalogLayout>
+
+<style>
+  .event-page {
+    padding-block: 24px 80px;
+  }
+  .breadcrumb-bar {
+    margin-bottom: 24px;
+  }
+
+  /* HERO — the landing page's two-column hero, applied to an hour instead of
+     a server. Text left, the desired-state block right. */
+  .event-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+  .event-intro h1 {
+    font-size: 44px;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    margin: 10px 0 18px;
+    max-width: 14ch;
+  }
+  .event-intro .lede {
+    font-size: 17.5px;
+    line-height: 1.6;
+    margin: 0 0 28px;
+  }
+  .event-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .register {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0 18px;
+    border-radius: 8px;
+    background: var(--blue);
+    color: var(--on-dark);
+    font-family: var(--mono);
+    font-size: 13.5px;
+    text-decoration: none;
+    transition: background-color 150ms ease;
+  }
+  .register:hover {
+    background: oklch(45% 0.18 260);
+    color: var(--on-dark);
+  }
+  .register:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+  }
+  .register-note {
+    max-width: 40ch;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  /* The block. Same panel as the landing hero: panel tint, hairline, 12px. */
+  .yml {
+    min-width: 0;
+    padding: 24px 26px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--code-ink);
+  }
+  .yml-caption {
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: var(--soft);
+  }
+  /* Shiki's <pre>/<code> take the UA monospace unless told otherwise. */
+  .yml :global(.astro-code),
+  .yml :global(.astro-code code) {
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .yml :global(.astro-code) {
+    overflow-x: auto;
+  }
+
+  /* WHEN — one date, five clocks. Times lead because that is what a reader
+     scans for; the city is the label. */
+  .when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px 32px;
+    padding: 18px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 8px;
+  }
+  .when-label {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  .zones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .zones li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .zone-time {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .zones li:first-child .zone-time {
+    color: oklch(45% 0.13 145);
+  }
+  .zone-name {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .zone-abbr {
+    color: var(--soft);
+  }
+
+  /* BODY */
+  .content-body h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 48px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-body p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .section-note {
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .content-body .section-note {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* AGENDA — a definition list keyed by the block's own ids. The key column
+     is the structure; no numbers, since the block already carries order. */
+  .agenda {
+    margin: 0 0 8px;
+  }
+  .agenda-item {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 24px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+    scroll-margin-top: 96px;
+  }
+  .agenda-item:last-child {
+    border-bottom: none;
+  }
+  .agenda dt {
+    margin: 0;
+    padding-top: 2px;
+  }
+  .agenda-key {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: oklch(45% 0.13 145);
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .agenda dd {
+    margin: 0;
+  }
+  .agenda dd strong {
+    display: block;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .content-body .agenda dd p {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+  .audience {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    padding-left: 22px;
+    margin: 0 0 24px;
+  }
+  .audience li {
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 860px) {
+    .event-hero {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    .event-intro h1 {
+      font-size: 34px;
+      max-width: none;
+    }
+    .yml {
+      padding: 20px;
+    }
+    .agenda-item {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+  @media (max-width: 520px) {
+    .yml :global(.astro-code),
+    .yml :global(.astro-code code) {
+      font-size: 12px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .register { transition: none; }
+  }
+</style>

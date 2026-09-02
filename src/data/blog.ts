@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "Colors Community Town Hall, 10 September",
+    slug: "/blog/community-town-hall",
+    date: "September 2, 2026",
+    isoDate: "2026-09-02T12:00:00Z",
+    readTime: "3 min read",
+    category: "Community",
+    runtime: "Town Hall \u00b7 Online \u00b7 10 Sep 2026",
+    summary:
+      "A one-hour virtual town hall for the people building and running Package Skills: where the SDK is after the rebrand, how the three colours fit together, an agent provisioning an analytics and application stack live, the proposals on the roadmap, and open Q&A with the maintainers. Free, registration on Luma.",
+    image: "/og-community-town-hall-v1.png",
+    tags: ["Community", "Town Hall", "Roadmap", "Package Skills", "Live Demo"],
+  },
+  {
     title: "The Converge Passed in 614 Milliseconds",
     slug: "/blog/n8n-green-run",
     date: "September 1, 2026",

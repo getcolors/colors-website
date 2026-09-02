@@ -399,6 +399,14 @@ context_skill_count = sum(len(recipe[4]) for recipe in catalog_recipes if recipe
 # (The generated v1 text card never shipped; the suffix follows the rule.)
 
 render_post_card(
+    "og-community-town-hall-v1.png",
+    "Community · Town Hall · 10 Sep 2026",
+    "Colors Community Town Hall",
+    "Roadmap, architecture, a live provisioning demo and open Q&A with the maintainers. Online, free, 17:00 CEST.",
+    "/blog/community-town-hall",
+)
+
+render_post_card(
     "og-gemini-3-7-flash-benchmark-v1.png",
     "Benchmark · Gemini 3.7 Flash",
     "Three-node PostgreSQL and MySQL HA clusters, built from scratch",
