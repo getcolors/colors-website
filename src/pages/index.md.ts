@@ -26,11 +26,13 @@ import {
   libraries,
   meta,
   realExample,
+  shapes,
   skillMatrix,
   submitContextSkill,
   submitContextSkillCmd,
   submitPackageSkill,
   submitPackageSkillCmd,
+  topology,
   trust,
   workflow,
 } from "~/data/landing";
@@ -84,7 +86,7 @@ ${wrap(hero.installNote)}
 
 ${fence("sh", installCmd)}
 
-${wrap("A Package Skill is configured with a `colors.yml` — this is the one that deploys this site:")}
+${wrap("A Package Skill is configured with a `colors.yml` — this is an excerpt of the real one behind a six-machine Langfuse deployment:")}
 
 ${fence("yaml", colorsYml)}
 
@@ -96,8 +98,20 @@ ${realExample.results.map((result) => `- ${result}`).join("\n")}
 
 ${wrap(realExample.note)}
 
-Documentation: https://getcolors.github.io/once/
-Repository: https://github.com/getcolors/once
+${wrap(`**${topology.caption}** — four firewall groups, six machines, one VPC:`)}
+
+${topology.groups.map((g) => wrap(`- **${g.name}** (${g.plan}): ${g.machines.join("; ")}`, "  ")).join("\n")}
+
+${topology.edges.map((e) => wrap(`- ${e}`, "  ")).join("\n")}
+
+Documentation: https://getcolors.github.io/langfuse/
+Repository: https://github.com/getcolors/langfuse
+
+## ${shapes.heading}
+
+${wrap(shapes.lede)}
+
+${shapes.items.map((item) => wrap(`- **${item.name}** — ${item.meta}. ${item.body} ${canonical.replace(/\/$/, "")}${item.href}`, "  ")).join("\n")}
 
 ## ${workflow.heading}
 

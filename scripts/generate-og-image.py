@@ -30,7 +30,10 @@ FONTS = os.path.join(ROOT, "public", "fonts")
 # cache unfurls by image URL, so new bytes at an old path show the old card.
 # og-colors.png was retired on 2026-07-30: it was generated before the rebrand
 # landed in CMD below and shipped a card reading "bigconfig-ai/once".
-OUT = os.path.join(ROOT, "public", "og-colors-v2.png")
+# og-colors-v2.png was retired on 2026-09-03 with the repositioning for teams
+# doing multi-machine deployments: it read "An SDK for building Package Skills"
+# over the ONCE install command, the single-host framing the page dropped.
+OUT = os.path.join(ROOT, "public", "og-colors-v3.png")
 
 try:
     from fontTools.ttLib import TTFont
@@ -137,12 +140,12 @@ o.append("</g>")
 o.append(draw(SANS, "Colors", 38, MX + MARK + 20, MY + MARK * 0.72, INK, -0.01, 0.022)[0])
 
 # Headline.
-o.append(draw(SANS, "An SDK for building", 78, MARGIN, 300, INK, -0.02, 0.024)[0])
-o.append(draw(SANS, "Package Skills", 78, MARGIN, 384, INK, -0.02, 0.024)[0])
+o.append(draw(SANS, "Complex deployments,", 66, MARGIN, 296, INK, -0.02, 0.024)[0])
+o.append(draw(SANS, "declared in one file.", 66, MARGIN, 370, INK, -0.02, 0.024)[0])
 
 # Subline.
-o.append(draw(SANS, "Dry-run guarantees, secret indirection and strict lifecycle", 27, MARGIN, 452, MUTED)[0])
-o.append(draw(SANS, "control over real infrastructure.", 27, MARGIN, 488, MUTED)[0])
+o.append(draw(SANS, "Dry-run boundaries, secret indirection and acceptance", 27, MARGIN, 452, MUTED)[0])
+o.append(draw(SANS, "gates across every machine a system needs.", 27, MARGIN, 488, MUTED)[0])
 
 # The three libraries, right column — beside the headline, above the subline.
 libraries = [
@@ -158,7 +161,7 @@ for i, (name, colour, stack) in enumerate(libraries):
     o.append(draw(MONO5, stack, 19, STACK_X, y, MUTED)[0])
 
 # Install command, in the same dark pill the page uses.
-CMD = "npx skills use getcolors/once"
+CMD = "npx skills use getcolors/langfuse"
 cmd_w = text(MONO5, CMD, 24)[1]
 PILL_Y, PILL_H, PAD = 516, 60, 26
 o.append(f'<rect x="{MARGIN}" y="{PILL_Y}" width="{cmd_w + 2 * PAD:.1f}" height="{PILL_H}" rx="10" fill="{INK}"/>')

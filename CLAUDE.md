@@ -60,7 +60,7 @@ that package widens the range, not before.
 │   ├── fonts/            # 21 self-hosted IBM Plex woff2 files
 │   ├── favicon.svg       # the three-stripe mark
 │   ├── favicon.png       # raster fallback, currently unreferenced
-│   ├── og-colors-v2.png  # og:image, generated — see scripts/
+│   ├── og-colors-v3.png  # og:image, generated — see scripts/
 │   └── .well-known/
 │       └── agent-skills/ # generated discovery index and skill artifacts
 ├── scripts/
@@ -140,10 +140,24 @@ Things to know before editing it:
   prop, and each library card's accent swatch). Add rules to the stylesheet
   rather than reaching for an attribute.
 - Repeated blocks are rendered from arrays — three library cards, three
-  bundles, and the Create/Submit Package Skill phases. Featured Package Skills no
-  longer appear on `/`; they live on `/featured` and in the Catalog.
+  bundles, the eight Shapes cards, and the Create/Submit Package Skill phases.
+  Featured Package Skills do not have sections on `/`; they live on `/featured`
+  and in the Catalog. The Shapes grid (`shapes.items` in `landing.ts`, added
+  2026-09-03) is the one place `/` names packages: the complex, multi-machine
+  topologies, each a link to its `/featured#<id>` anchor, with node count and
+  provider copied from that package's featured lede — never rounded.
   Adding a library means adding an object to `libraries.items`, not copying
   markup.
+- The hero renders `colorsYml`, an **excerpt** of the real
+  `langfuse-vultr/colors.yml` (the six-machine Langfuse deployment), and the
+  example section draws it as an inline SVG topology figure (`.topology`,
+  classes `t-*`, colours from the page's custom properties). Both say
+  "excerpt" on purpose: the full file is 260 lines and carries identities and
+  account-scoped endpoints. Until 2026-09-03 the hero showed the ONCE config
+  that deploys this site and the example section was ONCE; the page was
+  repositioned for teams doing complex, multi-machine deployments. ONCE is
+  still on `/featured`, in the Catalog, and in the Deployment section below,
+  because it still deploys the site.
 - The colour system is `oklch()` throughout, declared once as custom properties
   on `:root`. The three library accents are `--red oklch(60% 0.19 25)`,
   `--green oklch(65% 0.17 145)`, `--blue oklch(55% 0.18 260)`.
@@ -529,11 +543,13 @@ rename rule above still applies to changing the artwork at a fixed host.
   The repository's own root `index.html` carries its own copy of both.
 - Site URL: `https://www.getcolors.ai`, matching the deploy host. It is written
   in four files — see the table under Deployment; change them together.
-- The main Once command is `npx skills use getcolors/once`. It is written **twice**
-  in the repository: `installCmd` in `src/data/landing.ts`, which every on-page
-  occurrence and the markdown twin resolve to, and `CMD` in
-  `scripts/generate-og-image.py`, which bakes it into the og:image. It was six
-  hand-kept copies until 2026-07-30.
+- The main install command is `npx skills use getcolors/langfuse` (it was the
+  ONCE command until 2026-09-03). It is written **twice** in the repository:
+  `installCmd` in `src/data/landing.ts`, which the hero and the markdown twin
+  resolve to, and `CMD` in `scripts/generate-og-image.py`, which bakes it into
+  the og:image. It was six hand-kept copies until 2026-07-30. The showcase's
+  ONCE section uses its own `onceInstallCmd`; do not point it back at
+  `installCmd`.
 
   Create Package Skill has its own command,
   `npx skills use "https://github.com/getcolors/skills" --skill "create-package-skill"`,
@@ -543,12 +559,13 @@ rename rule above still applies to changing the artwork at a fixed host.
   each workflow skill's `*Cmd` constant has a sibling `*Prompt` export that the
   landing page passes to `InstallBox`.
 
-  The second Once copy is the one that bites. It is not on any page, so it does not
+  The second copy is the one that bites. It is not on any page, so it does not
   show up when you grep the rendered site, no build step reads it, and a wrong
   value there ships a social card contradicting the page — which is exactly what
   happened between 2026-07-27 and 2026-07-30, when every unfurl advertised
   `bigconfig-ai/once`. Changing the command means changing both, regenerating
-  the card, and renaming it.
+  the card, and renaming it (`og-colors-v2.png` became `og-colors-v3.png` on
+  2026-09-03 for exactly this reason).
 - The three library links are `github.com/getcolors/red|green|blue`, and the
   footer links to the org root `github.com/getcolors`. These shipped from the
   design export as `bigconfig-ai/once` and `amiorin/red|green|blue`; they were

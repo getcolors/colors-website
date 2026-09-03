@@ -24,32 +24,51 @@ export const html = (s: string) =>
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
 
 export const meta = {
-  title: "Colors — Reproducible self-hosted deployments",
+  title: "Colors — Reproducible multi-machine deployments",
   description:
-    "Colors turns a small desired-state file into an inspectable OpenTofu and Ansible deployment. Build and dry-run locally, then provision infrastructure in your own cloud account.",
+    "Colors turns one desired-state file into an inspectable OpenTofu and Ansible deployment across every machine a system needs. Build and dry-run locally, then provision in your own cloud account and prove the topology with acceptance gates.",
 };
 
 // The one string CLAUDE.md tracks across the repo. Every on-page occurrence now
 // resolves to this constant; the og:image bakes its own copy in
-// scripts/generate-og-image.py, which no build step can reach.
-export const installCmd = "npx skills use getcolors/once";
+// scripts/generate-og-image.py, which no build step can reach. It was the ONCE
+// command until 2026-09-03, when the landing page was repositioned for teams
+// doing multi-machine deployments; ONCE keeps its own constant below for the
+// showcase.
+export const installCmd = "npx skills use getcolors/langfuse";
+export const onceInstallCmd = "npx skills use getcolors/once";
 
-// The real config that deploys this site — see the Deployment section of
-// CLAUDE.md. Rendered by Shiki in the hero and fenced in the markdown twin.
-export const colorsYml = `profile: once-colors
+// An excerpt of the real desired state behind the langfuse-vultr deployment —
+// the six-machine Langfuse topology the hero and the example section describe.
+// The full file is 260 lines, most of it operator commentary; this keeps the
+// keys that carry the topology (providers, cluster size, subnet, four plans,
+// two backup cadences) and drops image digests, identities and account-scoped
+// endpoints. Every line stays under 60 columns so the hero panel never widens
+// the document (see the `.yml { min-width: 0 }` note in CLAUDE.md). Rendered
+// by Shiki in the hero and fenced in the markdown twin.
+export const colorsYml = `profile: langfuse-vultr
 workdir: .colors
 
-once:
-  applications:
-    - host: www.getcolors.ai
-      image: ghcr.io/getcolors/colors-website:latest
-      github: getcolors/colors-website
-
-provider-compute: oci
-provider-smtp: resend
+provider-compute: vultr
 provider-dns: cloudflare
 provider-backend: r2
-compute-prevent-destroy: true`;
+compute-prevent-destroy: true
+
+langfuse-host: langfuse.bigconfig.online
+clickhouse-version: 26.3.29.7
+clickhouse-nodes: 3
+neon-pg-version: 17
+
+vultr-region: ams
+vultr-vpc-subnet: 10.50.0.0/24
+vultr-plan-neon: vc2-4c-8gb
+vultr-plan-redis: vc2-1c-2gb
+vultr-plan-clickhouse: vc2-4c-8gb
+vultr-plan-app: vc2-4c-8gb
+vultr-http-sources: cloudflare
+
+langfuse-postgres-backup-oncalendar: "*-*-* 00/6:00:00"
+langfuse-backup-retention-days: 7`;
 
 export const nav = [
   { label: "Featured", href: "/featured" },
@@ -74,24 +93,24 @@ export const announcement = {
 
 export const hero = {
   eyebrow: "Open-source deployment packages",
-  headline: "From colors.yml to a running server.",
-  lede: "Colors packages OpenTofu and Ansible into reproducible deployments you can inspect before they run. Your infrastructure stays in your cloud account, and your credentials stay local.",
+  headline: "Complex deployments, declared in one file.",
+  lede: "Colors packages OpenTofu and Ansible into Package Skills: reproducible multi-machine deployments a coding agent can operate and your team can read. Infrastructure stays in your cloud account, and credentials stay local.",
   installNote:
-    "Try **Once**: provision a VPS, DNS, outgoing mail, Docker, HTTPS, and declared applications from one desired-state file.",
-  ymlCaption: "# The real colors.yml that deploys this site",
+    "Try **Langfuse**: six Vultr machines in one VPC — a Neon storage tier, Redis, three ClickHouse replicas with Keeper, and the application host — from one desired-state file.",
+  ymlCaption: "# Excerpt: the real colors.yml behind langfuse-vultr",
 };
 
 export const packageSkillDefinition =
-  "A Package Skill is a deterministic infrastructure and platform automation module built for AI coding agents using the Colors SDK (available in TypeScript/Bun, Clojure/Babashka, or Python/uv). It provisions and manages production resources—such as Kubernetes clusters, databases, dev machines, or personal PaaS environments—by reading a non-secret desired state file (`colors.yml`), enforcing mandatory dry-run boundaries before contacting live providers, maintaining strict credential indirection through environment variables (`COLORS_PAR_*`), and managing resource lifecycles through execution graphs (DAGs).";
+  "A Package Skill is a deterministic infrastructure and platform automation module built for AI coding agents using the Colors SDK (available in TypeScript/Bun, Clojure/Babashka, or Python/uv). It provisions and manages production resources—such as multi-node databases, observability stacks, Kubernetes clusters, message brokers, or development machines—by reading a non-secret desired state file (`colors.yml`), enforcing mandatory dry-run boundaries before contacting live providers, maintaining strict credential indirection through environment variables (`COLORS_PAR_*`), and managing resource lifecycles through execution graphs (DAGs).";
 
 export const workflow = {
   heading: "See exactly what happens before anything happens",
-  lede: "Every deployment uses the same explicit lifecycle. The first two commands are safe on a fresh checkout with no provider credentials.",
+  lede: "Every deployment uses the same explicit lifecycle, whether it converges one host or six. The first two commands are safe on a fresh checkout with no provider credentials.",
   steps: [
     {
       command: "./green build",
       title: "Render locally",
-      body: "Validate `colors.yml` and generate the OpenTofu, Ansible, and supporting files under `.colors/`.",
+      body: "Validate `colors.yml` and generate the OpenTofu, Ansible, and supporting files for every machine under `.colors/`.",
     },
     {
       command: "./green create --dry-run",
@@ -101,42 +120,83 @@ export const workflow = {
     {
       command: "./green create",
       title: "Provision and verify",
-      body: "Converge the declared infrastructure, configure the hosts, and run the package’s acceptance checks.",
+      body: "Converge the declared infrastructure, configure the hosts in dependency order, and run the package’s acceptance gates.",
     },
   ],
 };
 
 export const realExample = {
   eyebrow: "Real-life example",
-  heading: "Deploy an application on your own VPS with Basecamp ONCE",
-  lede: "The configuration shown above is not a mock-up: it deploys this website with the Once Package Skill, an implementation of Basecamp’s production single-server ONCE workflow. Starting with an OCI account and a domain, it creates the server and connects every layer needed to serve the application.",
+  heading: "Six machines, four firewall groups, one file: Langfuse built with Colors",
+  lede: "The excerpt above is not a mock-up: it is the desired state of a real Langfuse deployment. From a Vultr account, a Cloudflare zone and two R2 buckets, the Langfuse Package Skill creates a VPC, a Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with their own Keeper quorum, and the application host behind Cloudflare — and then proves the topology works before it reports success.",
   results: [
-    "Provisions the VPS with OpenTofu",
-    "Configures Docker and the host with Ansible",
-    "Creates Cloudflare DNS and Resend mail settings",
-    "Serves the declared container over HTTPS",
+    "Provisions the VPC, six instances and four role-scoped firewall groups with OpenTofu",
+    "Converges the storage tier, the three replicas, Redis and the app host with Ansible, in dependency order",
+    "Generates every internal secret on the machine that owns it; the operator holds three",
+    "Reads a trace back from node 0 and the last replica, finds the raw event in R2, then rehearses a restore",
   ],
-  note: "There is no Colors dashboard or long-running Colors control plane on the server. Once the workflow finishes, the VPS and provider resources remain yours.",
+  note: "There is no Colors control plane on any of the six machines. When the workflow finishes, the instances, the state and the backups are yours; `describe` and `rehearse` run against them from your laptop.",
+};
+
+// The signature figure of the landing page: what the excerpt above becomes.
+// Every box and edge is taken from langfuse-vultr's colors.yml and the
+// featured Langfuse copy — four firewall groups, six machines, the ports the
+// east-west rules name, Cloudflare in front, R2 beside. index.astro draws it
+// as an inline SVG; the markdown twin renders `groups` as a list.
+export const topology = {
+  caption: "langfuse-vultr — what the file above becomes",
+  groups: [
+    { name: "app", machines: ["langfuse-web · langfuse-worker · caddy"], plan: "vc2-4c-8gb" },
+    { name: "clickhouse", machines: ["node 0 + keeper", "node 1 + keeper", "node 2 + keeper"], plan: "3 × vc2-4c-8gb" },
+    { name: "neon", machines: ["storage broker · pageserver · safekeeper · compute"], plan: "vc2-4c-8gb" },
+    { name: "redis", machines: ["redis 7.2"], plan: "vc2-1c-2gb" },
+  ],
+  edges: [
+    "Cloudflare → app :443 only; SSH is key-only on every host",
+    "app → clickhouse :8123 / :9000, app → neon :5432, app → redis :6379 — each rule names the peer’s /32",
+    "clickhouse ↔ clickhouse :9009 interserver, :9181 keeper, :9234 raft",
+    "R2 holds raw events and media (app), layers and WAL (neon), and the backups from neon and node 0",
+  ],
+};
+
+// The complex shapes on /featured, shown on / as the argument for the team
+// audience: this is the range of topologies a Package Skill carries. Node
+// counts and providers are copied from each package's featured lede — never
+// round them up. Anchors are the /featured section ids.
+export const shapes = {
+  eyebrow: "Shapes",
+  heading: "One lifecycle, from a single host to a six-machine VPC",
+  lede: "Every Package Skill is built on the same SDK and walks the same build, dry-run, create and guarded delete. The shape it converges is the package’s to decide.",
+  items: [
+    { name: "Langfuse", meta: "6 machines · 4 firewall groups · Vultr", body: "LLM observability with a Neon storage tier, Redis, three ClickHouse replicas with Keeper, and the app host — plus a restore rehearsal.", href: "/featured#langfuse" },
+    { name: "ClickHouse", meta: "3 replicas + Keeper · Metabase host · Hetzner", body: "A replicated ClickHouse cluster with a three-member Keeper quorum and a separate Metabase and PostgreSQL server.", href: "/featured#clickhouse" },
+    { name: "PostgreSQL HA", meta: "3 nodes · Patroni + etcd · DigitalOcean", body: "PostgreSQL 17 with etcd quorum consensus, Patroni leader election, HAProxy routing and continuous WAL backups to R2.", href: "/featured#postgres-agy" },
+    { name: "MySQL HA", meta: "3 nodes · Group Replication · DigitalOcean", body: "MySQL 8.4 Group Replication with a floating-IP primary and one-minute binary-log archiving to R2.", href: "/featured#mysql-agy" },
+    { name: "AutoMQ", meta: "3 nodes · Kafka protocol on R2 · Vultr", body: "Apache Kafka 3.9.1 wire protocol with both KRaft roles on every node and Cloudflare R2 as the storage tier.", href: "/featured#automq" },
+    { name: "K8s", meta: "2 nodes · kubeadm + Flux · DigitalOcean", body: "A kubeadm cluster in a deployment-owned VPC with pinned Flannel, cloud-controller and Flux releases reconciling a public repository.", href: "/featured#k8s" },
+    { name: "Agent Network K8s", meta: "VKE cluster · 2-pod application · Vultr", body: "A keyless, policy-gated LLM endpoint behind a TCP load balancer and a network-isolated agent pod running headless Claude Code.", href: "/featured#agent-network-k8s" },
+    { name: "Agent Network DOKS", meta: "DOKS cluster · in-cluster build · DigitalOcean", body: "The same two-pod demo on DigitalOcean Kubernetes, with a kaniko build pushed to a created-or-adopted container registry.", href: "/featured#agent-network-doks" },
+  ],
 };
 
 export const difference = {
-  heading: "Why not use the existing tools directly?",
-  lede: "You can. Colors is useful when you want a tested, opinionated path through them rather than assembling and maintaining every layer yourself.",
+  heading: "Why not a Terraform module, a Helm chart, or a managed service?",
+  lede: "You can use any of them. Colors is useful when a team needs a whole topology stood up, proven and torn down on demand, not one layer of it.",
   cards: [
     {
-      label: "Versus an install script",
-      title: "Desired state, not curl-to-shell",
-      body: "Inputs are validated, generated infrastructure is inspectable, repeated runs converge, and deletion follows an explicit guarded graph.",
+      label: "Versus an OpenTofu module",
+      title: "The module stops at the instance",
+      body: "A Package Skill carries host configuration, secret generation on the machine that owns each secret, ordering across machines, and the acceptance gates that prove the topology works — behind one lifecycle.",
     },
     {
-      label: "Versus raw IaC",
-      title: "A packaged operational path",
-      body: "A Package Skill bundles provider resources, host configuration, credential boundaries, ordering, and acceptance checks behind one lifecycle.",
+      label: "Versus a Helm chart or Compose file",
+      title: "The cluster has to exist first",
+      body: "Charts assume a cluster and Compose assumes one host. Colors provisions the machines, the network between them and a firewall per role, then converges each tier in dependency order.",
     },
     {
-      label: "Versus a self-hosted PaaS",
-      title: "No permanent control panel",
-      body: "Colors provisions the infrastructure and exits. It can deploy a personal PaaS such as Once; it does not manage applications through a web dashboard.",
+      label: "Versus a managed service",
+      title: "No control plane, no seat bill",
+      body: "Colors provisions in your cloud account and exits. The machines, the state and the backups stay yours, and `delete` is guarded by a committed flag.",
     },
   ],
 };
@@ -147,7 +207,7 @@ export const trust = {
     {
       label: "Visible automation",
       title: "OpenTofu and Ansible stay inspectable",
-      body: "`build` renders the files locally before `create` is allowed to contact a provider or host.",
+      body: "`build` renders the files for every machine locally before `create` is allowed to contact a provider or a host.",
     },
     {
       label: "Local credentials",
@@ -156,13 +216,13 @@ export const trust = {
     },
     {
       label: "Deterministic execution",
-      title: "No model provisions your server",
-      body: "A coding agent can install and operate a Package Skill, but the launcher itself is ordinary deterministic code and makes no LLM calls.",
+      title: "No model provisions your infrastructure",
+      body: "A coding agent can install and operate a Package Skill, but the launcher itself is ordinary deterministic code and makes no LLM calls. Three implementations render byte-identical output, checked on every commit.",
     },
     {
       label: "Honest fit",
-      title: "Not for every self-hoster",
-      body: "If you want a dashboard for an existing homelab, or already prefer maintaining all your IaC directly, Colors may add no value.",
+      title: "Not for every team",
+      body: "If your platform team already maintains the IaC for every tier, or one host with a dashboard is all you need, Colors may add no value.",
     },
   ],
 };
@@ -1320,8 +1380,8 @@ export const mysqlHa = {
 };
 
 export const cta = {
-  heading: "Give your agent a new skill to create a personal PaaS.",
-  lede: "Dry-run first. Approve. Then provision — with Once, built with Colors. Paste this into your coding agent.",
+  heading: "Give your agent a new skill to stand up a whole topology.",
+  lede: "Dry-run first. Approve. Then provision — with Langfuse, built with Colors. Paste this into your coding agent.",
 };
 
 export const wavehouseInstallCmd = "npx skills use getcolors/wavehouse";

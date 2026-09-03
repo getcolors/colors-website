@@ -23,6 +23,7 @@ import {
   libraries,
   meta,
   realExample,
+  shapes,
   skillMatrix,
   submitContextSkill,
   submitContextSkillCmd,
@@ -30,6 +31,7 @@ import {
   submitPackageSkill,
   submitPackageSkillCmd,
   submitPackageSkillPrompt,
+  topology,
   trust,
   workflow,
 } from "~/data/landing";
@@ -548,8 +550,9 @@ const { title, description } = meta;
       .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
       .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
       /* K3s and Walter each have five steps. Their own class rather than a
-         wider .grid-4, because .grid-4 lays out the four Once steps and they
-         must keep their width. Five tracks in the same 1120px wrap give a
+         wider .grid-4, because .grid-4 lays out four-up card rows (the Shapes
+         grid here, the four ONCE steps on /featured) and they must keep their
+         width. Five tracks in the same 1120px wrap give a
          narrower card, so keep these bodies short. */
       .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 48px; }
 
@@ -567,6 +570,45 @@ const { title, description } = meta;
       .result-list li:last-child { border-bottom: 0; }
       .result-list li::before { content: "✓"; position: absolute; left: 20px; color: var(--green); font: 600 14px var(--mono); }
       .example-note { margin: 20px 0 0; color: var(--muted); font-size: 14px; }
+
+      /* The Langfuse topology figure — the file in the hero, drawn. Colours are
+         the page's custom properties; the SVG carries only geometry and class
+         names, so a palette change here is one edit like everywhere else. */
+      .example-grid { align-items: center; }
+      .topology { margin: 0; min-width: 0; }
+      .topology-scroll { overflow-x: auto; }
+      .topology-svg { display: block; width: 100%; height: auto; }
+      .topology-caption { margin: 10px 0 0; font: 12px var(--mono); color: var(--soft); }
+      .t-vpc { fill: var(--surface); stroke: var(--soft); stroke-width: 1; stroke-dasharray: 5 4; }
+      .t-group { fill: var(--page); stroke: var(--line); stroke-width: 1; }
+      .t-group-blue { stroke: oklch(85% 0.06 260); fill: oklch(97% 0.02 260); }
+      .t-group-red { stroke: oklch(85% 0.06 25); fill: oklch(97.5% 0.015 25); }
+      .t-group-green { stroke: oklch(85% 0.07 145); fill: oklch(97.5% 0.02 145); }
+      .t-group-soft { stroke: var(--line); fill: var(--panel); }
+      .t-box { fill: var(--page); stroke: var(--line); stroke-width: 1; }
+      .t-box-r2 { fill: var(--panel); }
+      .t-edge { fill: none; stroke: var(--soft); stroke-width: 1.2; }
+      .t-edge-dashed { stroke-dasharray: 3 3; }
+      .t-arrow { fill: var(--soft); }
+      .t-name { font: 500 12px 'IBM Plex Sans', Helvetica, Arial, sans-serif; fill: var(--ink); }
+      .t-label { font: 10px var(--mono); letter-spacing: 0.04em; }
+      .t-port { font: 10px var(--mono); fill: var(--code-ink); }
+      .t-muted { fill: var(--muted); letter-spacing: 0; }
+      .t-soft { fill: var(--soft); }
+      .t-blue { fill: var(--blue); }
+      .t-red { fill: var(--red); }
+      .t-green { fill: var(--green); }
+      .result-grid { grid-template-columns: 1fr 1fr; margin-top: 48px; }
+      .result-grid li:nth-last-child(2) { border-bottom: 0; }
+      .result-grid li:nth-child(odd) { border-right: 1px solid var(--line); }
+
+      /* Shapes — the complex topologies from /featured, as links. */
+      .shape-grid { margin-bottom: 0; }
+      .shape { display: block; color: inherit; background: var(--page); transition: border-color 0.15s ease; }
+      .shape:hover { color: inherit; border-color: var(--soft); }
+      .shape h3 { font-size: 17px; }
+      .shape p { font-size: 14px; }
+      .shape-meta { font: 11px var(--mono); color: var(--blue); letter-spacing: 0.04em; margin-bottom: 12px; }
       .workflow-card { background: var(--page); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
       .workflow-command { display: inline-block; margin-bottom: 18px; padding: 7px 10px; border-radius: 6px; background: var(--ink); color: var(--on-dark); font: 12px var(--mono); }
       .workflow-card h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
@@ -760,6 +802,20 @@ const { title, description } = meta;
           padding: 24px 20px;
         }
       }
+      /* Appended after the blocks above on purpose: media rules stay last so
+         ordinary cascade order settles them (see CLAUDE.md). .grid-4 already
+         collapses .shape-grid to two columns and then one. */
+      @media (max-width: 860px) {
+        .result-grid { grid-template-columns: 1fr; margin-top: 40px; }
+        .result-grid li:nth-child(odd) { border-right: 0; }
+        .result-grid li:nth-last-child(2) { border-bottom: 1px solid var(--line); }
+      }
+      @media (max-width: 520px) {
+        /* Ten-point mono labels vanish once the 640-unit viewBox scales below
+           ~0.85; hold the drawing at a legible width and let the figure's own
+           container scroll instead of the page. */
+        .topology-svg { min-width: 560px; }
+      }
     </style>
   </head>
   <body>
@@ -791,19 +847,122 @@ const { title, description } = meta;
       </div>
 
       <!-- REAL-LIFE EXAMPLE -->
-      <div class="sec" id="once-example">
-        <div class="wrap example-grid">
-          <div>
-            <div class="eyebrow eyebrow-green">{realExample.eyebrow}</div>
-            <SectionHeading id="once-example" title={realExample.heading} />
-            <p class="sec-lede">{realExample.lede}</p>
-            <ResourceLinks docsUrl="https://getcolors.github.io/once/" repoUrl="https://github.com/getcolors/once" catalogUrl="/getcolors/once" />
+      <div class="sec" id="langfuse-example">
+        <div class="wrap">
+          <div class="example-grid">
+            <div>
+              <div class="eyebrow eyebrow-green">{realExample.eyebrow}</div>
+              <SectionHeading id="langfuse-example" title={realExample.heading} />
+              <p class="sec-lede">{realExample.lede}</p>
+              <ResourceLinks docsUrl="https://getcolors.github.io/langfuse/" repoUrl="https://github.com/getcolors/langfuse" catalogUrl="/getcolors/langfuse" />
+            </div>
+            <figure class="topology">
+              <div class="topology-scroll">
+                <!-- Drawn from langfuse-vultr's colors.yml: four firewall groups,
+                     six machines, one VPC; the edges are the ports the east-west
+                     rules name. Colours come from the page's custom properties so
+                     the figure follows the palette. -->
+                <svg viewBox="0 0 640 430" role="img" aria-labelledby="topo-title topo-desc" class="topology-svg">
+                  <title id="topo-title">The langfuse-vultr topology</title>
+                  <desc id="topo-desc">One Vultr VPC holding four firewall groups: an application host running langfuse-web, langfuse-worker and Caddy; a Redis host; three ClickHouse replicas each with a Keeper; and a Neon storage host running the storage broker, pageserver, safekeeper and compute. Cloudflare reaches only the app host on port 443. The app host reaches Redis on 6379, ClickHouse on 8123 and 9000, and Neon on 5432. The replicas talk to each other on 9009, 9181 and 9234. Cloudflare R2 holds raw events and media, Neon layers and WAL, and the backups.</desc>
+                  <defs>
+                    <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                      <path d="M0 0.8 L7.4 4 L0 7.2 Z" class="t-arrow" />
+                    </marker>
+                  </defs>
+
+                  <!-- VPC -->
+                  <rect x="118" y="22" width="504" height="322" rx="14" class="t-vpc" />
+                  <text x="134" y="43" class="t-label t-soft">VPC 10.50.0.0/24 · ams</text>
+
+                  <!-- Cloudflare, outside -->
+                  <rect x="10" y="88" width="88" height="44" rx="8" class="t-box" />
+                  <text x="54" y="107" text-anchor="middle" class="t-name">Cloudflare</text>
+                  <text x="54" y="122" text-anchor="middle" class="t-label t-soft">proxied DNS</text>
+                  <path d="M98 110 H142" class="t-edge" marker-end="url(#arrow)" />
+                  <text x="120" y="102" text-anchor="middle" class="t-port">:443</text>
+
+                  <!-- app group -->
+                  <rect x="142" y="62" width="214" height="96" rx="10" class="t-group t-group-blue" />
+                  <text x="156" y="82" class="t-label t-blue">APP · vc2-4c-8gb</text>
+                  <rect x="156" y="92" width="186" height="52" rx="6" class="t-box" />
+                  <text x="249" y="113" text-anchor="middle" class="t-name">langfuse-web · langfuse-worker</text>
+                  <text x="249" y="130" text-anchor="middle" class="t-label t-muted">caddy · TLS from Let’s Encrypt</text>
+
+                  <!-- redis group -->
+                  <rect x="428" y="62" width="170" height="96" rx="10" class="t-group t-group-soft" />
+                  <text x="442" y="82" class="t-label t-soft">REDIS · vc2-1c-2gb</text>
+                  <rect x="442" y="92" width="142" height="52" rx="6" class="t-box" />
+                  <text x="513" y="113" text-anchor="middle" class="t-name">redis 7.2</text>
+                  <text x="513" y="130" text-anchor="middle" class="t-label t-muted">queues · cache</text>
+
+                  <!-- app -> redis -->
+                  <path d="M356 118 H426" class="t-edge" marker-end="url(#arrow)" />
+                  <text x="391" y="110" text-anchor="middle" class="t-port">:6379</text>
+
+                  <!-- clickhouse group -->
+                  <rect x="142" y="196" width="284" height="130" rx="10" class="t-group t-group-red" />
+                  <text x="156" y="216" class="t-label t-red">CLICKHOUSE · 3 × vc2-4c-8gb</text>
+                  <rect x="156" y="228" width="80" height="56" rx="6" class="t-box" />
+                  <text x="196" y="250" text-anchor="middle" class="t-name">node 0</text>
+                  <text x="196" y="266" text-anchor="middle" class="t-label t-muted">+ keeper</text>
+                  <rect x="244" y="228" width="80" height="56" rx="6" class="t-box" />
+                  <text x="284" y="250" text-anchor="middle" class="t-name">node 1</text>
+                  <text x="284" y="266" text-anchor="middle" class="t-label t-muted">+ keeper</text>
+                  <rect x="332" y="228" width="80" height="56" rx="6" class="t-box" />
+                  <text x="372" y="250" text-anchor="middle" class="t-name">node 2</text>
+                  <text x="372" y="266" text-anchor="middle" class="t-label t-muted">+ keeper</text>
+                  <path d="M236 256 H244 M324 256 H332" class="t-edge" />
+                  <text x="284" y="310" text-anchor="middle" class="t-port">↔ :9009 · :9181 keeper · :9234 raft</text>
+
+                  <!-- app -> clickhouse -->
+                  <path d="M196 158 V226" class="t-edge" marker-end="url(#arrow)" />
+                  <text x="204" y="182" class="t-port">:8123 · :9000</text>
+
+                  <!-- neon group -->
+                  <rect x="442" y="196" width="156" height="130" rx="10" class="t-group t-group-green" />
+                  <text x="456" y="216" class="t-label t-green">NEON · vc2-4c-8gb</text>
+                  <rect x="456" y="228" width="128" height="86" rx="6" class="t-box" />
+                  <text x="520" y="250" text-anchor="middle" class="t-name">postgres 17</text>
+                  <text x="520" y="268" text-anchor="middle" class="t-label t-muted">broker · pageserver</text>
+                  <text x="520" y="284" text-anchor="middle" class="t-label t-muted">safekeeper · compute</text>
+                  <text x="520" y="302" text-anchor="middle" class="t-label t-muted">layers + WAL → R2</text>
+
+                  <!-- app -> neon -->
+                  <path d="M320 158 V178 H520 V194" class="t-edge" marker-end="url(#arrow)" />
+                  <text x="528" y="176" class="t-port">:5432</text>
+
+                  <!-- R2 band, outside -->
+                  <path d="M196 326 V366 M520 326 V366" class="t-edge t-edge-dashed" />
+                  <rect x="142" y="366" width="456" height="50" rx="8" class="t-box t-box-r2" />
+                  <text x="370" y="386" text-anchor="middle" class="t-name">Cloudflare R2</text>
+                  <text x="370" y="403" text-anchor="middle" class="t-label t-muted">raw events &amp; media · Neon layers &amp; WAL · Postgres, ClickHouse and media backups</text>
+                </svg>
+              </div>
+              <figcaption class="topology-caption">{topology.caption}</figcaption>
+            </figure>
           </div>
-          <div>
-            <ul class="result-list">
-              {realExample.results.map((result) => <li>{result}</li>)}
-            </ul>
-            <p class="example-note">{realExample.note}</p>
+          <ul class="result-list result-grid">
+            {realExample.results.map((result) => <li>{result}</li>)}
+          </ul>
+          <p class="example-note" set:html={html(realExample.note)} />
+        </div>
+      </div>
+
+      <!-- SHAPES -->
+      <div class="sec sec-alt" id="shapes">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{shapes.eyebrow}</div>
+          <SectionHeading id="shapes" title={shapes.heading} />
+          <p class="sec-lede sec-lede-wide">{shapes.lede}</p>
+          <div class="grid-4 shape-grid">
+            {shapes.items.map((item) => (
+              <a class="card shape" href={item.href}>
+                <div class="shape-meta">{item.meta}</div>
+                <h3>{item.name}</h3>
+                <p>{item.body}</p>
+              </a>
+            ))}
           </div>
         </div>
       </div>

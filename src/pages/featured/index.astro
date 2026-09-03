@@ -20,7 +20,7 @@ import {
   dbos,
   dbosInstallCmd,
   html,
-  installCmd,
+  onceInstallCmd,
   k8s,
   k8sInstallCmd,
   k3s,
@@ -873,7 +873,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <div class="featured-intro-copy">
             <div class="pill"><span>Curated by Colors</span></div>
             <h1>Featured</h1>
-            <p class="sec-lede sec-lede-wide">Production examples that show what deterministic, agent-operated infrastructure looks like—from Kubernetes and data platforms to application hosting and remote development.</p>
+            <p class="sec-lede sec-lede-wide">Production examples of deterministic, agent-operated infrastructure—from multi-node databases and observability stacks to Kubernetes clusters, message brokers, network-isolated agents, application hosting and remote development.</p>
           </div>
           <nav class="featured-toc" aria-label="Featured Package Skills on this page">
             <div class="featured-toc-head">
@@ -1260,7 +1260,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <p class="sec-lede sec-lede-wide">{once.lede}</p>
 
           <div class="sec-install">
-            <InstallBox command={installCmd} id="featured-once-install" />
+            <InstallBox command={onceInstallCmd} id="featured-once-install" />
             <span class="install-note" set:html={html(once.runtimeNote)} />
             <ResourceLinks docsUrl={once.docsUrl} repoUrl={once.repoUrl} catalogUrl="/getcolors/once" />
           </div>
