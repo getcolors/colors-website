@@ -24,7 +24,10 @@ export interface Post {
   runtime: string;
   summary: string;
   /** Thumbnail on /blog. Not the og:image — that belongs to the article page,
-   *  which needs a 1200x630 card rather than an in-article figure. */
+   *  which needs a 1200x630 card rather than an in-article figure. Rasters
+   *  live under /images/cards/<slug>.jpg: a 1200x675 centre crop of the
+   *  source artwork, which is what the card's object-fit: cover shows at
+   *  the 358px column anyway. SVGs are used as they are. */
   image: string;
   tags: string[];
 }
@@ -40,7 +43,7 @@ export const posts: Post[] = [
     runtime: "Langfuse \u00b7 Neon \u00b7 ClickHouse \u00b7 Vultr \u00b7 Cloudflare R2",
     summary:
       "We split Langfuse v4 across six Vultr machines \u2014 Neon for Postgres, a Redis host, three ClickHouse replicas, the app behind Cloudflare \u2014 and made every separation claim a gate. Eleven converges: a storage tier that left a table in the application database and broke Prisma, a ClickHouse backup that wrote 128 unnamed objects, and a v4 write mode that rejected our traces while answering 207. Then a restore that boots the pinned image and reads through the API.",
-    image: "/images/langfuse-six-machines-card-v1.png",
+    image: "/images/cards/langfuse-six-machines.jpg",
     tags: ["Field Report", "Langfuse", "ClickHouse", "Neon", "Acceptance", "Vultr"],
   },
   {
@@ -53,7 +56,7 @@ export const posts: Post[] = [
     runtime: "Town Hall \u00b7 Online \u00b7 10 Sep 2026",
     summary:
       "A one-hour virtual town hall for the people building and running Package Skills: where the SDK is after the rebrand, how the three colours fit together, an agent provisioning an analytics and application stack live, the proposals on the roadmap, and open Q&A with the maintainers. Free, registration on Luma.",
-    image: "/og-community-town-hall-v1.png",
+    image: "/images/cards/community-town-hall.jpg",
     tags: ["Community", "Town Hall", "Roadmap", "Package Skills", "Live Demo"],
   },
   {
@@ -66,7 +69,7 @@ export const posts: Post[] = [
     runtime: "n8n \u00b7 Neon \u00b7 Vultr \u00b7 Cloudflare R2",
     summary:
       "We put n8n's database on object storage \u2014 a colocated self-hosted Neon instead of a colocated Postgres \u2014 and it handled 7950 executions in five minutes at a p99 of 80 ms. Getting there took sixteen converges, and the most useful failures were not in the infrastructure. Four of our own acceptance gates were wrong, one reported a green deployment with nothing checked at all, and one accused a correctly hardened host.",
-    image: "/images/n8n-green-run-card-v1.png",
+    image: "/images/cards/n8n-green-run.jpg",
     tags: ["Field Report", "n8n", "Neon", "Acceptance", "Object Storage", "Vultr"],
   },
   {
@@ -79,7 +82,7 @@ export const posts: Post[] = [
     runtime: "AutoMQ · Vultr · Cloudflare R2",
     summary:
       "A three-node AutoMQ cluster whose disks are object storage took twenty-three converge runs. In most of the failures the cluster was healthy: the firewall passed ping while dropping every TCP connection, a marker claimed work that never happened, and three of our own acceptance gates were wrong — one of them reporting data loss that never occurred.",
-    image: "/images/automq-acceptance-gates-infographic-v1.png",
+    image: "/images/cards/automq-acceptance-gates.jpg",
     tags: ["Field Report", "AutoMQ", "Kafka", "Acceptance", "Object Storage", "Vultr"],
   },
   {
@@ -92,7 +95,7 @@ export const posts: Post[] = [
     runtime: "Neon · Vultr · Cloudflare R2",
     summary:
       "Neon's engine is open source and genuinely good; its self-hosting story is a development fixture, and since July 2025 there is no versioned release to pin. We deployed it for real, measured the actual single-node durability bound, and left a Package Skill and a Context Skill behind as the starting point upstream doesn't ship.",
-    image: "/images/neon-self-hosting-infographic-v1.png",
+    image: "/images/cards/neon-self-hosting.jpg",
     tags: ["Field Report", "Neon", "PostgreSQL", "Cloudflare R2", "Package Skills", "Context Skills"],
   },
   {
@@ -105,7 +108,7 @@ export const posts: Post[] = [
     runtime: "Context Skills",
     summary:
       "Introducing Context Skills: knowledge distilled from a verified build, routed by the error on your screen, honest about what verified it. Three are live in the Skills Catalog, with one workflow to create them and another to submit yours.",
-    image: "/images/context-skills-card-v1.png",
+    image: "/images/cards/context-skills.jpg",
     tags: ["Announcement", "Context Skills", "Agent Skills", "Agentic DevOps", "Knowledge", "Catalog"],
   },
   {
@@ -118,7 +121,7 @@ export const posts: Post[] = [
     runtime: "NetBird · Claude Code · Codex",
     summary:
       "Three clipped YouTube transcripts became a live NetBird Agent Network deployment in a day: a keyless LLM endpoint and an agent container that cannot reach the internet, proven by acceptance gates. The six-step workflow behind it, with the failures left in, and the closing move that makes the next run cheaper.",
-    image: "/images/how-a-package-skill-gets-made-infographic-v1.png",
+    image: "/images/cards/how-a-package-skill-gets-made.jpg",
     tags: ["Workflow", "Agentic DevOps", "NetBird", "Claude Code", "Adversarial Review", "Package Skills"],
   },
   {
@@ -131,7 +134,7 @@ export const posts: Post[] = [
     runtime: "Manifesto",
     summary:
       "Thirteen theses on letting agents run infrastructure, written for the people who think that is a bad idea. Every claim is implemented in the getcolors repositories, and three of them exist to say what the approach costs rather than what it buys.",
-    image: "/images/agentic-devops-manifesto-infographic.png",
+    image: "/images/cards/agentic-devops-manifesto.jpg",
     tags: ["Manifesto", "Agentic DevOps", "Desired State", "Golden Tests", "Package Skills", "Guardrails"],
   },
   {
@@ -144,7 +147,7 @@ export const posts: Post[] = [
     runtime: "Colors · Package Skills",
     summary:
       "Anders Hejlsberg explained why the TypeScript team didn't let AI translate their half-million-line compiler to Go. Have it write a deterministic translator instead. Colors is that argument applied to infrastructure, where the agent writes the program once and the program runs production forever.",
-    image: "/images/park-the-stochasticity-infographic.png",
+    image: "/images/cards/park-the-stochasticity.jpg",
     tags: ["Architecture", "Agentic DevOps", "Determinism", "TypeScript", "Package Skills", "Golden Tests"],
   },
   {
@@ -157,7 +160,7 @@ export const posts: Post[] = [
     runtime: "Colors · Fable 5 · Rybbit",
     summary:
       "An agent renamed a production analytics domain, fixed the bug the rename exposed, and moved the deployment to another cloud in ten minutes of downtime. The safety KPI is a ratio: deterministic tasks over agentic ones, and every session should move it up.",
-    image: "/og-agentic-once-deterministic-forever-v2.png",
+    image: "/images/cards/agentic-once-deterministic-forever.jpg",
     tags: ["Architecture", "Agentic DevOps", "Claude Fable 5", "Rybbit", "Vultr", "Package Skills"],
   },
   {
@@ -170,7 +173,7 @@ export const posts: Post[] = [
     runtime: "launchd · ssh · Nix",
     summary:
       "A coding agent on a remote machine cannot see your screen. pngpaste, socat, a launchd agent, one ssh -R forward and a small skill give it your Mac's clipboard as a Unix socket. The recipe, and the two failures that each reported success.",
-    image: "/og-remote-clipboard-for-agents-v1.png",
+    image: "/images/cards/remote-clipboard-for-agents.jpg",
     tags: ["Architecture", "Claude Code", "SSH", "launchd", "Nix", "Skills"],
   },
   {
@@ -183,7 +186,7 @@ export const posts: Post[] = [
     runtime: "ClickHouse · dlt · dbt",
     summary:
       "For simple use cases, one $40 virtual machine running dlt, dbt, ClickHouse, PocketBase, and systemd can replace a four-figure SaaS data stack. A live single-host GitHub warehouse is the proof.",
-    image: "/og-single-host-data-warehouse-v1.png",
+    image: "/images/cards/single-host-data-warehouse.jpg",
     tags: ["Architecture", "ClickHouse", "dlt", "dbt", "PocketBase", "Single Host"],
   },
   {
@@ -223,7 +226,7 @@ export const posts: Post[] = [
     runtime: "Claude Opus 5",
     summary:
       "An empirical creation-effort benchmark evaluating Claude Opus 5 building and deploying 3-node PostgreSQL and MySQL High Availability clusters to DigitalOcean, with verified failover and continuous backups to Cloudflare R2.",
-    image: "/images/claude-opus-5-ha-architecture.png",
+    image: "/images/cards/claude-opus-5-benchmark.jpg",
     tags: ["Benchmark", "Claude Opus 5", "PostgreSQL HA", "MySQL HA", "Patroni", "Group Replication"],
   },
   {
@@ -237,7 +240,7 @@ export const posts: Post[] = [
     runtime: "Gemini 3.7 Flash",
     summary:
       "An empirical creation-effort benchmark evaluating Gemini 3.7 Flash building and deploying 3-node PostgreSQL and MySQL High Availability clusters to DigitalOcean with continuous backups to Cloudflare R2.",
-    image: "/images/benchmark_setup_flow_1786877790896.jpg",
+    image: "/images/cards/gemini-3-7-flash-benchmark.jpg",
     tags: ["Benchmark", "Gemini 3.7", "PostgreSQL HA", "MySQL HA", "DigitalOcean", "Cloudflare R2"],
   },
   {
@@ -250,7 +253,7 @@ export const posts: Post[] = [
     runtime: "Architecture",
     summary:
       "Why agentic DevOps accelerates faster over time: every verified Package Skill creates an executable corpus of operational knowledge that reduces the reasoning and implementation required for future deployments.",
-    image: "/images/agentic_devops_compounding_advantage_1786891719453.jpg",
+    image: "/images/cards/agentic-devops-compounding-advantage.jpg",
     tags: ["Agentic DevOps", "Architecture", "Colors SDK", "Autonomous Systems", "Compounding Advantage"],
   },
 ];
