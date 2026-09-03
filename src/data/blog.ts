@@ -31,6 +31,19 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "Six Machines and a Contract Nobody Told the Gates About",
+    slug: "/blog/langfuse-six-machines",
+    date: "September 3, 2026",
+    isoDate: "2026-09-03T12:00:00Z",
+    readTime: "11 min read",
+    category: "Field Report",
+    runtime: "Langfuse \u00b7 Neon \u00b7 ClickHouse \u00b7 Vultr \u00b7 Cloudflare R2",
+    summary:
+      "We split Langfuse v4 across six Vultr machines \u2014 Neon for Postgres, a Redis host, three ClickHouse replicas, the app behind Cloudflare \u2014 and made every separation claim a gate. Eleven converges: a storage tier that left a table in the application database and broke Prisma, a ClickHouse backup that wrote 128 unnamed objects, and a v4 write mode that rejected our traces while answering 207. Then a restore that boots the pinned image and reads through the API.",
+    image: "/og-langfuse-six-machines-v1.png",
+    tags: ["Field Report", "Langfuse", "ClickHouse", "Neon", "Acceptance", "Vultr"],
+  },
+  {
     title: "Colors Community Town Hall, 10 September",
     slug: "/blog/community-town-hall",
     date: "September 2, 2026",

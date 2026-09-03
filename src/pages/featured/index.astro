@@ -66,6 +66,8 @@ import {
   neonInstallCmd,
   automq,
   automqInstallCmd,
+  langfuse,
+  langfuseInstallCmd,
 } from "~/data/landing";
 
 const title = "Featured — Colors";
@@ -100,6 +102,7 @@ const featuredPackageSkills = [
   { label: "Neon", href: "#neon" },
   { label: "n8n", href: "#n8n" },
   { label: "AutoMQ", href: "#automq" },
+  { label: "Langfuse", href: "#langfuse" },
 ];
 const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
 ---
@@ -2112,6 +2115,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{automq.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LANGFUSE -->
+      <div class="sec" id="langfuse">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{langfuse.eyebrow}</div>
+          <SectionHeading id="langfuse" title={langfuse.heading} />
+          <p class="sec-lede sec-lede-wide">{langfuse.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={langfuseInstallCmd} id="featured-langfuse-install" />
+            <span class="install-note" set:html={html(langfuse.runtimeNote)} />
+            <ResourceLinks docsUrl={langfuse.docsUrl} repoUrl={langfuse.repoUrl} catalogUrl="/getcolors/langfuse" />
+          </div>
+
+          <div class="grid-5">
+            {langfuse.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{langfuse.dagCaption}</div>
+            <div class="dag">
+              {langfuse.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{langfuse.dagNote}</p>
           </div>
         </div>
       </div>

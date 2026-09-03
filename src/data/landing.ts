@@ -1906,3 +1906,55 @@ export const footer = {
     { href: "https://luma.com/colors", label: "Events" },
   ],
 };
+
+export const langfuseInstallCmd = "npx skills use getcolors/langfuse";
+
+export const langfuse = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/langfuse/",
+  repoUrl: "https://github.com/getcolors/langfuse",
+  heading: "Langfuse: LLM observability on six machines, each reachable only by the peer that needs it, built with Colors",
+  lede: "Langfuse is a Package Skill built with Colors. It provisions Langfuse v4 across six Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with their own Keeper quorum, and the application host running langfuse-web, langfuse-worker and Caddy behind Cloudflare — with Cloudflare R2 holding raw events, media, Neon's layers and WAL, and the backups. Langfuse's own guidance is one Docker Compose host or Kubernetes; this is the shape in between, and every separation claim is a gate.",
+  runtimeNote:
+    "Langfuse ships in **green**. The storage tier is rendered from a SHA pin on `getcolors/neon`, never copied; the ClickHouse cluster templates are the package's own, derived from `getcolors/clickhouse`. Each role has its **own firewall group** — a Vultr group filters the private interface too — and every east-west rule names the peer's `/32`.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It carries digest-pinned Langfuse, Redis, Caddy and Neon images, an exact ClickHouse apt version, the VPC subnet, four plans, the public hostname, headless-init identities, two R2 buckets and three backup cadences with per-store freshness thresholds. It holds no key material, and three application secrets — `ENCRYPTION_KEY`, `SALT`, the initial password — are the operator's to hold because a backup is readable only with them.",
+    },
+    {
+      title: "Refuse what fails later",
+      body: "Validation reports every problem at once: a ClickHouse version below 25.12 that would pass the converge and fail the first v4 migration, a cluster not named `default` that Langfuse cannot migrate `ON CLUSTER`, an S3 prefix without its trailing slash, a backup bucket that is also a live-data bucket, and any R2 credential reaching state and a host alike unless desired state records that choice.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds deterministic OpenTofu, Ansible, Compose and Caddy files for all six hosts, with placeholder addresses inside the subnet, then walks the DAG with every side effect skipped. Build and dry-run need no credentials, and an offline `--syntax-check` over the three rendered playbooks catches load-time failures in a second.",
+    },
+    {
+      title: "Provision and converge",
+      body: "OpenTofu creates the VPC, four role-scoped firewall groups, six instances and a proxied DNS record; Ansible converges the storage tier through the imported neon play, the three replicas with secrets generated on node 0 and propagated as facts, Redis, then the app host — whose environment is assembled from the passwords the other hosts generated, read where they live.",
+    },
+    {
+      title: "Prove it works",
+      body: "Gates ask the system what it has: raw TCP to every dependency and a **refusal** on Keeper, `UTC` on both databases, a trace read back through the public API and found on node 0 **and** the last replica, a new raw-event object in R2, a media file back with the same sha256, five refusals, 200 traces under the timeout — and `rehearse` restores both stores, boots the pinned image against them, drills a replica loss and a Redis restart, then writes a second marker.",
+    },
+  ],
+  dagCaption: "Langfuse — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ssh-config` → `ansible` → `acceptance`; `rehearse` and `describe` run against the hosts in state.",
+  dagNote:
+    "`ansible` is one inventory of six hosts in four groups and seven plays in dependency order: common hardening, the Neon overlay, the imported neon play, ClickHouse, Redis, the app, the backups. `.colors-ready` lands only after the gates; `.colors-recovery-verified` only after the rehearsal — automation can tell the two claims apart.",
+};

@@ -399,6 +399,14 @@ context_skill_count = sum(len(recipe[4]) for recipe in catalog_recipes if recipe
 # (The generated v1 text card never shipped; the suffix follows the rule.)
 
 render_post_card(
+    "og-langfuse-six-machines-v1.png",
+    "Field Report \u00b7 Langfuse \u00b7 Neon \u00b7 ClickHouse \u00b7 Vultr",
+    "Six machines and a contract nobody told the gates about",
+    "Langfuse v4 split across six Vultr machines, eleven converges, a restore that boots the pinned image and reads through the API.",
+    "/blog/langfuse-six-machines",
+)
+
+render_post_card(
     "og-community-town-hall-v1.png",
     "Community · Town Hall · 10 Sep 2026",
     "Colors Community Town Hall",

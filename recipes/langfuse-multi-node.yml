@@ -1,0 +1,22 @@
+type: context
+name: Langfuse Multi-Node
+repository: getcolors/skills
+summary: Verified topology, the Langfuse v4 events_only write-mode contract (OTLP in, Observations API v2 out, events_full in ClickHouse), the Prisma P3005 trap a Neon-provisioned database springs, ClickHouse cluster and s3_plain backup traps, the restore-time pairing rule, and a rehearsed restore-and-boot for self-hosted Langfuse on six machines.
+keywords:
+  - langfuse
+  - self-hosted langfuse
+  - langfuse v4
+  - events_only
+  - P3005 The database schema is not empty
+  - Rejected events from the legacy /api/public/ingestion endpoint
+  - clickhouse
+  - s3_plain
+  - PARTITION BY parameters should be specified directly inside engine
+  - SAXParseException Invalid token
+  - neon
+  - redis noeviction
+  - cloudflare r2
+companion: getcolors/langfuse
+context-skills:
+  - name: langfuse-multi-node
+    path: langfuse-multi-node/SKILL.md

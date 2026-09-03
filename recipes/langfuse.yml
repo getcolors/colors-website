@@ -1,0 +1,25 @@
+name: Langfuse
+repository: getcolors/langfuse
+summary: Operate self-hosted Langfuse v4 LLM observability on six Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with Keeper, and the application host behind Caddy and Cloudflare — with Cloudflare R2 for raw events, media, Neon layers and WAL, and backups that are restored and booted in a rehearsal.
+featured: /featured#langfuse
+keywords:
+  - Langfuse
+  - LLM observability
+  - LLM tracing
+  - self-hosted Langfuse
+  - prompt management
+  - ClickHouse
+  - ClickHouse Keeper
+  - Redis
+  - PostgreSQL
+  - Neon
+  - serverless Postgres
+  - Cloudflare R2
+  - Caddy
+  - Vultr
+  - VPC
+  - multi-node
+package-skills:
+  - name: package-langfuse-green
+    path: skills/package-langfuse-green/SKILL.md
+    runtime: green

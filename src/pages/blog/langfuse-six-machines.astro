@@ -1,0 +1,350 @@
+---
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+
+const title = "Six Machines and a Contract Nobody Told the Gates About — Colors";
+const description = "We split Langfuse v4 across six Vultr machines — Neon for Postgres, a Redis host, three ClickHouse replicas, the app behind Cloudflare — and made every separation claim a gate. Eleven converges: a storage tier that left a table in the application database and broke Prisma, a ClickHouse backup that wrote 128 unnamed objects, and a v4 write mode that rejected our traces while answering 207. Then a restore that boots the pinned image and reads through the API.";
+const path = "/blog/langfuse-six-machines";
+
+const post = postFor(path);
+const image = "/og-langfuse-six-machines-v1.png";
+const imageAlt =
+  "Six machines and a contract nobody told the gates about — Langfuse v4 split " +
+  "across six Vultr machines, eleven converges, and a restore that boots the " +
+  "pinned image and reads through the API.";
+
+const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
+const absolute = (p: string) => new URL(p, SITE_URL).toString();
+
+const publishDate = post.date;
+const readTime = post.readTime;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "Six Machines and a Contract Nobody Told the Gates About",
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: { "@type": "Organization", name: "Colors", url: absolute("/") },
+  publisher: {
+    "@type": "Organization",
+    name: "Colors",
+    url: absolute("/"),
+    logo: { "@type": "ImageObject", url: absolute("/favicon.svg") },
+  },
+  about: [
+    { "@type": "Thing", name: "Langfuse" },
+    { "@type": "Thing", name: "LLM observability" },
+    { "@type": "Thing", name: "ClickHouse" },
+    { "@type": "Thing", name: "Neon" },
+    { "@type": "Thing", name: "Acceptance testing" },
+    { "@type": "Thing", name: "Context Skills" },
+  ],
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap post-page">
+    <div class="breadcrumb-bar">
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Langfuse on Six Machines" }]} />
+    </div>
+
+    <header class="post-header">
+      <p class="eyebrow section-label">Field Report &amp; Operations</p>
+      <h1>Six Machines and a Contract Nobody Told the Gates About</h1>
+      <div class="post-meta">
+        <span class="runtime runtime-blue">Langfuse · Neon · ClickHouse · Vultr · Cloudflare R2</span>
+        <span class="meta-date mono">{publishDate}</span>
+        <span class="dot">·</span>
+        <span class="meta-readtime mono">{readTime}</span>
+      </div>
+      <p class="lede">Langfuse's own guidance is one Docker Compose host for testing or Kubernetes for production. We built the shape in between — every component Langfuse says should be separate, on its own machine, reachable only by the peer that needs it — and wrote gates for all of it. The gates were written against Langfuse v3's contract. The deployment was Langfuse v4. Everything was healthy, the ingestion answered 207, and not one trace ever appeared.</p>
+    </header>
+
+    <div class="panel summary-card">
+      <div class="card-label">What we found</div>
+      <p>Eleven converges against six Vultr machines, three rehearsal runs, and a four-round adversarial plan review before any of it. The infrastructure was the easy half. The expensive facts were contracts: a storage tier's health check in the wrong database, a backup disk type that hides its own files, and a write mode that rejects your data politely.</p>
+      <ul class="summary-list">
+        <li><strong>A fresh Langfuse v4 rejects the legacy ingestion endpoint while answering 207.</strong> The raw event still lands in S3, the legacy trace reads are 404 for everyone, and the <code>traces</code> table stays empty by design. Every gate had to be rewritten for OTLP in and the Observations API v2 out.</li>
+        <li><strong>The Neon play's smoke table broke Prisma.</strong> <code>P3005 The database schema is not empty</code> on a database nobody had used — except the storage tier proving its own round-trip inside it.</li>
+        <li><strong>A ClickHouse backup returned <code>BACKUP_CREATED</code> and wrote 128 objects with random names.</strong> A <code>type=s3</code> disk keeps the path mapping in local metadata; <code>s3_plain</code> is the one that writes files at their paths.</li>
+        <li><strong>Recovery is a boot, not a row count.</strong> The pinned image, in a second Compose project, against both restored databases, with the operator-held keys: the live API keys authenticate, the trace reads back, the encrypted LLM connection decrypts.</li>
+      </ul>
+    </div>
+
+    <article class="content-body">
+      <p class="lede">
+        Langfuse v4 wants six things: a web container, a worker, Postgres,
+        ClickHouse, Redis, and S3. The Compose file puts all of them on one
+        host and says so: "testing and low-scale deployments". The production
+        answer is Kubernetes. We wanted the third option — six ordinary
+        machines in one VPC, each sized at the documented minimum, with the
+        data tiers reachable only from the app host — and we wanted every one
+        of those separation claims to be something a converge proves rather
+        than something a README asserts.
+      </p>
+
+      <p>
+        The Postgres is a self-hosted Neon, rendered from the
+        <a href="/getcolors/neon">neon Package Skill</a>'s templates off a SHA
+        pin, so there is no second copy of that tier to drift. The ClickHouse
+        is three replicas with their own Keeper voters, derived from the
+        <a href="/getcolors/clickhouse">clickhouse package</a> and owned here.
+        Cloudflare R2 holds Neon's layers and WAL, Langfuse's raw events and
+        media, and the backups.
+      </p>
+
+      <h2>1. Two firewalls, and a denial in the gates</h2>
+
+      <p>
+        The first design had one Vultr firewall group for all six machines
+        and a subnet-wide allow for the database ports. The adversarial review
+        pointed out what that means: a compromised Redis host can reach
+        Keeper. We had also learned, on the AutoMQ build, that a Vultr firewall
+        group filters the private interface too — and selectively, passing
+        ICMP while dropping TCP, so every node pings every other node while
+        the cluster never forms.
+      </p>
+
+      <p>
+        So each role has its own group, every east-west rule names the peer's
+        <code>/32</code>, ufw mirrors the same rules on every host, and the
+        smoke gate proves a <em>refusal</em> as well as the allows: the app
+        host must reach Neon, Redis and the ClickHouse client ports by raw TCP
+        and must be refused on Keeper. An allow-only gate cannot tell a wide
+        firewall from a right one.
+      </p>
+
+      <pre><code>  ok    N1 neon 10.50.0.3:55433 reachable by raw TCP
+  ok    N1 redis 10.50.0.8:6379 reachable by raw TCP
+  ok    N1 clickhouse-0 10.50.0.7:8123 reachable by raw TCP
+  ok    N2 app is refused on Keeper 10.50.0.7:9181</code></pre>
+
+      <p>
+        One detail the addresses forced: OpenTofu cannot <code>for_each</code>
+        over instance addresses that do not exist until apply. The per-peer
+        rules are <code>count</code> over static lengths, indexed into the
+        instance list.
+      </p>
+
+      <h2>2. Three converges spent on ClickHouse not starting</h2>
+
+      <p>
+        The ClickHouse tier failed to start on all three nodes twice, and the
+        two failures had nothing in common except how badly systemd described
+        them. The first was <code>status=232/ADDRESS_FAMILIES</code> with an
+        empty <code>err.log</code>: the server dies before logging is
+        configured, and only <code>journalctl</code> carries the real
+        exception — <code>SAXParseException: Invalid token ... line 62 column
+        48</code>. Line 62 was a comment. XML forbids <code>--</code> inside
+        comments, and we had written "stay -- v4 reads". Python's
+        <code>xml.dom.minidom</code> now parses every rendered XML file in the
+        golden gate; it costs a second.
+      </p>
+
+      <p>
+        The second was <code>Failed with result 'protocol'</code> — a
+        <code>Type=notify</code> service that never notified — with the
+        message in <code>clickhouse-server.log</code>:
+      </p>
+
+      <pre><code>Code: 36. DB::Exception: If 'engine' is specified for system table,
+PARTITION BY parameters should be specified directly inside 'engine'
+and 'partition_by' setting doesn't make sense. (BAD_ARGUMENTS)</code></pre>
+
+      <p>
+        Langfuse's scaling docs offer an <code>&lt;engine&gt;</code> override
+        to put TTLs on the system log tables. The packaged
+        <code>config.xml</code> already carries <code>partition_by</code> for
+        those tables, and a <code>config.d</code> override merges beside it
+        rather than replacing it. The <code>&lt;ttl&gt;</code> setting does
+        the same job without the collision. We kept <code>query_log</code>
+        — v4 reads <code>system.query_log*</code> — and removed the six tables
+        Langfuse never reads.
+      </p>
+
+      <h2>3. The storage tier left a table in the application database</h2>
+
+      <p>
+        With ClickHouse and Redis converged and their gates green, the app
+        tier came up and <code>langfuse-web</code> restart-looped:
+      </p>
+
+      <pre><code>Error: P3005
+The database schema is not empty. Read more about how to baseline an
+existing production database: https://pris.ly/d/migrate-baseline
+Applying database migrations failed. Common causes:
+  1. The database is unavailable or unreachable.
+  2. DATABASE_URL / DIRECT_URL credentials contain special characters</code></pre>
+
+      <p>
+        Neither cause. The database was brand new. It was also not empty: the
+        imported Neon play proves its SQL round-trip by creating a
+        <code>colors_smoke</code> table — inside the application database,
+        because that is the database it provisions. Prisma refuses to apply
+        436 migrations to a schema that has tables but no
+        <code>_prisma_migrations</code>. Any Neon-provisioned database handed
+        to a Prisma application meets this, and the fix is exactly one drop,
+        guarded on the migrations table not existing yet; every later converge
+        recreates the smoke table and Prisma no longer cares.
+      </p>
+
+      <p>
+        Two more from the same converge, smaller: the compute reports
+        <code>SHOW timezone</code> as <code>GMT</code> because Neon's spec sets
+        no <code>TimeZone</code>, and Langfuse wants the literal
+        <code>UTC</code> on both databases (<code>ALTER DATABASE ... SET
+        timezone</code>, by the owning role); and the documented ClickHouse
+        grant list is exactly what Langfuse needs and not one column more, so
+        the package's own gates — <code>clusterAllReplicas</code> over
+        <code>system.one</code> — needed their own grants, labelled as ours.
+      </p>
+
+      <h2>4. Healthy, 207, and no traces</h2>
+
+      <p>
+        Migrations ran on both databases. Health with the database flag: 200.
+        Worker health with the stuck-queue flag: 200. The ingestion batch: 207.
+        A new raw-event object in R2. And the trace never became readable.
+      </p>
+
+      <pre><code>warn  Rejected 2 event(s) from the legacy /api/public/ingestion endpoint
+      for project langfuse-vultr because this Langfuse v4 deployment runs
+      in events_only mode. These events were not stored.</code></pre>
+
+      <p>
+        Every gate had been written from v3 knowledge, and the deployment was
+        v4.27.0. A fresh v4 runs the <code>events_only</code> write mode: the
+        legacy batch endpoint answers 207 while rejecting every event type
+        except scores, <code>GET /api/public/traces/:id</code> is 404 —
+        <em>for everyone</em>, so the negative gate expecting 401 on that route
+        failed too — and the data model is <code>events_full</code>, with
+        <code>traces</code> and <code>observations</code> migrated and empty.
+        The raw event landed in S3 because Langfuse writes the payload before
+        deciding.
+      </p>
+
+      <p>
+        The rewrite was the honest one: OTLP/HTTP JSON to
+        <code>/api/public/otel/v1/traces</code> with
+        <code>x-langfuse-ingestion-version: 4</code> (without the header, data
+        appears up to ten minutes late), reads through
+        <code>GET /api/public/v2/observations?traceId=</code>, scores through
+        <code>POST /api/public/scores</code>, ClickHouse evidence in
+        <code>events_full</code> on node 0 <em>and</em> on the last replica,
+        negatives on a v2 route. The probe that settled the contract took four
+        seconds from POST to read-back. Two smaller lies in the same run:
+        <code>POST /api/public/media</code> answers 201 for a flow that works
+        end to end, and a Redis <code>NOAUTH</code> reply is 33 bytes, which a
+        <code>head -c 64</code> waits on until the timeout kills it and the
+        bytes are lost.
+      </p>
+
+      <pre><code>  ok    A6 v4 write mode confirmed: legacy batch 207, legacy trace read 404
+  ok    I2 trace fe2c8ea5... readable through the Observations API v2
+  ok    I7 event rows replicated to 10.50.0.4
+  ok    P1 200 traces queryable within 120s</code></pre>
+
+      <h2>5. The backup that wrote 128 objects with no names</h2>
+
+      <p>
+        The rehearsal's first step is a fresh ClickHouse backup:
+        <code>BACKUP DATABASE default TO Disk('backups', '&lt;stamp&gt;/')</code>
+        to an S3 disk on the backup bucket, so the credential lives in the
+        disk configuration and never in SQL or <code>query_log</code>. It
+        returned <code>BACKUP_CREATED</code>, 270 files. The bucket held 128
+        objects named <code>agp/jjppeptxopeoqjzmlhpvtwrwopqkb</code> and
+        nothing under the stamp.
+      </p>
+
+      <p>
+        A <code>type=s3</code> disk stores objects under random keys and keeps
+        the path mapping in local metadata under
+        <code>/var/lib/clickhouse/disks/</code>. The backup was real and only
+        that node could ever read it. <code>s3_plain</code> writes every file
+        at its own path — <code>.backup</code>, <code>data/</code>,
+        <code>metadata/</code> — which is what makes a set listable by a
+        script and restorable from anywhere. Switching types on a live node
+        means stopping the server and removing the old metadata directory.
+      </p>
+
+      <h2>6. Restore is a boot</h2>
+
+      <p>
+        The review had rejected our first restore rehearsal as "a dump-import
+        test". It was right. The one that shipped restores both stores and
+        then boots the pinned web image in a second Compose project on
+        loopback, against the restored databases, with the operator-held
+        <code>ENCRYPTION_KEY</code> and <code>SALT</code> and a fresh
+        <code>NEXTAUTH_SECRET</code>, and asks through the API: do the live
+        project keys authenticate (hashed keys, salt, Postgres)? Does the
+        smoke trace read back with its generation (ClickHouse restore usable
+        through the app)? Does the seeded LLM connection return its display
+        secret (the row decrypts)?
+      </p>
+
+      <p>
+        The first run of that answered the second question with a 500: the
+        <code>langfuse</code> user's grants are <code>ON default.*</code>, and
+        the restored database is <code>restore_check</code>. One more grant.
+        The third run passed, then stopped a replica under ingestion, restarted
+        Redis with a job queued, and wrote a second marker beside the first:
+      </p>
+
+      <pre><code>.colors-ready                langfuse-vultr
+.colors-recovery-verified    langfuse-vultr clickhouse=20260903T071332Z postgres=20260903T071340Z</code></pre>
+
+      <p>
+        Two markers because "the service answers" and "the service can be
+        recovered" are different claims, and automation should be able to
+        tell them apart.
+      </p>
+
+      <h2>7. The pairing rule, and the one the review caught</h2>
+
+      <p>
+        Postgres dumps every six hours; ClickHouse backs up nightly. We do not
+        quiesce the two for a coordinated snapshot — pausing ingestion on an
+        observability system every six hours is the wrong trade — so a restore
+        pairs a ClickHouse set with a Postgres dump, and the direction matters.
+        Our first draft recorded, at backup time, the newest dump
+        <em>before</em> the ClickHouse set. Codex pointed out that pairs a newer
+        ClickHouse snapshot with an older Postgres one, and a project created
+        between the two would be referenced by traces and absent from the
+        database. The rule that shipped is decided at restore time: the oldest
+        dump completed <em>after</em> the ClickHouse set, so Postgres is always
+        the newer snapshot, and a set with no later dump is refused rather
+        than paired backwards. The rehearsal printed it:
+      </p>
+
+      <pre><code>clickhouse-restore-check: restored 20260903T071332Z into restore_check,
+  paired with postgres set 20260903T071340Z</code></pre>
+
+      <h2>What we left behind</h2>
+
+      <p>
+        Two skills, both public. The
+        <a href="/getcolors/langfuse">Langfuse Package Skill</a> converges all
+        six machines from one <code>colors.yml</code>, in green, and carries
+        <code>rehearse</code> and <code>describe</code> beside the lifecycle
+        verbs. The <a href="/getcolors/skills/langfuse-multi-node">Langfuse
+        Multi-Node Context Skill</a> carries the rest: fifteen failures with
+        their verbatim text, the pinned set with its retest conditions, the
+        acceptance doctrine, and seven evals shaped as the support message you
+        would actually send.
+      </p>
+
+      <p>
+        Splitting Langfuse across machines turned out to be the easy half.
+        The contract of the thing being deployed was the expensive half, and
+        it was expensive precisely because everything was healthy while we
+        were wrong about it.
+      </p>
+    </article>
+  </div>
+</CatalogLayout>
