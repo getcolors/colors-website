@@ -1,0 +1,24 @@
+type: context
+name: Redis Single-Node
+repository: getcolors/skills
+summary: Verified exposure doctrine, redis-cli gate contract, RDB backup-set protocol, and the AOF-off restore rehearsal for a single-node Redis 7 on Docker Compose with backups in Cloudflare R2.
+keywords:
+  - redis
+  - self-hosted redis
+  - docker compose
+  - appendonly
+  - appendonlydir
+  - dump.rdb
+  - Creating AOF base file
+  - NOAUTH Authentication required
+  - WRONGPASS
+  - redis-cli --rdb
+  - redis-check-rdb
+  - ufw docker
+  - kex_exchange_identification
+  - unattended-upgrades
+  - cloudflare r2
+companion: getcolors/redis
+context-skills:
+  - name: redis-single-node
+    path: redis-single-node/SKILL.md
