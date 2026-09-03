@@ -40,7 +40,7 @@ export const posts: Post[] = [
     runtime: "Langfuse \u00b7 Neon \u00b7 ClickHouse \u00b7 Vultr \u00b7 Cloudflare R2",
     summary:
       "We split Langfuse v4 across six Vultr machines \u2014 Neon for Postgres, a Redis host, three ClickHouse replicas, the app behind Cloudflare \u2014 and made every separation claim a gate. Eleven converges: a storage tier that left a table in the application database and broke Prisma, a ClickHouse backup that wrote 128 unnamed objects, and a v4 write mode that rejected our traces while answering 207. Then a restore that boots the pinned image and reads through the API.",
-    image: "/og-langfuse-six-machines-v1.png",
+    image: "/images/langfuse-six-machines-card-v1.png",
     tags: ["Field Report", "Langfuse", "ClickHouse", "Neon", "Acceptance", "Vultr"],
   },
   {

@@ -8,11 +8,12 @@ const description = "We split Langfuse v4 across six Vultr machines — Neon for
 const path = "/blog/langfuse-six-machines";
 
 const post = postFor(path);
-const image = "/og-langfuse-six-machines-v1.png";
+const image = "/og-langfuse-six-machines-v2.png";
 const imageAlt =
-  "Six machines and a contract nobody told the gates about — Langfuse v4 split " +
-  "across six Vultr machines, eleven converges, and a restore that boots the " +
-  "pinned image and reads through the API.";
+  "Title card: we split Langfuse v4 across six Vultr machines and made every " +
+  "claim a gate. Converge proved the ruptures: the storage tier that broke " +
+  "Prisma, the ClickHouse backup that wrote 128 unnamed objects, the v4 write " +
+  "mode that rejected traces while answering 207.";
 
 const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
 const absolute = (p: string) => new URL(p, SITE_URL).toString();

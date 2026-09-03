@@ -398,13 +398,14 @@ context_skill_count = sum(len(recipe[4]) for recipe in catalog_recipes if recipe
 # original 2752x1536 artwork remains the in-article figure under public/images/.
 # (The generated v1 text card never shipped; the suffix follows the rule.)
 
-render_post_card(
-    "og-langfuse-six-machines-v1.png",
-    "Field Report \u00b7 Langfuse \u00b7 Neon \u00b7 ClickHouse \u00b7 Vultr",
-    "Six machines and a contract nobody told the gates about",
-    "Langfuse v4 split across six Vultr machines, eleven converges, a restore that boots the pinned image and reads through the API.",
-    "/blog/langfuse-six-machines",
-)
+# og-langfuse-six-machines-v2.png is the article's supplied card artwork fitted
+# to 1200x630, not generated here — the sixth exception to "og-*.png are
+# generated", made the same way as the n8n card: the 35/36px side bars replicate
+# the artwork's edge columns (sharp's extendWith: "copy") because the background
+# is a navy-to-teal gradient that a flat fill would band against. "Fit, never
+# crop" is preserved. The full 2752x1536 original is the blog index card under
+# public/images/. The generated v1 text card it replaced did ship, so the
+# suffix is doing real cache-busting work.
 
 render_post_card(
     "og-community-town-hall-v1.png",
