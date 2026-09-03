@@ -1,0 +1,25 @@
+type: context
+name: ClickHouse Replicated
+repository: getcolors/skills
+summary: Verified topology, config.d traps, the s3_plain backup disk verified against system.backups, a collision-free restore beside the live database, application versus operator grants, the two firewalls on a Vultr VPC, and the replica-loss drill for three replicated ClickHouse nodes with embedded Keeper.
+keywords:
+  - clickhouse
+  - clickhouse keeper
+  - replicated clickhouse
+  - ReplicatedMergeTree
+  - SAXParseException Invalid token
+  - status=232/ADDRESS_FAMILIES
+  - PARTITION BY parameters should be specified directly inside engine
+  - Failed with result protocol
+  - BACKUP_CREATED
+  - s3_plain
+  - RESTORE DATABASE AS
+  - Not enough privileges SHOW COLUMNS ON system.one
+  - clusterAllReplicas
+  - SYSTEM FLUSH LOGS
+  - cloudflare r2
+  - vultr vpc
+companion: getcolors/langfuse
+context-skills:
+  - name: clickhouse-replicated
+    path: clickhouse-replicated/SKILL.md
