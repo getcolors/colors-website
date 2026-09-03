@@ -1916,7 +1916,7 @@ export const langfuse = {
   heading: "Langfuse: LLM observability on six machines, each reachable only by the peer that needs it, built with Colors",
   lede: "Langfuse is a Package Skill built with Colors. It provisions Langfuse v4 across six Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with their own Keeper quorum, and the application host running langfuse-web, langfuse-worker and Caddy behind Cloudflare — with Cloudflare R2 holding raw events, media, Neon's layers and WAL, and the backups. Langfuse's own guidance is one Docker Compose host or Kubernetes; this is the shape in between, and every separation claim is a gate.",
   runtimeNote:
-    "Langfuse ships in **green**. The storage tier is rendered from a SHA pin on `getcolors/neon`, never copied; the ClickHouse cluster templates are the package's own, derived from `getcolors/clickhouse`. Each role has its **own firewall group** — a Vultr group filters the private interface too — and every east-west rule names the peer's `/32`.",
+    "Langfuse ships in **green, red, and blue** — three implementations rendering byte-identical output, checked by `scripts/parity.sh` on both fixtures. The storage tier is rendered from a SHA pin on `getcolors/neon`, never copied; the ClickHouse cluster templates are the package's own, derived from `getcolors/clickhouse`. Each role has its **own firewall group** — a Vultr group filters the private interface too — and every east-west rule names the peer's `/32`.",
   steps: [
     {
       title: "Read desired state",

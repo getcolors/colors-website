@@ -20,6 +20,12 @@ keywords:
   - VPC
   - multi-node
 package-skills:
+  - name: package-langfuse-red
+    path: skills/package-langfuse-red/SKILL.md
+    runtime: red
   - name: package-langfuse-green
     path: skills/package-langfuse-green/SKILL.md
     runtime: green
+  - name: package-langfuse-blue
+    path: skills/package-langfuse-blue/SKILL.md
+    runtime: blue
