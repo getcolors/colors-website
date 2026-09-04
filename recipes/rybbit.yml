@@ -10,6 +10,7 @@ keywords:
   - Redis
   - Caddy
   - DigitalOcean
+  - Vultr
 featured: /featured#rybbit
 package-skills:
   - name: package-rybbit-red
