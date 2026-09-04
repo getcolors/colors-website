@@ -1,6 +1,6 @@
 name: ClickStack
 repository: getcolors/clickstack
-summary: Operate a single-server ClickStack observability stack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — on Vultr.
+summary: Operate a single-server ClickStack observability stack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — on Vultr or DigitalOcean.
 featured: /featured#clickstack
 keywords:
   - ClickStack
@@ -13,6 +13,7 @@ keywords:
   - tracing
   - logs
   - Vultr
+  - DigitalOcean
   - Cloudflare
   - self-hosted
 package-skills:
