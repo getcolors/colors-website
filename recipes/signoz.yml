@@ -1,6 +1,6 @@
 name: SigNoz
 repository: getcolors/signoz
-summary: Operate a single-node SigNoz observability stack — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — on Vultr.
+summary: Operate a single-node SigNoz observability stack — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — on Vultr or DigitalOcean.
 featured: /featured#signoz
 keywords:
   - SigNoz
@@ -14,6 +14,7 @@ keywords:
   - metrics
   - Caddy
   - Vultr
+  - DigitalOcean
   - Cloudflare
   - self-hosted
 package-skills:
