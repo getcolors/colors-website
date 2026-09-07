@@ -2,15 +2,15 @@
   "repositories": {
     "agent-network": {
       "ref": "main",
-      "sha": "7f44741d6ed329f84e25c70fef41ccd548702529"
+      "sha": "1eb36486fd0d025c1b4e89b8477684d48656c91a"
     },
     "agent-network-doks": {
       "ref": "main",
-      "sha": "8b0192571569186ed17dcc239097ef1b96324bc3"
+      "sha": "0a380fdcfe960c7b89522ceb99b4cfc3c818e5e9"
     },
     "agent-network-k8s": {
       "ref": "main",
-      "sha": "65e74179885a3ad25ac302688b9a67bec5a34453"
+      "sha": "605bb7a38464153c56f6afa9789b72fcc5ab357b"
     },
     "airflow": {
       "ref": "main",
@@ -18,7 +18,7 @@
     },
     "automq": {
       "ref": "main",
-      "sha": "3e443b682aeefd396384ed8c5acfbbf4fa59fa82"
+      "sha": "e41e59f1817ed4c7906a52d4a1f64090ac6e2c0f"
     },
     "clickhouse": {
       "ref": "main",
@@ -26,11 +26,11 @@
     },
     "clickstack": {
       "ref": "main",
-      "sha": "2cdd5301f42ddcb15d517d7288a45b0c1066d105"
+      "sha": "2b5da5dd3712dba7c7d8e88fac1b037da9f83826"
     },
     "dbos": {
       "ref": "main",
-      "sha": "81156c96f707abe02881fd9ca619927905e1c01b"
+      "sha": "5d86df7c43807d210e9c7ac01411bd55655f4102"
     },
     "github-dwh": {
       "ref": "main",
@@ -42,71 +42,79 @@
     },
     "k8s": {
       "ref": "main",
-      "sha": "9ba1b3f4811543446bb9efbc1f741418790250a1"
+      "sha": "7458b48856be305eb19317a853c416b15115aa05"
+    },
+    "langfuse": {
+      "ref": "main",
+      "sha": "e2db1a5624002e0d5af601b6873a57f7ae9e9af5"
     },
     "mysql-agy": {
       "ref": "main",
-      "sha": "cd81c94053906add50ae16ce2bad551fe4497c0f"
+      "sha": "f53fd531facdc4266db9bd076fe7d4199fa6d83c"
     },
     "mysql-ha": {
       "ref": "main",
-      "sha": "90190b6f16ec6886e226dd1b49dd128a8e642a92"
+      "sha": "0ebd07ec8aca5d3b01d6a13e26f7e798a82f730a"
     },
     "n8n": {
       "ref": "main",
-      "sha": "e285f58d38f49e00a7ba0217dbbff88efd304f1c"
+      "sha": "681e6912c70e8dfc95ea5b94c3ac2a8a83d5a23f"
     },
     "neon": {
       "ref": "main",
-      "sha": "87c009549a928fdf1f9dc135f9740c3baa5782d7"
+      "sha": "a3b77e55d31eb3a206ad9948300af60b66558a1a"
     },
     "netbird": {
       "ref": "main",
-      "sha": "9443139e1be41f6a9fc760315d2f12d526544f38"
+      "sha": "532605e198e8b91bc80217adada40c934f630500"
     },
     "once": {
       "ref": "main",
-      "sha": "4edbd6c564117eef3f3812f3ca17a70e280e17c0"
+      "sha": "10e525ae7c37130ab4d532b91c8d2ead94557cc8"
     },
     "postgres-agy": {
       "ref": "main",
-      "sha": "2e2a5b932d1dde13c8de6e188e9c3e7704cd9df8"
+      "sha": "fcb4b2a98ef1c913ed49822bf295df8fa14a68bf"
     },
     "postgres-ha": {
       "ref": "main",
-      "sha": "2723ef55bb8cd287a6c5d6ff618872df0b44397a"
+      "sha": "961e588c5f53fc81d37e06ac12c1fd402820c0a9"
     },
     "posthog": {
       "ref": "main",
-      "sha": "6ccbd53ffda265b1180b776b36b29576f3c5459c"
+      "sha": "4740515458e7b5952dbbe41a4b80db8625e42dd3"
     },
     "rama": {
       "ref": "main",
       "sha": "687f01370a24226b1709425c2838d5543ba2bd42"
     },
+    "redis": {
+      "ref": "main",
+      "sha": "c18449f0d7a136af0e341505f4c52743899d75fa"
+    },
     "restate": {
       "ref": "main",
-      "sha": "d932653f58d793c9fddb7b1c5c9ee2d7652ae008"
+      "sha": "0c92c9caec610e69e740270c0ad2971ebfa85aa9"
     },
     "rybbit": {
       "ref": "main",
-      "sha": "a2908d869c756d37fd45816cf56be24b70f9dc0f"
+      "sha": "b65f647d42614d2208aeb729cecce95939f2f540"
     },
     "signoz": {
       "ref": "main",
-      "sha": "5adc9100cdb6407018023b5772373f976a7394bc"
+      "sha": "6022b93a5a3a7a09155862f7ccecb5deefa00d14"
     },
     "skills": {
       "ref": "main",
-      "sha": "f2c2e946eea0c94b1f61d890decfad0d616fa0a8"
+      "sha": "f5875d9f9dcc6dc6985f4c872b418b853e9960ab"
     },
     "temporal": {
       "ref": "main",
-      "sha": "7900ce1b97edf41bd2257948de52b51c95efefb8"
+      "sha": "66f16d9d48d32cd4e0627353168383a14f6e46ff"
     },
     "umami": {
       "ref": "main",
-      "sha": "ff355a7a1c8cc204b0f8c8d4244d8072bc8b3892"
+      "sha": "0d2a92a19d56ba936f52606152ab8ed336161fc2"
     },
     "vaultwarden": {
       "ref": "main",
@@ -114,7 +122,7 @@
     },
     "walter": {
       "ref": "main",
-      "sha": "847eb5b31422a9bb5fa609e0d3b75ec2d2642edd"
+      "sha": "05afd2731842ee685dd8fe6695b6fedcf1a1a0f0"
     },
     "wavehouse": {
       "ref": "main",
