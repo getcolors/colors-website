@@ -327,7 +327,7 @@ production host as string literals, so a `SITE_URL=` preview build repointed
 
 `SiteHeader.astro` renders a one-line strip above the nav on every page from
 the `announcement` export in `landing.ts` — added 2026-09-02 for the Community
-Town Hall on 2026-09-10. It is rendered at **build time** and hides itself once
+Town Hall on 2026-09-18. It is rendered at **build time** and hides itself once
 `announcement.until` has passed, so a deploy after the event shows nothing even
 if the entry is forgotten; that guard is a backstop, not the removal. After the
 event, delete the export and the block in `SiteHeader.astro` together, and turn

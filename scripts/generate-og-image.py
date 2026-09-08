@@ -411,8 +411,8 @@ context_skill_count = sum(len(recipe[4]) for recipe in catalog_recipes if recipe
 # suffix is doing real cache-busting work.
 
 render_post_card(
-    "og-community-town-hall-v1.png",
-    "Community · Town Hall · 10 Sep 2026",
+    "og-community-town-hall-v2.png",
+    "Community · Town Hall · 18 Sep 2026",
     "Colors Community Town Hall",
     "Roadmap, architecture, a live provisioning demo and open Q&A with the maintainers. Online, free, 17:00 CEST.",
     "/blog/community-town-hall",

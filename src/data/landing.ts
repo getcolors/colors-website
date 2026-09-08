@@ -83,12 +83,12 @@ export const nav = [
 // The blog entry for the event (src/pages/blog/community-town-hall.astro) is
 // the permanent home for the recording and slides; the strip is not.
 export const announcement = {
-  date: "Thu 10 Sep · 17:00 CEST · online",
+  date: "Fri 18 Sep · 17:00 CEST · online",
   title: "Community Town Hall: the roadmap, the three colours, and a live provisioning demo",
   href: "/blog/community-town-hall",
   cta: "Agenda and registration",
   /** RFC 3339 instant after which the strip is not rendered — the end of the session. */
-  until: "2026-09-10T16:00:00Z",
+  until: "2026-09-18T16:00:00Z",
 };
 
 export const hero = {
