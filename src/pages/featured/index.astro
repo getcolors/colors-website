@@ -64,6 +64,8 @@ import {
   n8nInstallCmd,
   neon,
   neonInstallCmd,
+  neonMultiNode,
+  neonMultiNodeInstallCmd,
   automq,
   automqInstallCmd,
   langfuse,
@@ -100,6 +102,7 @@ const featuredPackageSkills = [
   { label: "Agent Network K8s", href: "#agent-network-k8s" },
   { label: "Agent Network DOKS", href: "#agent-network-doks" },
   { label: "Neon", href: "#neon" },
+  { label: "Neon Multi-Node", href: "#neon-multi-node" },
   { label: "n8n", href: "#n8n" },
   { label: "AutoMQ", href: "#automq" },
   { label: "Langfuse", href: "#langfuse" },
@@ -2040,6 +2043,44 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{neon.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEON MULTI-NODE -->
+      <div class="sec" id="neon-multi-node">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{neonMultiNode.eyebrow}</div>
+          <SectionHeading id="neon-multi-node" title={neonMultiNode.heading} />
+          <p class="sec-lede sec-lede-wide">{neonMultiNode.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={neonMultiNodeInstallCmd} id="featured-neon-multi-node-install" />
+            <span class="install-note" set:html={html(neonMultiNode.runtimeNote)} />
+            <ResourceLinks docsUrl={neonMultiNode.docsUrl} repoUrl={neonMultiNode.repoUrl} catalogUrl="/getcolors/neon-multi-node" />
+          </div>
+
+          <div class="grid-5">
+            {neonMultiNode.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{neonMultiNode.dagCaption}</div>
+            <div class="dag">
+              {neonMultiNode.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{neonMultiNode.dagNote}</p>
           </div>
         </div>
       </div>

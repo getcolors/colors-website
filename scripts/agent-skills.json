@@ -44,6 +44,10 @@
       "ref": "main",
       "sha": "9ba1b3f4811543446bb9efbc1f741418790250a1"
     },
+    "langfuse": {
+      "ref": "main",
+      "sha": "4ce273a55e68b9208809f664261c2acef5dea37d"
+    },
     "mysql-agy": {
       "ref": "main",
       "sha": "cd81c94053906add50ae16ce2bad551fe4497c0f"
@@ -59,6 +63,10 @@
     "neon": {
       "ref": "main",
       "sha": "87c009549a928fdf1f9dc135f9740c3baa5782d7"
+    },
+    "neon-multi-node": {
+      "ref": "main",
+      "sha": "0f06fe9de2ab45a026ad7e08476450449d38f88d"
     },
     "netbird": {
       "ref": "main",
@@ -84,6 +92,10 @@
       "ref": "main",
       "sha": "687f01370a24226b1709425c2838d5543ba2bd42"
     },
+    "redis": {
+      "ref": "main",
+      "sha": "9db5268f427b746a01c189548c5fe0b0934772d2"
+    },
     "restate": {
       "ref": "main",
       "sha": "d932653f58d793c9fddb7b1c5c9ee2d7652ae008"
@@ -98,7 +110,7 @@
     },
     "skills": {
       "ref": "main",
-      "sha": "f2c2e946eea0c94b1f61d890decfad0d616fa0a8"
+      "sha": "63410c36e4f7ea8c7b7c477a04c8d73a6e95f38f"
     },
     "temporal": {
       "ref": "main",

@@ -1,0 +1,19 @@
+type: context
+name: Neon Multi-Node AWS
+repository: getcolors/skills
+summary: Verified Neon TLS helper failures, psql witness parsing, uncertain quorum writes, and recovery acceptance across five AWS machines.
+keywords:
+  - Neon
+  - AWS
+  - safekeeper quorum
+  - server does not support SSL
+  - unknown TLS key type
+  - FAIL AssertionError
+  - INSERT 0 1
+  - timed-out write
+  - pageserver recovery
+  - native PostgreSQL TLS
+companion: getcolors/neon-multi-node
+context-skills:
+  - name: neon-multi-node
+    path: neon-multi-node/SKILL.md

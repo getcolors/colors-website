@@ -518,13 +518,20 @@ if context_skill_count:
     )
 # v2 on 2026-08-27: the heading changed from "Package Skills Catalog" when
 # Context Skills joined the catalog — new artwork means a new filename.
-render_blue_card("og-catalog-blue-v2.png", "Catalog", "Skills Catalog", catalog_card_text, "/skills")
+# v3 on 2026-09-10 updates counts for the Neon Multi-Node package and context.
+render_blue_card("og-catalog-blue-v3.png", "Catalog", "Skills Catalog", catalog_card_text, "/skills")
 render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills", "Production examples of deterministic, agent-operated infrastructure built with Colors.", "/featured")
 
 # One source card per repository, not per recipe: Context Skills share
 # getcolors/skills, and /{owner}/{repository} exists once.
 owners = {}
 repository_recipes = {}
+# Keep count-driven revisions synchronized with src/data/catalog.ts.
+catalog_og_revisions = {"owner-getcolors": 2, "source-getcolors-skills": 2}
+def catalog_og_name(kind, *parts):
+    key = "-".join([kind, *(slug(part) for part in parts)])
+    return f"og-{key}-blue-v{catalog_og_revisions.get(key, 1)}.png"
+
 for recipe_type, product, repository, summary, entries in catalog_recipes:
     owner, repo = repository.split("/", 1)
     owners.setdefault(owner, [set(), 0])
@@ -542,7 +549,7 @@ for repository, recipe_group in repository_recipes.items():
     if len(recipe_group) == 1:
         recipe_type, product, summary = recipe_group[0]
         source_label = "Package Skill source" if recipe_type == "package" else "Context Skill source"
-        render_blue_card(f"og-source-{slug(owner)}-{slug(repo)}-blue-v1.png", source_label, product, summary, f"/{owner}/{repo}")
+        render_blue_card(catalog_og_name("source", owner, repo), source_label, product, summary, f"/{owner}/{repo}")
     else:
         kinds = {recipe_type for recipe_type, _, _ in recipe_group}
         source_label = "Context Skill source" if kinds == {"context"} else "Skill source"
@@ -551,9 +558,9 @@ for repository, recipe_group in repository_recipes.items():
             if kinds == {"context"}
             else f"{len(recipe_group)} curated skills."
         )
-        render_blue_card(f"og-source-{slug(owner)}-{slug(repo)}-blue-v1.png", source_label, repository, group_summary, f"/{owner}/{repo}")
+        render_blue_card(catalog_og_name("source", owner, repo), source_label, repository, group_summary, f"/{owner}/{repo}")
 for owner, (repositories, skill_count) in owners.items():
-    render_blue_card(f"og-owner-{slug(owner)}-blue-v1.png", "Package Skill owner", owner, f"{len(repositories)} curated sources and {skill_count} Package Skills.", f"/{owner}")
+    render_blue_card(catalog_og_name("owner", owner), "Package Skill owner", owner, f"{len(repositories)} curated sources and {skill_count} Package Skills.", f"/{owner}")
 
 for w in dict.fromkeys(_warnings):
     print("warning:", w, file=sys.stderr)

@@ -109,8 +109,16 @@ export type Catalog = {
   owners: CatalogOwner[];
 };
 
-export const catalogOgImage = (kind: "owner" | "source" | "skill", ...parts: string[]) =>
-  `/og-${kind}-${parts.map((part) => part.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")).join("-")}-blue-v1.png`;
+// Count changes need new image URLs so cached social previews refresh.
+// Keep these revisions synchronized with scripts/generate-og-image.py.
+const catalogOgRevisions: Record<string, number> = {
+  "owner-getcolors": 2,
+  "source-getcolors-skills": 2,
+};
+export const catalogOgImage = (kind: "owner" | "source" | "skill", ...parts: string[]) => {
+  const key = `${kind}-${parts.map((part) => part.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")).join("-")}`;
+  return `/og-${key}-blue-v${catalogOgRevisions[key] ?? 1}.png`;
+};
 
 export const runtimeLabels: Record<Runtime, string> = {
   red: "TypeScript / Bun",

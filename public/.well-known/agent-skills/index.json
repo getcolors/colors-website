@@ -30,6 +30,13 @@
       "digest": "sha256:6de8440e011dcc35f280a98948cf3b4396071c93cfa2a79511f6564f30e133ba"
     },
     {
+      "name": "clickhouse-replicated",
+      "type": "archive",
+      "description": "What a three-node replicated ClickHouse cluster with embedded Keeper needs that the docs will not tell you - clickhouse-server failing to start with 'SAXParseException Invalid token', status=232/ADDRESS_FAMILIES and an empty err.log; 'PARTITION BY parameters should be specified directly inside engine' and 'Failed with result protocol' after a config.d override on system.query_log; BACKUP TO Disk answering BACKUP_CREATED while the bucket holds only randomly named objects (s3 versus s3_plain); a test restore beside the live database that must not collide in Keeper; 'Not enough privileges ... SHOW COLUMNS ON system.one' with the documented grants; replicas that ping each other while clusterAllReplicas never reaches 3 on Vultr (provider firewall and ufw both filter the VPC); system.query_log absent until SYSTEM FLUSH LOGS. Use whenever the user runs ClickHouse replicas with Keeper on separate hosts, backs ClickHouse up to S3 storage, or test-restores on a live cluster. Full symptom index at the top of the body.",
+      "url": "/.well-known/agent-skills/clickhouse-replicated-0b5ed9296b0b617eba65a8cba0d1c26298d0caf4a09679b3a13c6901e3ceec45.tar.gz",
+      "digest": "sha256:0b5ed9296b0b617eba65a8cba0d1c26298d0caf4a09679b3a13c6901e3ceec45"
+    },
+    {
       "name": "create-context-skill",
       "type": "skill-md",
       "description": "Distill a completed, verified build into a Colors Context Skill conforming to the Context Skill Standard - five required artifacts, symptom-first routing, no working-file copies. Use at the end of a build whose acceptance gates passed, when the user says to distill the lessons, capture what the build learned, or turn converge failures into a skill - or to migrate an existing knowledge skill with assets into conforming shape.",
@@ -40,8 +47,15 @@
       "name": "create-package-skill",
       "type": "skill-md",
       "description": "Use when asked to create a getcolors Package Skill and a deployment that uses it, including desired-state configuration, provider credentials, GitHub repositories, provisioning, or end-to-end deployment.",
-      "url": "/.well-known/agent-skills/create-package-skill-6cfc3199e4fdd846cc69f6b65bd7cdf9630b027f87d590f9dd74a3f2c83371c0/SKILL.md",
-      "digest": "sha256:6cfc3199e4fdd846cc69f6b65bd7cdf9630b027f87d590f9dd74a3f2c83371c0"
+      "url": "/.well-known/agent-skills/create-package-skill-a90a9e4b6f9f3261d308a893e423d82022398795df83b239d497733f842a0a61/SKILL.md",
+      "digest": "sha256:a90a9e4b6f9f3261d308a893e423d82022398795df83b239d497733f842a0a61"
+    },
+    {
+      "name": "langfuse-multi-node",
+      "type": "archive",
+      "description": "Everything a self-hosted Langfuse v4 on separate machines needs that the docs and the Compose quick start will not tell you - langfuse-web restart-looping on 'P3005 The database schema is not empty' against a brand-new Neon database, traces that never appear after a 207 from /api/public/ingestion ('Rejected N event(s) from the legacy /api/public/ingestion endpoint ... events_only mode'), GET /api/public/traces/<id> answering 404 while health is green, an empty traces table on a healthy ClickHouse, POST /api/public/media answering 201, ClickHouse failing to start with 'SAXParseException Invalid token' or 'PARTITION BY parameters should be specified directly inside engine', a BACKUP_CREATED that leaves randomly named objects in R2, 'Not enough privileges ... SHOW COLUMNS ON system.one', and SHOW timezone returning GMT. Use whenever the user runs Langfuse v4 on more than one host, puts its Postgres on Neon, or backs ClickHouse up to S3-compatible storage. Full symptom index at the top of the body.",
+      "url": "/.well-known/agent-skills/langfuse-multi-node-337f1ee470f9febe12049da9ab5e6355330874182794c2d04baaa7bc2e1e607a.tar.gz",
+      "digest": "sha256:337f1ee470f9febe12049da9ab5e6355330874182794c2d04baaa7bc2e1e607a"
     },
     {
       "name": "n8n-single-node",
@@ -49,6 +63,13 @@
       "description": "Everything a self-hosted n8n 2.x deployment needs that the docs and every third-party guide will not tell you - n8n refusing to boot with \"Mismatching encryption keys. The encryption key in the settings file /home/node/.n8n/config does not match the N8N_ENCRYPTION_KEY env var\" after one bad first boot, \"password authentication failed for user\" when the password is a literal unrendered template string, /healthz returning 200 while every API call answers 503 \"Database is not ready!\", DELETE refused with \"Workflow must be archived before it can be deleted\", \"To run the workflow manually, specify either a trigger to start from or a destination node\", pg_dump \"aborting because of server version mismatch\", and WEBHOOK_URL quietly deprecated in favour of N8N_WEBHOOK_URL. Use whenever the user self-hosts n8n on Postgres, puts its database on Neon or object storage, fronts it with Cloudflare and Caddy, or hits any symptom above. Full symptom index at the top of the body.",
       "url": "/.well-known/agent-skills/n8n-single-node-fe84196bc19f32e892dacc59a5ab72aefb88b5e2f10fb653b61885d7ded74b09.tar.gz",
       "digest": "sha256:fe84196bc19f32e892dacc59a5ab72aefb88b5e2f10fb653b61885d7ded74b09"
+    },
+    {
+      "name": "neon-multi-node",
+      "type": "archive",
+      "description": "Use when self-hosted Neon says \"server does not support SSL, but SSL was required\", compute_ctl logs \"unknown TLS key type\", a safekeeper outage rehearsal fails with \"FAIL AssertionError\", psql returns \"INSERT 0 1\" instead of the expected value, a timed-out quorum write appears after recovery, cleanup reports Ansible ENOENT, repeat delete reports migration after removing its backend, or three safekeepers and S3 are being mistaken for complete HA. Verified AWS multi-node TLS, SQL witness, WAL quorum, S3 recovery and lifecycle contracts.",
+      "url": "/.well-known/agent-skills/neon-multi-node-76c55c06514fa666287377077ea418fc856d8c42ce6dda9a0c59bd4f253349d6.tar.gz",
+      "digest": "sha256:76c55c06514fa666287377077ea418fc856d8c42ce6dda9a0c59bd4f253349d6"
     },
     {
       "name": "neon-single-node",
@@ -275,6 +296,27 @@
       "digest": "sha256:0d4a0b0f3ec08252434ad79cab1ef9e4cef63ee5e488b9d876ba5f3fb483561f"
     },
     {
+      "name": "package-langfuse-blue",
+      "type": "archive",
+      "description": "Provision and manage self-hosted Langfuse v4 on six AWS or Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with Keeper, and the application host (langfuse-web, langfuse-worker, Caddy) behind a Cloudflare-proxied name, with AWS S3 or Cloudflare R2 for events, media, Neon layers and WAL, and backups — using OpenTofu and Ansible. Use when asked to deploy, converge, rehearse recovery for, inspect or tear down self-hosted Langfuse, to run Langfuse on separate machines rather than one Docker Compose host, or to work on a colors.yml for a Langfuse deployment.",
+      "url": "/.well-known/agent-skills/package-langfuse-blue-bfcb80d5df013561bde7c02a823bc90552ee693764b6fc76014916148ea37fbc.tar.gz",
+      "digest": "sha256:bfcb80d5df013561bde7c02a823bc90552ee693764b6fc76014916148ea37fbc"
+    },
+    {
+      "name": "package-langfuse-green",
+      "type": "archive",
+      "description": "Provision and manage self-hosted Langfuse v4 on six AWS or Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with Keeper, and the application host (langfuse-web, langfuse-worker, Caddy) behind a Cloudflare-proxied name, with AWS S3 or Cloudflare R2 for events, media, Neon layers and WAL, and backups — using OpenTofu and Ansible. Use when asked to deploy, converge, rehearse recovery for, inspect or tear down self-hosted Langfuse, to run Langfuse on separate machines rather than one Docker Compose host, or to work on a colors.yml for a Langfuse deployment.",
+      "url": "/.well-known/agent-skills/package-langfuse-green-14d97ebaca23b53698d7a7a78618063809284e46f797033ed8171261581c70ba.tar.gz",
+      "digest": "sha256:14d97ebaca23b53698d7a7a78618063809284e46f797033ed8171261581c70ba"
+    },
+    {
+      "name": "package-langfuse-red",
+      "type": "archive",
+      "description": "Provision and manage self-hosted Langfuse v4 on six AWS or Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with Keeper, and the application host (langfuse-web, langfuse-worker, Caddy) behind a Cloudflare-proxied name, with AWS S3 or Cloudflare R2 for events, media, Neon layers and WAL, and backups — using OpenTofu and Ansible. Use when asked to deploy, converge, rehearse recovery for, inspect or tear down self-hosted Langfuse, to run Langfuse on separate machines rather than one Docker Compose host, or to work on a colors.yml for a Langfuse deployment.",
+      "url": "/.well-known/agent-skills/package-langfuse-red-aa87f58fbf2907986a5bf9cd4ee4898634516acb1bbd91774e117fba463c1c35.tar.gz",
+      "digest": "sha256:aa87f58fbf2907986a5bf9cd4ee4898634516acb1bbd91774e117fba463c1c35"
+    },
+    {
       "name": "package-mysql-agy-blue",
       "type": "archive",
       "description": "A 3-node MySQL Group Replication high-availability cluster on DigitalOcean with continuous point-in-time recovery to Cloudflare R2.",
@@ -336,6 +378,13 @@
       "description": "Provision and manage self-hosted Neon serverless Postgres on one Vultr instance — the storage broker, the pageserver, a safekeeper, and a compute node, with Cloudflare R2 as the remote storage for layers and WAL — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted Neon, to run storage/compute-separated Postgres with S3-durable data, or to work on a colors.yml for a neon deployment.",
       "url": "/.well-known/agent-skills/package-neon-green-e79831a926a7305a950669eac56f5faedc5ad540dacde7fb7975eaf6bf51a6c0.tar.gz",
       "digest": "sha256:e79831a926a7305a950669eac56f5faedc5ad540dacde7fb7975eaf6bf51a6c0"
+    },
+    {
+      "name": "package-neon-multi-node-green",
+      "type": "archive",
+      "description": "Deploy and operate self-hosted Neon Postgres 17 across separate compute and pageserver machines plus three safekeepers, using Colors Green and colors-compute, managed AWS S3 storage and state, Cloudflare DNS, and native PostgreSQL TLS. Use for neon-multi-node colors.yml deployments, convergence, recovery rehearsals, inspection, and guarded teardown.",
+      "url": "/.well-known/agent-skills/package-neon-multi-node-green-ece58703f96faf37816f952590726fc8681e5458a007007e345b74ebff4f32cc.tar.gz",
+      "digest": "sha256:ece58703f96faf37816f952590726fc8681e5458a007007e345b74ebff4f32cc"
     },
     {
       "name": "package-neon-red",
@@ -455,6 +504,13 @@
       "description": "Provision and operate a private single-node Rama cluster on DigitalOcean using Green.",
       "url": "/.well-known/agent-skills/package-rama-green-50afb1ec447e927ac524c94540fb1e52f908036e815a9eff2ff8cde6ba2ad7eb.tar.gz",
       "digest": "sha256:50afb1ec447e927ac524c94540fb1e52f908036e815a9eff2ff8cde6ba2ad7eb"
+    },
+    {
+      "name": "package-redis-green",
+      "type": "archive",
+      "description": "Provision and manage one Redis 7.2 server on one Vultr instance or DigitalOcean droplet — published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 that a rehearsal verb restores and reads back — using OpenTofu and Ansible. Use when asked to deploy, converge, back up, rehearse recovery for, inspect or tear down a single-node Redis, or to work on a colors.yml for a redis deployment.",
+      "url": "/.well-known/agent-skills/package-redis-green-23398afa90ac3cda8bed1d01dba005a32b2c32ed9705b11fa4b9d318e515b499.tar.gz",
+      "digest": "sha256:23398afa90ac3cda8bed1d01dba005a32b2c32ed9705b11fa4b9d318e515b499"
     },
     {
       "name": "package-restate-blue",
@@ -616,6 +672,13 @@
       "description": "Everything needed to stand up a working self-hosted single-node PostHog on one server - the ten-container topology, the ClickHouse Keeper/macros/named-collections configuration PostHog's migrations require, the capture and plugin-server ingestion chain, the converge ordering, and a catalogue of ~30 failures that each look like success. Use this whenever the user mentions self-hosting, deploying, provisioning, upgrading, or debugging PostHog, or is working on a PostHog docker-compose, Ansible playbook, ClickHouse schema, migrate_clickhouse run, or event-ingestion problem - even if they do not say \"single-node\" and even if they think their problem is small. Also use it when someone reports that PostHog accepts events but stores none, that a container \"runs\" but serves nothing, or that Celery will not start.",
       "url": "/.well-known/agent-skills/posthog-single-node-8bbeb434623b0adeaf66e15f7fb56a3e1458eb82776e3ca4dac03cc70b7037ad.tar.gz",
       "digest": "sha256:8bbeb434623b0adeaf66e15f7fb56a3e1458eb82776e3ca4dac03cc70b7037ad"
+    },
+    {
+      "name": "redis-single-node",
+      "type": "archive",
+      "description": "What a single-node Redis 7 deployment needs beyond the docs, verified live - a restored dump.rdb that loads ZERO keys because the instance started with appendonly yes and no appendonlydir/ beside it (\"Creating AOF base file appendonly.aof.1.base.rdb on server start\"), redis-cli refusals (\"NOAUTH Authentication required.\", \"WRONGPASS invalid username-password pair\") that exit 0 so a gate keyed on exit codes passes on a refusal, a minutes-old host UNREACHABLE (kex_exchange_identification reset) because unattended-upgrades restarted sshd, Docker-published ports that bypass ufw, backups streamed with `redis-cli --rdb -`, and R2 backup sets that count only once a .complete marker reads back. Use whenever the user self-hosts Redis on one machine with Docker Compose, backs it up to S3-compatible storage, asks whether the AOF or the RDB is what restores, gates a converge on redis-cli output, or hits any symptom above. Full symptom index in the body.",
+      "url": "/.well-known/agent-skills/redis-single-node-618b1b750ebacc20825f32bf7a82110a88439c128aa9818623149feafc75c71d.tar.gz",
+      "digest": "sha256:618b1b750ebacc20825f32bf7a82110a88439c128aa9818623149feafc75c71d"
     },
     {
       "name": "rybbit-single-node",

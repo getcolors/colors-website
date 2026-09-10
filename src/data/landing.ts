@@ -169,6 +169,7 @@ export const shapes = {
   lede: "Every Package Skill is built on the same SDK and walks the same build, dry-run, create and guarded delete. The shape it converges is the package’s to decide.",
   items: [
     { name: "Langfuse", meta: "6 machines · 4 firewall groups · Vultr", body: "LLM observability with a Neon storage tier, Redis, three ClickHouse replicas with Keeper, and the app host — plus a restore rehearsal.", href: "/featured#langfuse" },
+    { name: "Neon Multi-Node", meta: "5 machines · 3 safekeepers · AWS", body: "Separate PostgreSQL compute and pageserver roles, a three-member WAL quorum, native PostgreSQL TLS and managed S3 storage.", href: "/featured#neon-multi-node" },
     { name: "ClickHouse", meta: "3 replicas + Keeper · Metabase host · Hetzner", body: "A replicated ClickHouse cluster with a three-member Keeper quorum and a separate Metabase and PostgreSQL server.", href: "/featured#clickhouse" },
     { name: "PostgreSQL HA", meta: "3 nodes · Patroni + etcd · DigitalOcean", body: "PostgreSQL 17 with etcd quorum consensus, Patroni leader election, HAProxy routing and continuous WAL backups to R2.", href: "/featured#postgres-agy" },
     { name: "MySQL HA", meta: "3 nodes · Group Replication · DigitalOcean", body: "MySQL 8.4 Group Replication with a floating-IP primary and one-minute binary-log archiving to R2.", href: "/featured#mysql-agy" },
@@ -1902,6 +1903,37 @@ export const neon = {
     "The create/build DAG runs `start` \u2192 `infrastructure` \u2192 `ssh-config` \u2192 `ansible` \u2192 `acceptance`.",
   dagNote:
     "There is no dns stage on purpose: nothing in this package is reachable by name. Delete removes the `~/.ssh/config` block before the compute destroy and the keypair after it \u2014 and leaves the R2 data in place, because that prefix is the database, not a byproduct.",
+};
+
+export const neonMultiNodeInstallCmd = 'npx skills add https://github.com/getcolors/neon-multi-node --skill package-neon-multi-node-green';
+
+export const neonMultiNode = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://github.com/getcolors/neon-multi-node#readme",
+  repoUrl: "https://github.com/getcolors/neon-multi-node",
+  heading: "Neon Multi-Node: separate compute, pageserver and WAL quorum on AWS",
+  lede: "Neon Multi-Node operates self-hosted Neon across five AWS machines: one PostgreSQL compute host, one pageserver host with the storage broker, and three independent safekeeper hosts. S3 holds the database's remote storage and Terraform state in deployment-owned buckets. Cloudflare DNS names the compute endpoint, which serves native PostgreSQL TLS.",
+  runtimeNote: "This package uses **green** (Clojure / Babashka) and shared `colors-compute` infrastructure. The three safekeepers form the WAL quorum. The compute and pageserver each have one instance; this topology does not provide automatic failover for those roles.",
+  steps: [
+    { title: "Read desired state", body: "`colors.yml` describes the five machine roles, database identities, image pins, S3 storage and the hostname. Provider credentials remain environment references." },
+    { title: "Build and dry-run", body: "Render the deployment and inspect its execution graph before contacting AWS, Cloudflare or the machines." },
+    { title: "Create owned resources", body: "Manage the machines through `colors-compute`, together with role firewalls, the SSH keypair, S3 backend and database buckets, and DNS." },
+    { title: "Connect over TLS", body: "Use the DNS-only Cloudflare record for the PostgreSQL endpoint. Clients connect with the PostgreSQL protocol directly to the compute host." },
+    { title: "Operate the lifecycle", body: "Verify TLS and authentication from an external client, preserve exact witnesses through compute recreation and pageserver recovery, and exercise the three-member WAL quorum. Deletion is guarded." },
+  ],
+  dagCaption: "Neon Multi-Node — LIFECYCLE OVERVIEW",
+  dag: [
+    { kind: "node", label: "desired state", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "build / dry-run" },
+    { kind: "edge" },
+    { kind: "node", label: "provision" },
+    { kind: "edge" },
+    { kind: "node", label: "converge" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagNote: "S3 buckets are lifecycle resources, like the SSH keypair. Storage deletion belongs to the guarded teardown, after database writers have stopped.",
 };
 
 export const automqInstallCmd = "npx skills use getcolors/automq";

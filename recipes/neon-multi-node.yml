@@ -1,0 +1,19 @@
+name: Neon Multi-Node
+repository: getcolors/neon-multi-node
+summary: Operate self-hosted Neon on five AWS machines with separate compute and pageserver roles, three safekeepers, native PostgreSQL TLS, and managed S3 storage.
+featured: /featured#neon-multi-node
+keywords:
+  - Neon
+  - PostgreSQL
+  - AWS
+  - Amazon S3
+  - pageserver
+  - safekeeper quorum
+  - WAL
+  - Cloudflare DNS
+  - TLS
+  - storage compute separation
+package-skills:
+  - name: package-neon-multi-node-green
+    path: skills/package-neon-multi-node-green/SKILL.md
+    runtime: green
