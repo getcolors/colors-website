@@ -1,7 +1,7 @@
 type: context
 name: Neon Multi-Node AWS
 repository: getcolors/skills
-summary: Verified Neon TLS helper failures, psql witness parsing, uncertain quorum writes, and recovery acceptance across five AWS machines.
+summary: Verified Neon TLS and SQL witness traps, uncertain quorum writes, recovery, guarded cleanup, and repeated deletion across five AWS machines.
 keywords:
   - Neon
   - AWS
@@ -13,6 +13,9 @@ keywords:
   - timed-out write
   - pageserver recovery
   - native PostgreSQL TLS
+  - Cannot run program ansible-playbook
+  - NoSuchBucket
+  - legacy monolithic state requires explicit migration
 companion: getcolors/neon-multi-node
 context-skills:
   - name: neon-multi-node

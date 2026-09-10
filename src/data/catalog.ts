@@ -114,6 +114,7 @@ export type Catalog = {
 const catalogOgRevisions: Record<string, number> = {
   "owner-getcolors": 2,
   "source-getcolors-skills": 2,
+  "skill-getcolors-skills-neon-multi-node": 2,
 };
 export const catalogOgImage = (kind: "owner" | "source" | "skill", ...parts: string[]) => {
   const key = `${kind}-${parts.map((part) => part.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")).join("-")}`;

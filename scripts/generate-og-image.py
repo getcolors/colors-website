@@ -527,7 +527,7 @@ render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills
 owners = {}
 repository_recipes = {}
 # Keep count-driven revisions synchronized with src/data/catalog.ts.
-catalog_og_revisions = {"owner-getcolors": 2, "source-getcolors-skills": 2}
+catalog_og_revisions = {"owner-getcolors": 2, "source-getcolors-skills": 2, "skill-getcolors-skills-neon-multi-node": 2}
 def catalog_og_name(kind, *parts):
     key = "-".join([kind, *(slug(part) for part in parts)])
     return f"og-{key}-blue-v{catalog_og_revisions.get(key, 1)}.png"
@@ -541,7 +541,7 @@ for recipe_type, product, repository, summary, entries in catalog_recipes:
     repository_recipes.setdefault(repository, []).append((recipe_type, product, summary))
     for skill_name, runtime in entries:
         skill_label = f"Package Skill - {runtime}" if runtime else "Context Skill"
-        render_blue_card(f"og-skill-{slug(owner)}-{slug(repo)}-{slug(skill_name)}-blue-v1.png", skill_label, skill_name, summary, f"/{owner}/{repo}/{skill_name}")
+        render_blue_card(catalog_og_name("skill", owner, repo, skill_name), skill_label, skill_name, summary, f"/{owner}/{repo}/{skill_name}")
 # A repository with several recipes gets a card named after the repository,
 # since no single recipe's name describes the page.
 for repository, recipe_group in repository_recipes.items():
