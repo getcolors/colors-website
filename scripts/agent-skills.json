@@ -66,7 +66,7 @@
     },
     "neon-multi-node": {
       "ref": "main",
-      "sha": "0f06fe9de2ab45a026ad7e08476450449d38f88d"
+      "sha": "413eec3a863744a6a53ea1b552461b983ce7bafb"
     },
     "netbird": {
       "ref": "main",
@@ -110,7 +110,7 @@
     },
     "skills": {
       "ref": "main",
-      "sha": "63410c36e4f7ea8c7b7c477a04c8d73a6e95f38f"
+      "sha": "ea584deee1f01ed6d405cab1a498a8e0b21ddacd"
     },
     "temporal": {
       "ref": "main",

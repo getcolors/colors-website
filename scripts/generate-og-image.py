@@ -518,8 +518,9 @@ if context_skill_count:
     )
 # v2 on 2026-08-27: the heading changed from "Package Skills Catalog" when
 # Context Skills joined the catalog — new artwork means a new filename.
-# v3 on 2026-09-10 updates counts for the Neon Multi-Node package and context.
-render_blue_card("og-catalog-blue-v3.png", "Catalog", "Skills Catalog", catalog_card_text, "/skills")
+# v3 on 2026-09-10 adds the Neon Multi-Node package and context.
+# v4 adds its Red and Blue runtime variants to the package count.
+render_blue_card("og-catalog-blue-v4.png", "Catalog", "Skills Catalog", catalog_card_text, "/skills")
 render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills", "Production examples of deterministic, agent-operated infrastructure built with Colors.", "/featured")
 
 # One source card per repository, not per recipe: Context Skills share
@@ -527,7 +528,7 @@ render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills
 owners = {}
 repository_recipes = {}
 # Keep count-driven revisions synchronized with src/data/catalog.ts.
-catalog_og_revisions = {"owner-getcolors": 2, "source-getcolors-skills": 2, "skill-getcolors-skills-neon-multi-node": 2}
+catalog_og_revisions = {"owner-getcolors": 3, "source-getcolors-skills": 2, "skill-getcolors-skills-neon-multi-node": 3}
 def catalog_og_name(kind, *parts):
     key = "-".join([kind, *(slug(part) for part in parts)])
     return f"og-{key}-blue-v{catalog_og_revisions.get(key, 1)}.png"

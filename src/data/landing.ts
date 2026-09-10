@@ -1913,7 +1913,7 @@ export const neonMultiNode = {
   repoUrl: "https://github.com/getcolors/neon-multi-node",
   heading: "Neon Multi-Node: separate compute, pageserver and WAL quorum on AWS",
   lede: "Neon Multi-Node operates self-hosted Neon across five AWS machines: one PostgreSQL compute host, one pageserver host with the storage broker, and three independent safekeeper hosts. S3 holds the database's remote storage and Terraform state in deployment-owned buckets. Cloudflare DNS names the compute endpoint, which serves native PostgreSQL TLS.",
-  runtimeNote: "This package uses **green** (Clojure / Babashka) and shared `colors-compute` infrastructure. The three safekeepers form the WAL quorum. The compute and pageserver each have one instance; this topology does not provide automatic failover for those roles.",
+  runtimeNote: "This package supplies **red** (TypeScript / Bun), **green** (Clojure / Babashka), and **blue** (Python / uv) runtimes using shared `colors-compute` infrastructure. Each reads the same `colors.yml`; run one lifecycle operation per profile at a time. The three safekeepers form the WAL quorum. The compute and pageserver each have one instance; this topology does not provide automatic failover for those roles.",
   steps: [
     { title: "Read desired state", body: "`colors.yml` describes the five machine roles, database identities, image pins, S3 storage and the hostname. Provider credentials remain environment references." },
     { title: "Build and dry-run", body: "Render the deployment and inspect its execution graph before contacting AWS, Cloudflare or the machines." },

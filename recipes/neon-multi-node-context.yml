@@ -1,7 +1,7 @@
 type: context
 name: Neon Multi-Node AWS
 repository: getcolors/skills
-summary: Verified Neon TLS and SQL witness traps, uncertain quorum writes, recovery, guarded cleanup, and repeated deletion across five AWS machines.
+summary: Verified Neon TLS, quorum recovery and guarded cleanup, with native Red/Blue runtime handoff and offline subprocess and cold-install traps.
 keywords:
   - Neon
   - AWS
@@ -16,6 +16,11 @@ keywords:
   - Cannot run program ansible-playbook
   - NoSuchBucket
   - legacy monolithic state requires explicit migration
+  - Red Blue runtime handoff
+  - negative subprocess exit
+  - SIGTERM
+  - failed to resolve
+  - Bun cold cache
 companion: getcolors/neon-multi-node
 context-skills:
   - name: neon-multi-node

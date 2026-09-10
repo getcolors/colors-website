@@ -32,9 +32,9 @@
     {
       "name": "clickhouse-replicated",
       "type": "archive",
-      "description": "What a three-node replicated ClickHouse cluster with embedded Keeper needs that the docs will not tell you - clickhouse-server failing to start with 'SAXParseException Invalid token', status=232/ADDRESS_FAMILIES and an empty err.log; 'PARTITION BY parameters should be specified directly inside engine' and 'Failed with result protocol' after a config.d override on system.query_log; BACKUP TO Disk answering BACKUP_CREATED while the bucket holds only randomly named objects (s3 versus s3_plain); a test restore beside the live database that must not collide in Keeper; 'Not enough privileges ... SHOW COLUMNS ON system.one' with the documented grants; replicas that ping each other while clusterAllReplicas never reaches 3 on Vultr (provider firewall and ufw both filter the VPC); system.query_log absent until SYSTEM FLUSH LOGS. Use whenever the user runs ClickHouse replicas with Keeper on separate hosts, backs ClickHouse up to S3 storage, or test-restores on a live cluster. Full symptom index at the top of the body.",
-      "url": "/.well-known/agent-skills/clickhouse-replicated-0b5ed9296b0b617eba65a8cba0d1c26298d0caf4a09679b3a13c6901e3ceec45.tar.gz",
-      "digest": "sha256:0b5ed9296b0b617eba65a8cba0d1c26298d0caf4a09679b3a13c6901e3ceec45"
+      "description": "Replicated ClickHouse with embedded Keeper: SAXParseException Invalid token, status=232/ADDRESS_FAMILIES and empty err.log; PARTITION BY engine conflicts and systemd protocol failure; BACKUP_CREATED with random S3 keys or logical/physical count mismatches; live restore Keeper collisions; missing system.one grants or lazy query_log; peers ping while clusterAllReplicas never reaches 3. AWS additions cover small queries working while dbt/clickhouse_connect hangs with ReadTimeoutError or StreamFailureError over jumbo-MTU WireGuard, Ansible YAML errors at unexpanded scaffold conditionals, stale outage probes, replica-count gates broken by rehearsal tables, and managed S3 backend cleanup after compute retirement. Use for three-host Keeper clusters, native S3 backups, and restore rehearsals. Full symptom routing and dated evidence are in the body.",
+      "url": "/.well-known/agent-skills/clickhouse-replicated-67254edb83912991b7d31dc6e62c10b65ed1ba32358b3f4f0c2474d49f4c9a2d.tar.gz",
+      "digest": "sha256:67254edb83912991b7d31dc6e62c10b65ed1ba32358b3f4f0c2474d49f4c9a2d"
     },
     {
       "name": "create-context-skill",
@@ -67,9 +67,9 @@
     {
       "name": "neon-multi-node",
       "type": "archive",
-      "description": "Use when self-hosted Neon says \"server does not support SSL, but SSL was required\", compute_ctl logs \"unknown TLS key type\", a safekeeper outage rehearsal fails with \"FAIL AssertionError\", psql returns \"INSERT 0 1\" instead of the expected value, a timed-out quorum write appears after recovery, cleanup reports Ansible ENOENT, repeat delete reports migration after removing its backend, or three safekeepers and S3 are being mistaken for complete HA. Verified AWS multi-node TLS, SQL witness, WAL quorum, S3 recovery and lifecycle contracts.",
-      "url": "/.well-known/agent-skills/neon-multi-node-76c55c06514fa666287377077ea418fc856d8c42ce6dda9a0c59bd4f253349d6.tar.gz",
-      "digest": "sha256:76c55c06514fa666287377077ea418fc856d8c42ce6dda9a0c59bd4f253349d6"
+      "description": "Use when self-hosted Neon says \"server does not support SSL, but SSL was required\", compute_ctl logs \"unknown TLS key type\", a safekeeper outage rehearsal fails with \"FAIL AssertionError\", psql returns \"INSERT 0 1\" instead of the expected value, a timed-out quorum write appears after recovery, cleanup reports Ansible ENOENT, repeat delete reports migration after removing its backend, or three safekeepers and S3 are being mistaken for complete HA. Also use when changing Red/Blue runtimes on one profile, negative subprocess exits bypass failure gates, or Bun cold dependency resolution fails. Verified AWS multi-node TLS, SQL witness, WAL quorum, S3 recovery and lifecycle contracts.",
+      "url": "/.well-known/agent-skills/neon-multi-node-520afba04bee4fccb71539c2e6c8aa81dcfb9c6d625135fd143de9faff7cc0ad.tar.gz",
+      "digest": "sha256:520afba04bee4fccb71539c2e6c8aa81dcfb9c6d625135fd143de9faff7cc0ad"
     },
     {
       "name": "neon-single-node",
@@ -380,11 +380,25 @@
       "digest": "sha256:e79831a926a7305a950669eac56f5faedc5ad540dacde7fb7975eaf6bf51a6c0"
     },
     {
+      "name": "package-neon-multi-node-blue",
+      "type": "archive",
+      "description": "Deploy and operate self-hosted Neon Postgres 17 across separate compute and pageserver machines plus three safekeepers, using Colors Blue and colors-compute, managed AWS S3 storage and state, Cloudflare DNS, and native PostgreSQL TLS. Use for neon-multi-node colors.yml deployments, convergence, recovery rehearsals, inspection, and guarded teardown.",
+      "url": "/.well-known/agent-skills/package-neon-multi-node-blue-1118bafd5fd55921a9e2bc38793a843d11cc586dc51426769bcaed61e9ba5040.tar.gz",
+      "digest": "sha256:1118bafd5fd55921a9e2bc38793a843d11cc586dc51426769bcaed61e9ba5040"
+    },
+    {
       "name": "package-neon-multi-node-green",
       "type": "archive",
       "description": "Deploy and operate self-hosted Neon Postgres 17 across separate compute and pageserver machines plus three safekeepers, using Colors Green and colors-compute, managed AWS S3 storage and state, Cloudflare DNS, and native PostgreSQL TLS. Use for neon-multi-node colors.yml deployments, convergence, recovery rehearsals, inspection, and guarded teardown.",
-      "url": "/.well-known/agent-skills/package-neon-multi-node-green-ece58703f96faf37816f952590726fc8681e5458a007007e345b74ebff4f32cc.tar.gz",
-      "digest": "sha256:ece58703f96faf37816f952590726fc8681e5458a007007e345b74ebff4f32cc"
+      "url": "/.well-known/agent-skills/package-neon-multi-node-green-a37413d6005b9510bce78e1084d29ac6efecfbf597dd4435ef0063b2606198a2.tar.gz",
+      "digest": "sha256:a37413d6005b9510bce78e1084d29ac6efecfbf597dd4435ef0063b2606198a2"
+    },
+    {
+      "name": "package-neon-multi-node-red",
+      "type": "archive",
+      "description": "Deploy and operate self-hosted Neon Postgres 17 across separate compute and pageserver machines plus three safekeepers, using Colors Red and colors-compute, managed AWS S3 storage and state, Cloudflare DNS, and native PostgreSQL TLS. Use for neon-multi-node colors.yml deployments, convergence, recovery rehearsals, inspection, and guarded teardown.",
+      "url": "/.well-known/agent-skills/package-neon-multi-node-red-3d3dc6283f3e5c7d0c0015055e101244ad7e32c7c3baa045fbd6890874b96379.tar.gz",
+      "digest": "sha256:3d3dc6283f3e5c7d0c0015055e101244ad7e32c7c3baa045fbd6890874b96379"
     },
     {
       "name": "package-neon-red",
