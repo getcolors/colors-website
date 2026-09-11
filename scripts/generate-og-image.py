@@ -529,7 +529,27 @@ render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills
 owners = {}
 repository_recipes = {}
 # Keep count-driven revisions synchronized with src/data/catalog.ts.
-catalog_og_revisions = {"owner-getcolors": 4, "source-getcolors-skills": 2, "skill-getcolors-skills-neon-multi-node": 3}
+# v2 on 2026-09-11 for the agent-network, clickstack, posthog and redis cards:
+# their recipes changed on 2026-09-04 and the cards were never regenerated.
+catalog_og_revisions = {
+    "owner-getcolors": 4,
+    "source-getcolors-skills": 2,
+    "skill-getcolors-skills-neon-multi-node": 3,
+    "skill-getcolors-agent-network-package-agent-network-red": 2,
+    "skill-getcolors-agent-network-package-agent-network-green": 2,
+    "skill-getcolors-agent-network-package-agent-network-blue": 2,
+    "source-getcolors-agent-network": 2,
+    "skill-getcolors-clickstack-package-clickstack-red": 2,
+    "skill-getcolors-clickstack-package-clickstack-green": 2,
+    "skill-getcolors-clickstack-package-clickstack-blue": 2,
+    "source-getcolors-clickstack": 2,
+    "skill-getcolors-posthog-package-posthog-red": 2,
+    "skill-getcolors-posthog-package-posthog-green": 2,
+    "skill-getcolors-posthog-package-posthog-blue": 2,
+    "source-getcolors-posthog": 2,
+    "skill-getcolors-redis-package-redis-green": 2,
+    "source-getcolors-redis": 2,
+}
 def catalog_og_name(kind, *parts):
     key = "-".join([kind, *(slug(part) for part in parts)])
     return f"og-{key}-blue-v{catalog_og_revisions.get(key, 1)}.png"

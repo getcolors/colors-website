@@ -115,6 +115,20 @@ const catalogOgRevisions: Record<string, number> = {
   "owner-getcolors": 4,
   "source-getcolors-skills": 2,
   "skill-getcolors-skills-neon-multi-node": 3,
+  "skill-getcolors-agent-network-package-agent-network-red": 2,
+  "skill-getcolors-agent-network-package-agent-network-green": 2,
+  "skill-getcolors-agent-network-package-agent-network-blue": 2,
+  "source-getcolors-agent-network": 2,
+  "skill-getcolors-clickstack-package-clickstack-red": 2,
+  "skill-getcolors-clickstack-package-clickstack-green": 2,
+  "skill-getcolors-clickstack-package-clickstack-blue": 2,
+  "source-getcolors-clickstack": 2,
+  "skill-getcolors-posthog-package-posthog-red": 2,
+  "skill-getcolors-posthog-package-posthog-green": 2,
+  "skill-getcolors-posthog-package-posthog-blue": 2,
+  "source-getcolors-posthog": 2,
+  "skill-getcolors-redis-package-redis-green": 2,
+  "source-getcolors-redis": 2,
 };
 export const catalogOgImage = (kind: "owner" | "source" | "skill", ...parts: string[]) => {
   const key = `${kind}-${parts.map((part) => part.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")).join("-")}`;
