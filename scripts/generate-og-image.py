@@ -232,12 +232,21 @@ def render_blue_card(filename, kicker, title, subtitle, route):
     card.append(f'<rect x="{MARGIN}" y="153" width="{kicker_width + 36:.1f}" height="48" rx="24" fill="{oklch(0.96, 0.03, 260)}" stroke="{oklch(0.90, 0.05, 260)}"/>')
     card.append(kicker_path)
 
-    title_lines = wrapped(title, 68, W - 2 * MARGIN, tracking=-0.02)
+    # A skill name is one hyphenated word, so wrapped() cannot break it; when
+    # it is wider than the safe area at 68px, shrink the size until it fits
+    # rather than let it run past the margin (package-agent-network-doks-green
+    # overflowed by 24px). Every title that already fits is untouched.
+    title_size, title_width = 68, W - 2 * MARGIN
+    title_lines = wrapped(title, title_size, title_width, tracking=-0.02)
+    while title_size > 40 and any(text(SANS, line, title_size, -0.02)[1] > title_width for line in title_lines):
+        title_size -= 2
+        title_lines = wrapped(title, title_size, title_width, tracking=-0.02)
+    title_leading = round(title_size * 74 / 68)
     title_y = 294
     for index, line in enumerate(title_lines):
-        card.append(draw(SANS, line, 68, MARGIN, title_y + index * 74, INK, -0.02, 0.023)[0])
+        card.append(draw(SANS, line, title_size, MARGIN, title_y + index * title_leading, INK, -0.02, 0.023)[0])
 
-    subtitle_y = title_y + len(title_lines) * 74 + 22
+    subtitle_y = title_y + len(title_lines) * title_leading + 22
     for index, line in enumerate(wrapped(subtitle, 26, W - 2 * MARGIN, 2)):
         card.append(draw(SANS, line, 26, MARGIN, subtitle_y + index * 36, MUTED)[0])
 
@@ -535,6 +544,8 @@ catalog_og_revisions = {
     "owner-getcolors": 4,
     "source-getcolors-skills": 2,
     "skill-getcolors-skills-neon-multi-node": 3,
+    # v2 on 2026-09-11: the title now shrinks to fit instead of overflowing.
+    "skill-getcolors-agent-network-doks-package-agent-network-doks-green": 2,
     "skill-getcolors-agent-network-package-agent-network-red": 2,
     "skill-getcolors-agent-network-package-agent-network-green": 2,
     "skill-getcolors-agent-network-package-agent-network-blue": 2,

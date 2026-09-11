@@ -115,6 +115,7 @@ const catalogOgRevisions: Record<string, number> = {
   "owner-getcolors": 4,
   "source-getcolors-skills": 2,
   "skill-getcolors-skills-neon-multi-node": 3,
+  "skill-getcolors-agent-network-doks-package-agent-network-doks-green": 2,
   "skill-getcolors-agent-network-package-agent-network-red": 2,
   "skill-getcolors-agent-network-package-agent-network-green": 2,
   "skill-getcolors-agent-network-package-agent-network-blue": 2,
