@@ -1,7 +1,7 @@
 type: context
 name: AutoMQ Multi-Node
 repository: getcolors/skills
-summary: Verified multi-node AutoMQ traps, SCRAM genesis and listener contracts, object-storage ownership, and targeted failover gates. Includes Vultr host firewalls, AWS and Google Cloud bucket lifecycles, and GCS conditional-write signing.
+summary: AutoMQ traps verified on Vultr, AWS and Google Cloud, plus OCI storage probes and failed VM allocation. Covers SCRAM genesis, bucket ownership, conditional writes and targeted failover gates.
 keywords:
   - automq
   - kafka
@@ -13,6 +13,12 @@ keywords:
   - s3
   - google cloud
   - gcs
+  - oci
+  - Oracle Cloud Infrastructure
+  - If-Match
+  - SignatureDoesNotMatch
+  - Valid ratio range
+  - Out of host capacity
   - ExcessHeaderValues
   - ufw
   - waiting for the controller to acknowledge that we are caught up

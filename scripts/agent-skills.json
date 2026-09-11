@@ -22,7 +22,7 @@
     },
     "automq": {
       "ref": "main",
-      "sha": "69761b1f663fb8c2151c2fe93085b5e251e80470"
+      "sha": "d37766dbac4f115f543fa55cdbd3f25d46a4fc32"
     },
     "clickhouse": {
       "ref": "main",
@@ -118,7 +118,7 @@
     },
     "skills": {
       "ref": "main",
-      "sha": "3914f35801750d503f0abcf2e927522e74abd85a"
+      "sha": "df792d2cdad756f5d64ea34461cdefa74c2e3bb7"
     },
     "temporal": {
       "ref": "main",
