@@ -534,11 +534,25 @@
       "digest": "sha256:50afb1ec447e927ac524c94540fb1e52f908036e815a9eff2ff8cde6ba2ad7eb"
     },
     {
+      "name": "package-redis-blue",
+      "type": "archive",
+      "description": "Provision and manage one Redis 7.2 server on one Vultr instance, DigitalOcean droplet or AWS EC2 instance, published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 or a deployment-owned S3 bucket that a rehearsal verb restores and reads back, using OpenTofu and Ansible. Use when asked to deploy, converge, back up, rehearse recovery for, inspect or tear down a single-node Redis, or to work on a colors.yml for a redis deployment.",
+      "url": "/.well-known/agent-skills/package-redis-blue-d0c65024091a634655bfdedb01b8cf48ab73e77111884004209b85df495063eb.tar.gz",
+      "digest": "sha256:d0c65024091a634655bfdedb01b8cf48ab73e77111884004209b85df495063eb"
+    },
+    {
       "name": "package-redis-green",
       "type": "archive",
-      "description": "Provision and manage one Redis 7.2 server on one Vultr instance or DigitalOcean droplet — published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 that a rehearsal verb restores and reads back — using OpenTofu and Ansible. Use when asked to deploy, converge, back up, rehearse recovery for, inspect or tear down a single-node Redis, or to work on a colors.yml for a redis deployment.",
-      "url": "/.well-known/agent-skills/package-redis-green-23398afa90ac3cda8bed1d01dba005a32b2c32ed9705b11fa4b9d318e515b499.tar.gz",
-      "digest": "sha256:23398afa90ac3cda8bed1d01dba005a32b2c32ed9705b11fa4b9d318e515b499"
+      "description": "Provision and manage one Redis 7.2 server on one Vultr instance, DigitalOcean droplet or AWS EC2 instance, published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 or a deployment-owned S3 bucket that a rehearsal verb restores and reads back, using OpenTofu and Ansible. Use when asked to deploy, converge, back up, rehearse recovery for, inspect or tear down a single-node Redis, or to work on a colors.yml for a redis deployment.",
+      "url": "/.well-known/agent-skills/package-redis-green-b3c84034d3902beb61aa5e0f5cd498dc5c37bc9a2884f5c7ebbc7eda3c816263.tar.gz",
+      "digest": "sha256:b3c84034d3902beb61aa5e0f5cd498dc5c37bc9a2884f5c7ebbc7eda3c816263"
+    },
+    {
+      "name": "package-redis-red",
+      "type": "archive",
+      "description": "Provision and manage one Redis 7.2 server on one Vultr instance, DigitalOcean droplet or AWS EC2 instance, published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 or a deployment-owned S3 bucket that a rehearsal verb restores and reads back, using OpenTofu and Ansible. Use when asked to deploy, converge, back up, rehearse recovery for, inspect or tear down a single-node Redis, or to work on a colors.yml for a redis deployment.",
+      "url": "/.well-known/agent-skills/package-redis-red-e8a0a7a0b6d8503f0a064784137be687c7c51424b4348bec83bcd38f7419155b.tar.gz",
+      "digest": "sha256:e8a0a7a0b6d8503f0a064784137be687c7c51424b4348bec83bcd38f7419155b"
     },
     {
       "name": "package-restate-blue",

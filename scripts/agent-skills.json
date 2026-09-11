@@ -94,7 +94,7 @@
     },
     "redis": {
       "ref": "main",
-      "sha": "9db5268f427b746a01c189548c5fe0b0934772d2"
+      "sha": "7ce215e9c4437812bc2426ff4e84c2f0e18c5000"
     },
     "restate": {
       "ref": "main",

@@ -530,7 +530,8 @@ if context_skill_count:
 # v3 on 2026-09-10 adds the Neon Multi-Node package and context.
 # v4 adds its Red and Blue runtime variants to the package count.
 # v5 on 2026-09-11 adds the Red and Blue n8n variants to the package count.
-render_blue_card("og-catalog-blue-v5.png", "Catalog", "Skills Catalog", catalog_card_text, "/skills")
+# v6 on 2026-09-11 adds the Red and Blue redis variants to the package count.
+render_blue_card("og-catalog-blue-v6.png", "Catalog", "Skills Catalog", catalog_card_text, "/skills")
 render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills", "Production examples of deterministic, agent-operated infrastructure built with Colors.", "/featured")
 
 # One source card per repository, not per recipe: Context Skills share
@@ -541,7 +542,7 @@ repository_recipes = {}
 # v2 on 2026-09-11 for the agent-network, clickstack, posthog and redis cards:
 # their recipes changed on 2026-09-04 and the cards were never regenerated.
 catalog_og_revisions = {
-    "owner-getcolors": 4,
+    "owner-getcolors": 5,
     "source-getcolors-skills": 2,
     "skill-getcolors-skills-neon-multi-node": 3,
     # v2 on 2026-09-11: the title now shrinks to fit instead of overflowing.
@@ -558,8 +559,10 @@ catalog_og_revisions = {
     "skill-getcolors-posthog-package-posthog-green": 2,
     "skill-getcolors-posthog-package-posthog-blue": 2,
     "source-getcolors-posthog": 2,
-    "skill-getcolors-redis-package-redis-green": 2,
-    "source-getcolors-redis": 2,
+    # v3 on 2026-09-11 for the redis cards: the recipe now names AWS beside
+    # Vultr and DigitalOcean and the S3 bucket beside R2.
+    "skill-getcolors-redis-package-redis-green": 3,
+    "source-getcolors-redis": 3,
 }
 def catalog_og_name(kind, *parts):
     key = "-".join([kind, *(slug(part) for part in parts)])

@@ -112,7 +112,7 @@ export type Catalog = {
 // Count changes need new image URLs so cached social previews refresh.
 // Keep these revisions synchronized with scripts/generate-og-image.py.
 const catalogOgRevisions: Record<string, number> = {
-  "owner-getcolors": 4,
+  "owner-getcolors": 5,
   "source-getcolors-skills": 2,
   "skill-getcolors-skills-neon-multi-node": 3,
   "skill-getcolors-agent-network-doks-package-agent-network-doks-green": 2,
@@ -128,8 +128,8 @@ const catalogOgRevisions: Record<string, number> = {
   "skill-getcolors-posthog-package-posthog-green": 2,
   "skill-getcolors-posthog-package-posthog-blue": 2,
   "source-getcolors-posthog": 2,
-  "skill-getcolors-redis-package-redis-green": 2,
-  "source-getcolors-redis": 2,
+  "skill-getcolors-redis-package-redis-green": 3,
+  "source-getcolors-redis": 3,
 };
 export const catalogOgImage = (kind: "owner" | "source" | "skill", ...parts: string[]) => {
   const key = `${kind}-${parts.map((part) => part.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")).join("-")}`;

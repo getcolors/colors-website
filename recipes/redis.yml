@@ -1,6 +1,6 @@
 name: Redis
 repository: getcolors/redis
-summary: Operate one Redis 7.2 server on one Vultr instance or DigitalOcean droplet — published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 that a rehearsal verb restores and reads back.
+summary: Operate one Redis 7.2 server on one Vultr instance, DigitalOcean droplet or AWS EC2 instance, published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 or a deployment-owned S3 bucket that a rehearsal verb restores and reads back.
 keywords:
   - Redis
   - cache
@@ -11,12 +11,20 @@ keywords:
   - noeviction
   - RDB backup
   - Cloudflare R2
+  - Amazon S3
   - Vultr
   - DigitalOcean
+  - AWS
   - SSH tunnel
   - single node
   - self-hosted
 package-skills:
+  - name: package-redis-red
+    path: skills/package-redis-red/SKILL.md
+    runtime: red
   - name: package-redis-green
     path: skills/package-redis-green/SKILL.md
     runtime: green
+  - name: package-redis-blue
+    path: skills/package-redis-blue/SKILL.md
+    runtime: blue
