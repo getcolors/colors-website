@@ -112,7 +112,7 @@ export type Catalog = {
 // Count changes need new image URLs so cached social previews refresh.
 // Keep these revisions synchronized with scripts/generate-og-image.py.
 const catalogOgRevisions: Record<string, number> = {
-  "owner-getcolors": 3,
+  "owner-getcolors": 4,
   "source-getcolors-skills": 2,
   "skill-getcolors-skills-neon-multi-node": 3,
 };

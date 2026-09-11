@@ -1812,7 +1812,7 @@ export const n8n = {
   heading: "n8n: workflow automation whose database is object storage, built with Colors",
   lede: "n8n is a Package Skill built with Colors. It provisions n8n 2.36.9 on a single Vultr instance \u2014 the n8n server, an external task runner isolating Code nodes, and Caddy terminating TLS \u2014 backed not by a colocated Postgres but by a colocated self-hosted Neon, so the durable copy of every workflow, credential and execution lives in Cloudflare R2 rather than on the instance's disk. Seven containers, one Compose project, and only the proxy publishes beyond loopback.",
   runtimeNote:
-    "n8n ships in **green**. The storage tier is not reimplemented: this package SHA-pins `getcolors/neon` and renders that package's templates straight off the classpath, so **no copy of the storage tier exists here to drift** \u2014 n8n's services arrive as a Compose override installed beside the upstream file, which is what lets every unchanged upstream command operate on the one merged project.",
+    "n8n ships in all three colours. **Red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit across both fixtures. None of them reimplements the storage tier. Each colour SHA-pins `getcolors/neon` and renders that package's templates straight out of the dependency, so **no copy of the storage tier exists here to drift**. n8n's services arrive as a Compose override installed beside the upstream file, which is what lets every unchanged upstream command operate on the one merged project.",
   steps: [
     {
       title: "Read desired state",

@@ -17,6 +17,12 @@ keywords:
   - Vultr
   - single node
 package-skills:
+  - name: package-n8n-red
+    path: skills/package-n8n-red/SKILL.md
+    runtime: red
   - name: package-n8n-green
     path: skills/package-n8n-green/SKILL.md
     runtime: green
+  - name: package-n8n-blue
+    path: skills/package-n8n-blue/SKILL.md
+    runtime: blue

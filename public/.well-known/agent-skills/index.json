@@ -359,11 +359,25 @@
       "digest": "sha256:9ecc35f577bf84bdcf8093d1d08ccbda89738ded94835a6f5d45bab1dbaf0fe0"
     },
     {
+      "name": "package-n8n-blue",
+      "type": "archive",
+      "description": "Provision and manage a self-hosted n8n workflow automation instance on one Vultr instance, backed by a colocated self-hosted Neon (storage/compute-separated Postgres with layers and WAL in Cloudflare R2), behind Caddy TLS with an external task runner — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted n8n, to run n8n on Postgres rather than SQLite, to put n8n's database on object storage, or to work on a colors.yml for an n8n deployment.",
+      "url": "/.well-known/agent-skills/package-n8n-blue-a9388e299ca26b532c1393c513ae0e99cdd62ea0a2ce506e4016b6ec1d26e547.tar.gz",
+      "digest": "sha256:a9388e299ca26b532c1393c513ae0e99cdd62ea0a2ce506e4016b6ec1d26e547"
+    },
+    {
       "name": "package-n8n-green",
       "type": "archive",
       "description": "Provision and manage a self-hosted n8n workflow automation instance on one Vultr instance, backed by a colocated self-hosted Neon (storage/compute-separated Postgres with layers and WAL in Cloudflare R2), behind Caddy TLS with an external task runner — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted n8n, to run n8n on Postgres rather than SQLite, to put n8n's database on object storage, or to work on a colors.yml for an n8n deployment.",
       "url": "/.well-known/agent-skills/package-n8n-green-17b6aa291ac6752d3ef0dba9c4aac17fc8a025b5f00f116c4e370846e3a38b9a.tar.gz",
       "digest": "sha256:17b6aa291ac6752d3ef0dba9c4aac17fc8a025b5f00f116c4e370846e3a38b9a"
+    },
+    {
+      "name": "package-n8n-red",
+      "type": "archive",
+      "description": "Provision and manage a self-hosted n8n workflow automation instance on one Vultr instance, backed by a colocated self-hosted Neon (storage/compute-separated Postgres with layers and WAL in Cloudflare R2), behind Caddy TLS with an external task runner — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted n8n, to run n8n on Postgres rather than SQLite, to put n8n's database on object storage, or to work on a colors.yml for an n8n deployment.",
+      "url": "/.well-known/agent-skills/package-n8n-red-1783d6e922aca0090378a5a615d0b83f013f4426bd4d5ca4da94a6ae9520f7a5.tar.gz",
+      "digest": "sha256:1783d6e922aca0090378a5a615d0b83f013f4426bd4d5ca4da94a6ae9520f7a5"
     },
     {
       "name": "package-neon-blue",
