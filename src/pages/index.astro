@@ -864,7 +864,7 @@ const { title, description } = meta;
                      the figure follows the palette. -->
                 <svg viewBox="0 0 640 430" role="img" aria-labelledby="topo-title topo-desc" class="topology-svg">
                   <title id="topo-title">The langfuse-vultr topology</title>
-                  <desc id="topo-desc">One Vultr VPC holding four firewall groups: an application host running langfuse-web, langfuse-worker and Caddy; a Redis host; three ClickHouse replicas each with a Keeper; and a Neon storage host running the storage broker, pageserver, safekeeper and compute. Cloudflare reaches only the app host on port 443. The app host reaches Redis on 6379, ClickHouse on 8123 and 9000, and Neon on 5432. The replicas talk to each other on 9009, 9181 and 9234. Cloudflare R2 holds raw events and media, Neon layers and WAL, and the backups.</desc>
+                  <desc id="topo-desc">One Vultr VPC holding four firewall groups: an application host running langfuse-web, langfuse-worker and Caddy; a Redis host; three ClickHouse replicas each with a Keeper; and a Neon storage host running the storage broker, pageserver, safekeeper and compute. Cloudflare reaches only the app host on port 443. The app host reaches Redis on 6379, ClickHouse on 8123 and 9000, and Neon on 55433. The replicas talk to each other on 9009, 9181 and 9234. Cloudflare R2 holds raw events and media, Neon layers and WAL, and the backups.</desc>
                   <defs>
                     <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                       <path d="M0 0.8 L7.4 4 L0 7.2 Z" class="t-arrow" />
@@ -930,7 +930,7 @@ const { title, description } = meta;
 
                   <!-- app -> neon -->
                   <path d="M320 158 V178 H520 V194" class="t-edge" marker-end="url(#arrow)" />
-                  <text x="528" y="176" class="t-port">:5432</text>
+                  <text x="528" y="176" class="t-port">:55433</text>
 
                   <!-- R2 band, outside -->
                   <path d="M196 326 V366 M520 326 V366" class="t-edge t-edge-dashed" />

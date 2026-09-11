@@ -153,7 +153,7 @@ export const topology = {
   ],
   edges: [
     "Cloudflare → app :443 only; SSH is key-only on every host",
-    "app → clickhouse :8123 / :9000, app → neon :5432, app → redis :6379 — each rule names the peer’s /32",
+    "app → clickhouse :8123 / :9000, app → neon :55433, app → redis :6379, each rule names the peer's /32",
     "clickhouse ↔ clickhouse :9009 interserver, :9181 keeper, :9234 raft",
     "R2 holds raw events and media (app), layers and WAL (neon), and the backups from neon and node 0",
   ],
@@ -168,12 +168,12 @@ export const shapes = {
   heading: "One lifecycle, from a single host to a six-machine VPC",
   lede: "Every Package Skill is built on the same SDK and walks the same build, dry-run, create and guarded delete. The shape it converges is the package’s to decide.",
   items: [
-    { name: "Langfuse", meta: "6 machines · 4 firewall groups · Vultr", body: "LLM observability with a Neon storage tier, Redis, three ClickHouse replicas with Keeper, and the app host — plus a restore rehearsal.", href: "/featured#langfuse" },
+    { name: "Langfuse", meta: "6 machines · 4 firewall groups · AWS / Vultr", body: "LLM observability with a Neon storage tier, Redis, three ClickHouse replicas with Keeper, and the app host, plus a restore rehearsal.", href: "/featured#langfuse" },
     { name: "Neon Multi-Node", meta: "5 machines · 3 safekeepers · AWS", body: "Separate PostgreSQL compute and pageserver roles, a three-member WAL quorum, native PostgreSQL TLS and managed S3 storage.", href: "/featured#neon-multi-node" },
-    { name: "ClickHouse", meta: "3 replicas + Keeper · Metabase host · Hetzner", body: "A replicated ClickHouse cluster with a three-member Keeper quorum and a separate Metabase and PostgreSQL server.", href: "/featured#clickhouse" },
-    { name: "PostgreSQL HA", meta: "3 nodes · Patroni + etcd · DigitalOcean", body: "PostgreSQL 17 with etcd quorum consensus, Patroni leader election, HAProxy routing and continuous WAL backups to R2.", href: "/featured#postgres-agy" },
+    { name: "ClickHouse", meta: "3 replicas + Keeper · Metabase host · AWS / Hetzner", body: "A replicated ClickHouse cluster with a three-member Keeper quorum and a separate Metabase and PostgreSQL server.", href: "/featured#clickhouse" },
+    { name: "PostgreSQL HA", meta: "3 nodes · Patroni + etcd · colors-compute", body: "PostgreSQL 17 with etcd quorum consensus, Patroni leader election, HAProxy routing and continuous WAL backups to R2.", href: "/featured#postgres-agy" },
     { name: "MySQL HA", meta: "3 nodes · Group Replication · DigitalOcean", body: "MySQL 8.4 Group Replication with a floating-IP primary and one-minute binary-log archiving to R2.", href: "/featured#mysql-agy" },
-    { name: "AutoMQ", meta: "3 nodes · Kafka protocol on R2 · Vultr", body: "Apache Kafka 3.9.1 wire protocol with both KRaft roles on every node and Cloudflare R2 as the storage tier.", href: "/featured#automq" },
+    { name: "AutoMQ", meta: "3 nodes · R2 / S3 / GCS · Vultr / AWS / Google", body: "Kafka 3.9.1 protocol with both KRaft roles on every node and object storage in R2, S3 or GCS.", href: "/featured#automq" },
     { name: "K8s", meta: "2 nodes · kubeadm + Flux · DigitalOcean", body: "A kubeadm cluster in a deployment-owned VPC with pinned Flannel, cloud-controller and Flux releases reconciling a public repository.", href: "/featured#k8s" },
     { name: "Agent Network K8s", meta: "VKE cluster · 2-pod application · Vultr", body: "A keyless, policy-gated LLM endpoint behind a TCP load balancer and a network-isolated agent pod running headless Claude Code.", href: "/featured#agent-network-k8s" },
     { name: "Agent Network DOKS", meta: "DOKS cluster · in-cluster build · DigitalOcean", body: "The same two-pod demo on DigitalOcean Kubernetes, with a kaniko build pushed to a created-or-adopted container registry.", href: "/featured#agent-network-doks" },
@@ -494,7 +494,7 @@ export const k3s = {
   docsUrl: "https://getcolors.github.io/k3s/",
   repoUrl: "https://github.com/getcolors/k3s",
   heading: "K3s: a GitOps Kubernetes server, built with Colors",
-  lede: "K3s is a Package Skill built with Colors. It provisions one Hetzner Cloud VPS behind a default-deny firewall, installs pinned K3s and Flux releases, and continuously reconciles a public Git repository without exposing the Kubernetes API.",
+  lede: "K3s is a Package Skill built with Colors. It provisions one VPS through the shared compute library behind a default-deny firewall, installs pinned K3s and Flux releases, and continuously reconciles a public Git repository without exposing the Kubernetes API.",
   runtimeNote:
     "K3s ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Its launcher, desired state, dry-run boundary, and lifecycle graph use the same Colors SDK contracts in every colour.",
   steps: [
@@ -504,7 +504,7 @@ export const k3s = {
     },
     {
       title: "Resolve secrets",
-      body: "Hetzner, R2, and optional Cloudflare credentials arrive through `COLORS_PAR_*`; none are rendered under `.colors/`.",
+      body: "Compute-provider, R2/S3 state, and optional Cloudflare credentials arrive through `COLORS_PAR_*`; none are rendered under `.colors/`.",
     },
     {
       title: "Dry-run boundary",
@@ -523,14 +523,16 @@ export const k3s = {
   dag: [
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
-    { kind: "node", label: "k3s-compute" },
+    { kind: "node", label: "compute" },
     { kind: "edge" },
-    { kind: "group", nodes: ["k3s-ansible-local", "k3s-ansible-remote"] },
+    { kind: "node", label: "ansible-local" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible-remote" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `k3s-compute` → (`k3s-ansible-local`, `k3s-ansible-remote`).",
+    "The create/build workflow runs `start`, `compute`, `ansible-local` and `ansible-remote` in order.",
   dagNote:
-    "The remote branch installs K3s and Flux and waits for the GitOps repository; the local branch writes the SSH alias. `./green kubectl` then crosses an SSH tunnel instead of publishing port 6443. Delete removes the alias before destroying the firewall and server, and the committed guard refuses accidental destruction.",
+    "The local stage checks and writes the SSH alias before remote convergence. The remote stage installs K3s and Flux and waits for the Git repository. `./green kubectl` uses SSH; port 6443 stays private. Delete removes the alias before destroying the guarded server.",
 };
 
 export const clickhouseInstallCmd = "npx skills use getcolors/clickhouse";
@@ -540,7 +542,7 @@ export const clickhouse = {
   docsUrl: "https://getcolors.github.io/clickhouse/",
   repoUrl: "https://github.com/getcolors/clickhouse",
   heading: "ClickHouse: a private analytics stack, built with Colors",
-  lede: "ClickHouse is a Package Skill built with Colors. It provisions a three-node replicated ClickHouse cluster with a three-member Keeper quorum, plus a separate Metabase and PostgreSQL server, on Hetzner Cloud.",
+  lede: "ClickHouse is a Package Skill built with Colors. It provisions a three-node replicated ClickHouse cluster with a three-member Keeper quorum, plus a separate Metabase and PostgreSQL server, on AWS or Hetzner Cloud.",
   runtimeNote:
     "ClickHouse ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. ClickHouse, Keeper, and Metabase stay closed to the public internet; local dbt and browser traffic cross WireGuard.",
   steps: [
@@ -550,7 +552,7 @@ export const clickhouse = {
     },
     {
       title: "Resolve secrets",
-      body: "Hetzner, Cloudflare, R2, ClickHouse, and Metabase credentials arrive through `COLORS_PAR_*`; deployment SSH and WireGuard private keys are generated and retained outside remote state.",
+      body: "Compute-provider, Cloudflare, remote-state, ClickHouse, and Metabase credentials arrive through `COLORS_PAR_*`; deployment SSH and WireGuard private keys are generated and retained outside remote state.",
     },
     {
       title: "Dry-run boundary",
@@ -569,15 +571,13 @@ export const clickhouse = {
   dag: [
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
-    { kind: "node", label: "network" },
+    { kind: "node", label: "infrastructure" },
     { kind: "edge" },
-    { kind: "node", label: "access" },
-    { kind: "edge" },
-    { kind: "group", nodes: ["node-1", "node-2", "node-3", "metabase"] },
-    { kind: "edge" },
-    { kind: "node", label: "firewall" },
+    { kind: "node", label: "storage if managed" },
     { kind: "edge" },
     { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible-local" },
     { kind: "edge" },
     { kind: "node", label: "ansible-render" },
     { kind: "edge" },
@@ -589,12 +589,14 @@ export const clickhouse = {
     { kind: "edge" },
     { kind: "node", label: "acceptance" },
     { kind: "edge" },
+    { kind: "node", label: "rehearsal if backups configured" },
+    { kind: "edge" },
     { kind: "node", label: "drift" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `network` → `access` → (`node-1`, `node-2`, `node-3`, `metabase`) → `firewall` → `dns` → `ansible-render` → `wireguard` → (`clickhouse-config`, `metabase-config`) → `dbt` → `acceptance` → `drift`.",
+    "The create/build workflow runs `start`, `infrastructure`, `storage if managed` and `dns` in order. It runs `ansible-local`, `ansible-render` and `wireguard`, then configures ClickHouse and Metabase in parallel. It continues with `dbt`, `acceptance`, `rehearsal if backups configured` and `drift` in order.",
   dagNote:
-    "The shared firewall exposes only SSH, ICMP, and WireGuard UDP. Acceptance verifies Keeper, replicas, dbt, Metabase, DNS, VPN reachability, and public-port isolation; the drift stage requires every OpenTofu plan to be empty. Delete reverses the graph with parallel DNS/firewall and server teardown, while destroy protection refuses accidents.",
+    "The shared compute library provisions four hosts and their private network. WireGuard precedes parallel ClickHouse and Metabase configuration. Configured backups add a restore rehearsal before drift checks. Delete stops applications, removes DNS and managed storage, then destroys compute.",
 };
 
 export const umamiInstallCmd = "npx skills use getcolors/umami";
@@ -604,13 +606,13 @@ export const umami = {
   docsUrl: "https://getcolors.github.io/umami/",
   repoUrl: "https://github.com/getcolors/umami",
   heading: "Umami: single-node web analytics, built with Colors",
-  lede: "Umami is a Package Skill built with Colors. It provisions one DigitalOcean droplet running Umami web analytics with colocated PostgreSQL 17 behind Caddy, with restore-verified backups to Cloudflare R2.",
+  lede: "Umami is a Package Skill built with Colors. It provisions one cloud VM through the shared compute library running Umami web analytics with colocated PostgreSQL 17 behind Caddy, with restore-verified backups to Cloudflare R2.",
   runtimeNote:
     "Umami ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Only Caddy's 80/443 are public; PostgreSQL and Umami's own port stay on the private Compose network.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It pins every image by tag, the droplet shape and region, DNS, backup schedule and retention, and the state backend. No secret appears in it.",
+      body: "Agent reads `colors.yml`. It pins every image by tag, the VM shape and region, DNS, backup schedule and retention, and the state backend. No secret appears in it.",
     },
     {
       title: "Resolve secrets",
@@ -622,7 +624,7 @@ export const umami = {
     },
     {
       title: "Provision and converge",
-      body: "OpenTofu creates the droplet in the region's default VPC behind a firewall, publishes the Cloudflare record, then Ansible converges Docker Compose and issues TLS. The seeded admin password is rotated during the same run.",
+      body: "The shared compute library provisions the VM and its provider firewall. The package publishes the Cloudflare record, then Ansible converges Docker Compose and issues TLS. The seeded admin password is rotated during the same run.",
     },
     {
       title: "Prove it works",
@@ -635,6 +637,8 @@ export const umami = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
     { kind: "node", label: "ansible" },
@@ -642,7 +646,7 @@ export const umami = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`, and delete reverses it so the application stops before its machine is destroyed.",
+    "The create/build workflow runs `start`, `infrastructure`, `ssh-config` and `dns` in order. It continues with `ansible` and `acceptance` in order.",
   dagNote:
     "Three containers: PostgreSQL, Umami and Caddy. Backups dump PostgreSQL nightly, restore each dump into a scratch database before uploading it, and prune R2 to the same horizon as local disk. `compute-prevent-destroy` refuses accidental deletion.",
 };
@@ -654,13 +658,13 @@ export const rybbit = {
   docsUrl: "https://getcolors.github.io/rybbit/",
   repoUrl: "https://github.com/getcolors/rybbit",
   heading: "Rybbit: hybrid OLTP and columnar analytics, built with Colors",
-  lede: "Rybbit is a Package Skill built with Colors. It provisions one DigitalOcean droplet pairing PostgreSQL 17 for metadata and authentication with ClickHouse for columnar events, plus Redis and Caddy.",
+  lede: "Rybbit is a Package Skill built with Colors. It provisions one cloud VM through the shared compute library pairing PostgreSQL 17 for metadata and authentication with ClickHouse for columnar events, plus Redis and Caddy.",
   runtimeNote:
     "Rybbit ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Only Caddy's 80/443 are public; PostgreSQL, ClickHouse, Redis and the Rybbit backend and client ports stay private.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It pins every image by tag, the droplet shape and region, DNS, backup schedule and retention, and the state backend. No secret appears in it.",
+      body: "Agent reads `colors.yml`. It pins every image by tag, the VM shape and region, DNS, backup schedule and retention, and the state backend. No secret appears in it.",
     },
     {
       title: "Resolve secrets",
@@ -672,7 +676,7 @@ export const rybbit = {
     },
     {
       title: "Provision and converge",
-      body: "OpenTofu creates the droplet and firewall and publishes DNS; Ansible then generates the stack's database, cache and auth secrets on the machine, retains them, and converges six containers.",
+      body: "OpenTofu creates the VM and provider firewall and publishes DNS; Ansible then generates the stack's database, cache and auth secrets on the machine, retains them, and converges six containers.",
     },
     {
       title: "Prove it works",
@@ -685,6 +689,8 @@ export const rybbit = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
     { kind: "node", label: "ansible" },
@@ -692,7 +698,7 @@ export const rybbit = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`, and delete reverses it so the application stops before its machine is destroyed.",
+    "The create/build workflow runs `start`, `infrastructure`, `ssh-config` and `dns` in order. It continues with `ansible` and `acceptance` in order.",
   dagNote:
     "Six containers. Backups dump PostgreSQL and take a native ClickHouse `BACKUP` — never a hot copy of the data directory, which races running merges — restore the dump into a scratch database before uploading, and prune R2 alongside local disk.",
 };
@@ -704,13 +710,13 @@ export const posthog = {
   docsUrl: "https://getcolors.github.io/posthog/",
   repoUrl: "https://github.com/getcolors/posthog",
   heading: "PostHog: a product analytics suite on one machine, built with Colors",
-  lede: "PostHog is a Package Skill built with Colors. It provisions one DigitalOcean droplet running the PostHog application, ClickHouse with embedded Keeper, Kafka, Temporal, a Rust capture service and a plugin server — the tiers PostHog cannot run without, reduced to a single node.",
+  lede: "PostHog is a Package Skill built with Colors. It provisions one cloud VM through the shared compute library running the PostHog application, ClickHouse with embedded Keeper, Kafka, Temporal, a Rust capture service and a plugin server, the tiers PostHog cannot run without, reduced to a single node.",
   runtimeNote:
     "PostHog ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Only Caddy's 80/443 are public; the ingestion path from capture through Kafka to ClickHouse stays on the private Compose network.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It pins every image by tag, the droplet shape and region, DNS, backup schedule and retention, and the state backend. No secret appears in it.",
+      body: "Agent reads `colors.yml`. It pins every image by tag, the VM shape and region, DNS, backup schedule and retention, and the state backend. No secret appears in it.",
     },
     {
       title: "Resolve secrets",
@@ -722,7 +728,7 @@ export const posthog = {
     },
     {
       title: "Provision and migrate",
-      body: "OpenTofu creates the droplet and DNS; Ansible starts the datastores alone, restores a committed schema checkpoint when it matches the pinned image, and applies PostgreSQL and ClickHouse migrations before any application container starts.",
+      body: "OpenTofu creates the VM and DNS; Ansible starts the datastores alone, restores a committed schema checkpoint when it matches the pinned image, and applies PostgreSQL and ClickHouse migrations before any application container starts.",
     },
     {
       title: "Prove ingestion",
@@ -735,6 +741,8 @@ export const posthog = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
     { kind: "node", label: "ansible" },
@@ -742,7 +750,7 @@ export const posthog = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`, and delete reverses it so the application stops before its machine is destroyed.",
+    "The create/build workflow runs `start`, `infrastructure`, `ssh-config` and `dns` in order. It continues with `ansible` and `acceptance` in order.",
   dagNote:
     "Ten containers. The application and plugin server are pinned to one upstream commit because they share a Postgres schema; a committed plain-SQL checkpoint replaces an hour of cold migrations, and is restored only when its stamped commit matches the image.",
 };
@@ -783,22 +791,22 @@ export const airflow = {
   dag: [
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
-    { kind: "node", label: "airflow-compute" },
+    { kind: "node", label: "compute" },
     { kind: "edge" },
-    { kind: "node", label: "tofu-smtp" },
+    { kind: "node", label: "smtp" },
     { kind: "edge" },
-    { kind: "node", label: "tofu-dns" },
+    { kind: "node", label: "dns" },
     { kind: "edge" },
-    { kind: "node", label: "tofu-smtp-post" },
+    { kind: "node", label: "smtp-post" },
     { kind: "edge" },
-    {
-      kind: "branch",
-      nodes: ["airflow-ansible-local", "airflow-ansible-remote"],
-      tail: "airflow-github",
-    },
+    { kind: "node", label: "ansible-local" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible-remote" },
+    { kind: "edge" },
+    { kind: "node", label: "github" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `airflow-compute` → `tofu-smtp` → `tofu-dns` → `tofu-smtp-post` → (`airflow-ansible-local`, `airflow-ansible-remote`), and `airflow-ansible-remote` → `airflow-github`.",
+    "The create/build workflow runs `start`, `compute`, `smtp` and `dns` in order. It continues with `smtp-post`, `ansible-local`, `ansible-remote` and `github` in order.",
   dagNote:
     "GitHub follows the remote stage because seeding the repository immediately triggers its deploy workflow, so the matching public key must already be installed. Delete revokes the credential first, removes the local SSH alias, then tears down SMTP, DNS, and compute; it deliberately keeps the DAG repository and the WAL-G archive.",
 };
@@ -841,6 +849,8 @@ export const rama = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
+    { kind: "node", label: "ansible-local" },
+    { kind: "edge" },
     { kind: "node", label: "smtp" },
     { kind: "edge" },
     { kind: "node", label: "dns" },
@@ -852,7 +862,7 @@ export const rama = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `smtp` → `dns` → `smtp-post` → `ansible` → `acceptance`.",
+    "The create/build workflow runs `start`, `infrastructure`, `ansible-local` and `smtp` in order. It continues with `dns`, `smtp-post`, `ansible` and `acceptance` in order.",
   dagNote:
     "DNS and mail stages become no-ops when their providers are disabled. Delete reverses the graph, removing local and remote WireGuard configuration before infrastructure; the committed destroy guard refuses accidental deletion.",
 };
@@ -864,17 +874,17 @@ export const restate = {
   docsUrl: "https://getcolors.github.io/restate/",
   repoUrl: "https://github.com/getcolors/restate",
   heading: "Restate: durable workflows on one server, built with Colors",
-  lede: "Restate is a Package Skill built with Colors. It provisions a production-oriented single-node Restate server and TypeScript reference application on DigitalOcean, with private service ports, public TLS, durable workflow recovery, and off-server backups.",
+  lede: "Restate is a Package Skill built with Colors. It provisions a production-oriented single-node Restate server and TypeScript reference application through the shared compute library, with private service ports, public TLS, durable workflow recovery, and off-server backups.",
   runtimeNote:
-    "Restate ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Its acceptance workflow deliberately retries an activity and reboots the complete Droplet during a durable delay before verifying the final result.",
+    "Restate ships in all three colours, **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Its acceptance workflow deliberately retries an activity and reboots the complete host during a durable delay before verifying the final result.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It pins Restate, the TypeScript SDK, Caddy, Droplet sizing, backup policy, hostname, region, and state backend.",
+      body: "Agent reads `colors.yml`. It pins Restate, the TypeScript SDK, Caddy, host sizing, backup policy, hostname, region, and state backend.",
     },
     {
       title: "Resolve secrets",
-      body: "DigitalOcean, Cloudflare, remote-state, and backup credentials arrive through `COLORS_PAR_*`; no credential or generated `.colors/` content enters source control.",
+      body: "Compute-provider, Cloudflare, remote-state, and backup credentials arrive through `COLORS_PAR_*`; no credential or generated `.colors/` content enters source control.",
     },
     {
       title: "Dry-run boundary",
@@ -882,11 +892,11 @@ export const restate = {
     },
     {
       title: "Provision privately",
-      body: "OpenTofu discovers the regional default VPC, creates the Droplet, firewall, and apex DNS record; Ansible converges Restate, the application, Caddy, and scheduled R2 backups.",
+      body: "The shared compute library provisions the host and provider firewall; OpenTofu publishes the apex DNS record; Ansible converges Restate, the application, Caddy, and scheduled R2 backups.",
     },
     {
       title: "Prove durability",
-      body: "Acceptance checks HTTPS and duplicate IDs, starts a durable delay, reboots the Droplet, and verifies recovery, two failed activity attempts, attempt-three success, status, and deterministic result.",
+      body: "Acceptance checks HTTPS and duplicate IDs, starts a durable delay, reboots the host, and verifies recovery, two failed activity attempts, attempt-three success, status, and deterministic result.",
     },
   ],
   dagCaption: "Restate — CREATE / BUILD DAG",
@@ -895,6 +905,8 @@ export const restate = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
     { kind: "node", label: "ansible" },
@@ -902,7 +914,7 @@ export const restate = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`.",
+    "The create/build workflow runs `start`, `infrastructure`, `ssh-config` and `dns` in order. It continues with `ansible` and `acceptance` in order.",
   dagNote:
     "Restate ingress, administration, fabric, metrics, and SDK ports remain private. Delete reverses Ansible, DNS, and infrastructure while the committed destroy guard refuses accidents; external backup archives remain available for manual recovery.",
 };
@@ -913,9 +925,7 @@ export const once = {
   repoUrl: "https://github.com/getcolors/once",
   heading: "Once: a personal PaaS, built with Colors",
   lede: "Once is a Package Skill built with Colors. It provisions a VPS, configures DNS and outgoing mail, installs Docker, and reconciles declared applications — a self-hosted alternative to Netlify or Vercel that an agent runs end to end.",
-  // The counterpart to the green-only K3s and Walter runtime notes. Together
-  // they make the three-library claim concrete: Once uses all three while a
-  // Package Skill remains free to choose one.
+  // ONCE supplies all three SDK runtimes for the same desired state.
   runtimeNote:
     "Once ships in all three colours — **red**, **green** and **blue** are interchangeable managers of the same OpenTofu state, from one `colors.yml`.",
   steps: [
@@ -940,20 +950,26 @@ export const once = {
   dag: [
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
-    { kind: "group", nodes: ["tofu-compute", "tofu-smtp"] },
+    { kind: "node", label: "tofu-compute" },
+    { kind: "edge" },
+    { kind: "node", label: "tofu-smtp" },
     { kind: "edge" },
     { kind: "node", label: "tofu-dns" },
     { kind: "edge" },
     { kind: "node", label: "tofu-smtp-post" },
     { kind: "edge" },
-    { kind: "branch", nodes: ["ansible-local", "ansible-remote"], tail: "github" },
+    { kind: "node", label: "ansible-local" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible-remote" },
+    { kind: "edge" },
+    { kind: "node", label: "github" },
   ] satisfies DagItem[],
   // Prose form of the graph above. The page draws the boxes instead, so this
   // one line is the twin's only addition rather than a duplicate.
   dagSummary:
-    "The create/build DAG runs `start` → (`tofu-compute`, `tofu-smtp`) → `tofu-dns` → `tofu-smtp-post` → (`ansible-local`, `ansible-remote`), and `ansible-remote` → `github`.",
+    "The create/build workflow runs `start`, `tofu-compute`, `tofu-smtp` and `tofu-dns` in order. It continues with `tofu-smtp-post`, `ansible-local`, `ansible-remote` and `github` in order.",
   dagNote:
-    "Publishing follows the remote stage, not the local one: the deploy keys describe a configured host, so a workstation-side failure does not gate them. Delete reverses the graph — it withdraws the published credentials first, then cleanup, SMTP post and DNS, then SMTP and compute in parallel. Step failures travel as namespaced exit codes, never uncaught exceptions.",
+    "Compute completes before SMTP and DNS. Local SSH configuration must succeed before remote convergence and GitHub credential publication. Delete withdraws credentials, cleans the host and DNS/SMTP resources, then destroys compute.",
 };
 
 export const temporalInstallCmd = "npx skills use getcolors/temporal";
@@ -963,17 +979,17 @@ export const temporal = {
   docsUrl: "https://getcolors.github.io/temporal/",
   repoUrl: "https://github.com/getcolors/temporal",
   heading: "Temporal: durable workflows on one production server, built with Colors",
-  lede: "Temporal is a Package Skill built with Colors. It provisions one DigitalOcean Droplet running PostgreSQL, all four Temporal Server roles, a TypeScript reference API and worker, and Caddy with public TLS.",
+  lede: "Temporal is a Package Skill built with Colors. It provisions one cloud VM through the shared compute library running PostgreSQL, all four Temporal Server roles, a TypeScript reference API and worker, and Caddy with public TLS.",
   runtimeNote:
-    "Temporal ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. The reference workflow uses a durable timer, retries an activity twice, rejects duplicate IDs, and returns a deterministic result after service or whole-Droplet restarts.",
+    "Temporal ships in all three colours, **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. The reference workflow uses a durable timer, retries an activity twice, rejects duplicate IDs, and returns a deterministic result after service or whole-host restarts.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It pins Temporal Server and TypeScript SDK releases, PostgreSQL, Droplet shape, namespace, workflow delay, retry policy, DNS, TLS, backups, and state backend.",
+      body: "Agent reads `colors.yml`. It pins Temporal Server and TypeScript SDK releases, PostgreSQL, host shape, namespace, workflow delay, retry policy, DNS, TLS, backups, and state backend.",
     },
     {
       title: "Resolve secrets",
-      body: "DigitalOcean, Cloudflare, and remote-state credentials arrive through `COLORS_PAR_*`; PostgreSQL credentials are generated and retained on the server rather than rendered under `.colors/`.",
+      body: "Compute-provider, Cloudflare, and remote-state credentials arrive through `COLORS_PAR_*`; PostgreSQL credentials are generated and retained on the server rather than rendered under `.colors/`.",
     },
     {
       title: "Dry-run boundary",
@@ -981,11 +997,11 @@ export const temporal = {
     },
     {
       title: "Provision privately",
-      body: "OpenTofu discovers the Amsterdam region's existing default VPC, creates the guarded Droplet and firewall, and publishes apex DNS; PostgreSQL, Temporal, and administrative ports remain private.",
+      body: "The shared compute library creates the guarded host and provider firewall; the package publishes apex DNS; PostgreSQL, Temporal, and administrative ports remain private.",
     },
     {
       title: "Prove durability",
-      body: "Acceptance verifies HTTPS, workflow completion, intentional activity retries, duplicate rejection, deterministic status/results, and recovery when Docker or the entire Droplet restarts during the durable delay.",
+      body: "Acceptance verifies HTTPS, workflow completion, intentional activity retries, duplicate rejection, deterministic status/results, and recovery when Docker or the entire host restarts during the durable delay.",
     },
   ],
   dagCaption: "Temporal — CREATE / BUILD DAG",
@@ -994,6 +1010,8 @@ export const temporal = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
     { kind: "node", label: "ansible" },
@@ -1001,9 +1019,9 @@ export const temporal = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`.",
+    "The create/build workflow runs `start`, `infrastructure`, `ssh-config` and `dns` in order. It continues with `ansible` and `acceptance` in order.",
   dagNote:
-    "The infrastructure stage discovers rather than creates the regional default VPC. Ansible initializes both Temporal PostgreSQL schemas before starting all server roles, the API and Caddy. Delete stops the stack, removes DNS, then reaches guarded infrastructure destruction; acceptance can separately reboot the whole Droplet mid-workflow.",
+    "The compute library owns provider networking and remote state. Ansible initializes both Temporal PostgreSQL schemas before starting all server roles, the API and Caddy. Delete stops the stack, removes DNS, then reaches guarded infrastructure destruction; acceptance can separately reboot the whole host mid-workflow.",
 };
 
 export const vaultwardenInstallCmd = "npx skills use getcolors/vaultwarden";
@@ -1042,18 +1060,24 @@ export const vaultwarden = {
   dag: [
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
-    { kind: "group", nodes: ["tofu-compute", "tofu-smtp"] },
+    { kind: "node", label: "compute" },
     { kind: "edge" },
-    { kind: "node", label: "tofu-dns" },
+    { kind: "node", label: "smtp" },
     { kind: "edge" },
-    { kind: "node", label: "tofu-smtp-post" },
+    { kind: "node", label: "dns" },
     { kind: "edge" },
-    { kind: "group", nodes: ["ansible-local", "ansible-remote"] },
+    { kind: "node", label: "smtp-post" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible-local" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible-remote" },
+    { kind: "edge" },
+    { kind: "node", label: "github if configured" },
   ] satisfies DagItem[],
   dagSummary:
-    "The public-image create/build DAG runs `start` → (`tofu-compute`, `tofu-smtp`) → `tofu-dns` → `tofu-smtp-post` → (`ansible-local`, `ansible-remote`).",
+    "The create/build workflow runs `start`, `compute`, `smtp` and `dns` in order. It continues with `smtp-post`, `ansible-local`, `ansible-remote` and `github if configured` in order.",
   dagNote:
-    "This diagram shows the public-image path, which omits the inherited GitHub stage. Setting `vaultwarden-repo` adds credential publication after `ansible-remote`; delete revokes those credentials first. The external R2 replica remains available for recovery and the committed destroy guard refuses accidents.",
+    "The GitHub stage runs only when `vaultwarden-repo` is configured. It publishes credentials after remote convergence; delete revokes them first. The external R2 replica remains available for recovery, and the committed destroy guard protects the server.",
 };
 
 export const dbosInstallCmd = "npx skills use getcolors/dbos";
@@ -1063,17 +1087,17 @@ export const dbos = {
   docsUrl: "https://getcolors.github.io/dbos/",
   repoUrl: "https://github.com/getcolors/dbos",
   heading: "DBOS: durable TypeScript workflows on one production server",
-  lede: "DBOS is a Package Skill built with Colors. It provisions a production-oriented DigitalOcean server, embeds the pinned DBOS TypeScript SDK in a reference HTTP API, keeps PostgreSQL private, publishes Cloudflare HTTPS, and writes PostgreSQL backups to Cloudflare R2.",
+  lede: "DBOS is a Package Skill built with Colors. It provisions one cloud server through the shared compute library, embeds the pinned DBOS TypeScript SDK in a reference HTTP API, keeps PostgreSQL private, publishes Cloudflare HTTPS, and writes PostgreSQL backups to Cloudflare R2.",
   runtimeNote:
-    "DBOS ships in **green**. Its reference workflow durably sleeps, intentionally retries an activity, safely deduplicates caller-supplied workflow IDs, and resumes after the entire Droplet restarts.",
+    "DBOS ships in green, red and blue with byte-identical generated artifacts. Its reference workflow durably sleeps, retries an activity, deduplicates caller-supplied workflow IDs, and resumes after the host restarts.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It pins DBOS and the application image, Amsterdam region, Droplet size, apex hostname, retry policy, retention, PostgreSQL, and backup settings.",
+      body: "Agent reads `colors.yml`. It pins DBOS and the application image, region, VM size, apex hostname, retry policy, retention, PostgreSQL, and backup settings.",
     },
     {
       title: "Resolve secrets",
-      body: "DigitalOcean, Cloudflare, R2, PostgreSQL, and backup credentials arrive only through `COLORS_PAR_*`; `COLORS_PAR_PROFILE` is explicitly rejected.",
+      body: "Compute-provider, Cloudflare, R2, PostgreSQL, and backup credentials arrive only through `COLORS_PAR_*`; `COLORS_PAR_PROFILE` is explicitly rejected.",
     },
     {
       title: "Dry-run boundary",
@@ -1081,27 +1105,31 @@ export const dbos = {
     },
     {
       title: "Provision and deploy",
-      body: "OpenTofu discovers the configured region's default VPC instead of creating one, then provisions the guarded Droplet and DNS before ONCE deploys private PostgreSQL and the DBOS API behind HTTPS.",
+      body: "The shared compute library provisions the guarded VM, firewall and SSH access. The package publishes DNS and bootstraps the host before ONCE deploys PostgreSQL and the DBOS API behind HTTPS.",
     },
     {
       title: "Prove recovery",
-      body: "Acceptance checks HTTPS, completion, activity retry, duplicate IDs, deterministic results, R2 backup upload, and recovery after rebooting the Droplet during a durable delay.",
+      body: "Acceptance checks HTTPS, completion, activity retry, duplicate IDs, deterministic results, R2 backup upload, and recovery after rebooting the host during a durable delay.",
     },
   ],
   dagCaption: "DBOS — CREATE / BUILD DAG",
   dag: [
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
-    { kind: "node", label: "tofu-compute" },
+    { kind: "node", label: "compute" },
     { kind: "edge" },
-    { kind: "node", label: "tofu-dns" },
+    { kind: "node", label: "ssh-config" },
     { kind: "edge" },
-    { kind: "group", nodes: ["ansible-local", "ansible-remote"] },
+    { kind: "node", label: "dns" },
+    { kind: "edge" },
+    { kind: "node", label: "bootstrap" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible-remote" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `tofu-compute` → `tofu-dns` → (`ansible-local`, `ansible-remote`).",
+    "The create/build workflow runs `start`, `compute`, `ssh-config` and `dns` in order. It continues with `bootstrap` and `ansible-remote` in order.",
   dagNote:
-    "Delete removes the managed host configuration and DNS before destroying compute, while preserving the pre-existing default VPC, SSH key, R2 state bucket, and backup objects. The committed prevent-destroy guard requires a separately authorized one-run override.",
+    "Delete removes the application, DNS and SSH alias before destroying compute. The library removes deployment-owned machine keys; external keys and backup objects remain. The committed destroy guard requires an authorized one-run override.",
 };
 
 // Walter's own install line. Deliberately not the `installCmd` constant: that
@@ -1115,11 +1143,11 @@ export const walter = {
   docsUrl: "https://getcolors.github.io/walter/",
   repoUrl: "https://github.com/getcolors/walter",
   heading: "Walter: a remote dev machine, built with Colors",
-  lede: "Walter is another Package Skill built with Colors. It provisions one development machine, records it in `~/.ssh/config` so `ssh <profile>` reaches it, and powers it off and on — so the machine you code on costs nothing while you sleep.",
+  lede: "Walter provisions a development machine, records its SSH aliases, and installs the declared development environment. On OCI and Vultr, `stop` and `start` control its power through the provider API.",
   // The three-library pitch is about choice, not obligation, and saying so
   // plainly is better than letting a reader assume Walter ships in all three.
   runtimeNote:
-    "Walter ships in **green** alone. A Package Skill picks the runtime that suits it — the SDK offers three, it does not demand all three.",
+    "Walter ships in green. It supports extra Unix logins with private homes, machine-owned GitHub authentication, Nix packages, asdf runtimes and optional Emacs configuration. Power operations are available on OCI and Vultr; other providers report that they are unsupported.",
   steps: [
     {
       title: "Read desired state",
@@ -1152,9 +1180,15 @@ export const walter = {
         [
           { kind: "node", label: "start", dark: true },
           { kind: "edge" },
+          { kind: "node", label: "github-token" },
+          { kind: "edge" },
           { kind: "node", label: "compute" },
           { kind: "edge" },
-          { kind: "group", nodes: ["ansible-local", "ansible-remote"] },
+          { kind: "node", label: "ansible-bootstrap" },
+          { kind: "edge" },
+          { kind: "node", label: "ansible-seats" },
+          { kind: "edge" },
+          { kind: "branch", nodes: ["ansible-local", "ansible-remote"], tail: "emacs-packages" },
         ],
       ],
     },
@@ -1179,7 +1213,7 @@ export const walter = {
   // Prose form of the graphs above, for the markdown twin. `start` is both a
   // step name and a command name, so the commands are named explicitly.
   dagSummary:
-    "The create/build DAG runs `start` → `compute` → (`ansible-local`, `ansible-remote`). The `stop` command runs `start` → `power-off`; the `start` command runs `start` → `power-on` → `ansible-local`.",
+    "Create/build prepares GitHub authentication, provisions compute, bootstraps the login and seats, then configures local SSH aliases and the remote environment. The remote branch finishes with optional Emacs packages. Stop calls the power API; start calls it and refreshes SSH aliases.",
   dagNote:
     "Stop and start never reach OpenTofu. No template declares a power state, so powering the machine down out of band causes no drift — there is nothing to reconcile, because power was never managed. Starting reads the address back from the provider rather than from stored state, which a power cycle does not refresh. Delete reverses the create graph, dropping the managed ssh alias before anything is destroyed.",
 };
@@ -1192,9 +1226,9 @@ export const postgresAgy = {
   docsUrl: "https://getcolors.github.io/postgres-agy/",
   repoUrl: "https://github.com/getcolors/postgres-agy",
   heading: "PostgreSQL HA: 3-node Patroni & etcd failover cluster",
-  lede: "PostgreSQL HA is a Package Skill built with Colors. It provisions a 3-node PostgreSQL 17 cluster on DigitalOcean, establishes etcd v3 quorum consensus with Patroni leader election, routes clients via local HAProxy, and streams continuous WAL backups to Cloudflare R2.",
+  lede: "PostgreSQL HA is a Package Skill built with Colors. It provisions a 3-node PostgreSQL 17 cluster through the shared compute library, establishes etcd v3 quorum consensus with Patroni leader election, routes clients via local HAProxy, and streams continuous WAL backups to Cloudflare R2.",
   runtimeNote:
-    "PostgreSQL HA ships in **green** (Babashka / Clojure). It orchestrates Patroni, etcd, HAProxy, and pgBackRest with zero human intervention during failover.",
+    "This package ships in green, red and blue with byte-identical generated artifacts. The pinned colors-compute library owns machines, provider networking, SSH keys and R2/S3 state. Select a provider whose capabilities meet the declared three-node topology.",
   steps: [
     {
       title: "Read desired state",
@@ -1221,16 +1255,20 @@ export const postgresAgy = {
   dag: [
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
-    { kind: "node", label: "tofu-compute" },
+    { kind: "node", label: "infrastructure" },
     { kind: "edge" },
-    { kind: "node", label: "tofu-dns" },
+    { kind: "node", label: "dns" },
     { kind: "edge" },
-    { kind: "group", nodes: ["ansible-local", "cluster", "ansible-remote"] },
+    { kind: "node", label: "ansible-local" },
+    { kind: "edge" },
+    { kind: "node", label: "cluster" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `tofu-compute` → `tofu-dns` → (`ansible-local`, `cluster`, `ansible-remote`).",
+    "Create/build provisions infrastructure and DNS, writes SSH aliases, configures the cluster, then runs acceptance. These stages run in order.",
   dagNote:
-    "Delete reverses the DAG, removing HAProxy DNS routing before tearing down etcd consensus and destroying Droplets. Guarded by committed `compute-prevent-destroy: true`.",
+    "Delete reverses the DAG, removing HAProxy DNS routing before tearing down etcd consensus and destroying the hosts. Guarded by committed `compute-prevent-destroy: true`.",
 };
 
 export const mysqlAgyInstallCmd =
@@ -1243,7 +1281,7 @@ export const mysqlAgy = {
   heading: "MySQL HA: 3-node Group Replication & Floating VIP cluster",
   lede: "MySQL HA is a Package Skill built with Colors. It provisions a 3-node MySQL 8.4 Group Replication cluster on DigitalOcean, manages dynamic primary election via an automated Floating VIP daemon, and streams continuous 1-minute binary logs to Cloudflare R2.",
   runtimeNote:
-    "MySQL HA ships in **green** (Babashka / Clojure). Consensus is maintained natively via MySQL Group Communication System (Paxos) without external key-value stores.",
+    "This package ships in green, red and blue with byte-identical generated artifacts. The pinned colors-compute library owns machines, provider networking, SSH keys and R2/S3 state. The selected provider must support an application-assigned reserved IP.",
   steps: [
     {
       title: "Read desired state",
@@ -1270,14 +1308,20 @@ export const mysqlAgy = {
   dag: [
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
-    { kind: "node", label: "tofu-compute" },
+    { kind: "node", label: "infrastructure" },
     { kind: "edge" },
-    { kind: "node", label: "tofu-dns" },
+    { kind: "node", label: "ansible-local" },
     { kind: "edge" },
-    { kind: "group", nodes: ["ansible-local", "ansible-remote"] },
+    { kind: "group", nodes: ["dns", "base"] },
+    { kind: "edge" },
+    { kind: "node", label: "cluster" },
+    { kind: "edge" },
+    { kind: "node", label: "backup" },
+    { kind: "edge" },
+    { kind: "node", label: "health" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `tofu-compute` → `tofu-dns` → (`ansible-local`, `ansible-remote`).",
+    "Create/build provisions infrastructure and writes SSH aliases. DNS and base host configuration run in parallel, followed by cluster configuration, backup setup and health checks in order.",
   dagNote:
     "Delete releases the Floating Reserved IP and DNS records before destroying compute, guarded by `compute-prevent-destroy: true`.",
 };
@@ -1292,15 +1336,15 @@ export const postgresHa = {
   heading: "PostgreSQL HA (Opus 5): Patroni, colocated etcd, HAProxy on every node",
   lede: "A second, independent implementation of a 3-node PostgreSQL 17 failover cluster, built by Claude Opus 5 in an isolated benchmark run. Patroni 4.1.5 drives a colocated 3-member etcd; HAProxy runs on all three nodes behind three A records, so a failover writes no DNS and calls no cloud API.",
   runtimeNote:
-    "PostgreSQL HA (Opus 5) ships in **green** (Babashka / Clojure) and depends only on the Colors SDK — it writes its own DigitalOcean and Cloudflare templates rather than reusing Once.",
+    "This package ships in green, red and blue with byte-identical generated artifacts. The pinned colors-compute library owns machines, provider networking, SSH keys and R2/S3 state. Select a provider whose capabilities meet the declared three-node topology.",
   steps: [
     {
       title: "Read desired state",
-      body: "The agent reads `colors.yml`: PostgreSQL 17, Patroni 4.1.5, etcd 3.5.33 pinned by tarball SHA-256, three Droplets in AMS3, and a pgBackRest repository in Cloudflare R2.",
+      body: "The agent reads `colors.yml`: PostgreSQL 17, Patroni 4.1.5, etcd 3.5.33 pinned by tarball SHA-256, three provider-configured hosts, and a pgBackRest repository in Cloudflare R2.",
     },
     {
       title: "Resolve secrets",
-      body: "DigitalOcean, Cloudflare and R2 credentials arrive as `COLORS_PAR_*` environment variables. Only two database credentials exist, and the package is built not to need a third.",
+      body: "Compute-provider, Cloudflare and R2 credentials arrive as `COLORS_PAR_*` environment variables. Only two database credentials exist, and the package is built not to need a third.",
     },
     {
       title: "Dry-run boundary",
@@ -1308,7 +1352,7 @@ export const postgresHa = {
     },
     {
       title: "Provision & cluster",
-      body: "OpenTofu creates three Droplets on the region's default VPC; Ansible forms etcd quorum, bootstraps Patroni with quorum synchronous commit `ANY 1`, and starts an HAProxy on every node.",
+      body: "The compute library creates three hosts and their private network; Ansible forms etcd quorum, bootstraps Patroni with quorum synchronous commit `ANY 1`, and starts an HAProxy on every node.",
     },
     {
       title: "Archive & prove restore",
@@ -1323,10 +1367,14 @@ export const postgresHa = {
     { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
-    { kind: "group", nodes: ["ansible-local", "cluster", "acceptance"] },
+    { kind: "node", label: "ansible-local" },
+    { kind: "edge" },
+    { kind: "node", label: "cluster" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → (`ansible-local`, `cluster`, `acceptance`).",
+    "Create/build provisions infrastructure and DNS, writes SSH aliases, configures the cluster, then runs acceptance. These stages run in order.",
   dagNote:
     "Delete reverses the DAG, tearing down the cluster and DNS before destroying compute. Guarded by committed `compute-prevent-destroy: true`.",
 };
@@ -1341,7 +1389,7 @@ export const mysqlHa = {
   heading: "MySQL HA (Opus 5): Group Replication with a reserved-IP endpoint",
   lede: "A second, independent implementation of a 3-node MySQL 8.0 failover cluster, built by Claude Opus 5 in an isolated benchmark run. The three mysqld processes are the Paxos group, so quorum needs no external store, and a DigitalOcean reserved IP follows whichever member reports PRIMARY.",
   runtimeNote:
-    "MySQL HA (Opus 5) ships in **green** (Babashka / Clojure) and depends only on the Colors SDK — it writes its own DigitalOcean and Cloudflare templates rather than reusing Once.",
+    "This package ships in green, red and blue with byte-identical generated artifacts. The pinned colors-compute library owns machines, provider networking, SSH keys and R2/S3 state. The selected provider must support an application-assigned reserved IP.",
   steps: [
     {
       title: "Read desired state",
@@ -1370,12 +1418,18 @@ export const mysqlHa = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
-    { kind: "node", label: "dns" },
+    { kind: "node", label: "ansible-local" },
     { kind: "edge" },
-    { kind: "group", nodes: ["base", "cluster", "backup", "health"] },
+    { kind: "group", nodes: ["dns", "base"] },
+    { kind: "edge" },
+    { kind: "node", label: "cluster" },
+    { kind: "edge" },
+    { kind: "node", label: "backup" },
+    { kind: "edge" },
+    { kind: "node", label: "health" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → (`base`, `cluster`, `backup`, `health`).",
+    "Create/build provisions infrastructure and writes SSH aliases. DNS and base host configuration run in parallel, followed by cluster configuration, backup setup and health checks in order.",
   dagNote:
     "Delete releases the reserved IP and DNS records before destroying compute, guarded by committed `compute-prevent-destroy: true`.",
 };
@@ -1423,6 +1477,8 @@ export const wavehouse = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
+    { kind: "node", label: "ansible-local" },
+    { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
     { kind: "node", label: "ansible" },
@@ -1430,7 +1486,7 @@ export const wavehouse = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`.",
+    "The create/build workflow runs `start`, `infrastructure`, `ansible-local` and `dns` in order. It continues with `ansible` and `acceptance` in order.",
   dagNote:
     "Only Caddy 80/443 and key-only SSH are public; ingest and admin need the server-held operator key while browsers stay anonymous and read-only. Delete reverses Ansible, DNS, and infrastructure while the committed destroy guard refuses accidents.",
 };
@@ -1482,7 +1538,7 @@ export const githubDwh = {
   dagSummary:
     "The run DAG executes `start` → `dlt` → `dbt-run` → `dbt-test` → `lightdash`.",
   dagNote:
-    "Create converges infrastructure and services as its own DAG (`start` → `tofu` → `ansible`); a failed load is retried only as a new complete run. Delete reverses Ansible and infrastructure while the committed destroy guard refuses accidents.",
+    "Create provisions shared compute, updates the SSH alias, publishes DNS and converges the services. Each retry starts a complete warehouse run. Delete stops the services and removes DNS and the SSH alias before guarded compute destruction.",
 };
 
 export const clickstackInstallCmd = "npx skills use getcolors/clickstack";
@@ -1492,17 +1548,17 @@ export const clickstack = {
   docsUrl: "https://getcolors.github.io/clickstack/",
   repoUrl: "https://github.com/getcolors/clickstack",
   heading: "ClickStack: an open-source observability stack on one server, built with Colors",
-  lede: "ClickStack is a Package Skill built with Colors. It provisions the HyperDX observability stack on a single Vultr instance — ClickHouse for telemetry, MongoDB for application state, the HyperDX OpenTelemetry collector, and the HyperDX UI — behind Caddy TLS and Cloudflare, with logs, traces, and metrics ingested over OTLP on the same host that serves the dashboard.",
+  lede: "ClickStack is a Package Skill built with Colors. It provisions the HyperDX observability stack on one VM through the shared compute library, ClickHouse for telemetry, MongoDB for application state, the HyperDX OpenTelemetry collector, and the HyperDX UI, behind Caddy TLS and Cloudflare, with logs, traces, and metrics ingested over OTLP on the same host that serves the dashboard.",
   runtimeNote:
     "ClickStack ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. One hostname carries both halves: the UI and OTLP/HTTP ingestion share port 443, so an exporter needs no endpoint beyond `https://<host>` and 4317/4318 are never exposed.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It names the public host, the initial team's admin email, the five container images, and the Vultr and state-backend boundary. It carries no key material and no secret.",
+      body: "Agent reads `colors.yml`. It names the public host, the initial team's admin email, the five container images, and the selected compute provider and state backend. It carries no key material and no secret.",
     },
     {
       title: "Own the machine keypair",
-      body: "With no `vultr-ssh-keys` in desired state the package generates `~/.ssh/<profile>`, registers it as the Vultr account key named for the profile, and removes it last on delete — the workspace SSH keypair standard, not a bespoke rule.",
+      body: "The shared compute library owns managed machine keys and provider registration. The package writes the profile SSH alias from the returned host details. External keys use the operator's explicit identity; guarded deletion removes only managed keys.",
     },
     {
       title: "Dry-run boundary",
@@ -1523,6 +1579,8 @@ export const clickstack = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
     { kind: "node", label: "ansible" },
@@ -1530,7 +1588,7 @@ export const clickstack = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ansible` → `acceptance`.",
+    "The create/build workflow runs `start`, `infrastructure`, `ssh-config` and `dns` in order. It continues with `ansible` and `acceptance` in order.",
   dagNote:
     "The ingestion key is the team's own `apiKey`, minted by the application and therefore unknowable in advance; convergence reads it back rather than inventing one. Delete reverses Ansible, DNS, and infrastructure and drops the keypair only after the compute destroy succeeded, while the committed destroy guard refuses accidents.",
 };
@@ -1542,17 +1600,17 @@ export const signoz = {
   docsUrl: "https://getcolors.github.io/signoz/",
   repoUrl: "https://github.com/getcolors/signoz",
   heading: "SigNoz: a self-hosted OpenTelemetry backend on one server, built with Colors",
-  lede: "SigNoz is a Package Skill built with Colors. It provisions the SigNoz observability stack on a single Vultr instance \u2014 ClickHouse and ClickHouse Keeper for telemetry, a Postgres metastore for dashboards and alert rules, the schema migrator, the SigNoz application, and the signoz-otel-collector ingester \u2014 behind Caddy TLS and Cloudflare, with traces, logs, and metrics arriving over OTLP on the same host that serves the UI.",
+  lede: "SigNoz is a Package Skill built with Colors. It provisions the SigNoz observability stack on one VM through the shared compute library, ClickHouse and ClickHouse Keeper for telemetry, a Postgres metastore for dashboards and alert rules, the schema migrator, the SigNoz application, and the signoz-otel-collector ingester, behind Caddy TLS and Cloudflare, with traces, logs, and metrics arriving over OTLP on the same host that serves the UI.",
   runtimeNote:
     "SigNoz ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. One hostname carries both halves: the UI and OTLP/HTTP ingestion share port 443, so an exporter needs no endpoint beyond `https://<host>` and 4317/4318 never leave loopback.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It names the public host, the root account, the six container images, the nightly metastore backup, and the Vultr and state-backend boundary. It carries no key material and no secret.",
+      body: "Agent reads `colors.yml`. It names the public host, the root account, the six container images, the nightly metastore backup, and the selected compute provider and state backend. It carries no key material and no secret.",
     },
     {
       title: "Own the machine keypair",
-      body: "With no `vultr-ssh-keys` in desired state the package generates `~/.ssh/<profile>`, registers it as the Vultr account key named for the profile, writes the matching `~/.ssh/config` block so `ssh <profile>` works, and removes the key last on delete \u2014 the workspace SSH keypair and config standards, not bespoke rules.",
+      body: "The shared compute library owns managed machine keys and provider registration. The package writes the profile SSH alias from the returned host details. External keys use the operator's explicit identity; guarded deletion removes only managed keys.",
     },
     {
       title: "Dry-run boundary",
@@ -1582,7 +1640,7 @@ export const signoz = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` \u2192 `infrastructure` \u2192 `ssh-config` \u2192 `dns` \u2192 `ansible` \u2192 `acceptance`.",
+    "The create/build workflow runs `start`, `infrastructure`, `ssh-config` and `dns` in order. It continues with `ansible` and `acceptance` in order.",
   dagNote:
     "Delete is not the create order reversed twice over: the `~/.ssh/config` block goes before the compute destroy, while the keypair goes after it \u2014 a stale block is harmless, a key removed early locks you out of a machine that still exists. The committed destroy guard refuses accidents either way.",
 };
@@ -1600,11 +1658,11 @@ export const netbird = {
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It names the two public hosts, the local break-glass owner, Authentik's first administrator, the seven container images, the nightly encrypted backup, and the Vultr and state-backend boundary. It carries no key material and no secret.",
+      body: "Agent reads `colors.yml`. It names the two public hosts, the local break-glass owner, Authentik's first administrator, the seven container images, the nightly encrypted backup, and the selected compute provider and state backend. It carries no key material and no secret.",
     },
     {
       title: "Own the machine keypair",
-      body: "With no `vultr-ssh-keys` in desired state the package generates `~/.ssh/<profile>`, registers it as the Vultr account key named for the profile, writes the matching `~/.ssh/config` block so `ssh <profile>` works, and removes the key last on delete — the workspace SSH keypair and config standards, not bespoke rules.",
+      body: "The shared compute library owns managed machine keys and provider registration. The package writes the profile SSH alias from the returned host details. External keys use the operator's explicit identity; guarded deletion removes only managed keys.",
     },
     {
       title: "Dry-run boundary",
@@ -1646,7 +1704,7 @@ export const agentNetwork = {
   docsUrl: "https://getcolors.github.io/agent-network/",
   repoUrl: "https://github.com/getcolors/agent-network",
   heading: "Agent Network: keyless LLM access an isolated agent cannot escape, built with Colors",
-  lede: "Agent Network is a Package Skill built with Colors. It provisions a minimal NetBird Agent Network demo on a single Vultr instance — Traefik, the combined `netbird-server`, the dashboard in agent-network view, the private reverse proxy — and an agent container running headless Claude Code on an internal Docker network with no internet route. The agent holds no API key: its only path to an LLM is the generated tunnel-only endpoint, where every request carries its peer identity, passes a model allowlist and per-day budget caps, and lands attributed in the access log.",
+  lede: "Agent Network is a Package Skill built with Colors. It provisions a minimal NetBird Agent Network demo on one Vultr instance or DigitalOcean droplet, Traefik, the combined `netbird-server`, the dashboard in agent-network view, the private reverse proxy, and an agent container running headless Claude Code on an internal Docker network with no internet route. The agent holds no API key: its only path to an LLM is the generated tunnel-only endpoint, where every request carries its peer identity, passes a model allowlist and per-day budget caps, and lands attributed in the access log.",
   runtimeNote:
     "Agent Network ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. The isolation is the demo: an internal Docker network doubled by port-scoped DOCKER-USER rules, with acceptance proving the negative space — raw-TCP probes that must fail beside a control probe that must succeed — after a real Docker restart and a real reboot.",
   steps: [
@@ -1656,7 +1714,7 @@ export const agentNetwork = {
     },
     {
       title: "Own the machine keypair",
-      body: "With no `vultr-ssh-keys` in desired state the package generates `~/.ssh/<profile>`, registers it as the Vultr account key named for the profile, writes the matching `~/.ssh/config` block so `ssh <profile>` works, and removes the key last on delete — the workspace SSH keypair and config standards, not bespoke rules.",
+      body: "The shared compute library owns managed machine keys and provider registration. The package writes the profile SSH alias from the returned host details. External keys use the operator's explicit identity; guarded deletion removes only managed keys.",
     },
     {
       title: "Dry-run boundary",
@@ -1810,7 +1868,7 @@ export const n8n = {
   docsUrl: "https://getcolors.github.io/n8n/",
   repoUrl: "https://github.com/getcolors/n8n",
   heading: "n8n: workflow automation whose database is object storage, built with Colors",
-  lede: "n8n is a Package Skill built with Colors. It provisions n8n 2.36.9 on a single Vultr instance \u2014 the n8n server, an external task runner isolating Code nodes, and Caddy terminating TLS \u2014 backed not by a colocated Postgres but by a colocated self-hosted Neon, so the durable copy of every workflow, credential and execution lives in Cloudflare R2 rather than on the instance's disk. Seven containers, one Compose project, and only the proxy publishes beyond loopback.",
+  lede: "n8n provisions workflow automation on one Vultr or AWS instance, with an external task runner for Code nodes and Caddy TLS. A colocated self-hosted Neon database stores layers and WAL in Cloudflare R2 or Amazon S3. Seven containers share one Compose project. Recovery from complete host loss uses logical backups, with a six-hour default backup interval.",
   runtimeNote:
     "n8n ships in all three colours. **Red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit across both fixtures. None of them reimplements the storage tier. Each colour SHA-pins `getcolors/neon` and renders that package's templates straight out of the dependency, so **no copy of the storage tier exists here to drift**. n8n's services arrive as a Compose override installed beside the upstream file, which is what lets every unchanged upstream command operate on the one merged project.",
   steps: [
@@ -1828,11 +1886,11 @@ export const n8n = {
     },
     {
       title: "Provision and converge",
-      body: "OpenTofu creates the instance, a DNS record, and a firewall whose HTTP rules resolve to Cloudflare's published ranges; Ansible converges the storage tier through the imported upstream play, then n8n's own \u2014 and claims the owner account over the internal network **before** the public name resolves, closing the window in which an unauthenticated setup screen hands the instance to whoever finds it first.",
+      body: "OpenTofu creates the instance, a DNS record, and a firewall whose HTTP rules resolve to Cloudflare's published ranges; Ansible converges the storage tier through the imported upstream play, then n8n's own, and claims the owner account over the internal network before the public application starts.",
     },
     {
       title: "Prove it works",
-      body: "Seventeen gates ask the system what it has: a workflow created through the public API and read back **out of Neon**, a new WAL segment in R2 beyond a pre-switch baseline, liveness and readiness separately, the generated webhook URL exactly, and a Code node that actually **executes** on the external runner \u2014 because a runner reports connected long before it has run a task.",
+      body: "Seventeen gates ask the system what it has: a workflow created through the public API and read back **out of Neon**, a new WAL segment in object storage beyond a pre-switch baseline, liveness and readiness separately, the generated webhook URL exactly, and a Code node that actually **executes** on the external runner, because a runner reports connected long before it has run a task.",
     },
   ],
   dagCaption: "n8n \u2014 CREATE / BUILD DAG",
@@ -1840,6 +1898,8 @@ export const n8n = {
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "storage if managed" },
     { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
@@ -1850,9 +1910,9 @@ export const n8n = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` \u2192 `infrastructure` \u2192 `dns` \u2192 `ssh-config` \u2192 `ansible` \u2192 `acceptance`.",
+    "The create/build workflow runs `start`, `infrastructure`, `storage if managed` and `dns` in order. It continues with `ssh-config`, `ansible` and `acceptance` in order.",
   dagNote:
-    "`dns` comes before the converge, not after: Caddy provisions its certificate over ACME on first start, and the HTTP-01 challenge needs the name to already resolve. Delete reverses it \u2014 the record goes before the compute destroy, so nothing resolves to an address that has stopped answering.",
+    "DNS precedes convergence so Caddy can complete ACME validation. Managed AWS deployments create separate Neon and backup buckets with scoped credentials. Guarded deletion stops the host and removes DNS, managed application buckets and their contents, compute, then the managed state bucket. Adopted R2 buckets remain intact.",
 };
 
 export const neonInstallCmd = "npx skills use getcolors/neon";
@@ -1862,7 +1922,7 @@ export const neon = {
   docsUrl: "https://getcolors.github.io/neon/",
   repoUrl: "https://github.com/getcolors/neon",
   heading: "Neon: self-hosted serverless Postgres with its storage in R2, built with Colors",
-  lede: "Neon is a Package Skill built with Colors. It provisions self-hosted Neon \u2014 Postgres with storage and compute separated \u2014 on a single Vultr instance: the storage broker, the pageserver, one safekeeper, and a Postgres 17 compute node under compute_ctl, with pageserver layers and safekeeper WAL uploaded to Cloudflare R2 under the deployment's own prefix. The R2 prefix plus the tenant and timeline ids in colors.yml are the database: a rebuilt host re-attaches the same identities and rehydrates from R2.",
+  lede: "Neon is a Package Skill built with Colors. It provisions self-hosted Neon, Postgres with storage and compute separated, on a single Vultr instance: the storage broker, the pageserver, one safekeeper, and a Postgres 17 compute node under compute_ctl, with pageserver layers and safekeeper WAL uploaded to Cloudflare R2 under the deployment's own prefix. A rebuilt host reattaches the same tenant and timeline identities. Complete host loss recovers the latest uploaded pageserver checkpoint, so recent writes can be lost. This is a demo-tier singleton.",
   runtimeNote:
     "Neon ships in all three colours \u2014 **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. Nothing is published beyond loopback: the firewall opens **22 only**, and the supported client path is an SSH tunnel through the `~/.ssh/config` alias the package writes.",
   steps: [
@@ -1943,17 +2003,17 @@ export const automq = {
   docsUrl: "https://getcolors.github.io/automq/",
   repoUrl: "https://github.com/getcolors/automq",
   heading: "AutoMQ: a Kafka cluster whose disks are object storage, built with Colors",
-  lede: "AutoMQ is a Package Skill built with Colors. It provisions three AutoMQ 1.7.4 nodes on Vultr \u2014 the Apache Kafka 3.9.1 wire protocol, both KRaft roles on every node \u2014 with Cloudflare R2 as the storage tier rather than replicated local disks. A produce is acknowledged once the record is in R2, which is why every topic is replication factor 1 and why losing a broker loses no bytes. The three nodes buy the controller quorum, partition failover and throughput; they do not buy copies.",
+  lede: "AutoMQ provisions three nodes on Vultr, AWS or Google Cloud, with the Kafka 3.9.1 protocol and both KRaft roles on every node. Cloudflare R2, managed Amazon S3 or managed Google Cloud Storage holds the records. Topics use replication factor 1. The three nodes provide controller quorum and partition failover; acceptance measures the interruption when a partition leader fails.",
   runtimeNote:
-    "AutoMQ ships in all three colours — **red**, **green** and **blue** render byte-identical artifacts from one `colors.yml`, held to parity on every commit. The public endpoint on **9092** is `SASL_SSL` with **SCRAM-SHA-512** and a `StandardAuthorizer` ACL set, because a port facing the internet is not gated by a firewall and authentication is not authorization. The controller quorum and inter-broker replication never leave a Vultr VPC.",
+    "AutoMQ ships in red, green and blue with byte-identical generated artifacts. Clients use SASL_SSL, SCRAM-SHA-512 and topic ACLs on port 9092. Quorum traffic stays on the private network. Cloudflare DNS with ACME certificates and direct IP access with an explicit private CA are supported.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It names the digest-pinned image, the node count, the cluster id that is also the object namespace, the bootstrap and broker hostnames, the two R2 buckets, and the VPC and firewall boundary. It carries no key material and no secret.",
+      body: "Agent reads `colors.yml`. It names the digest-pinned image, the node count, the cluster id that is also the object namespace, the bootstrap and broker hostnames, the two application buckets, and the VPC and firewall boundary. It carries no key material and no secret.",
     },
     {
-      title: "Adopt storage, never create it",
-      body: "AutoMQ writes hash-prefixed keys at the bucket root and supports no path prefix, so a bucket belongs to one cluster outright. Adoption proves emptiness by paginating the whole bucket, claims ownership with a conditional create, and carries one transaction id across both buckets \u2014 so a half-adopted pair resumes and a mismatched one fails.",
+      title: "Select storage ownership",
+      body: "Adopt two dedicated R2 buckets, or let the package create S3 or GCS buckets with scoped credentials. Ownership checks refuse foreign buckets. Managed buckets and their contents belong to guarded teardown.",
     },
     {
       title: "Dry-run boundary",
@@ -1974,6 +2034,8 @@ export const automq = {
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
     { kind: "edge" },
+    { kind: "node", label: "storage if managed" },
+    { kind: "edge" },
     { kind: "node", label: "ssh-config" },
     { kind: "edge" },
     { kind: "node", label: "dns" },
@@ -1983,9 +2045,9 @@ export const automq = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` \u2192 `infrastructure` \u2192 `ssh-config` \u2192 `dns` \u2192 `ansible` \u2192 `acceptance`.",
+    "The create/build workflow runs `start`, `infrastructure`, `storage if managed` and `ssh-config` in order. It continues with `dns`, `ansible` and `acceptance` in order.",
   dagNote:
-    "DNS comes before convergence because every broker advertises a name that must already resolve, and the certificate is issued for those names during the play. Delete unwinds the other way and stops at the storage: the buckets hold the cluster\u2019s data, so an accidental delete stays recoverable.",
+    "The storage stage runs for managed S3 or GCS. DNS precedes convergence when enabled; direct IP deployments use a private CA. Delete stops the brokers before removing managed application buckets and their contents, then compute and a managed state bucket. Adopted R2 buckets remain intact.",
 };
 
 export const footer = {
@@ -2006,13 +2068,13 @@ export const langfuse = {
   docsUrl: "https://getcolors.github.io/langfuse/",
   repoUrl: "https://github.com/getcolors/langfuse",
   heading: "Langfuse: LLM observability on six machines, each reachable only by the peer that needs it, built with Colors",
-  lede: "Langfuse is a Package Skill built with Colors. It provisions Langfuse v4 across six Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with their own Keeper quorum, and the application host running langfuse-web, langfuse-worker and Caddy behind Cloudflare — with Cloudflare R2 holding raw events, media, Neon's layers and WAL, and the backups. Langfuse's own guidance is one Docker Compose host or Kubernetes; this is the shape in between, and every separation claim is a gate.",
+  lede: "Langfuse v4 runs on six machines in one AWS or Vultr VPC. A self-hosted Neon storage tier serves Postgres, one host runs Redis, three ClickHouse replicas have their own Keeper quorum, and the application host runs langfuse-web, langfuse-worker and Caddy behind Cloudflare. Cloudflare R2 or managed Amazon S3 stores raw events, media, Neon layers and WAL, and backups.",
   runtimeNote:
-    "Langfuse ships in **green, red, and blue** — three implementations rendering byte-identical output, checked by `scripts/parity.sh` on both fixtures. The storage tier is rendered from a SHA pin on `getcolors/neon`, never copied; the ClickHouse cluster templates are the package's own, derived from `getcolors/clickhouse`. Each role has its **own firewall group** — a Vultr group filters the private interface too — and every east-west rule names the peer's `/32`.",
+    "Langfuse ships in green, red and blue with byte-identical generated artifacts. It imports the Neon templates from a pinned dependency and owns its ClickHouse templates. Four role firewalls restrict private traffic to the required peer addresses and ports. AWS can create storage and backup buckets with separate scoped credentials.",
   steps: [
     {
       title: "Read desired state",
-      body: "Agent reads `colors.yml`. It carries digest-pinned Langfuse, Redis, Caddy and Neon images, an exact ClickHouse apt version, the VPC subnet, four plans, the public hostname, headless-init identities, two R2 buckets and three backup cadences with per-store freshness thresholds. It holds no key material, and three application secrets — `ENCRYPTION_KEY`, `SALT`, the initial password — are the operator's to hold because a backup is readable only with them.",
+      body: "Agent reads `colors.yml`. It carries digest-pinned Langfuse, Redis, Caddy and Neon images, an exact ClickHouse apt version, the VPC subnet, four plans, the public hostname, headless-init identities, storage and backup buckets and three backup cadences with per-store freshness thresholds. It holds no key material. Keep `ENCRYPTION_KEY`, `SALT` and the initial password outside the config; recovery requires these application secrets.",
     },
     {
       title: "Refuse what fails later",
@@ -2028,7 +2090,7 @@ export const langfuse = {
     },
     {
       title: "Prove it works",
-      body: "Gates ask the system what it has: raw TCP to every dependency and a **refusal** on Keeper, `UTC` on both databases, a trace read back through the public API and found on node 0 **and** the last replica, a new raw-event object in R2, a media file back with the same sha256, five refusals, 200 traces under the timeout — and `rehearse` restores both stores, boots the pinned image against them, drills a replica loss and a Redis restart, then writes a second marker.",
+      body: "Acceptance checks dependency connectivity, blocked Keeper access and UTC on both databases. It reads a trace through the app API on loopback, finds it on the first and last ClickHouse replicas, and checks event and media objects. Further gates test denied requests and 200 traces under a timeout. The `rehearse` command restores both stores, boots the pinned application, tests replica loss and a Redis restart, and writes a second marker.",
     },
   ],
   dagCaption: "Langfuse — CREATE / BUILD DAG",
@@ -2036,6 +2098,8 @@ export const langfuse = {
     { kind: "node", label: "start", dark: true },
     { kind: "edge" },
     { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "storage if managed" },
     { kind: "edge" },
     { kind: "node", label: "dns" },
     { kind: "edge" },
@@ -2046,7 +2110,7 @@ export const langfuse = {
     { kind: "node", label: "acceptance" },
   ] satisfies DagItem[],
   dagSummary:
-    "The create/build DAG runs `start` → `infrastructure` → `dns` → `ssh-config` → `ansible` → `acceptance`; `rehearse` and `describe` run against the hosts in state.",
+    "The create/build workflow runs `start`, `infrastructure`, `storage if managed` and `dns` in order. It continues with `ssh-config`, `ansible` and `acceptance` in order.",
   dagNote:
-    "`ansible` is one inventory of six hosts in four groups and seven plays in dependency order: common hardening, the Neon overlay, the imported neon play, ClickHouse, Redis, the app, the backups. `.colors-ready` lands only after the gates; `.colors-recovery-verified` only after the rehearsal — automation can tell the two claims apart.",
+    "Ansible configures six hosts in four groups, with the data services ready before the app. The built-in smoke test calls the API on app-host loopback; external DNS, proxy and TLS checks require a separate client. `rehearse` restores both stores and runs disruption checks. Guarded AWS teardown removes managed buckets and their contents; adopted R2 buckets remain.",
 };

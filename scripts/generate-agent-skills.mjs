@@ -30,19 +30,15 @@ const run = (command, args, options = {}) => {
 };
 
 const parseFrontmatter = (source, sourcePath) => {
-  const match = source.match(/^---\n([\s\S]*?)\n---(?:\n|$)/);
+  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   if (!match) throw new Error(`${sourcePath} has no YAML frontmatter`);
 
-  const fields = {};
-  for (const line of match[1].split("\n")) {
-    const field = line.match(/^([a-zA-Z][\w-]*):\s*(.+)$/);
-    if (field) fields[field[1]] = field[2].trim().replace(/^(["'])(.*)\1$/, "$2");
-  }
+  const fields = parseYaml(match[1]);
 
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(fields.name ?? "")) {
+  if (typeof fields?.name !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(fields.name)) {
     throw new Error(`${sourcePath} has an invalid or missing skill name`);
   }
-  if (!fields.description || fields.description.length > 1024) {
+  if (typeof fields.description !== "string" || !fields.description.trim() || fields.description.length > 1024) {
     throw new Error(`${sourcePath} has an invalid or missing description`);
   }
   return { name: fields.name, description: fields.description };

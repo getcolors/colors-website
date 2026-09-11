@@ -1,7 +1,7 @@
 name: PostgreSQL HA (Opus 5)
 repository: getcolors/postgres-ha
 featured: /featured#postgres-ha
-summary: Operate a 3-node PostgreSQL 17 failover cluster with Patroni, colocated etcd, quorum synchronous commit, HAProxy client routing on every node, Cloudflare DNS, and pgBackRest continuous WAL backups with a daily verified restore to Cloudflare R2 on DigitalOcean.
+summary: Operate a 3-node PostgreSQL 17 failover cluster with Patroni, colocated etcd, quorum synchronous commit, HAProxy client routing on every node, Cloudflare DNS, and pgBackRest continuous WAL backups with a daily verified restore to Cloudflare R2. Compute uses a cloud provider supported by the shared compute library.
 keywords:
   - PostgreSQL
   - PostgreSQL HA

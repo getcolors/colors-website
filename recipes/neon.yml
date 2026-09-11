@@ -1,6 +1,6 @@
 name: Neon
 repository: getcolors/neon
-summary: Operate self-hosted Neon serverless Postgres — the storage broker, the pageserver, one safekeeper, and a Postgres 17 compute node, with layers and WAL in Cloudflare R2 — on a loopback-only Vultr instance reached over an SSH tunnel.
+summary: Operate self-hosted Neon serverless Postgres on one loopback-only Vultr instance reached over an SSH tunnel. The storage broker, pageserver, safekeeper, and Postgres 17 compute node use Cloudflare R2 for layers and WAL.
 featured: /featured#neon
 keywords:
   - Neon

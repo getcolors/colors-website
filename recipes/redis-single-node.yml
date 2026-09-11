@@ -1,7 +1,7 @@
 type: context
 name: Redis Single-Node
 repository: getcolors/skills
-summary: Verified exposure doctrine, redis-cli gate contract, RDB backup-set protocol, and the AOF-off restore rehearsal for a single-node Redis 7 on Docker Compose with backups in Cloudflare R2.
+summary: Verified network exposure, redis-cli response checks, RDB backup sets, and restore rehearsals with AOF disabled for single-node Redis 7 on Docker Compose. Covers Vultr and AWS deployments, Cloudflare R2 and S3 backups, OpenTofu state failures, AMI login permissions, and storage cleanup.
 keywords:
   - redis
   - self-hosted redis
@@ -18,6 +18,13 @@ keywords:
   - kex_exchange_identification
   - unattended-upgrades
   - cloudflare r2
+  - aws
+  - vultr
+  - s3
+  - No state file was found
+  - Permission denied
+  - s3 encryption
+  - managed storage credentials unavailable
 companion: getcolors/redis
 context-skills:
   - name: redis-single-node

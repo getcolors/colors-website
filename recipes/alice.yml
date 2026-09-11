@@ -1,0 +1,14 @@
+name: Alice
+repository: getcolors/alice
+summary: Operate a private Transmission server on one DigitalOcean droplet through an SSH tunnel. Sync completed downloads to a local directory, verify the copy, and delete the droplet.
+keywords:
+  - Transmission
+  - BitTorrent
+  - DigitalOcean
+  - SSH tunnel
+  - rsync
+  - ephemeral server
+package-skills:
+  - name: package-alice-green
+    path: skills/package-alice-green/SKILL.md
+    runtime: green

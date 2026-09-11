@@ -1,7 +1,10 @@
 name: ClickHouse
 repository: getcolors/clickhouse
-summary: Operate a private replicated ClickHouse cluster with Keeper, Metabase, PostgreSQL, WireGuard, and dbt.
+summary: Operate a private replicated ClickHouse cluster with Keeper, Metabase, PostgreSQL, WireGuard, and dbt. Shared compute supports multiple cloud providers with R2 or S3 state.
 keywords:
+  - AWS
+  - Amazon S3
+  - Cloudflare R2
   - ClickHouse
   - analytics
   - database

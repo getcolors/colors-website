@@ -1,8 +1,12 @@
 name: AutoMQ
 repository: getcolors/automq
-summary: Operate a three-node AutoMQ cluster on Vultr — Kafka-compatible brokers whose storage tier is Cloudflare R2, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.
+summary: Operate a three-node AutoMQ cluster on Vultr, AWS, or Google Cloud with Kafka-compatible brokers backed by Cloudflare R2, Amazon S3, or Google Cloud Storage. Public SASL_SSL endpoints use SCRAM authentication and ACL authorization.
 featured: /featured#automq
 keywords:
+  - AWS
+  - Amazon S3
+  - Google Cloud
+  - Google Cloud Storage
   - AutoMQ
   - Kafka
   - streaming

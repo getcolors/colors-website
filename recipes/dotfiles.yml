@@ -1,0 +1,13 @@
+name: Dotfiles
+repository: getcolors/dotfiles
+summary: Render, compare, and install a managed Ubuntu or macOS dotfiles profile in a local home directory.
+keywords:
+  - dotfiles
+  - Ubuntu
+  - macOS
+  - local configuration
+  - home directory
+package-skills:
+  - name: package-dotfiles-green
+    path: skills/package-dotfiles-green/SKILL.md
+    runtime: green

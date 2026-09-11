@@ -1,8 +1,10 @@
 name: Langfuse
 repository: getcolors/langfuse
-summary: Operate self-hosted Langfuse v4 LLM observability on six Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with Keeper, and the application host behind Caddy and Cloudflare — with Cloudflare R2 for raw events, media, Neon layers and WAL, and backups that are restored and booted in a rehearsal.
+summary: Operate self-hosted Langfuse v4 on six AWS or Vultr machines in one VPC, with a Neon storage tier for Postgres, Redis, three ClickHouse replicas with Keeper, and an application host behind Caddy and Cloudflare. Amazon S3 or Cloudflare R2 stores events, media, Neon layers and WAL, and backups with a restore-and-boot rehearsal.
 featured: /featured#langfuse
 keywords:
+  - AWS
+  - Amazon S3
   - Langfuse
   - LLM observability
   - LLM tracing

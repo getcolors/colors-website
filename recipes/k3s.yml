@@ -1,6 +1,6 @@
 name: K3s
 repository: getcolors/k3s
-summary: Operate a secure single-node K3s server on Hetzner Cloud, continuously reconciled from Git with Flux.
+summary: Operate a single-node K3s server on one cloud VM, continuously reconciled from Git with Flux. Shared compute supports eight cloud providers.
 keywords:
   - Kubernetes
   - K3s

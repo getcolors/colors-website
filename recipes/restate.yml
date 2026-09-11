@@ -1,6 +1,6 @@
 name: Restate
 repository: getcolors/restate
-summary: Operate a production-oriented single-node Restate durable execution platform on DigitalOcean.
+summary: Operate a single-node Restate durable execution service on one cloud VM with a TypeScript reference workflow.
 featured: /featured#restate
 keywords:
   - Restate

@@ -1,6 +1,6 @@
 name: Redis
 repository: getcolors/redis
-summary: Operate one Redis 7.2 server on one Vultr instance, DigitalOcean droplet or AWS EC2 instance, published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 or a deployment-owned S3 bucket that a rehearsal verb restores and reads back.
+summary: Operate Redis 7.2 on one Vultr, DigitalOcean, or AWS EC2 instance, with loopback-only access through an SSH tunnel and append-only persistence. Store RDB backup sets in Cloudflare R2 or a deployment-owned S3 bucket, and verify them with a restore rehearsal.
 keywords:
   - Redis
   - cache

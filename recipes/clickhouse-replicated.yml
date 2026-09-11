@@ -1,7 +1,7 @@
 type: context
 name: ClickHouse Replicated
 repository: getcolors/skills
-summary: Verified topology, config.d traps, the s3_plain backup disk verified against system.backups, a collision-free restore beside the live database, application versus operator grants, the two firewalls on a Vultr VPC, and the replica-loss drill for three replicated ClickHouse nodes with embedded Keeper.
+summary: Verified configuration, S3 backups, restore rehearsals, grants, and replica-loss checks for three ClickHouse nodes with embedded Keeper. Covers Vultr firewalls and AWS WireGuard MTU failures, stale outage probes, rehearsal-table checks, and managed S3 cleanup.
 keywords:
   - clickhouse
   - clickhouse keeper
@@ -19,6 +19,13 @@ keywords:
   - SYSTEM FLUSH LOGS
   - cloudflare r2
   - vultr vpc
+  - aws
+  - wireguard mtu
+  - ReadTimeoutError
+  - StreamFailureError
+  - dbt
+  - clickhouse_connect
+  - managed S3 cleanup
 companion: getcolors/langfuse
 context-skills:
   - name: clickhouse-replicated

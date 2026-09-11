@@ -1,7 +1,8 @@
 name: Walter
 repository: getcolors/walter
-summary: Operate a remote development machine that configures SSH access and powers off while you sleep.
+summary: Operate a remote development machine with managed SSH access and a declared development environment. Stop and start its power through the provider API on OCI or Vultr.
 keywords:
+  - Vultr
   - development machine
   - remote development
   - SSH

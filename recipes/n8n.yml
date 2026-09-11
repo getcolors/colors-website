@@ -1,8 +1,10 @@
 name: n8n
 repository: getcolors/n8n
-summary: Operate self-hosted n8n workflow automation on one Vultr instance — the n8n server, an external task runner, and Caddy TLS — backed by a colocated self-hosted Neon whose Postgres layers and WAL live in Cloudflare R2.
+summary: Operate self-hosted n8n on one Vultr or AWS EC2 instance with an external task runner and Caddy TLS. A colocated Neon database stores its Postgres layers and WAL in Cloudflare R2 or Amazon S3.
 featured: /featured#n8n
 keywords:
+  - AWS
+  - Amazon S3
   - n8n
   - workflow automation
   - self-hosted n8n

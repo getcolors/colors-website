@@ -1,6 +1,6 @@
 name: NetBird
 repository: getcolors/netbird
-summary: Operate a self-hosted NetBird control plane and its identity provider — Traefik, the combined netbird-server, the dashboard and Authentik — on Vultr.
+summary: Operate a self-hosted NetBird control plane on Vultr with Traefik, the combined netbird-server, the dashboard, and Authentik as its identity provider.
 featured: /featured#netbird
 keywords:
   - NetBird

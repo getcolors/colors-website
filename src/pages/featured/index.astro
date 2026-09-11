@@ -968,15 +968,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             <div class="dag">
               {k3s.dag.map((item) => {
                 if (item.kind === "edge") return <div class="dag-edge"></div>;
-                if (item.kind === "group")
-                  return (
-                    <div class="dag-group">
-                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
-                    </div>
-                  );
-                return (
-                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
-                );
+                return <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>;
               })}
             </div>
             <p class="dag-note">{k3s.dagNote}</p>
@@ -1191,21 +1183,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             >
               {airflow.dag.map((item) => {
                 if (item.kind === "edge") return <div class="dag-edge"></div>;
-                if (item.kind === "node")
-                  return (
-                    <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
-                  );
-                return (
-                  <div class="dag-branch">
-                    <div class="dag-node">{item.nodes[0]}</div>
-                    <div class="dag-spacer"></div>
-                    <div class="dag-node">{item.nodes[1]}</div>
-                    <div class="dag-tail">
-                      <div class="dag-edge"></div>
-                      <div class="dag-node">{item.tail}</div>
-                    </div>
-                  </div>
-                );
+                return <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>;
               })}
             </div>
             <p class="dag-note">{airflow.dagNote}</p>
@@ -1284,27 +1262,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             <div class="dag">
               {once.dag.map((item) => {
                 if (item.kind === "edge") return <div class="dag-edge"></div>;
-                if (item.kind === "node")
-                  return (
-                    <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
-                  );
-                if (item.kind === "group")
-                  return (
-                    <div class="dag-group">
-                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
-                    </div>
-                  );
-                return (
-                  <div class="dag-branch">
-                    <div class="dag-node">{item.nodes[0]}</div>
-                    <div class="dag-spacer"></div>
-                    <div class="dag-node">{item.nodes[1]}</div>
-                    <div class="dag-tail">
-                      <div class="dag-edge"></div>
-                      <div class="dag-node">{item.tail}</div>
-                    </div>
-                  </div>
-                );
+                return <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>;
               })}
             </div>
             <p class="dag-note">{once.dagNote}</p>
@@ -1340,16 +1298,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             <div class="dag">
               {vaultwarden.dag.map((item) => {
                 if (item.kind === "edge") return <div class="dag-edge"></div>;
-                if (item.kind === "node")
-                  return (
-                    <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
-                  );
-                if (item.kind === "group")
-                  return (
-                    <div class="dag-group">
-                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
-                    </div>
-                  );
+                return <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>;
               })}
             </div>
             <p class="dag-note">{vaultwarden.dagNote}</p>
@@ -1385,16 +1334,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             <div class="dag">
               {dbos.dag.map((item) => {
                 if (item.kind === "edge") return <div class="dag-edge"></div>;
-                if (item.kind === "node")
-                  return (
-                    <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
-                  );
-                if (item.kind === "group")
-                  return (
-                    <div class="dag-group">
-                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
-                    </div>
-                  );
+                return <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>;
               })}
             </div>
             <p class="dag-note">{dbos.dagNote}</p>
@@ -1433,10 +1373,16 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
                 <div class="dag">
                   {items.map((item) => {
                     if (item.kind === "edge") return <div class="dag-edge"></div>;
-                    if (item.kind === "group")
+                    if (item.kind === "branch")
                       return (
-                        <div class="dag-group">
-                          {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
+                        <div class="dag-branch">
+                          <div class="dag-node">{item.nodes[0]}</div>
+                          <div></div>
+                          <div class="dag-node">{item.nodes[1]}</div>
+                          <div class="dag-tail">
+                            <div class="dag-edge"></div>
+                            <div class="dag-node">{item.tail}</div>
+                          </div>
                         </div>
                       );
                     if (item.kind === "node")
@@ -1557,15 +1503,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             <div class="dag">
               {postgresAgy.dag.map((item) => {
                 if (item.kind === "edge") return <div class="dag-edge"></div>;
-                if (item.kind === "group")
-                  return (
-                    <div class="dag-group">
-                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
-                    </div>
-                  );
-                return (
-                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
-                );
+                return <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>;
               })}
             </div>
             <p class="dag-note">{postgresAgy.dagNote}</p>
@@ -1645,15 +1583,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
             <div class="dag">
               {postgresHa.dag.map((item) => {
                 if (item.kind === "edge") return <div class="dag-edge"></div>;
-                if (item.kind === "group")
-                  return (
-                    <div class="dag-group">
-                      {item.nodes.map((n) => <div class="dag-node">{n}</div>)}
-                    </div>
-                  );
-                return (
-                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
-                );
+                return <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>;
               })}
             </div>
             <p class="dag-note">{postgresHa.dagNote}</p>
