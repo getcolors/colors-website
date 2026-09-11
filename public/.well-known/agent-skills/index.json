@@ -23,11 +23,11 @@
       "digest": "sha256:0bb06ce051a143c16b4c7df6642ae26daa4553531906f576286a8d2f72a2c9a7"
     },
     {
-      "name": "automq-vultr",
+      "name": "automq-multi-node",
       "type": "archive",
-      "description": "Everything a multi-node AutoMQ cluster needs that the docs and the single-node quick start will not tell you - two firewalls in front of every Vultr node (the provider group AND the ufw the image ships enabled, which passes ICMP while dropping inter-node TCP, so ping says the network is fine and the KRaft quorum never elects), SCRAM records that must be bootstrapped at genesis or the cluster can never authenticate anyone, and gates that prove a failover instead of assuming it. Use whenever AutoMQ, a Kafka cluster backed by object storage, KRaft on Vultr, or replication factor 1 comes up. Also on these symptoms - \"waiting for the controller to acknowledge that we are caught up\", endless \"we still don't know the high water mark\", perpetual CandidateState with a climbing epoch, \"Could not find a 'KafkaServer' or 'external.KafkaServer' entry\", \"invalid credentials with SASL mechanism SCRAM-SHA-512\" from every principal, \"error creating VPC 2.0\". Full symptom index in the body.",
-      "url": "/.well-known/agent-skills/automq-vultr-6de8440e011dcc35f280a98948cf3b4396071c93cfa2a79511f6564f30e133ba.tar.gz",
-      "digest": "sha256:6de8440e011dcc35f280a98948cf3b4396071c93cfa2a79511f6564f30e133ba"
+      "description": "Diagnose multi-node AutoMQ deployments backed by object storage. Use for KRaft stuck in CandidateState or waiting for the high water mark, SCRAM-SHA-512 invalid credentials for every principal, missing KafkaServer JAAS entries, gates that pass only once, and bucket or SSH key ownership failures. Carries verified Vultr, AWS and Google Cloud context, listener and genesis contracts, and targeted failover acceptance gates.",
+      "url": "/.well-known/agent-skills/automq-multi-node-1f4d9aedd1114ecc93e879c5db760a3d738f8488898430706f17f0c3cbad2746.tar.gz",
+      "digest": "sha256:1f4d9aedd1114ecc93e879c5db760a3d738f8488898430706f17f0c3cbad2746"
     },
     {
       "name": "clickhouse-replicated",
@@ -60,9 +60,9 @@
     {
       "name": "n8n-single-node",
       "type": "archive",
-      "description": "Everything a self-hosted n8n 2.x deployment needs that the docs and every third-party guide will not tell you - n8n refusing to boot with \"Mismatching encryption keys. The encryption key in the settings file /home/node/.n8n/config does not match the N8N_ENCRYPTION_KEY env var\" after one bad first boot, \"password authentication failed for user\" when the password is a literal unrendered template string, /healthz returning 200 while every API call answers 503 \"Database is not ready!\", DELETE refused with \"Workflow must be archived before it can be deleted\", \"To run the workflow manually, specify either a trigger to start from or a destination node\", pg_dump \"aborting because of server version mismatch\", and WEBHOOK_URL quietly deprecated in favour of N8N_WEBHOOK_URL. Use whenever the user self-hosts n8n on Postgres, puts its database on Neon or object storage, fronts it with Cloudflare and Caddy, or hits any symptom above. Full symptom index at the top of the body.",
-      "url": "/.well-known/agent-skills/n8n-single-node-fe84196bc19f32e892dacc59a5ab72aefb88b5e2f10fb653b61885d7ded74b09.tar.gz",
-      "digest": "sha256:fe84196bc19f32e892dacc59a5ab72aefb88b5e2f10fb653b61885d7ded74b09"
+      "description": "Self-hosted n8n 2.x traps the docs and every guide omit - n8n refusing to boot with \"Mismatching encryption keys\" that \"does not match the N8N_ENCRYPTION_KEY env var\" after one bad first boot, \"password authentication failed for user\" from a literal unrendered template string, /healthz returning 200 while every API call answers 503 \"Database is not ready!\", \"Workflow must be archived before it can be deleted\", \"To run the workflow manually, specify either a trigger to start from or a destination node\", pg_dump \"aborting because of server version mismatch\", and WEBHOOK_URL deprecated in favour of N8N_WEBHOOK_URL. AWS additions cover Cloudflare 9109 \"Invalid access token\" then 10502 \"Too many authentication failures\", a backup-scope gate printing RISK on every run, tofu planning an SSE rule update in-place on every apply, and BACKUP_CREDENTIAL_MODE=none without sudo. Use for self-hosted n8n on Postgres or Neon behind Cloudflare and Caddy, on Vultr or AWS. Full symptom index at the top of the body.",
+      "url": "/.well-known/agent-skills/n8n-single-node-10fdd36c71d16edc4b13429b10a3a33b1c48cb1919e01e53cc28757410e51b57.tar.gz",
+      "digest": "sha256:10fdd36c71d16edc4b13429b10a3a33b1c48cb1919e01e53cc28757410e51b57"
     },
     {
       "name": "neon-multi-node",
@@ -165,23 +165,23 @@
     {
       "name": "package-automq-blue",
       "type": "archive",
-      "description": "Provision a three-node AutoMQ cluster on Vultr — Kafka-compatible brokers whose storage tier is S3 object storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
-      "url": "/.well-known/agent-skills/package-automq-blue-47d5e6c8a3ea3232170ac0a6b46ed7c2ca47131fff4498e99d20f798114da156.tar.gz",
-      "digest": "sha256:47d5e6c8a3ea3232170ac0a6b46ed7c2ca47131fff4498e99d20f798114da156"
+      "description": "Provision a three-node AutoMQ cluster with Kafka-compatible brokers backed by Cloudflare R2, AWS S3, or Google Cloud Storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
+      "url": "/.well-known/agent-skills/package-automq-blue-465b398f3aa25e1ca0cf56d1c78560e64291b8afa4ae18062269da7721f097db.tar.gz",
+      "digest": "sha256:465b398f3aa25e1ca0cf56d1c78560e64291b8afa4ae18062269da7721f097db"
     },
     {
       "name": "package-automq-green",
       "type": "archive",
-      "description": "Provision a three-node AutoMQ cluster on Vultr — Kafka-compatible brokers whose storage tier is S3 object storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
-      "url": "/.well-known/agent-skills/package-automq-green-347912f0b39f413e0280e191599ea626c72581873e2938dfd6643fbabf663455.tar.gz",
-      "digest": "sha256:347912f0b39f413e0280e191599ea626c72581873e2938dfd6643fbabf663455"
+      "description": "Provision a three-node AutoMQ cluster with Kafka-compatible brokers backed by Cloudflare R2, AWS S3, or Google Cloud Storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
+      "url": "/.well-known/agent-skills/package-automq-green-77b2af8ea9e5e9de9a25388e797fae26dd0e617b80d30cf85e141ddb11b3cfd0.tar.gz",
+      "digest": "sha256:77b2af8ea9e5e9de9a25388e797fae26dd0e617b80d30cf85e141ddb11b3cfd0"
     },
     {
       "name": "package-automq-red",
       "type": "archive",
-      "description": "Provision a three-node AutoMQ cluster on Vultr — Kafka-compatible brokers whose storage tier is S3 object storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
-      "url": "/.well-known/agent-skills/package-automq-red-cb99e94d5995c6ba2a1ed7e200552ae528a659821817f18c14176c480464788b.tar.gz",
-      "digest": "sha256:cb99e94d5995c6ba2a1ed7e200552ae528a659821817f18c14176c480464788b"
+      "description": "Provision a three-node AutoMQ cluster with Kafka-compatible brokers backed by Cloudflare R2, AWS S3, or Google Cloud Storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
+      "url": "/.well-known/agent-skills/package-automq-red-9d78321321cd9ed4665dbc40c23fa4f17bf351cf786e8e15b62b08c1a5bd5fdf.tar.gz",
+      "digest": "sha256:9d78321321cd9ed4665dbc40c23fa4f17bf351cf786e8e15b62b08c1a5bd5fdf"
     },
     {
       "name": "package-clickhouse-blue",
@@ -718,9 +718,9 @@
     {
       "name": "redis-single-node",
       "type": "archive",
-      "description": "What a single-node Redis 7 deployment needs beyond the docs, verified live - a restored dump.rdb that loads ZERO keys because the instance started with appendonly yes and no appendonlydir/ beside it (\"Creating AOF base file appendonly.aof.1.base.rdb on server start\"), redis-cli refusals (\"NOAUTH Authentication required.\", \"WRONGPASS invalid username-password pair\") that exit 0 so a gate keyed on exit codes passes on a refusal, a minutes-old host UNREACHABLE (kex_exchange_identification reset) because unattended-upgrades restarted sshd, Docker-published ports that bypass ufw, backups streamed with `redis-cli --rdb -`, and R2 backup sets that count only once a .complete marker reads back. Use whenever the user self-hosts Redis on one machine with Docker Compose, backs it up to S3-compatible storage, asks whether the AOF or the RDB is what restores, gates a converge on redis-cli output, or hits any symptom above. Full symptom index in the body.",
-      "url": "/.well-known/agent-skills/redis-single-node-618b1b750ebacc20825f32bf7a82110a88439c128aa9818623149feafc75c71d.tar.gz",
-      "digest": "sha256:618b1b750ebacc20825f32bf7a82110a88439c128aa9818623149feafc75c71d"
+      "description": "What a single-node Redis 7 deployment needs beyond the docs, verified live on Vultr and AWS - a restored dump.rdb that loads ZERO keys because the instance started with appendonly yes and no appendonlydir/ (\"Creating AOF base file appendonly.aof.1.base.rdb on server start\"), redis-cli refusals (\"NOAUTH Authentication required.\", \"WRONGPASS\") that exit 0 so exit-code gates pass, a minutes-old host UNREACHABLE (kex_exchange_identification reset) after unattended-upgrades restarted sshd, Docker-published ports that bypass ufw, backups streamed with `redis-cli --rdb -`, backup sets that count only once a .complete marker reads back, and, on AWS, OpenTofu 1.12 \"Error: No state file was found\" failing a create, \"Permission denied\" reading the password because the AMI logs in as ubuntu, an S3 encryption rule planning \"1 to change\" forever, and \"managed storage credentials unavailable\" on delete. Use for self-hosted Redis on one machine with Docker Compose and S3-compatible backups. Full symptom index in the body.",
+      "url": "/.well-known/agent-skills/redis-single-node-93c5b26386a426b98cc558fd151d3ba16799dfc869f5b815eef748dfa8c5bcd7.tar.gz",
+      "digest": "sha256:93c5b26386a426b98cc558fd151d3ba16799dfc869f5b815eef748dfa8c5bcd7"
     },
     {
       "name": "rybbit-single-node",
