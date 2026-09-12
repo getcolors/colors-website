@@ -173,7 +173,7 @@ export const shapes = {
     { name: "ClickHouse", meta: "3 replicas + Keeper · Metabase host · AWS / Hetzner", body: "A replicated ClickHouse cluster with a three-member Keeper quorum and a separate Metabase and PostgreSQL server.", href: "/featured#clickhouse" },
     { name: "PostgreSQL HA", meta: "3 nodes · Patroni + etcd · colors-compute", body: "PostgreSQL 17 with etcd quorum consensus, Patroni leader election, HAProxy routing and continuous WAL backups to R2.", href: "/featured#postgres-agy" },
     { name: "MySQL HA", meta: "3 nodes · Group Replication · DigitalOcean", body: "MySQL 8.4 Group Replication with a floating-IP primary and one-minute binary-log archiving to R2.", href: "/featured#mysql-agy" },
-    { name: "AutoMQ", meta: "3 nodes · R2 / S3 / GCS · Vultr / AWS / Google", body: "Kafka 3.9.1 protocol with both KRaft roles on every node and object storage in R2, S3 or GCS.", href: "/featured#automq" },
+    { name: "AutoMQ", meta: "3 nodes · OCI / AWS / Google / Vultr", body: "Kafka 3.9.1 protocol with both KRaft roles on every node and records in OCI Object Storage, S3, GCS or R2.", href: "/featured#automq" },
     { name: "K8s", meta: "2 nodes · kubeadm + Flux · DigitalOcean", body: "A kubeadm cluster in a deployment-owned VPC with pinned Flannel, cloud-controller and Flux releases reconciling a public repository.", href: "/featured#k8s" },
     { name: "Agent Network K8s", meta: "VKE cluster · 2-pod application · Vultr", body: "A keyless, policy-gated LLM endpoint behind a TCP load balancer and a network-isolated agent pod running headless Claude Code.", href: "/featured#agent-network-k8s" },
     { name: "Agent Network DOKS", meta: "DOKS cluster · in-cluster build · DigitalOcean", body: "The same two-pod demo on DigitalOcean Kubernetes, with a kaniko build pushed to a created-or-adopted container registry.", href: "/featured#agent-network-doks" },
@@ -2003,7 +2003,7 @@ export const automq = {
   docsUrl: "https://getcolors.github.io/automq/",
   repoUrl: "https://github.com/getcolors/automq",
   heading: "AutoMQ: a Kafka cluster whose disks are object storage, built with Colors",
-  lede: "AutoMQ provisions three nodes on Vultr, AWS or Google Cloud, with the Kafka 3.9.1 protocol and both KRaft roles on every node. Cloudflare R2, managed Amazon S3 or managed Google Cloud Storage holds the records. Topics use replication factor 1. The three nodes provide controller quorum and partition failover; acceptance measures the interruption when a partition leader fails.",
+  lede: "AutoMQ provisions three nodes on Vultr, AWS, Google Cloud or OCI, with the Kafka 3.9.1 protocol and both KRaft roles on every node. Cloudflare R2, managed Amazon S3, Google Cloud Storage or OCI Object Storage holds the records. Topics use replication factor 1. The three nodes provide controller quorum and partition failover; acceptance measures the interruption when a partition leader fails.",
   runtimeNote:
     "AutoMQ ships in red, green and blue with byte-identical generated artifacts. Clients use SASL_SSL, SCRAM-SHA-512 and topic ACLs on port 9092. Quorum traffic stays on the private network. Cloudflare DNS with ACME certificates and direct IP access with an explicit private CA are supported.",
   steps: [

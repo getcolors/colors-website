@@ -25,9 +25,9 @@
     {
       "name": "automq-multi-node",
       "type": "archive",
-      "description": "Diagnose multi-node AutoMQ deployments backed by object storage. Use for KRaft stuck in CandidateState or waiting for the high water mark, SCRAM-SHA-512 invalid credentials for every principal, missing KafkaServer JAAS entries, gates that pass only once, and bucket or SSH key ownership failures. Carries verified Vultr, AWS and Google Cloud context plus OCI conditional-write, identity and VM allocation failures, listener and genesis contracts, and targeted failover acceptance gates.",
-      "url": "/.well-known/agent-skills/automq-multi-node-ed830eafee64958931a70b6267f14af4b21529bd2141482a371a5b78d6499a5c.tar.gz",
-      "digest": "sha256:ed830eafee64958931a70b6267f14af4b21529bd2141482a371a5b78d6499a5c"
+      "description": "Diagnose multi-node AutoMQ deployments backed by object storage. Use for KRaft stuck in CandidateState or waiting for the high water mark, SCRAM-SHA-512 invalid credentials for every principal, missing KafkaServer JAAS entries, gates that pass only once, and bucket or SSH key ownership failures. Carries verified Vultr, AWS, Google Cloud and OCI context, including conditional-write, identity and VM allocation failures, listener and genesis contracts, and targeted failover acceptance gates.",
+      "url": "/.well-known/agent-skills/automq-multi-node-2ae0beb84d38a41c3eb80122cba1c2b8e4502d7edef0cc491880e00f6c1401c1.tar.gz",
+      "digest": "sha256:2ae0beb84d38a41c3eb80122cba1c2b8e4502d7edef0cc491880e00f6c1401c1"
     },
     {
       "name": "clickhouse-replicated",
@@ -173,22 +173,22 @@
       "name": "package-automq-blue",
       "type": "archive",
       "description": "Provision a three-node AutoMQ cluster with Kafka-compatible brokers backed by Cloudflare R2, AWS S3, Google Cloud Storage, or OCI Object Storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
-      "url": "/.well-known/agent-skills/package-automq-blue-1480ae5fb2b3b633baa294ad35f7f41e64063a028c2f9840261f0415ab5dbfe2.tar.gz",
-      "digest": "sha256:1480ae5fb2b3b633baa294ad35f7f41e64063a028c2f9840261f0415ab5dbfe2"
+      "url": "/.well-known/agent-skills/package-automq-blue-3e0f12e712d659bf7d5102e25f4cc203be87eff3f0b1920d40be21170e241af9.tar.gz",
+      "digest": "sha256:3e0f12e712d659bf7d5102e25f4cc203be87eff3f0b1920d40be21170e241af9"
     },
     {
       "name": "package-automq-green",
       "type": "archive",
       "description": "Provision a three-node AutoMQ cluster with Kafka-compatible brokers backed by Cloudflare R2, AWS S3, Google Cloud Storage, or OCI Object Storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
-      "url": "/.well-known/agent-skills/package-automq-green-f6d30adcd5b8611e956a2cc5d58da7963c25af8b520b5b3bbd500eba266edc55.tar.gz",
-      "digest": "sha256:f6d30adcd5b8611e956a2cc5d58da7963c25af8b520b5b3bbd500eba266edc55"
+      "url": "/.well-known/agent-skills/package-automq-green-a92538bdaa3f9d23d45963af4337f5203a3b3d42070b4308e0f2a059d6533ae3.tar.gz",
+      "digest": "sha256:a92538bdaa3f9d23d45963af4337f5203a3b3d42070b4308e0f2a059d6533ae3"
     },
     {
       "name": "package-automq-red",
       "type": "archive",
       "description": "Provision a three-node AutoMQ cluster with Kafka-compatible brokers backed by Cloudflare R2, AWS S3, Google Cloud Storage, or OCI Object Storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
-      "url": "/.well-known/agent-skills/package-automq-red-70d43bd6578316a30b93f326174061d51bd8e683c67cf7e8a87e6c107162772a.tar.gz",
-      "digest": "sha256:70d43bd6578316a30b93f326174061d51bd8e683c67cf7e8a87e6c107162772a"
+      "url": "/.well-known/agent-skills/package-automq-red-e548254de83d8807f0321ec52f0da30cb82ca7584ea2845a20e002e74b33b28d.tar.gz",
+      "digest": "sha256:e548254de83d8807f0321ec52f0da30cb82ca7584ea2845a20e002e74b33b28d"
     },
     {
       "name": "package-clickhouse-blue",

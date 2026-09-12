@@ -1,7 +1,7 @@
 type: context
 name: AutoMQ Multi-Node
 repository: getcolors/skills
-summary: AutoMQ traps verified on Vultr, AWS and Google Cloud, plus OCI storage probes and failed VM allocation. Covers SCRAM genesis, bucket ownership, conditional writes and targeted failover gates.
+summary: AutoMQ traps verified on Vultr, AWS, Google Cloud and OCI. Includes OCI credential readiness, native firewall persistence and reboot recovery, with SCRAM genesis and targeted failover doctrine.
 keywords:
   - automq
   - kafka
