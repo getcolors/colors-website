@@ -14,8 +14,8 @@ import { html, workflow } from "~/data/landing";
           role="tab"
           id={`langfuse-${runtime.color}-tab`}
           aria-controls={`langfuse-${runtime.color}-panel`}
-          aria-selected={runtime.color === "green" ? "true" : "false"}
-          tabindex={runtime.color === "green" ? 0 : -1}
+          aria-selected={runtime.color === "red" ? "true" : "false"}
+          tabindex={runtime.color === "red" ? 0 : -1}
           data-runtime={runtime.color}
         >
           <span>{runtime.label}</span><span class="runtime-language"> · {runtime.language}</span>
@@ -29,7 +29,7 @@ import { html, workflow } from "~/data/landing";
       role="tabpanel"
       aria-labelledby={`langfuse-${runtime.color}-tab`}
       tabindex="0"
-      hidden={runtime.color !== "green"}
+      hidden={runtime.color !== "red"}
       data-runtime-panel
     >
       <InstallBox command={runtime.setup} id={`langfuse-setup-${runtime.color}`} showPrompt={false} showHeader={false} />
