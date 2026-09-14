@@ -73,7 +73,7 @@ import {
 } from "~/data/landing";
 
 const title = "Featured — Colors";
-const description = "A curated showcase of production infrastructure and platform automation built with the Colors SDK.";
+const description = "Executable infrastructure workflows built with Colors. Review the code and run a Package Skill from your terminal or CI without an agent.";
 const featuredPackageSkills = [
   { label: "K8s", href: "#k8s" },
   { label: "K3s", href: "#k3s" },
@@ -117,7 +117,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <SeoMeta title={title} description={description} path="/featured" image="/og-featured-blue-v1.png" imageAlt="Featured Package Skills built with Colors" />
+    <SeoMeta title={title} description={description} path="/featured" image="/og-featured-blue-v2.png" imageAlt="Featured Package Skills built with Colors" />
     <StyleGate />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script
@@ -876,7 +876,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
           <div class="featured-intro-copy">
             <div class="pill"><span>Curated by Colors</span></div>
             <h1>Featured</h1>
-            <p class="sec-lede sec-lede-wide">Production examples of deterministic, agent-operated infrastructure—from multi-node databases and observability stacks to Kubernetes clusters, message brokers, network-isolated agents, application hosting and remote development.</p>
+            <p class="sec-lede sec-lede-wide">These Package Skills contain the code that provisions and checks a deployment. Run a package from your terminal or CI without an agent, or use it as a starting point for an agent to adapt to your requirements. Current packages focus on OpenTofu and Ansible. Colors workflows can call any DevOps CLI, including tools in the Kubernetes ecosystem.</p>
           </div>
           <nav class="featured-toc" aria-label="Featured Package Skills on this page">
             <div class="featured-toc-head">
@@ -2131,7 +2131,7 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
       <!-- FINAL CTA -->
       <div class="cta">
         <div class="cta-inner">
-          <h2>Find infrastructure your agent can operate.</h2>
+          <h2>Find a workflow for your infrastructure.</h2>
           <p>Browse the PR-curated Skills Catalog by platform, provider, or runtime.</p>
           <a class="catalog-link" href="/skills"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" /></svg><span>View the Catalog</span></a>
         </div>

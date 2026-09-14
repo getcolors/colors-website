@@ -60,7 +60,7 @@ that package widens the range, not before.
 │   ├── fonts/            # 21 self-hosted IBM Plex woff2 files
 │   ├── favicon.svg       # the three-stripe mark
 │   ├── favicon.png       # raster fallback, currently unreferenced
-│   ├── og-colors-v3.png  # og:image, generated — see scripts/
+│   ├── og-colors-v4.png  # og:image, generated — see scripts/
 │   └── .well-known/
 │       └── agent-skills/ # generated discovery index and skill artifacts
 ├── scripts/
@@ -543,29 +543,23 @@ rename rule above still applies to changing the artwork at a fixed host.
   The repository's own root `index.html` carries its own copy of both.
 - Site URL: `https://www.getcolors.ai`, matching the deploy host. It is written
   in four files — see the table under Deployment; change them together.
-- The main install command is `npx skills use getcolors/langfuse` (it was the
-  ONCE command until 2026-09-03). It is written **twice** in the repository:
-  `installCmd` in `src/data/landing.ts`, which the hero and the markdown twin
-  resolve to, and `CMD` in `scripts/generate-og-image.py`, which bakes it into
-  the og:image. It was six hand-kept copies until 2026-07-30. The showcase's
-  ONCE section uses its own `onceInstallCmd`; do not point it back at
-  `installCmd`.
-
-  Create Package Skill has its own command,
-  `npx skills use "https://github.com/getcolors/skills" --skill "create-package-skill"`,
-  in `landing.ts`. It is an Agent Skill fetched for the agent's next request,
-  not a Package Skill installed into a deployment. The site advertises the
-  `--skill` flag form everywhere — never the `owner/repo@skill` shorthand — and
-  each workflow skill's `*Cmd` constant has a sibling `*Prompt` export that the
-  landing page passes to `InstallBox`.
-
-  The second copy is the one that bites. It is not on any page, so it does not
-  show up when you grep the rendered site, no build step reads it, and a wrong
-  value there ships a social card contradicting the page — which is exactly what
-  happened between 2026-07-27 and 2026-07-30, when every unfurl advertised
-  `bigconfig-ai/once`. Changing the command means changing both, regenerating
-  the card, and renaming it (`og-colors-v2.png` became `og-colors-v3.png` on
-  2026-09-03 for exactly this reason).
+- The homepage leads with agent-authored `colors.yml` and workflow code, informed
+  by Context Skills. Workflows can invoke any DevOps CLI. Current packages focus
+  on OpenTofu and Ansible; Kubernetes tooling is another possible workflow target.
+  Direct terminal/CI execution does not require an agent. Credential separation
+  depends on the execution environment, not on keeping credentials local.
+- Shared `hero`, `authoring`, `packageSkillDefinition`, `difference`, `workflow`,
+  `trust`, and `catalogCta` copy lives in `src/data/landing.ts`. Keep HTML and
+  Markdown sections aligned. The hero links to Create Package Skill; Langfuse
+  installation and launcher setup live in the direct-execution example.
+- The social card uses `DELIVERABLE` in `scripts/generate-og-image.py` to label
+  `colors.yml + workflow code`. It does not show the Langfuse install command.
+  Version the image filename when changing artwork and update its references.
+- Create Package Skill uses
+  `npx skills use "https://github.com/getcolors/skills" --skill "create-package-skill"`.
+  Preserve its phased prompt and the companion create/submit prompts. These are
+  Agent Skills for authoring or submitting packages and context, not package
+  launchers. Keep the `--skill` form rather than `owner/repo@skill` shorthand.
 - The three library links are `github.com/getcolors/red|green|blue`, and the
   footer links to the org root `github.com/getcolors`. These shipped from the
   design export as `bigconfig-ai/once` and `amiorin/red|green|blue`; they were

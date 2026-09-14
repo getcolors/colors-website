@@ -24,17 +24,12 @@ export const html = (s: string) =>
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
 
 export const meta = {
-  title: "Colors — Reproducible multi-machine deployments",
+  title: "Colors | Turn infrastructure requirements into executable workflows",
   description:
-    "Colors turns one desired-state file into an inspectable OpenTofu and Ansible deployment across every machine a system needs. Build and dry-run locally, then provision in your own cloud account and prove the topology with acceptance gates.",
+    "Ask your agent to write colors.yml and a reusable Colors workflow, informed by Context Skills. Orchestrate any DevOps CLI and run the reviewed code without an agent.",
 };
 
-// The one string CLAUDE.md tracks across the repo. Every on-page occurrence now
-// resolves to this constant; the og:image bakes its own copy in
-// scripts/generate-og-image.py, which no build step can reach. It was the ONCE
-// command until 2026-09-03, when the landing page was repositioned for teams
-// doing multi-machine deployments; ONCE keeps its own constant below for the
-// showcase.
+// Langfuse installation is the concrete example of direct package execution.
 export const installCmd = "npx skills use getcolors/langfuse";
 export const onceInstallCmd = "npx skills use getcolors/once";
 
@@ -92,36 +87,42 @@ export const announcement = {
 };
 
 export const hero = {
-  eyebrow: "Open-source deployment packages",
-  headline: "Complex deployments, declared in one file.",
-  lede: "Colors packages OpenTofu and Ansible into Package Skills: reproducible multi-machine deployments a coding agent can operate and your team can read. Infrastructure stays in your cloud account, and credentials stay local.",
-  installNote:
-    "Try **Langfuse**: six Vultr machines in one VPC — a Neon storage tier, Redis, three ClickHouse replicas with Keeper, and the application host — from one desired-state file.",
-  ymlCaption: "# Excerpt: the real colors.yml behind langfuse-vultr",
+  eyebrow: "An open-source workflow SDK for DevOps",
+  headline: "Describe the infrastructure. Get the complete workflow.",
+  lede: "Ask your agent to write colors.yml and the Colors workflow that converges your infrastructure to that desired state. The code coordinates your CLI tools and checks the result. Context Skills bring knowledge from verified builds to help tailor it to your requirements.",
+  executionNote: "Run the reviewed workflow from your terminal or CI. No AI agent is required at execution time.",
+  cta: "Create a Package Skill",
+  secondaryCta: "Explore existing packages",
+  installNote: "Try the existing Langfuse package. It deploys six Vultr machines from one desired-state file.",
+  ymlCaption: "# Example input: an excerpt of langfuse-vultr/colors.yml",
 };
 
 export const packageSkillDefinition =
-  "A Package Skill is a deterministic infrastructure and platform automation module built for AI coding agents using the Colors SDK (available in TypeScript/Bun, Clojure/Babashka, or Python/uv). It provisions and manages production resources—such as multi-node databases, observability stacks, Kubernetes clusters, message brokers, or development machines—by reading a non-secret desired state file (`colors.yml`), enforcing mandatory dry-run boundaries before contacting live providers, maintaining strict credential indirection through environment variables (`COLORS_PAR_*`), and managing resource lifecycles through execution graphs (DAGs).";
+  "A Package Skill bundles executable Colors workflow code with instructions for using it. The workflow reads desired state from colors.yml, coordinates CLI tools, and checks outcomes. People, CI runners, and coding agents can execute the same code.";
+
+export const authoring = {
+  heading: "Have the agent write the orchestration too",
+  lede: "Generated OpenTofu and Ansible files still leave you to connect the steps, pass outputs between tools, and verify the deployment. Ask for the complete program. A Colors workflow puts those decisions into code your team can review and run again.",
+  steps: [
+    { title: "Describe what you need", body: "Specify the topology, platform, operational constraints, and acceptance criteria. The agent writes colors.yml and the workflow code for those requirements." },
+    { title: "Use knowledge from verified builds", body: "Context Skills give the agent recorded failures, working approaches, and version-specific constraints. It uses that knowledge to adapt the workflow to your infrastructure. Each new solution still needs its own verification." },
+    { title: "Review and test the program", body: "Inspect the tool calls, execution order, failure handling, and checks. Test local rendering and dry runs before authorizing a live deployment." },
+    { title: "Run it with your deployment process", body: "A person or CI runner executes the reviewed version with the credentials it needs. An agent can help revise the code later, without becoming a runtime dependency." },
+  ],
+};
 
 export const workflow = {
-  heading: "See exactly what happens before anything happens",
-  lede: "Every deployment uses the same explicit lifecycle, whether it converges one host or six. The first two commands are safe on a fresh checkout with no provider credentials.",
+  heading: "Run a Package Skill without an agent",
+  lede: "For the existing Langfuse package, install the launcher and configure colors.yml using its documentation. Then run these commands in your terminal or CI. Build and dry-run need no provider credentials. A live create needs the package's dependencies and deployment credentials.",
+  setup: `${installCmd.replace(/^npx skills use\b/, "npx skills add")}
+cp .agents/skills/package-langfuse-green/green ./green
+chmod +x green`,
+  docsLabel: "Langfuse installation and configuration",
+  docsUrl: "https://getcolors.github.io/langfuse/",
   steps: [
-    {
-      command: "./green build",
-      title: "Render locally",
-      body: "Validate `colors.yml` and generate the OpenTofu, Ansible, and supporting files for every machine under `.colors/`.",
-    },
-    {
-      command: "./green create --dry-run",
-      title: "Walk the complete plan",
-      body: "Traverse the deployment graph while skipping every provider call and remote side effect.",
-    },
-    {
-      command: "./green create",
-      title: "Provision and verify",
-      body: "Converge the declared infrastructure, configure the hosts in dependency order, and run the package’s acceptance gates.",
-    },
+    { command: "./green build", title: "Render locally", body: "Validate colors.yml and generate the OpenTofu, Ansible, and supporting files under .colors/." },
+    { command: "./green create --dry-run", title: "Walk the workflow", body: "Traverse the execution graph while skipping provider calls and remote side effects. This checks the workflow path, not live provider behavior." },
+    { command: "./green create", title: "Converge and verify", body: "Run the programmed steps in dependency order and execute the package's acceptance checks. The launcher makes no LLM calls." },
   ],
 };
 
@@ -181,56 +182,33 @@ export const shapes = {
 };
 
 export const difference = {
-  heading: "Why not a Terraform module, a Helm chart, or a managed service?",
-  lede: "You can use any of them. Colors is useful when a team needs a whole topology stood up, proven and torn down on demand, not one layer of it.",
+  heading: "Use the CLI tools your infrastructure needs",
+  lede: "Colors is a programmable workflow SDK. Its workflows can invoke any DevOps CLI. The package code defines how the tools work together and what counts as success.",
   cards: [
-    {
-      label: "Versus an OpenTofu module",
-      title: "The module stops at the instance",
-      body: "A Package Skill carries host configuration, secret generation on the machine that owns each secret, ordering across machines, and the acceptance gates that prove the topology works — behind one lifecycle.",
-    },
-    {
-      label: "Versus a Helm chart or Compose file",
-      title: "The cluster has to exist first",
-      body: "Charts assume a cluster and Compose assumes one host. Colors provisions the machines, the network between them and a firewall per role, then converges each tier in dependency order.",
-    },
-    {
-      label: "Versus a managed service",
-      title: "No control plane, no seat bill",
-      body: "Colors provisions in your cloud account and exits. The machines, the state and the backups stay yours, and `delete` is guarded by a committed flag.",
-    },
+    { label: "Current packages", title: "OpenTofu and Ansible", body: "Current Package Skills focus on OpenTofu for provisioning and Ansible for configuration. The Colors workflow connects those steps and runs verification." },
+    { label: "Kubernetes workflows", title: "Build around Kubernetes tooling", body: "You can write workflows that invoke kubectl, Helm, or other Kubernetes CLIs. Their ordering, checks, and failure handling belong in the package code." },
+    { label: "Your own tools", title: "Compose the commands you need", body: "Use cloud CLIs, scripts, or internal tools in the same workflow. The author defines how each command reads state, handles repeat runs, and verifies its result." },
   ],
 };
 
 export const trust = {
-  heading: "Inspect it. Keep it. Leave it.",
+  heading: "Keep production access in your deployment process",
   cards: [
-    {
-      label: "Visible automation",
-      title: "OpenTofu and Ansible stay inspectable",
-      body: "`build` renders the files for every machine locally before `create` is allowed to contact a provider or a host.",
-    },
-    {
-      label: "Local credentials",
-      title: "Secrets never belong in `colors.yml`",
-      body: "Credentials arrive through local `COLORS_PAR_*` environment variables and are not rendered into generated files.",
-    },
-    {
-      label: "Deterministic execution",
-      title: "No model provisions your infrastructure",
-      body: "A coding agent can install and operate a Package Skill, but the launcher itself is ordinary deterministic code and makes no LLM calls. Three implementations render byte-identical output, checked on every commit.",
-    },
-    {
-      label: "Honest fit",
-      title: "Not for every team",
-      body: "If your platform team already maintains the IaC for every tier, or one host with a dashboard is all you need, Colors may add no value.",
-    },
+    { label: "Development", title: "The authoring agent needs no production access", body: "An agent can write and locally test the workflow without production credentials. Keep those credentials in a separate authorized execution environment when your team requires that boundary." },
+    { label: "Execution", title: "Your operator or CI runner holds the credentials", body: "Supply credentials to the approved run through environment variables. Keeping secrets out of colors.yml does not isolate them from an agent with access to that environment." },
+    { label: "Review", title: "Inspect the program before it runs", body: "Review and pin the workflow code, dependencies, and desired state through your existing change process. Execution follows the program rather than asking a model to choose the next command." },
+    { label: "Verification", title: "Check the result against your requirements", body: "Reproducibility and convergence depend on the code and tools you choose. Define acceptance checks, retry behavior, and recovery for partial failures. A successful command alone does not prove the infrastructure works." },
   ],
+};
+
+export const catalogCta = {
+  heading: "Find a workflow to build on",
+  body: "Browse Package Skills for executable automation and Context Skills for knowledge from verified builds.",
 };
 
 export const libraries = {
   heading: "Three libraries. One SDK.",
-  lede: "Colors is an SDK made of three interchangeable libraries for building Package Skills. Pick the runtime your team already uses — the guarantees don't change: dry-run boundaries, secret indirection, identical desired-state semantics.",
+  lede: "Write Colors workflows in TypeScript, Clojure, or Python. Each library provides the execution graph and workflow mechanisms for building Package Skills that call your chosen CLI tools.",
   items: [
     {
       name: "red",
@@ -264,7 +242,7 @@ export const libraries = {
 // so the hrefs must match those sections' anchors.
 export const skillMatrix = {
   heading: "Four Agent Skills, two verbs, two kinds",
-  lede: "A Package Skill provisions infrastructure; a Context Skill remembers what a verified build learned. Each kind can be created with your agent, and each can be submitted to the Skills Catalog — four workflows that pair up into a matrix.",
+  lede: "Package Skills carry executable workflows. Context Skills carry knowledge from verified builds that helps an agent create or adapt those workflows. Use these Agent Skills to create either kind or submit it to the catalog.",
   columns: ["Package Skill", "Context Skill"],
   rows: [
     {
@@ -311,7 +289,7 @@ export const createPackageSkill = {
   docsUrl: "https://getcolors.github.io/skills/",
   repoUrl: "https://github.com/getcolors/skills",
   heading: "Create Package Skill: build a new Package Skill with your agent",
-  lede: "Create Package Skill gives a coding agent the workflow for building a new Colors Package Skill and a deployment that uses it — from requirements and credential boundaries through implementation, safe dry runs, and an authorized production deployment.",
+  lede: "Describe the infrastructure you need and ask your agent to create the complete Package Skill. It writes colors.yml, workflow code, and acceptance checks, using relevant Context Skills to inform the implementation. Review and test the result before an authorized operator, CI runner, or agent deploys it.",
   useNote:
     "This is an **Agent Skill**, not a Package Skill. `npx skills use` gives it to your agent for the next request without installing it into a project.",
   phases: [
@@ -374,7 +352,7 @@ export const createContextSkill = {
   docsUrl: "https://github.com/getcolors/skills/blob/main/create-context-skill/SKILL.md",
   repoUrl: "https://github.com/getcolors/skills",
   heading: "Create Context Skill: distill a verified build into a Context Skill",
-  lede: "Create Context Skill gives a coding agent the workflow for distilling a completed, verified build into a Context Skill conforming to the Context Skill Standard — symptom-first routing, provenance-labelled claims, pinned versions, a failure catalogue, and evals, with no copies of the companion package's files.",
+  lede: "Capture what a verified build learned so the next agent can use it. A Context Skill records failures, fixes, pinned versions, and the evidence behind each claim. It supplies knowledge for future workflows without copying the package code.",
   useNote:
     "This is an **Agent Skill**, not a Package Skill. Its input is a completed build whose acceptance gates passed — without one, there is nothing to distill.",
   phases: [

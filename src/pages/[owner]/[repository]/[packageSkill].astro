@@ -52,6 +52,9 @@ const structuredData = {
       )}
     </div>
     <p class="lede description">{packageSkill.description}</p>
+    {packageSkill.kind === "package" && (
+      <p class="execution-note">This Package Skill includes executable workflow code. Run its launcher from your terminal or CI without an agent. The <a href={`https://github.com/${packageSkill.repository}`}>repository documentation</a> explains how to configure and run it.</p>
+    )}
     <div class="detail-grid">
       <article>
         <section aria-label="Installation">
@@ -88,6 +91,7 @@ const structuredData = {
   </section>
 </CatalogLayout>
 <style is:global>
+  .execution-note { max-width: 900px; color: var(--muted); }
   .package-skill-page { padding-top: 62px; }
   .package-skill-page h1 { overflow-wrap: anywhere; }
   .runtime-line { margin-top: 18px; }

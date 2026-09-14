@@ -1,5 +1,5 @@
 // Markdown for Agents. Caddy rewrites `/` to `/index.md` when the request
-// carries `Accept: text/markdown` — see the @markdown handle in Caddyfile.prod.
+// carries `Accept: text/markdown`. see the @markdown handle in Caddyfile.prod.
 // Browsers send Accept: text/html and keep getting index.astro.
 //
 // The copy is NOT duplicated here. Both this route and index.astro render
@@ -14,6 +14,8 @@
 
 import type { APIContext } from "astro";
 import {
+  authoring,
+  catalogCta,
   colorsYml,
   createContextSkill,
   createContextSkillCmd,
@@ -22,9 +24,9 @@ import {
   difference,
   footer,
   hero,
-  installCmd,
   libraries,
   meta,
+  packageSkillDefinition,
   realExample,
   shapes,
   skillMatrix,
@@ -41,7 +43,7 @@ const fence = (lang: string, body: string) => `\`\`\`${lang}\n${body}\n\`\`\``;
 
 /** Hard-wrap prose at 78 columns, indenting continuation lines. Markdown does
  *  not care, but the twin is read as a raw file often enough to be worth
- *  keeping tidy — the hand-written version it replaced wrapped the same way.
+ *  keeping tidy. the hand-written version it replaced wrapped the same way.
  *  Never applied to fences or tables, where a line break would change meaning. */
 const wrap = (text: string, indent = "", width = 78) => {
   const lines: string[] = [];
@@ -70,7 +72,7 @@ const quote = (text: string) =>
     .join("\n");
 
 export async function GET({ site }: APIContext) {
-  // No fallback literal — see the comment in sitemap.xml.ts.
+  // No fallback literal. see the comment in sitemap.xml.ts.
   if (!site) throw new Error("`site` is unset in astro.config.mjs");
   const canonical = new URL("/", site).toString();
 
@@ -80,13 +82,48 @@ ${quote(meta.description)}
 
 Canonical HTML: ${canonical}
 
-## Install
+## ${hero.headline}
+
+${wrap(hero.lede)}
+
+${wrap(hero.executionNote)}
+
+${hero.cta}: ${canonical}#create-package-skill
+${hero.secondaryCta}: ${new URL("/skills", site).toString()}
+
+## ${authoring.heading}
+
+${wrap(authoring.lede)}
+
+${wrap(packageSkillDefinition)}
+
+${authoring.steps.map((step) => wrap(`- **${step.title}.** ${step.body}`, "  ")).join("\n")}
+
+## ${difference.heading}
+
+${wrap(difference.lede)}
+
+${difference.cards.map((c) => wrap(`- **${c.label}. ${c.title}.** ${c.body}`, "  ")).join("\n")}
+
+## ${workflow.heading}
+
+${wrap(workflow.lede)}
+
+${workflow.docsLabel}: ${workflow.docsUrl}
 
 ${wrap(hero.installNote)}
 
-${fence("sh", installCmd)}
+${fence("sh", workflow.setup)}
 
-${wrap("A Package Skill is configured with a `colors.yml` — this is an excerpt of the real one behind a six-machine Langfuse deployment:")}
+${workflow.steps.map((step, i) => wrap(`${i + 1}. **${step.title}. \`${step.command}\`.** ${step.body}`, "   ")).join("\n")}
+
+## ${trust.heading}
+
+${trust.cards.map((c) => wrap(`- **${c.title}.** ${c.body}`, "  ")).join("\n")}
+
+## Example desired state
+
+${hero.ymlCaption}
 
 ${fence("yaml", colorsYml)}
 
@@ -98,7 +135,7 @@ ${realExample.results.map((result) => `- ${result}`).join("\n")}
 
 ${wrap(realExample.note)}
 
-${wrap(`**${topology.caption}** — four firewall groups, six machines, one VPC:`)}
+${wrap(`**${topology.caption}**. Four firewall groups, six machines, one VPC:`)}
 
 ${topology.groups.map((g) => wrap(`- **${g.name}** (${g.plan}): ${g.machines.join("; ")}`, "  ")).join("\n")}
 
@@ -111,23 +148,7 @@ Repository: https://github.com/getcolors/langfuse
 
 ${wrap(shapes.lede)}
 
-${shapes.items.map((item) => wrap(`- **${item.name}** — ${item.meta}. ${item.body} ${canonical.replace(/\/$/, "")}${item.href}`, "  ")).join("\n")}
-
-## ${workflow.heading}
-
-${wrap(workflow.lede)}
-
-${workflow.steps.map((step, i) => wrap(`${i + 1}. **${step.title} — \`${step.command}\`.** ${step.body}`, "   ")).join("\n")}
-
-## ${difference.heading}
-
-${wrap(difference.lede)}
-
-${difference.cards.map((c) => wrap(`- **${c.label} — ${c.title}.** ${c.body}`, "  ")).join("\n")}
-
-## ${trust.heading}
-
-${trust.cards.map((c) => wrap(`- **${c.title}.** ${c.body}`, "  ")).join("\n")}
+${shapes.items.map((item) => wrap(`- **${item.name}**. ${item.meta}. ${item.body} ${canonical.replace(/\/$/, "")}${item.href}`, "  ")).join("\n")}
 
 ## ${libraries.heading}
 
@@ -143,7 +164,7 @@ ${wrap(skillMatrix.lede)}
 
 | | ${skillMatrix.columns.join(" | ")} |
 |---|---|---|
-${skillMatrix.rows.map((r) => `| **${r.verb}** | ${r.cells.map((c) => `**${c.title}** — ${c.body}`).join(" | ")} |`).join("\n")}
+${skillMatrix.rows.map((r) => `| **${r.verb}** | ${r.cells.map((c) => `**${c.title}**. ${c.body}`).join(" | ")} |`).join("\n")}
 
 ## ${createPackageSkill.heading}
 
@@ -197,14 +218,14 @@ Repository: ${submitContextSkill.repoUrl}
 
 ${submitContextSkill.phases.map((phase, i) => wrap(`${i + 1}. **${phase.title}.** ${phase.body}`, "   ")).join("\n")}
 
-## Find infrastructure your agent can operate
+## ${catalogCta.heading}
 
-Browse the PR-curated Skills Catalog by platform, provider, or runtime:
+${wrap(catalogCta.body)}
 ${new URL("/skills", site).toString()}
 
 ---
 
-${footer.name} — ${footer.links.map((link) => `${link.label}: ${link.href}`).join(" · ")}
+${footer.name}. ${footer.links.map((link) => `${link.label}: ${link.href}`).join(" · ")}
 `;
 
   return new Response(body, {

@@ -210,16 +210,17 @@ const structuredData = {
         </li>
       </ul>
 
-      <h2>The model is load-bearing too</h2>
+      <h2>The model's role in this incident</h2>
       <p>
-        The deterministic half does not make the model optional. The agentic remainder in this session was
-        exactly the part you cannot turn into a procedure: connecting a 403 to a write-once file created six
+        This session used a model to investigate an unfamiliar failure. Running a Package Skill does not
+        require a model. A person or CI runner can execute the same workflow. Here, the agent handled work
+        the existing workflow did not cover: connecting a 403 to a write-once file created six
         days earlier, recognizing that a green converge and a working product are different claims,
         distrusting its own successful-looking verification. A model at the level of Fable 5 handles that
         remainder reliably enough to be left alone with scoped credentials; the converges and tests keep the
-        remainder small enough that "reliably enough" is a reasonable bet. Neither half is safe on its own. Capability without
-        determinism improvises everywhere, including where it should not; determinism without capability
-        stalls at the first screenshot.
+        remainder small enough that "reliably enough" is a reasonable bet for this session. A human engineer
+        could also investigate the failure and update the workflow. Once the fix is in the code, later
+        runs can execute it without repeating that investigation or consulting a model.
       </p>
       <p>
         The ratio is also why this gets safer over time rather than merely staying safe. Every session like
@@ -235,8 +236,8 @@ const structuredData = {
         runs the same Package Skill you can install. The skill provisions the full Rybbit stack as desired
         state, with the verbs used throughout this article: PostgreSQL, ClickHouse, Redis, Caddy behind
         Cloudflare, and nightly restore-checked backups to
-        R2. <a href="/featured#rybbit">Try the Rybbit Package Skill</a>, hand it to your agent, and start
-        converting.
+        R2. <a href="/featured#rybbit">Try the Rybbit Package Skill</a>. Run its workflow directly from your
+        terminal or CI, or use an agent to adapt it to your infrastructure.
       </p>
     </article>
   </div>

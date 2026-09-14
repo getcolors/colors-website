@@ -6,13 +6,13 @@ const catalog = await loadCatalog();
 const packageSources = catalog.sources.filter((source) => source.type === "package");
 const contextSkills = catalog.contextSkills;
 const title = "Skills Catalog — Colors";
-const description = "Find deterministic Package Skills and build-verified Context Skills for infrastructure and platform automation with the Colors SDK.";
+const description = "Find executable Colors workflows and Context Skills that help agents tailor infrastructure automation to your requirements.";
 ---
-<CatalogLayout {title} {description} path="/skills" image="/og-catalog-blue-v7.png" imageAlt="Colors Skills Catalog">
+<CatalogLayout {title} {description} path="/skills" image="/og-catalog-blue-v8.png" imageAlt="Colors Skills Catalog">
   <section class="catalog-hero wrap">
     <div class="pill"><span>The Skills Catalog</span></div>
-    <h1>What should your agent operate?</h1>
-    <p class="lede">Search deterministic infrastructure automation by platform, provider, runtime, or the production resource you need to manage.</p>
+    <h1>What infrastructure do you need?</h1>
+    <p class="lede">Find Package Skills you can run from your terminal or CI without an agent. Use Context Skills to help an agent write a Colors workflow and <code>colors.yml</code> for your requirements.</p>
     <label class="search">
       <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 5 5"></path></svg>
       <span class="sr-only">Search Package Skills</span>
@@ -33,7 +33,7 @@ const description = "Find deterministic Package Skills and build-verified Contex
     <div class="results-head">
       <div>
         <h2 id="results-heading">Package Skills</h2>
-        <p class="section-lede">Deterministic operators for one production resource each — versioned, SHA-pinned into your project. Installed with <code>npx skills add</code>.</p>
+        <p class="section-lede">Executable workflow code and instructions for a deployment. Review the package, then run its launcher with your <code>colors.yml</code>. An agent is optional at execution time.</p>
       </div>
       <a class="button-link" href="/#submit-package-skill">Submit a Package Skill</a>
     </div>
@@ -70,7 +70,7 @@ const description = "Find deterministic Package Skills and build-verified Contex
       <div class="results-head">
         <div>
           <h2 id="context-heading">Context Skills</h2>
-          <p class="section-lede">Knowledge distilled from verified builds — symptom-indexed traps, contracts, and acceptance doctrine. Loaded with <code>npx skills use</code>, not installed.</p>
+          <p class="section-lede">Knowledge from verified builds, including failure symptoms, operational requirements, and acceptance checks. Load a Context Skill with <code>npx skills use</code> to help your agent write and test a workflow tailored to your infrastructure.</p>
         </div>
         <a class="button-link" href="/#submit-context-skill">Submit a Context Skill</a>
       </div>

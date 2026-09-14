@@ -9,6 +9,8 @@ import SiteFooter from "~/components/SiteFooter.astro";
 import SiteHeader from "~/components/SiteHeader.astro";
 import { yamlTheme } from "~/data/yaml-theme";
 import {
+  authoring,
+  catalogCta,
   colorsYml,
   createContextSkill,
   createContextSkillCmd,
@@ -19,9 +21,9 @@ import {
   difference,
   hero,
   html,
-  installCmd,
   libraries,
   meta,
+  packageSkillDefinition,
   realExample,
   shapes,
   skillMatrix,
@@ -520,6 +522,9 @@ const { title, description } = meta;
         text-transform: uppercase;
       }
       h1 { font-size: 52px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 600; margin: 0 0 20px; }
+      .hero-execution { font-size: 17px; margin: 0 0 24px; max-width: 520px; }
+      .hero-actions { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+      .workflow-docs { margin: 20px 0; }
       .hero-lede { font-size: 18px; color: var(--muted); margin: 0 0 32px; max-width: 520px; }
 
       .install { display: flex; flex-direction: column; gap: 12px; width: 100%; min-width: 0; max-width: 520px; }
@@ -830,9 +835,10 @@ const { title, description } = meta;
           <div class="pill"><span>{hero.eyebrow}</span></div>
           <h1>{hero.headline}</h1>
           <p class="hero-lede">{hero.lede}</p>
-          <div class="install">
-            <InstallBox command={installCmd} id="hero-install" />
-            <span class="install-note" set:html={html(hero.installNote)} />
+          <p class="hero-execution">{hero.executionNote}</p>
+          <div class="hero-actions">
+            <a class="catalog-link" href="#create-package-skill">{hero.cta}</a>
+            <a href="/skills">{hero.secondaryCta}</a>
           </div>
         </div>
         <div class="yml">
@@ -843,6 +849,74 @@ const { title, description } = meta;
             theme={yamlTheme}
             style="margin:0; background:transparent; line-height:1.7"
           />
+        </div>
+      </div>
+
+      <section class="sec sec-alt" id="authoring">
+        <div class="wrap">
+          <SectionHeading id="authoring" title={authoring.heading} />
+          <p class="sec-lede sec-lede-wide">{authoring.lede}</p>
+          <p class="sec-lede sec-lede-wide">{packageSkillDefinition}</p>
+          <div class="grid-2">
+            {authoring.steps.map((step) => (
+              <div class="card">
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- WHY ANOTHER LAYER -->
+      <div class="sec" id="why-colors">
+        <div class="wrap">
+          <SectionHeading id="why-colors" title={difference.heading} />
+          <p class="sec-lede sec-lede-wide">{difference.lede}</p>
+          <div class="grid-3">
+            {difference.cards.map((c) => (
+              <div class="card">
+                <div class="eyebrow eyebrow-blue">{c.label}</div>
+                <h3>{c.title}</h3>
+                <p set:html={html(c.body)} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- SAFE LOCAL WORKFLOW -->
+      <div class="sec sec-alt" id="workflow">
+        <div class="wrap">
+          <SectionHeading id="workflow" title={workflow.heading} />
+          <p class="sec-lede sec-lede-wide">{workflow.lede}</p>
+          <div class="sec-install"><p class="install-note">{hero.installNote}</p><Code code={workflow.setup} lang="sh" theme={yamlTheme} /></div>
+          <p class="workflow-docs"><a href={workflow.docsUrl}>{workflow.docsLabel}</a></p>
+          <div class="grid-3">
+            {workflow.steps.map((step) => (
+              <div class="workflow-card">
+                <code class="workflow-command">{step.command}</code>
+                <h3>{step.title}</h3>
+                <p set:html={html(step.body)} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- TRUST AND FIT -->
+      <div class="sec sec-alt" id="trust">
+        <div class="wrap">
+          <SectionHeading id="trust" title={trust.heading} headingClass="solo" />
+          <div class="trust-grid">
+            {trust.cards.map((c) => (
+              <div class="trust-card">
+                <div class="eyebrow eyebrow-green">{c.label}</div>
+                <h3>{c.title}</h3>
+                <p set:html={html(c.body)} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -962,56 +1036,6 @@ const { title, description } = meta;
                 <h3>{item.name}</h3>
                 <p>{item.body}</p>
               </a>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <!-- SAFE LOCAL WORKFLOW -->
-      <div class="sec sec-alt" id="workflow">
-        <div class="wrap">
-          <SectionHeading id="workflow" title={workflow.heading} />
-          <p class="sec-lede sec-lede-wide">{workflow.lede}</p>
-          <div class="grid-3">
-            {workflow.steps.map((step) => (
-              <div class="workflow-card">
-                <code class="workflow-command">{step.command}</code>
-                <h3>{step.title}</h3>
-                <p set:html={html(step.body)} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <!-- WHY ANOTHER LAYER -->
-      <div class="sec" id="why-colors">
-        <div class="wrap">
-          <SectionHeading id="why-colors" title={difference.heading} />
-          <p class="sec-lede sec-lede-wide">{difference.lede}</p>
-          <div class="grid-3">
-            {difference.cards.map((c) => (
-              <div class="card">
-                <div class="eyebrow eyebrow-blue">{c.label}</div>
-                <h3>{c.title}</h3>
-                <p set:html={html(c.body)} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <!-- TRUST AND FIT -->
-      <div class="sec sec-alt" id="trust">
-        <div class="wrap">
-          <SectionHeading id="trust" title={trust.heading} headingClass="solo" />
-          <div class="trust-grid">
-            {trust.cards.map((c) => (
-              <div class="trust-card">
-                <div class="eyebrow eyebrow-green">{c.label}</div>
-                <h3>{c.title}</h3>
-                <p set:html={html(c.body)} />
-              </div>
             ))}
           </div>
         </div>
@@ -1163,8 +1187,8 @@ const { title, description } = meta;
       <!-- FINAL CTA -->
       <div class="cta" id="catalog">
         <div class="cta-inner">
-          <SectionHeading id="catalog" title="Find infrastructure your agent can operate." centered />
-          <p>Browse the PR-curated Skills Catalog by platform, provider, or runtime.</p>
+          <SectionHeading id="catalog" title={catalogCta.heading} centered />
+          <p>{catalogCta.body}</p>
           <a class="catalog-link" href="/skills"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" /></svg><span>View the Catalog</span></a>
 
         </div>

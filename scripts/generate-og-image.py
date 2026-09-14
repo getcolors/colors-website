@@ -33,7 +33,7 @@ FONTS = os.path.join(ROOT, "public", "fonts")
 # og-colors-v2.png was retired on 2026-09-03 with the repositioning for teams
 # doing multi-machine deployments: it read "An SDK for building Package Skills"
 # over the ONCE install command, the single-host framing the page dropped.
-OUT = os.path.join(ROOT, "public", "og-colors-v3.png")
+OUT = os.path.join(ROOT, "public", "og-colors-v4.png")
 
 try:
     from fontTools.ttLib import TTFont
@@ -139,33 +139,19 @@ o.append(f'<rect x="{MX + 2 * MARK / 3:.3f}" y="{MY}" width="{MARK / 3:.3f}" hei
 o.append("</g>")
 o.append(draw(SANS, "Colors", 38, MX + MARK + 20, MY + MARK * 0.72, INK, -0.01, 0.022)[0])
 
-# Headline.
-o.append(draw(SANS, "Complex deployments,", 66, MARGIN, 296, INK, -0.02, 0.024)[0])
-o.append(draw(SANS, "declared in one file.", 66, MARGIN, 370, INK, -0.02, 0.024)[0])
+# The workflow is the deliverable. Runtime choice is secondary to that message.
+o.append(draw(SANS, "Describe the infrastructure.", 66, MARGIN, 250, INK, -0.02, 0.024)[0])
+o.append(draw(SANS, "Get the complete workflow.", 66, MARGIN, 328, INK, -0.02, 0.024)[0])
 
-# Subline.
-o.append(draw(SANS, "Dry-run boundaries, secret indirection and acceptance", 27, MARGIN, 452, MUTED)[0])
-o.append(draw(SANS, "gates across every machine a system needs.", 27, MARGIN, 488, MUTED)[0])
+o.append(draw(SANS, "Ask an agent to write the automation with any DevOps CLI.", 29, MARGIN, 407, MUTED)[0])
+o.append(draw(SANS, "Run the reviewed code from your terminal or CI. No agent required.", 29, MARGIN, 447, MUTED)[0])
 
-# The three libraries, right column — beside the headline, above the subline.
-libraries = [
-    ("red", RED, "TypeScript / Bun"),
-    ("green", GREEN, "Clojure / Babashka"),
-    ("blue", BLUE, "Python / uv"),
-]
-CX = 790
-STACK_X = CX + max(text(MONO6, n, 22)[1] for n, _, _ in libraries) + 18
-for i, (name, colour, stack) in enumerate(libraries):
-    y = 268 + i * 56
-    o.append(draw(MONO6, name, 22, CX, y, colour)[0])
-    o.append(draw(MONO5, stack, 19, STACK_X, y, MUTED)[0])
-
-# Install command, in the same dark pill the page uses.
-CMD = "npx skills use getcolors/langfuse"
-cmd_w = text(MONO5, CMD, 24)[1]
-PILL_Y, PILL_H, PAD = 516, 60, 26
-o.append(f'<rect x="{MARGIN}" y="{PILL_Y}" width="{cmd_w + 2 * PAD:.1f}" height="{PILL_H}" rx="10" fill="{INK}"/>')
-o.append(draw(MONO5, CMD, 24, MARGIN + PAD, PILL_Y + 39, ONDARK)[0])
+# Name the files the agent produces, rather than an example package install.
+DELIVERABLE = "colors.yml + workflow code"
+label_w = text(MONO5, DELIVERABLE, 24)[1]
+PILL_Y, PILL_H, PAD = 492, 60, 26
+o.append(f'<rect x="{MARGIN}" y="{PILL_Y}" width="{label_w + 2 * PAD:.1f}" height="{PILL_H}" rx="10" fill="{INK}"/>')
+o.append(draw(MONO5, DELIVERABLE, 24, MARGIN + PAD, PILL_Y + 39, ONDARK)[0])
 
 # Bottom colour band.
 BAND = 16
@@ -396,9 +382,6 @@ def recipes():
 
 
 catalog_recipes = recipes()
-package_recipes = [recipe for recipe in catalog_recipes if recipe[0] == "package"]
-all_skills = sum(len(recipe[4]) for recipe in package_recipes)
-context_skill_count = sum(len(recipe[4]) for recipe in catalog_recipes if recipe[0] == "context")
 # og-context-skills-v3.png is a supplied dark promotional card, cropped
 # centrally from 2752x1536 to 1200x630 and re-encoded to strip an inverted gAMA
 # chunk, not generated here — the fifth exception to "og-*.png are generated".
@@ -519,12 +502,7 @@ render_article_card(
     "/blog/self-hosted-analytics-benchmark",
 )
 
-catalog_card_text = f"{len(package_recipes)} curated sources and {all_skills} Package Skills for production infrastructure."
-if context_skill_count:
-    catalog_card_text = (
-        f"{len(package_recipes)} curated sources, {all_skills} Package Skills, and "
-        f"{context_skill_count} Context Skill{'s' if context_skill_count != 1 else ''} for production infrastructure."
-    )
+catalog_card_text = "Run Package Skills from your terminal or CI. Use Context Skills to help an agent write your next workflow."
 # v2 on 2026-08-27: the heading changed from "Package Skills Catalog" when
 # Context Skills joined the catalog — new artwork means a new filename.
 # v3 on 2026-09-10 adds the Neon Multi-Node package and context.
@@ -532,8 +510,9 @@ if context_skill_count:
 # v5 on 2026-09-11 adds the Red and Blue n8n variants to the package count.
 # v6 on 2026-09-11 adds the Red and Blue redis variants to the package count.
 # v7 adds Alice and Dotfiles after checking the GitHub package inventory.
-render_blue_card("og-catalog-blue-v7.png", "Catalog", "Skills Catalog", catalog_card_text, "/skills")
-render_blue_card("og-featured-blue-v1.png", "Featured", "Featured Package Skills", "Production examples of deterministic, agent-operated infrastructure built with Colors.", "/featured")
+# v8 explains direct execution and the role of Context Skills.
+render_blue_card("og-catalog-blue-v8.png", "Catalog", "Skills catalog", catalog_card_text, "/skills")
+render_blue_card("og-featured-blue-v2.png", "Featured", "Featured Package Skills", "Executable infrastructure workflows built with Colors. Run them from your terminal or CI, with no agent required.", "/featured")
 
 # One source card per repository, not per recipe: Context Skills share
 # getcolors/skills, and /{owner}/{repository} exists once.
