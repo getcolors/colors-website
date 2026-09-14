@@ -6,8 +6,8 @@ This is the static website for Colors, an SDK for building Package Skills. The
 product was previously called BigConfig. `/` remains the landing page;
 `/featured` is the editorial showcase and `/skills` plus the generated
 owner/source/Package Skill routes form the PR-curated Skills Catalog (Package Skills and Context Skills).
-The blog is live again at `/blog` with ten articles; the manual and talk
-decks remain retired.
+The blog is live again at `/blog` with ten articles; the manual and old talk
+decks remain retired. The Marp introduction is live at `/slides/introduction/`.
 
 ## Tech Stack
 
@@ -564,3 +564,20 @@ rename rule above still applies to changing the artwork at a fixed host.
   footer links to the org root `github.com/getcolors`. These shipped from the
   design export as `bigconfig-ai/once` and `amiorin/red|green|blue`; they were
   repointed to the `getcolors` org on 2026-07-28.
+
+## Introduction deck
+
+`slides/introduction.md` contains the ten-slide Marp introduction and speaker
+notes. `slides/colors.css` is its theme. The closing CTA is the Community Town
+Hall on 18 September 2026, with its Luma registration QR code. Update this
+time-specific invitation deliberately before reusing the deck for later events.
+
+Run `pnpm slides:build` to regenerate the committed HTML and PDF in
+`public/slides/introduction/`. Marp CLI is pinned to 4.5.1, the npm latest stable
+release verified when this deck was added. The script embeds local fonts and
+the QR code. It needs Chrome for PDF generation; `CHROME_PATH` may select an
+executable. On an isolated build environment without browser sandbox support,
+Marp also accepts `CHROME_NO_SANDBOX=1`. The normal site build only copies these
+artifacts and needs no browser. Inspect all slides after changing source or
+theme, verify the PDF has ten pages, and check registration and PDF links.
+The event page links to the deck and PDF; the sitemap includes the HTML URL.

@@ -12,7 +12,8 @@
         "typecheck": "astro check",
         "skills:generate": "node scripts/generate-agent-skills.mjs",
         "skills:update": "node scripts/generate-agent-skills.mjs --update",
-        "astro": "astro"
+        "astro": "astro",
+        "slides:build": "node scripts/build-slides.mjs"
     },
     "pnpm": {
         "onlyBuiltDependencies": [
@@ -28,6 +29,8 @@
     },
     "devDependencies": {
         "@astrojs/check": "^0.9.10",
+        "@marp-team/marp-cli": "4.5.1",
+        "qrcode": "^1.5.4",
         "typescript": "^6.0.3"
     }
 }
