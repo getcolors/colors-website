@@ -3,9 +3,10 @@ interface Props {
   command: string;
   id?: string;
   prompt?: string;
+  showPrompt?: boolean;
 }
 
-const { command, id: providedId, prompt: providedPrompt } = Astro.props;
+const { command, id: providedId, prompt: providedPrompt, showPrompt = true } = Astro.props;
 const id = providedId ?? `install-${command.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}`;
 // The Command tab always reads `add`, the Prompt tab always reads `use` —
 // for every skill kind, regardless of which verb the caller's command uses.
@@ -18,7 +19,7 @@ const panelId = `${id}-panel`;
 <div class="install-box" data-install-box>
   <div class="install-header">
     <span class="install-label">Installation</span>
-    <div class="install-tabs" role="tablist" aria-label="Installation format">
+    {showPrompt && <div class="install-tabs" role="tablist" aria-label="Installation format">
       <button
         id={`${id}-command-tab`}
         type="button"
@@ -35,15 +36,15 @@ const panelId = `${id}-panel`;
         aria-controls={panelId}
         data-install-tab="prompt"
       ><span class="spark" aria-hidden="true">✦</span> Prompt</button>
-    </div>
+    </div>}
   </div>
 
-  <div class="command-shell" data-install-shell data-mode="command">
+  <div class="command-shell" data-install-shell data-mode="command" data-multiline={installCommand.includes("\n") ? "true" : undefined}>
     <span class="shell-prompt" aria-hidden="true">$</span>
     <code
       id={panelId}
-      role="tabpanel"
-      aria-labelledby={`${id}-command-tab`}
+      role={showPrompt ? "tabpanel" : undefined}
+      aria-labelledby={showPrompt ? `${id}-command-tab` : undefined}
       data-install-content
       data-install-command={installCommand}
       data-install-prompt={prompt}
@@ -196,6 +197,14 @@ const panelId = `${id}-panel`;
     line-height: 1.5;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .command-shell[data-mode="command"][data-multiline="true"] {
+    align-items: flex-start;
+  }
+  .command-shell[data-mode="command"][data-multiline="true"] code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
   }
   .copy-command {
     display: grid;
