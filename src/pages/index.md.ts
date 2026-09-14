@@ -113,9 +113,13 @@ ${workflow.docsLabel}: ${workflow.docsUrl}
 
 ${wrap(hero.installNote)}
 
-${fence("sh", workflow.setup)}
+${wrap(workflow.runtimeNote)}
 
-${workflow.steps.map((step, i) => wrap(`${i + 1}. **${step.title}. \`${step.command}\`.** ${step.body}`, "   ")).join("\n")}
+${workflow.runtimes.map((runtime) => `### ${runtime.label} · ${runtime.language}
+
+${fence("sh", runtime.setup)}
+
+${workflow.steps.map((step, i) => wrap(`${i + 1}. **${step.title}. \`./${runtime.color} ${step.command}\`.** ${step.body}`, "   ")).join("\n")}`).join("\n\n")}
 
 ## ${trust.heading}
 

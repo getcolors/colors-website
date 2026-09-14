@@ -114,15 +114,23 @@ export const authoring = {
 export const workflow = {
   heading: "Run a Package Skill without an agent",
   lede: "For the existing Langfuse package, install the launcher and configure colors.yml using its documentation. Then run these commands in your terminal or CI. Build and dry-run need no provider credentials. A live create needs the package's dependencies and deployment credentials.",
-  setup: `${installCmd.replace(/^npx skills use\b/, "npx skills add")}
-cp .agents/skills/package-langfuse-green/green ./green
-chmod +x green`,
+  runtimeNote: "Choose the runtime your team uses. Each implementation runs the same deployment workflow.",
+  runtimes: [
+    { color: "red", label: "Red", language: "TypeScript" },
+    { color: "green", label: "Green", language: "Clojure" },
+    { color: "blue", label: "Blue", language: "Python" },
+  ].map((runtime) => ({
+    ...runtime,
+    setup: `${installCmd.replace(/^npx skills use\b/, "npx skills add")}
+cp .agents/skills/package-langfuse-${runtime.color}/${runtime.color} ./${runtime.color}
+chmod +x ${runtime.color}`,
+  })),
   docsLabel: "Langfuse installation and configuration",
   docsUrl: "https://getcolors.github.io/langfuse/",
   steps: [
-    { command: "./green build", title: "Render locally", body: "Validate colors.yml and generate the OpenTofu, Ansible, and supporting files under .colors/." },
-    { command: "./green create --dry-run", title: "Walk the workflow", body: "Traverse the execution graph while skipping provider calls and remote side effects. This checks the workflow path, not live provider behavior." },
-    { command: "./green create", title: "Converge and verify", body: "Run the programmed steps in dependency order and execute the package's acceptance checks. The launcher makes no LLM calls." },
+    { command: "build", title: "Render locally", body: "Validate colors.yml and generate the OpenTofu, Ansible, and supporting files under .colors/." },
+    { command: "create --dry-run", title: "Walk the workflow", body: "Traverse the execution graph while skipping provider calls and remote side effects. This checks the workflow path, not live provider behavior." },
+    { command: "create", title: "Converge and verify", body: "Run the programmed steps in dependency order and execute the package's acceptance checks. The launcher makes no LLM calls." },
   ],
 };
 

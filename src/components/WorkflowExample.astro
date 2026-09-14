@@ -1,0 +1,96 @@
+---
+import InstallBox from "./InstallBox.astro";
+import { html, workflow } from "~/data/landing";
+---
+
+<div data-workflow-example>
+  <p class="runtime-note">{workflow.runtimeNote}</p>
+  <div class="runtime-header">
+    <span class="runtime-label">Installation</span>
+    <div class="runtime-tabs" role="tablist" aria-label="Package runtime">
+      {workflow.runtimes.map((runtime) => (
+        <button
+          type="button"
+          role="tab"
+          id={`langfuse-${runtime.color}-tab`}
+          aria-controls={`langfuse-${runtime.color}-panel`}
+          aria-selected={runtime.color === "green" ? "true" : "false"}
+          tabindex={runtime.color === "green" ? 0 : -1}
+          data-runtime={runtime.color}
+        >
+          <span>{runtime.label}</span><span class="runtime-language"> · {runtime.language}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+  {workflow.runtimes.map((runtime) => (
+    <div
+      id={`langfuse-${runtime.color}-panel`}
+      role="tabpanel"
+      aria-labelledby={`langfuse-${runtime.color}-tab`}
+      tabindex="0"
+      hidden={runtime.color !== "green"}
+      data-runtime-panel
+    >
+      <InstallBox command={runtime.setup} id={`langfuse-setup-${runtime.color}`} showPrompt={false} showHeader={false} />
+      <div class="grid-3 runtime-steps">
+        {workflow.steps.map((step) => (
+          <div class="workflow-card">
+            <code class="workflow-command">{`./${runtime.color} ${step.command}`}</code>
+            <h3>{step.title}</h3>
+            <p set:html={html(step.body)} />
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-workflow-example]").forEach((example) => {
+    const tabs = Array.from(example.querySelectorAll<HTMLButtonElement>("[role=tab]"));
+    const panels = example.querySelectorAll<HTMLElement>("[data-runtime-panel]");
+    const select = (selected: HTMLButtonElement) => {
+      tabs.forEach((tab) => {
+        tab.setAttribute("aria-selected", String(tab === selected));
+        tab.tabIndex = tab === selected ? 0 : -1;
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.id !== selected.getAttribute("aria-controls");
+      });
+    };
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => select(tab));
+      tab.addEventListener("keydown", (event) => {
+        let next: number;
+        switch (event.key) {
+          case "ArrowRight": next = (index + 1) % tabs.length; break;
+          case "ArrowLeft": next = (index + tabs.length - 1) % tabs.length; break;
+          case "Home": next = 0; break;
+          case "End": next = tabs.length - 1; break;
+          default: return;
+        }
+        event.preventDefault();
+        select(tabs[next]);
+        tabs[next].focus();
+      });
+    });
+  });
+</script>
+
+<style>
+  .runtime-note { color: var(--muted); margin: 0 0 20px; }
+  .runtime-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; min-height: 46px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .runtime-label { color: var(--ink); font: 12px var(--mono); letter-spacing: 0.04em; text-transform: uppercase; }
+  .runtime-tabs { display: flex; flex-wrap: wrap; gap: 2px; }
+  .runtime-tabs button { min-height: 34px; padding: 7px 11px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font: 12px var(--mono); cursor: pointer; }
+  .runtime-tabs button[aria-selected="true"] { background: var(--ink); color: var(--on-dark); }
+  .runtime-tabs button:hover:not([aria-selected="true"]) { background: var(--surface); color: var(--ink); }
+  .runtime-tabs button:focus-visible, [data-runtime-panel]:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .runtime-steps { margin-top: 24px; }
+  @media (max-width: 520px) {
+    .runtime-tabs { width: 100%; flex-wrap: nowrap; }
+    .runtime-tabs button { flex: 1; padding-inline: 6px; }
+    .runtime-language { display: block; font-size: 10px; }
+  }
+</style>

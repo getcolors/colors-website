@@ -1,5 +1,6 @@
 ---
 import { Code } from "astro:components";
+import WorkflowExample from "~/components/WorkflowExample.astro";
 import InstallBox from "~/components/InstallBox.astro";
 import ResourceLinks from "~/components/ResourceLinks.astro";
 import SectionHeading from "~/components/SectionHeading.astro";
@@ -890,17 +891,9 @@ const { title, description } = meta;
         <div class="wrap">
           <SectionHeading id="workflow" title={workflow.heading} />
           <p class="sec-lede sec-lede-wide">{workflow.lede}</p>
-          <div class="sec-install"><p class="install-note">{hero.installNote}</p><InstallBox command={workflow.setup} id="langfuse-setup" showPrompt={false} /></div>
+          <p class="install-note">{hero.installNote}</p>
           <p class="workflow-docs"><a href={workflow.docsUrl}>{workflow.docsLabel}</a></p>
-          <div class="grid-3">
-            {workflow.steps.map((step) => (
-              <div class="workflow-card">
-                <code class="workflow-command">{step.command}</code>
-                <h3>{step.title}</h3>
-                <p set:html={html(step.body)} />
-              </div>
-            ))}
-          </div>
+          <WorkflowExample />
         </div>
       </div>
 

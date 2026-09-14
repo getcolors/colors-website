@@ -4,9 +4,10 @@ interface Props {
   id?: string;
   prompt?: string;
   showPrompt?: boolean;
+  showHeader?: boolean;
 }
 
-const { command, id: providedId, prompt: providedPrompt, showPrompt = true } = Astro.props;
+const { command, id: providedId, prompt: providedPrompt, showPrompt = true, showHeader = true } = Astro.props;
 const id = providedId ?? `install-${command.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}`;
 // The Command tab always reads `add`, the Prompt tab always reads `use` —
 // for every skill kind, regardless of which verb the caller's command uses.
@@ -17,7 +18,7 @@ const panelId = `${id}-panel`;
 ---
 
 <div class="install-box" data-install-box>
-  <div class="install-header">
+  {showHeader && <div class="install-header">
     <span class="install-label">Installation</span>
     {showPrompt && <div class="install-tabs" role="tablist" aria-label="Installation format">
       <button
@@ -37,14 +38,14 @@ const panelId = `${id}-panel`;
         data-install-tab="prompt"
       ><span class="spark" aria-hidden="true">✦</span> Prompt</button>
     </div>}
-  </div>
+  </div>}
 
   <div class="command-shell" data-install-shell data-mode="command" data-multiline={installCommand.includes("\n") ? "true" : undefined}>
     <span class="shell-prompt" aria-hidden="true">$</span>
     <code
       id={panelId}
-      role={showPrompt ? "tabpanel" : undefined}
-      aria-labelledby={showPrompt ? `${id}-command-tab` : undefined}
+      role={showPrompt && showHeader ? "tabpanel" : undefined}
+      aria-labelledby={showPrompt && showHeader ? `${id}-command-tab` : undefined}
       data-install-content
       data-install-command={installCommand}
       data-install-prompt={prompt}
