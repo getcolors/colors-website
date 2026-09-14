@@ -11,7 +11,7 @@ interface Props {
   image?: string;
   imageAlt?: string;
   type?: "website" | "article";
-  active?: "featured" | "catalog" | "blog";
+  active?: "featured" | "catalog" | "blog" | "slides";
 }
 
 const { title, description, path, image, imageAlt, type = "website", active = "catalog" } = Astro.props;

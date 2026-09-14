@@ -1,0 +1,49 @@
+---
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+
+const title = "Slides | Colors";
+const description = "Presentations about Colors workflows, Package Skills, and Context Skills. Read online or download a PDF.";
+---
+
+<CatalogLayout {title} {description} path="/slides" active="slides">
+  <section class="wrap slides-page">
+    <header class="slides-header">
+      <p class="section-label">Presentations</p>
+      <h1>Slides</h1>
+      <p class="lede">An introduction to Colors and the workflows you can build with it. Present in your browser or download the PDF.</p>
+    </header>
+    <article class="deck-card">
+      <a class="deck-image" href="/slides/introduction/" aria-label="View Introduction to Colors slides">
+        <img src="/og-colors-v4.png" alt="Describe the infrastructure. Get the complete workflow." width="1200" height="630" />
+      </a>
+      <div class="deck-body">
+        <p class="deck-meta">10 slides · 10–15 minutes</p>
+        <h2><a href="/slides/introduction/">Introduction to Colors</a></h2>
+        <p>How an agent turns infrastructure requirements into colors.yml and executable workflow code. Covers Package Skills, Context Skills, and running a deployment without an agent.</p>
+        <p class="event-note">Includes an invitation to the <a href="/blog/community-town-hall">Community Town Hall on 18 September 2026</a>.</p>
+        <div class="deck-actions">
+          <a class="view-deck" href="/slides/introduction/">View slides</a>
+          <a href="/slides/introduction/introduction.pdf" download>Download PDF</a>
+        </div>
+      </div>
+    </article>
+  </section>
+</CatalogLayout>
+
+<style>
+  .slides-page { padding-block: 62px 80px; }
+  .slides-header { max-width: 800px; margin-bottom: 40px; }
+  .deck-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 32px; padding: 24px; border: 1px solid var(--line); border-radius: 14px; }
+  .deck-image { display: block; align-self: start; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; }
+  .deck-image img { display: block; width: 100%; height: auto; }
+  .deck-meta { margin: 0 0 12px; color: var(--soft); font: 12px var(--mono); }
+  h2 { margin: 0 0 16px; font-size: 30px; }
+  h2 a { color: var(--ink); }
+  .deck-body > p:not(.deck-meta) { color: var(--muted); line-height: 1.6; }
+  .event-note { font-size: 14px; }
+  .deck-actions { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; margin-top: 24px; font: 13px var(--mono); }
+  .view-deck { display: inline-block; padding: 13px 18px; border-radius: 8px; background: var(--ink); color: var(--on-dark); }
+  .view-deck:hover { background: oklch(30% 0.01 260); color: var(--on-dark); }
+  a:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+  @media (max-width: 760px) { .deck-card { grid-template-columns: minmax(0, 1fr); padding: 20px; gap: 24px; } .slides-page { padding-block: 36px 60px; } }
+</style>

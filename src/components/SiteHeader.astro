@@ -2,14 +2,15 @@
 import { announcement, nav } from "~/data/landing";
 
 interface Props {
-  active?: "featured" | "catalog" | "blog";
+  active?: "featured" | "catalog" | "blog" | "slides";
 }
 
 const { active } = Astro.props;
 const isCurrent = (href: string) =>
   (active === "featured" && href === "/featured") ||
   (active === "catalog" && href === "/skills") ||
-  (active === "blog" && href === "/blog");
+  (active === "blog" && href === "/blog") ||
+  (active === "slides" && href === "/slides");
 
 // The strip is evaluated at build time: a deploy after `until` renders no
 // strip. It is not a substitute for removing the entry from landing.ts.
@@ -111,6 +112,10 @@ const showAnnouncement = Date.now() < Date.parse(announcement.until);
     .nav-links { gap: 16px; font-size: 13px; }
     .announcement-inner { padding-block: 8px; gap: 2px 12px; }
     .announcement-title { flex-basis: 100%; }
+  }
+  @media (max-width: 520px) {
+    .nav { flex-wrap: wrap; gap: 14px; }
+    .nav-links { width: 100%; justify-content: space-between; gap: 12px; }
   }
   @media (prefers-reduced-motion: reduce) { .site-header, .nav, .announcement-title, .announcement-cta { transition: none; } }
 </style>

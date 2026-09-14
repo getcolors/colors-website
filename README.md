@@ -55,6 +55,8 @@ typography, spacing, shared `SiteHeader.astro`, shared `SiteFooter.astro`, and
 
 ## Introduction slides
 
+`/slides` lists presentations and is linked from the shared site navigation.
+
 The Marp deck at `/slides/introduction/` introduces Colors and closes with the
 18 September 2026 Community Town Hall invitation. Its PDF is linked on the first
 slide and the event page. Source and speaker notes live in
