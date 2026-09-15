@@ -33,6 +33,12 @@ const showAnnouncement = Date.now() < Date.parse(announcement.until);
       <img class="mark" src="/favicon.svg" width="20" height="20" alt="" />
       <span class="brand-name">Colors</span>
     </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation" aria-label="Open navigation" data-nav-toggle>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+        <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" />
+        <path class="close-icon" d="m6 6 12 12M18 6 6 18" />
+      </svg>
+    </button>
     <nav class="nav-links" id="site-navigation" aria-label="Main navigation">
       {nav.map((item) => <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>)}
     </nav>
@@ -53,6 +59,39 @@ const showAnnouncement = Date.now() < Date.parse(announcement.until);
     headerUpdatePending = true;
     requestAnimationFrame(updateHeader);
   }, { passive: true });
+
+  const toggle = header?.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+  const navigation = header?.querySelector<HTMLElement>("#site-navigation");
+  const mobileViewport = window.matchMedia("(max-width: 600px)");
+
+  if (header && toggle && navigation) {
+    const setMenuOpen = (open: boolean) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+      header.classList.toggle("menu-open", open);
+    };
+
+    toggle.addEventListener("click", () => {
+      setMenuOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+    navigation.addEventListener("click", (event) => {
+      if (event.target instanceof Element && event.target.closest("a")) setMenuOpen(false);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        setMenuOpen(false);
+        toggle.focus();
+      }
+    });
+    mobileViewport.addEventListener("change", () => {
+      const focusWasInNavigation = navigation.contains(document.activeElement);
+      const focusWasOnToggle = document.activeElement === toggle;
+      setMenuOpen(false);
+      if (mobileViewport.matches && focusWasInNavigation) toggle.focus();
+      if (!mobileViewport.matches && focusWasOnToggle) navigation.querySelector<HTMLAnchorElement>("a")?.focus();
+    });
+    header.classList.add("nav-enhanced");
+  }
 </script>
 
 <style>
@@ -91,6 +130,12 @@ const showAnnouncement = Date.now() < Date.parse(announcement.until);
   .nav-links a:hover { color: var(--blue); }
   .nav-links a[aria-current="page"] { color: var(--blue); font-weight: 400; }
   .nav-links a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+  .nav-toggle { display: none; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line, oklch(91% 0.005 260)); border-radius: 8px; background: transparent; color: var(--ink, oklch(20% 0.01 260)); cursor: pointer; }
+  .nav-toggle:hover { color: var(--blue); background: var(--surface, oklch(97.5% 0.003 260)); }
+  .nav-toggle:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+  .close-icon { display: none; }
+  .menu-open .menu-icon { display: none; }
+  .menu-open .close-icon { display: block; }
   /* The strip is a line of the page, not a banner: page-coloured, one
      hairline under it, the date set as a mono value in the yaml green the
      hero uses for values. Only the call to action is blue. */
@@ -113,9 +158,16 @@ const showAnnouncement = Date.now() < Date.parse(announcement.until);
     .announcement-inner { padding-block: 8px; gap: 2px 12px; }
     .announcement-title { flex-basis: 100%; }
   }
-  @media (max-width: 520px) {
-    .nav { flex-wrap: wrap; gap: 14px; }
-    .nav-links { width: 100%; justify-content: space-between; gap: 12px; }
+  @media (max-width: 600px) {
+    .nav { flex-wrap: wrap; gap: 12px; padding-block: 12px; }
+    .site-header.is-scrolled .nav { padding-block: 8px; }
+    .nav-links { width: 100%; flex-wrap: wrap; justify-content: space-between; gap: 8px 12px; }
+    .nav-links a { display: flex; align-items: center; min-height: 44px; }
+    .nav-enhanced .nav-toggle { display: flex; }
+    .nav-enhanced .nav-links { display: none; }
+    .nav-enhanced.menu-open { border-color: var(--line, oklch(91% 0.005 260)); background: oklch(99% 0.002 90); }
+    .nav-enhanced.menu-open .nav-links { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding-top: 8px; border-top: 1px solid var(--line, oklch(91% 0.005 260)); }
+    .nav-enhanced.menu-open .nav-links a { padding-inline: 4px; }
   }
   @media (prefers-reduced-motion: reduce) { .site-header, .nav, .announcement-title, .announcement-cta { transition: none; } }
 </style>

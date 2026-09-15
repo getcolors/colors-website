@@ -382,6 +382,13 @@ def recipes():
 
 
 catalog_recipes = recipes()
+render_post_card(
+    "og-green-kubernetes-controller-v1.png",
+    "Green / Clojure / Kubernetes",
+    "Green Workflows, Reconciled by Kubernetes",
+    "A control loop for infrastructure workflows. Redis service recovery tested on a live cluster.",
+    "getcolors.ai/blog/green-kubernetes-controller",
+)
 # og-context-skills-v3.png is a supplied dark promotional card, cropped
 # centrally from 2752x1536 to 1200x630 and re-encoded to strip an inverted gAMA
 # chunk, not generated here — the fifth exception to "og-*.png are generated".

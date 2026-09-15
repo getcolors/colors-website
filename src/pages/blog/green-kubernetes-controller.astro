@@ -1,0 +1,66 @@
+---
+import { marked } from "marked";
+import Breadcrumbs from "~/components/Breadcrumbs.astro";
+import GreenArchitecture from "~/components/GreenArchitecture.astro";
+import CatalogLayout from "~/layouts/CatalogLayout.astro";
+import { postFor } from "~/data/blog";
+import article from "~/data/articles/green-kubernetes-controller.md?raw";
+
+const path = "/blog/green-kubernetes-controller";
+const post = postFor(path);
+const title = `${post.title} — Colors`;
+const description = post.summary;
+const image = "/og-green-kubernetes-controller-v1.png";
+const imageAlt = "Green Workflows, Reconciled by Kubernetes. A control loop for infrastructure workflows, with Redis service recovery tested on a live cluster.";
+const absolute = (value: string) => new URL(value, Astro.site).toString();
+const body = marked.parse(article.replace(/^# .+\r?\n/, ""), { async: false });
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: post.title,
+  description,
+  url: absolute(path),
+  image: absolute(image),
+  datePublished: post.isoDate,
+  dateModified: post.isoDate,
+  author: { "@type": "Organization", name: "Colors", url: absolute("/") },
+  publisher: { "@type": "Organization", name: "Colors", url: absolute("/") },
+};
+---
+
+<CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <div class="wrap green-post">
+    <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Green and Kubernetes" }]} />
+    <header>
+      <p class="eyebrow">Green · Kubernetes · Field report</p>
+      <h1>{post.title}</h1>
+      <p class="post-meta">{post.date} · {post.readTime} · Clojure / Babashka</p>
+      <p class="lede">A Clojure workflow can now run under a Kubernetes control loop. We used it to recreate a deleted Redis virtual machine—and checked exactly what recovered.</p>
+    </header>
+    <GreenArchitecture />
+    <article class="article-body" set:html={body} />
+  </div>
+</CatalogLayout>
+
+<style>
+  .green-post { max-width: 900px; padding-top: 2rem; padding-bottom: 5rem; }
+  header { margin: 3.5rem 0 2.5rem; }
+  .eyebrow { color: var(--green, #237a44); font: 500 .8rem "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .09em; }
+  h1 { font-size: clamp(2.3rem, 6vw, 4rem); line-height: 1.08; letter-spacing: -.035em; max-width: 18ch; margin: 1rem 0; }
+  .post-meta { font: .8rem "IBM Plex Mono", monospace; opacity: .65; }
+  .lede { font-size: 1.3rem; line-height: 1.6; margin-top: 1.6rem; }
+  .article-body { font-size: 1.06rem; line-height: 1.8; overflow-wrap: break-word; }
+  .article-body :global(h2) { margin: 2.8rem 0 1rem; font-size: 1.8rem; line-height: 1.25; letter-spacing: -.025em; }
+  .article-body :global(h3) { margin: 2rem 0 .7rem; font-size: 1.3rem; line-height: 1.35; }
+  .article-body :global(p), .article-body :global(ul), .article-body :global(ol) { margin: 1rem 0; }
+  .article-body :global(li) { margin: .4rem 0; }
+  .article-body :global(a) { text-decoration: underline; text-underline-offset: .18em; }
+  .article-body :global(code) { font: .86em "IBM Plex Mono", monospace; }
+  .article-body :global(pre) { overflow-x: auto; padding: 1.3rem; border: 1px solid #d9ded9; border-radius: 8px; background: #f3f6f3; line-height: 1.65; margin: 1.5rem 0; }
+  .article-body :global(pre code) { font-size: .79rem; white-space: pre; }
+  .article-body :global(table) { display: block; overflow-x: auto; border-collapse: collapse; width: 100%; margin: 1.5rem 0; font-size: .95rem; }
+  .article-body :global(th), .article-body :global(td) { padding: .7rem 1rem; border-bottom: 1px solid #d9ded9; text-align: left; vertical-align: top; }
+  .article-body :global(blockquote) { margin: 1.5rem 0; border-left: 3px solid #237a44; padding: .1rem 1.2rem; }
+  @media (max-width: 600px) { .green-post { padding-inline: 1.2rem; } header { margin-top: 2.5rem; } }
+</style>

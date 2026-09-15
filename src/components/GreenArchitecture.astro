@@ -1,0 +1,100 @@
+<figure class="architecture">
+  <div class="diagram-scroll" tabindex="0" role="region" aria-label="Architecture diagram; scroll horizontally on small screens">
+    <svg viewBox="0 0 840 810" role="img" aria-labelledby="green-architecture-title green-architecture-description">
+      <title id="green-architecture-title">Green controls external Redis infrastructure from Kubernetes</title>
+      <desc id="green-architecture-description">A user applies a RedisDeployment to the Kubernetes API. One Green controller polls the resource, publishes status, and invokes a registered Redis adapter. The adapter observes DigitalOcean and Redis health, then runs existing Green workflows using OpenTofu and Ansible. OpenTofu provisions an external Redis Droplet through the DigitalOcean API and stores infrastructure state in R2. Ansible configures Redis over SSH. Redis writes backups to a separate R2 bucket. A Kubernetes persistent volume retains the controller's SSH keys and generated files.</desc>
+      <defs>
+        <marker id="green-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" fill="#267248" /></marker>
+        <marker id="gray-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" fill="#637367" /></marker>
+      </defs>
+
+      <rect class="cluster" x="16" y="80" width="808" height="365" rx="16" />
+      <text class="boundary" x="36" y="109">KUBERNETES CLUSTER · ONE CONTROLLER REPLICA</text>
+      <text class="label" x="50" y="28">Human / CI</text>
+      <text class="small" x="50" y="49">kubectl apply</text>
+      <path class="flow" d="M138 57V139" />
+
+      <rect class="box" x="36" y="145" width="215" height="105" rx="10" />
+      <text class="label" x="52" y="174">RedisDeployment</text>
+      <text class="small" x="52" y="198">spec: desired configuration</text>
+      <text class="small" x="52" y="220">status: observed result</text>
+
+      <path class="flow" d="M258 174H300" />
+      <path class="secondary" d="M300 224H258" />
+      <text class="tiny" x="265" y="162">poll</text>
+      <text class="tiny" x="259" y="242">status</text>
+
+      <rect class="controller" x="307" y="145" width="235" height="105" rx="10" />
+      <text class="label" x="325" y="174">green.kubernetes</text>
+      <text class="small" x="325" y="198">Schedule · lock · retry</text>
+      <text class="small" x="325" y="220">Status · finalizers</text>
+
+      <path class="flow" d="M548 197H580" />
+      <rect class="box" x="587" y="145" width="216" height="105" rx="10" />
+      <text class="label" x="604" y="174">Redis adapter</text>
+      <text class="small" x="604" y="198">Observe: DO API + SSH</text>
+      <text class="small" x="604" y="220">Run Green workflows</text>
+
+      <path class="flow" d="M695 257V279H425V311" />
+      <path class="flow" d="M695 279V311" />
+      <text class="tiny" x="456" y="273">direct Clojure calls</text>
+      <rect class="box" x="307" y="318" width="235" height="88" rx="10" />
+      <text class="label" x="325" y="350">OpenTofu</text>
+      <text class="small" x="325" y="376">Plan and apply infrastructure</text>
+      <rect class="box" x="587" y="318" width="216" height="88" rx="10" />
+      <text class="label" x="604" y="350">Ansible</text>
+      <text class="small" x="604" y="376">Configure and check Redis</text>
+
+      <rect class="storage" x="36" y="318" width="215" height="88" rx="10" />
+      <text class="label" x="52" y="350">Controller PVC</text>
+      <text class="small" x="52" y="375">SSH keys · generated files</text>
+      <path class="secondary" d="M350 257V293H143V312" />
+
+      <text class="boundary" x="36" y="480">EXTERNAL INFRASTRUCTURE</text>
+      <path class="flow" d="M425 413V525" />
+      <text class="tiny" x="440" y="501">provider API</text>
+      <path class="flow" d="M695 413V525" />
+      <text class="tiny" x="709" y="501">SSH</text>
+
+      <rect class="box" x="307" y="532" width="235" height="92" rx="10" />
+      <text class="label" x="325" y="564">DigitalOcean API</text>
+      <text class="small" x="325" y="590">Create the owned Droplet</text>
+      <path class="flow" d="M549 578H580" />
+      <rect class="redis" x="587" y="532" width="216" height="92" rx="10" />
+      <text class="label" x="604" y="564">Redis Droplet</text>
+      <text class="small" x="604" y="590">Redis runs outside K8s</text>
+
+      <path class="secondary" d="M307 382H278V739H257" />
+      <text class="tiny" x="70" y="675">OpenTofu reads / writes</text>
+      <rect class="storage" x="36" y="699" width="215" height="86" rx="10" />
+      <text class="label" x="52" y="731">R2: redis-state</text>
+      <text class="small" x="52" y="756">Infrastructure state</text>
+
+      <path class="flow" d="M695 631V692" />
+      <text class="tiny" x="709" y="671">backups</text>
+      <rect class="storage" x="587" y="699" width="216" height="86" rx="10" />
+      <text class="label" x="604" y="731">R2: redis-backup</text>
+      <text class="small" x="604" y="756">Backup sets</text>
+    </svg>
+  </div>
+  <figcaption>The controller runs in Kubernetes; Redis runs on a separate VM. The adapter observes the provider and service on each reconciliation. Infrastructure state, Redis backups, and controller SSH keys have separate storage.</figcaption>
+</figure>
+
+<style>
+  .architecture { margin: 2.5rem 0 3rem; }
+  .diagram-scroll { overflow-x: auto; border: 1px solid #d9ded9; border-radius: 12px; background: #fff; }
+  .diagram-scroll:focus-visible { outline: 2px solid #267248; outline-offset: 4px; }
+  svg { display: block; width: 100%; min-width: 680px; height: auto; font-family: "IBM Plex Sans", sans-serif; }
+  .cluster { fill: #f1f7f2; stroke: #9dbda5; stroke-width: 1.5; stroke-dasharray: 6 4; }
+  .box { fill: #fff; stroke: #b8c6bc; stroke-width: 1.5; }
+  .controller { fill: #dceee0; stroke: #267248; stroke-width: 2; }
+  .redis { fill: #e9f3ec; stroke: #267248; stroke-width: 2; }
+  .storage { fill: #f3f5f7; stroke: #b4c0cc; stroke-width: 1.5; }
+  .flow { fill: none; stroke: #267248; stroke-width: 2; marker-end: url(#green-arrow); }
+  .secondary { fill: none; stroke: #637367; stroke-width: 1.5; marker-end: url(#gray-arrow); }
+  .label { font-size: 17px; font-weight: 600; fill: #183d28; }
+  .small { font-size: 13px; fill: #405548; }
+  .tiny { font-size: 11px; fill: #52665a; }
+  .boundary { font: 11px "IBM Plex Mono", monospace; letter-spacing: .7px; fill: #52665a; }
+  figcaption { font-size: .9rem; line-height: 1.6; margin-top: .85rem; color: #52665a; }
+</style>

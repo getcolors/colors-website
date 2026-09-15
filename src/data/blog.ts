@@ -34,6 +34,18 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "Green Workflows, Reconciled by Kubernetes",
+    slug: "/blog/green-kubernetes-controller",
+    date: "September 15, 2026",
+    isoDate: "2026-09-15T16:45:00Z",
+    readTime: "9 min read",
+    category: "Architecture",
+    runtime: "Green · Clojure · Kubernetes",
+    summary: "Green now provides a Kubernetes control loop for registered Clojure workflows. A practical walkthrough of the adapter contract, Redis desired state, serialized convergence, and a live VM deletion test that recovered service in 5 minutes 46 seconds.",
+    image: "/og-green-kubernetes-controller-v1.png",
+    tags: ["Green", "Clojure", "Kubernetes", "Redis", "Reconciliation"],
+  },
+  {
     title: "Six Machines and a Contract Nobody Told the Gates About",
     slug: "/blog/langfuse-six-machines",
     date: "September 3, 2026",
