@@ -4,9 +4,9 @@ theme: colors
 size: 16:9
 paginate: true
 header: Colors
-footer: Green Kubernetes
-title: "Colors | Register the workflow. Let a controller keep it converged."
-description: "The green.kubernetes controller, the redis-operator and doks Package Skills, the live cycle of 16 September 2026, and the catalog's shape facet."
+footer: Kubernetes in Green, Red and Blue
+title: "Colors | Kubernetes controllers in Green, Red and Blue"
+description: "Three native Kubernetes SDKs, the Redis Operator and DOKS Package Skills, and Green, Red and Blue live verification on 16 September 2026."
 author: Colors
 lang: en
 ---
@@ -17,14 +17,14 @@ lang: en
 
 # Register the workflow.<br>Let a controller keep it converged.
 
-`green.kubernetes` reconciles a custom resource by running the same Green workflow a launcher runs.
+Green, Red and Blue reconcile a custom resource by running the same native workflow a launcher runs.
 
-`redis-operator` and `doks` are the first two packages on it, verified live on 16 September 2026.
+`redis-operator` supplies the controller; `doks` supplies its cluster. Both packages ship in all three colours, verified live on 16 September 2026.
 
 <p class="small"><a href="https://www.getcolors.ai/slides/green-kubernetes/green-kubernetes.pdf">Download the PDF</a> · <a href="https://www.getcolors.ai">getcolors.ai</a></p>
 
 <!--
-Allow about one minute. This deck presents four additions that shipped together. The Green SDK gained an optional controller library, green.kubernetes, which reconciles Kubernetes custom resources by calling package functions directly. Two Green-only Package Skills use it: redis-operator, a controller that provisions one Redis Droplet per RedisDeployment resource, and doks, which creates the managed cluster the controller runs on. The Skills Catalog gained a shape facet and an artifacts section so both packages are findable, and a Context Skill records what the live run taught. Every number in the deck comes from the evidence directory of the redis-operator-doks deployment, recorded on 16 September 2026, and the whole deployment was torn down the same day. Say that up front so nobody expects a running demo.
+Allow about one minute. Colors now has three native Kubernetes controller SDKs: Clojure/Babashka, TypeScript/Bun, and Python/uv. Redis Operator calls the matching Redis workflow; DOKS provisions the managed cluster underneath it and does not itself run a Kubernetes controller. Distinguish two evidence periods on 16 September: the original Green cycle was fully torn down, then later Red and Blue verification created another deployment that remained running at the handoff. Do not present the old account-empty result as current. The later verification is recorded in workspace/kubernetes-ports-handoff.md and the deployments' per-colour evidence. The catalog exposes all six Package Skills.
 -->
 
 ---
@@ -44,10 +44,28 @@ Allow about one minute. This deck presents four additions that shipped together.
 </div>
 </div>
 
-The controller is an optional Green library. It calls registered package functions and loads no code from a resource.
+The controller is an optional library in each SDK. It calls registered package functions and loads no code from a resource.
 
 <!--
 Allow about one minute. The introduction deck ends with a reviewed program that a person or a CI runner executes. That program has one weakness: it stops. After the exit code nothing watches the Droplet, and a deleted machine stays deleted until someone runs create again. A Kubernetes controller closes that gap by making the same workflow run on a schedule against a desired state that lives in a custom resource. The design decision worth stating is what the controller does not do. It does not execute skill documents, launch Jobs, or load code selected by a resource. You register trusted packages in the controller program, and each package owns one namespaced CRD. Polling uses kubectl with an explicit context or in-cluster authentication, which the documentation labels as intended for local development.
+-->
+
+---
+
+## Three native runtimes, one controller contract
+
+| Colour | Runtime | Kubernetes SDK |
+| :--- | :--- | :--- |
+| Green | Clojure / Babashka | `green.kubernetes` |
+| Red | TypeScript / Bun | `red/kubernetes` |
+| Blue | Python / uv | `blue.kubernetes` |
+
+`./green`, `./red` or `./blue` selects the **CLI**. The `image` digest selects the **controller**. All three CLIs can operate the verified Red and Blue images.
+
+Both packages share desired state and ownership keys, with byte-identical rendered artifacts. Run one lifecycle operation per profile at a time.
+
+<!--
+Allow about ninety seconds. These are native ports, not wrappers around Babashka. Green observation keys have question marks; Red and Blue use exists, matches and ready. Installing a Blue launcher does not switch the running controller. Build the desired colour with scripts/image.sh registry revision colour, then review and pin its digest in colors.yml. Preserve profile, backend and credentials when changing CLI. Probe dispatch follows the image runtime. Runtime switches may require one convergence to establish that runtime's convergence record. Shared keys do not grant a distributed lock across separate processes; byte parity covers generated artifacts, including custom-namespace operator manifests. Both SDK ports passed actual Kubernetes API tests using in-memory infrastructure adapters: stale status writes, finalizers, readiness, idempotence, stopped state, Retain and Destroy. These SDK tests did not destroy the live Redis deployment.
 -->
 
 ---
@@ -73,16 +91,16 @@ Allow about ninety seconds. Walk the four mechanisms in order. Polling lists the
 | :--- | :--- |
 | `validate` | Errors for an invalid configuration |
 | `identity` | A stable name for the backend and the profile |
-| `observe` | `exists?`, `matches?`, `ready?` from a read-only look |
+| `observe` | Existence, configuration match and readiness from a read-only look |
 | `converge` | The package's converge workflow outcome |
 | `delete` | The package's delete workflow outcome, repeatable |
 
-`converge` and `delete` call the same `green.workflow` graphs a launcher runs.
+`converge` and `delete` call the same native workflow graphs a launcher runs.
 
 <p class="muted">One controller process. It implements no distributed leases or fencing.</p>
 
 <!--
-Allow about ninety seconds. Every callback receives the keywordized spec.config map with a profile, which defaults to namespace, two dashes, name, plus the event and the full resource snapshot. Validation errors keep the resource Invalid until the configuration or the request token changes, and the controller never copies error text to status. Observation must be read-only; it answers whether the infrastructure exists, whether it matches the configuration, and whether it is ready. Matching configuration with ready false waits and re-observes without converging again. A nonzero exit or an exception from converge causes a retry with backoff. Finalization waits until observation reports absence. Now the caveat, and say it plainly: this version supports one controller process. A Recreate Deployment and graceful shutdown help ordinary upgrades, but nothing prevents two writers during a node failure or a network partition. Human or CI launcher runs in other processes do not share this lock. The documentation names distributed leases, fencing, a watch client, and durable workflow recovery as separate future work.
+Allow about ninety seconds. Every callback receives spec.config as its runtime's map or object with a profile, which defaults to namespace, two dashes, name, plus the event and the full resource snapshot. Validation errors keep the resource Invalid until the configuration or the request token changes, and the controller never copies error text to status. Observation must be read-only; it answers whether the infrastructure exists, whether it matches the configuration, and whether it is ready. Matching configuration with ready false waits and re-observes without converging again. A nonzero exit or an exception from converge causes a retry with backoff. Finalization waits until observation reports absence. Now the caveat, and say it plainly: this version supports one controller process. A Recreate Deployment and graceful shutdown help ordinary upgrades, but nothing prevents two writers during a node failure or a network partition. Human or CI launcher runs in other processes do not share this lock. The documentation names distributed leases, fencing, a watch client, and durable workflow recovery as separate future work.
 -->
 
 ---
@@ -103,7 +121,7 @@ Allow about ninety seconds. Every callback receives the keywordized spec.config 
 <p class="small">Verbs: <code>build</code>, <code>create</code>, <code>check</code>, <code>rehearse</code>, <code>drill</code>, <code>restart</code>, <code>delete</code>. Redis 7.2 runs on a Droplet outside the cluster; the controller Pod runs the workflow.</p>
 
 <!--
-Allow about ninety seconds. redis-operator is two halves under one pin: the controller image, whose entry point is bb controller in-cluster, and the Package Skill that installs the controller into an existing cluster from a non-secret colors.yml, applies one RedisDeployment, and carries the operational verbs. The adapter reads owned compute state, asks the DigitalOcean API for that exact Droplet ID, and checks the recorded name. A confirmed HTTP 404 is the one absence proof, and it is relative to the token's team: a Droplet in another team also answers 404, so rotating the Secret to a token from a different team would make the operator recreate the Droplet there while the original keeps running. Rotate within one team. A healthy observation also checks region, size, image, the recorded public IP, and an authenticated PING over SSH. The verbs on this slide are the launcher's: check polls for Ready, rehearse restores a backup set into a scratch container under an acknowledged suspension, drill deletes the owned Droplet and waits for a replacement, restart rolls the controller, and delete patches Destroy and waits for the finalizer. Only the five COLORS_PAR credentials enter the Pod, from a Secret; startup refuses any other override.
+Allow about ninety seconds. redis-operator is two halves under one pin: the controller image, whose entry point runs the selected native runtime in-cluster, and the Package Skill that installs the controller into an existing cluster from a non-secret colors.yml, applies one RedisDeployment, and carries the operational verbs. The adapter reads owned compute state, asks the DigitalOcean API for that exact Droplet ID, and checks the recorded name. A confirmed HTTP 404 is the one absence proof, and it is relative to the token's team: a Droplet in another team also answers 404, so rotating the Secret to a token from a different team would make the operator recreate the Droplet there while the original keeps running. Rotate within one team. A healthy observation also checks region, size, image, the recorded public IP, and an authenticated PING over SSH. The verbs on this slide are the launcher's: check polls for Ready, rehearse restores a backup set into a scratch container under an acknowledged suspension, drill deletes the owned Droplet and waits for a replacement, restart rolls the controller, and delete patches Destroy and waits for the finalizer. Only the five COLORS_PAR credentials enter the Pod, from a Secret; startup refuses any other override.
 -->
 
 ---
@@ -114,7 +132,7 @@ Allow about ninety seconds. redis-operator is two halves under one pin: the cont
 <div class="card">
 <h3>On the volume</h3>
 <p>A failed converge or delete is kept at <code>/data/work/&lt;profile&gt;/failures/</code>, 20 newest, every <code>COLORS_PAR_*</code> value masked to <code>***</code>.</p>
-<p>SSH keys, the convergence record, and the dependency caches share the same volume, so a restart resolves nothing.</p>
+<p>SSH keys and convergence records persist on the volume. Green also persists its dependency caches; Red and Blue dependencies are installed in their images.</p>
 </div>
 <div class="card">
 <h3>The image</h3>
@@ -124,7 +142,7 @@ Allow about ninety seconds. redis-operator is two halves under one pin: the cont
 </div>
 
 <!--
-Allow about one minute. The volume matters because remote state does not contain the machine's private SSH keys; persisting them is what lets the controller reach a Droplet after a Pod restart. The failure directory exists because the adapter suppresses raw workflow output on stdout so no secret reaches a log; the retained file holds the failing step and exit code, the workflow's error text with the play's or OpenTofu's output, the Ansible recap, and the trace, with every credential value replaced before the file is written. Nothing from those files reaches stdout, the resource status, or events; check prints how many files it holds and the newest name. The caches, gitlibs, m2, deps.clj and cpcache, are subPaths of the same claim as data and the SSH directory. The image is a separate pin from the package: a change under src/colors needs a new image, a change on the package side needs a new launcher pin, and a change to the CRD needs both. image.sh refuses a dirty tree so the revision label is true.
+Allow about one minute. The volume matters because remote state does not contain the machine's private SSH keys; persisting them is what lets the controller reach a Droplet after a Pod restart. The failure directory exists because the adapter suppresses raw workflow output on stdout so no secret reaches a log; the retained file holds the failing step and exit code, the workflow's error text with the play's or OpenTofu's output, the Ansible recap, and the trace, with every credential value replaced before the file is written. Nothing from those files reaches stdout, the resource status, or events; check prints how many files it holds and the newest name. Green caches gitlibs, m2, deps.clj and cpcache as subPaths of the same claim as data and SSH keys. Red and Blue images install their native dependencies at build time. A runtime switch may converge once to establish its own convergence record; same-runtime restart verification checks that convergence did not run. The image is a separate pin from the package: a change to any controller, adapter or probe needs a new image, a change on the package side needs a new launcher pin, and a change to the CRD needs both. Build from the reviewed revision and select green, red or blue as the image target; the default build refuses a dirty tree.
 -->
 
 ---
@@ -150,7 +168,7 @@ Allow about one minute. doks creates no machines, so the Compute Provider Standa
 
 ---
 
-## One live cycle, 16 September 2026
+## Historical Green cycle · 16 September 2026
 
 <div class="small">
 
@@ -168,16 +186,38 @@ Allow about one minute. doks creates no machines, so the Compute Provider Standa
 </div>
 
 <!--
-Allow about two minutes. Read the numbers from the evidence files. The doks infrastructure stage took 356 seconds, the registry 19 and the link 1; the idempotent second create spent 13 seconds in the infrastructure stage. The first operator create reached Ready and Converged at generation 1 on Droplet 600954837. The second image digest rolled the controller, which observed the existing Droplet healthy and ran no create. The drill proved ownership first, including that the ID was not the DOKS worker, round-tripped a marker, then deleted exactly that Droplet at 07:49:33; the controller logged droplet-absent 17 seconds later and the replacement passed a fresh authenticated write at 07:54:54. The resource UID and generation did not change. Now the caveat that must be said out loud: the prior marker did not survive. The replacement is a fresh Droplet with a new password and an empty data volume. Backup sets in R2 survive, and nothing restores them automatically. The drill proves service recovery, not data recovery. The rehearsal ran under an acknowledged suspension, which is a one-shot check, not a lease. The finalizer took 107 seconds during the Destroy delete. The account audit after the DigitalOcean cleanup window read zero Droplets, zero clusters, zero firewalls and no registry; the three R2 buckets were kept on purpose.
+Allow about two minutes. These are the original Green run's historical numbers, not the later Red/Blue deployment. Read them from its evidence files. The doks infrastructure stage took 356 seconds, the registry 19 and the link 1; the idempotent second create spent 13 seconds in the infrastructure stage. The first operator create reached Ready and Converged at generation 1 on Droplet 600954837. The second image digest rolled the controller, which observed the existing Droplet healthy and ran no create. The drill proved ownership first, including that the ID was not the DOKS worker, round-tripped a marker, then deleted exactly that Droplet at 07:49:33; the controller logged droplet-absent 17 seconds later and the replacement passed a fresh authenticated write at 07:54:54. The resource UID and generation did not change. Now the caveat that must be said out loud: the prior marker did not survive. The replacement is a fresh Droplet with a new password and an empty data volume. Backup sets in R2 survive, and nothing restores them automatically. The drill proves service recovery, not data recovery. The rehearsal ran under an acknowledged suspension, which is a one-shot check, not a lease. The finalizer took 107 seconds during the Destroy delete. The account audit after the DigitalOcean cleanup window read zero Droplets, zero clusters, zero firewalls and no registry; the three R2 buckets were kept on purpose.
 -->
 
 ---
 
-## Four fixes came out of the live run
+## Later Red and Blue verification · 16 September 2026
+
+<div class="small">
+
+| Check | Observed result |
+| :--- | :--- |
+| DOKS | Red created cluster and registry; Blue converged the same resources; all three CLIs passed checks |
+| Native controllers | Blue created Redis; Red adopted the same Droplet; both passed health, backup restore and restart |
+| CLI compatibility | Green, Red and Blue CLIs all probed the Red image |
+| Red recovery drill | 601089393 → 601094147; old host absent, UID and generation unchanged, fresh authenticated write passed |
+| Final handoff snapshot | Ready at generation 5, Red controller; cluster, registry, volume and Redis remained running |
+
+</div>
+
+<p class="small">Service recovery does not restore deleted-host data automatically. Backup restoration was verified separately. Live provider: DigitalOcean; Vultr: fixture parity.</p>
+
+<!--
+Allow about ninety seconds. This is a later deployment than the historical Green cycle. The Red replacement encountered a dpkg lock and recovered through the controller's normal retry. All three CLIs and both native images were checked, but do not imply every CLI/image combination received a full destructive cycle. The handoff records the final image digests and per-colour evidence. Package teardown was not run for this deployment: deletion guards and SDK finalizer behavior were checked separately. Protection and Retain stayed enabled. The running-state statement is the 16 September handoff snapshot, not an assertion of present uptime. Evidence is under doks-dev/evidence/2026-09-16 and redis-operator-doks/evidence/2026-09-16 on GitHub.
+-->
+
+---
+
+## Four fixes from the original Green run
 
 - `check` read `phase=Reconciling reason=Reconciling` on a healthy resource. It now polls every 5 s for up to 180 s through the periodic pass.
 - A failed first Ansible attempt left nothing readable. The controller now retains masked failure logs, and `check` prints `failures retained: N`.
-- A probe exec hit `Unexpected end of ZLIB input stream` in a pod still unpacking its toolchain. Every exec now waits for that pod's own `RedisDeployment controller running` line, and the caches live on the volume.
+- A probe exec hit `Unexpected end of ZLIB input stream` in a pod still unpacking its toolchain. Every exec now waits for that pod's own `RedisDeployment controller running` line, and Green's caches live on the volume.
 - The delete patch failed with `the server rejected our request due to an error in our request` because status writes had moved the `resourceVersion`. Patches now retry when only status moved.
 
 <!--
@@ -186,22 +226,18 @@ Allow about two minutes. Each fix follows from one fact about the loop: it publi
 
 ---
 
-## One item stays open
+## A later failure was captured
 
-On 3 of 4 creates over two days, the first Ansible attempt on a fresh Droplet failed:
+Earlier Green creates sometimes failed at `redis/ansible`, then passed on retry. Those attempts had no retained diagnostic; their cause remains unproven.
 
-```text
-converge outcome=failed step=:redis/ansible exit=2
-```
+During the later Red recovery drill, the retained log identified **Ubuntu's dpkg lock** on the replacement Droplet. The controller retried and converged without manual intervention.
 
-The controller's retry converged about two minutes later with nothing changed. The cause is unknown; the failure did not recur once retention existed.
+Read masked diagnostics at `/data/work/<profile>/failures/<file>`.
 
-The next occurrence is readable with `kubectl exec` and `cat /data/work/<profile>/failures/<file>`.
-
-<p class="muted">A gate that fails a create on the first Failed pass is wrong. The create wait tolerates Failed because the controller retries.</p>
+<p class="muted">This explains the captured later failure, not every earlier Ansible exit. Create and recovery waits tolerate Failed while the controller retries.</p>
 
 <!--
-Allow about one minute. State this without softening it. Both converges on 15 September and the first create on 16 September failed at the Ansible step on a Droplet about two minutes old, observed the host unhealthy ten seconds later, converged again and succeeded. The drill's replacement Droplet on 16 September converged on its first attempt, so the retention path captured nothing that day. A single-node Redis build on Vultr once met unattended-upgrade restarting sshd minutes after first boot; whether that is this failure is a guess the Context Skill declines to make. Until the cause is read from a retained log, a first-attempt failure followed by a converged retry is the observed normal. The other documented boundaries are in the README and the Context Skill: the token-relative 404, a converge loop when an image slug retires or a resize changes the size, suspension as a one-shot check, and no liveness or readiness probe on the controller.
+Allow about one minute. Keep observation and inference separate. The earlier Green failures lacked captured output, so the later dpkg-lock error does not establish their cause. The Red drill replaced Droplet 601089393 with 601094147, retained the failed installation output and retried successfully. One historical failure log remained in the final Ready snapshot. The earlier theory about unattended upgrades restarting sshd was never established. Other limits still apply: token-relative provider 404s, drift from retired image slugs or resizing, suspension as a one-shot check, and no distributed fencing.
 -->
 
 ---
@@ -211,15 +247,17 @@ Allow about one minute. State this without softening it. Both converges on 15 Se
 Package recipes now carry a `shape`, one of single-node, multi-node, kubernetes, operator, or local. It renders as a chip on the card and a filter on `/skills`. Source pages list `artifacts`: the CRD, the controller image, the rendered manifests. A Context Skill inherits the shape of its companion package.
 
 ```sh
-npx skills add getcolors/doks --skill package-doks-green
-npx skills add getcolors/redis-operator --skill package-redis-operator-green
+colour=red # or green or blue
+# Run each install in its own deployment directory.
+npx skills add getcolors/doks --skill package-doks-$colour
+npx skills add getcolors/redis-operator --skill package-redis-operator-$colour
 npx skills use getcolors/skills --skill redis-operator-kubernetes
 ```
 
 <p class="small"><a href="https://www.getcolors.ai/getcolors/doks">getcolors.ai/getcolors/doks</a> · <a href="https://www.getcolors.ai/getcolors/redis-operator">getcolors.ai/getcolors/redis-operator</a> · <a href="https://www.getcolors.ai/getcolors/skills/redis-operator-kubernetes">redis-operator-kubernetes</a></p>
 
 <!--
-Allow about one minute. The shape is a facet over Package Skills, never a third skill kind: an operator is still installed as a Package Skill. doks carries the kubernetes shape and redis-operator the operator shape, and the filter is reachable as /skills?shape=operator. The artifacts section exists because a controller package has files worth reading beyond the launcher; redis-operator lists the RedisDeployment CRD, the Dockerfile, and the two rendered outputs. The Context Skill redis-operator-kubernetes lives in getcolors/skills and takes its shape from its companion. Its symptom index carries the verbatim failure strings from this deck, the Reconciling read, the rejected patch, the truncated archive, the Ansible exit, so an agent that meets one of them finds the entry and the commit that fixed it. The three commands are the whole install: two Package Skills added with their launchers, then the launcher copied to the deployment root as always, and one Context Skill loaded on demand. Repository landing pages are at getcolors.github.io/doks and getcolors.github.io/redis-operator.
+Allow about one minute. The shape is a facet over Package Skills, never a third skill kind: an operator is still installed as a Package Skill. doks carries the kubernetes shape and redis-operator the operator shape, and the filter is reachable as /skills?shape=operator. The artifacts section exists because a controller package has files worth reading beyond the launcher; redis-operator lists the RedisDeployment CRD, the Dockerfile, and the two rendered outputs. The Context Skill redis-operator-kubernetes lives in getcolors/skills and takes its shape from its companion. Its symptom index carries the verbatim failure strings from this deck, the Reconciling read, the rejected patch, the truncated archive, the Ansible exit, so an agent that meets one of them finds the entry and the commit that fixed it. Choose a colour and run each package install and copy in its own deployment directory. For DOKS, copy .agents/skills/package-doks-$colour/$colour to ./$colour; for the operator use package-redis-operator-$colour. Repeat the copy after skill updates. The Context Skill loads on demand and records the original Green experience; use the later per-colour evidence for Red/Blue results. Repository landing pages are at getcolors.github.io/doks and getcolors.github.io/redis-operator.
 -->
 
 ---

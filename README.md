@@ -53,7 +53,7 @@ typography, spacing, shared `SiteHeader.astro`, shared `SiteFooter.astro`, and
 `favicon.svg` mark. Catalog routes share `src/layouts/CatalogLayout.astro`;
 `/featured` preserves the original featured sections and DAG styling.
 
-## Introduction slides
+## Slides
 
 `/slides` lists presentations and is linked from the shared site navigation.
 
@@ -62,8 +62,13 @@ The Marp deck at `/slides/introduction/` introduces Colors and closes with the
 slide and the event page. Source and speaker notes live in
 `slides/introduction.md`; `slides/colors.css` supplies the theme.
 
+The deck at `/slides/green-kubernetes/` covers the Kubernetes SDKs, DOKS and
+Redis Operator in Green, Red and Blue, with live deployment evidence. Its source
+and speaker notes live in `slides/green-kubernetes.md`; the URL stays stable.
+
 Run `pnpm slides:build` after editing the source or theme, then commit the generated
-HTML and PDF under `public/slides/introduction/`. The command needs a local Chrome
+HTML and PDF under `public/slides/<deck>/`. To rebuild only the Kubernetes deck,
+run `pnpm slides:build green-kubernetes`. The command needs a local Chrome
 or Chromium installation. Set `CHROME_PATH` to its executable if autodetection
 fails. It embeds the site's fonts and the generated registration QR code, so the
 PDF and HTML do not depend on a font service. `SITE_URL` controls the HTML canonical

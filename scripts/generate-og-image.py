@@ -428,10 +428,10 @@ render_post_card(
 # The slide decks' own cards; the build script picks the newest
 # og-slides-<deck>-v<n>.png for a deck's og:image.
 render_post_card(
-    "og-slides-green-kubernetes-v1.png",
-    "Slides · 12 slides",
+    "og-slides-green-kubernetes-v2.png",
+    "Slides · 14 slides",
     "Register the workflow. Let a controller keep it converged.",
-    "The green.kubernetes controller, the redis-operator and doks Package Skills, one live cycle, and the catalog's shape facet.",
+    "Kubernetes controllers in Green, Red and Blue. DOKS, Redis Operator, runtime selection, and verified live deployments.",
     "/slides/green-kubernetes/",
 )
 
