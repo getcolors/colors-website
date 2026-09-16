@@ -425,6 +425,16 @@ render_post_card(
     "/blog/gemini-3-7-flash-benchmark",
 )
 
+# The slide decks' own cards; the build script picks the newest
+# og-slides-<deck>-v<n>.png for a deck's og:image.
+render_post_card(
+    "og-slides-green-kubernetes-v1.png",
+    "Slides · 12 slides",
+    "Register the workflow. Let a controller keep it converged.",
+    "The green.kubernetes controller, the redis-operator and doks Package Skills, one live cycle, and the catalog's shape facet.",
+    "/slides/green-kubernetes/",
+)
+
 render_post_card(
     "og-agentic-devops-compounding-advantage-v1.png",
     "Architecture",

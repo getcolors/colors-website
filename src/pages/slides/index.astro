@@ -10,8 +10,23 @@ const description = "Presentations about Colors workflows, Package Skills, and C
     <header class="slides-header">
       <p class="section-label">Presentations</p>
       <h1>Slides</h1>
-      <p class="lede">An introduction to Colors and the workflows you can build with it. Present in your browser or download the PDF.</p>
+      <p class="lede">An introduction to Colors and the workflows you can build with it, and a deck on the Kubernetes controller and the operators built on it. Present in your browser or download the PDF.</p>
     </header>
+    <article class="deck-card">
+      <a class="deck-image" href="/slides/green-kubernetes/" aria-label="View Green Kubernetes slides">
+        <img src="/og-slides-green-kubernetes-v1.png" alt="Register the workflow. Let a controller keep it converged." width="1200" height="630" />
+      </a>
+      <div class="deck-body">
+        <p class="deck-meta">12 slides · 15–20 minutes</p>
+        <h2><a href="/slides/green-kubernetes/">Green Kubernetes</a></h2>
+        <p>How the green.kubernetes controller keeps a registered workflow converged, how the redis-operator and doks Package Skills use it, what one live cycle on DigitalOcean proved on 16 September 2026, and how the catalog's shape facet finds them.</p>
+        <p class="event-note">Closes with the same invitation to the <a href="/blog/community-town-hall">Community Town Hall on 18 September 2026</a>.</p>
+        <div class="deck-actions">
+          <a class="view-deck" href="/slides/green-kubernetes/">View slides</a>
+          <a href="/slides/green-kubernetes/green-kubernetes.pdf" download>Download PDF</a>
+        </div>
+      </div>
+    </article>
     <article class="deck-card">
       <a class="deck-image" href="/slides/introduction/" aria-label="View Introduction to Colors slides">
         <img src="/og-colors-v4.png" alt="Describe the infrastructure. Get the complete workflow." width="1200" height="630" />
@@ -33,6 +48,7 @@ const description = "Presentations about Colors workflows, Package Skills, and C
 <style>
   .slides-page { padding-block: 62px 80px; }
   .slides-header { max-width: 800px; margin-bottom: 40px; }
+  .deck-card + .deck-card { margin-top: 28px; }
   .deck-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 32px; padding: 24px; border: 1px solid var(--line); border-radius: 14px; }
   .deck-image { display: block; align-self: start; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; }
   .deck-image img { display: block; width: 100%; height: auto; }

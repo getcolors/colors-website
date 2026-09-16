@@ -15,7 +15,7 @@ import { loadCatalog } from "~/data/catalog";
 // Article routes come from src/data/blog.ts rather than being listed here.
 // Two of the four articles were missing from this list, so they were absent
 // from the sitemap while being linked from /blog.
-const STATIC_PAGES = ["/", "/featured", "/skills", "/blog", "/slides", "/slides/introduction/", ...posts.map((post) => post.slug)];
+const STATIC_PAGES = ["/", "/featured", "/skills", "/blog", "/slides", "/slides/introduction/", "/slides/green-kubernetes/", ...posts.map((post) => post.slug)];
 
 export async function GET({ site }: APIContext) {
   // No fallback literal on purpose. `site` is set unconditionally in

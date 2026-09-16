@@ -579,18 +579,27 @@ rename rule above still applies to changing the artwork at a fixed host.
   design export as `bigconfig-ai/once` and `amiorin/red|green|blue`; they were
   repointed to the `getcolors` org on 2026-07-28.
 
-## Introduction deck
+## Slide decks
 
+`slides/<deck>.md` holds one Marp deck each with speaker notes; `slides/colors.css`
+is the shared theme. `pnpm slides:build` builds every deck, and
+`node scripts/build-slides.mjs <deck>` builds one, into `public/slides/<deck>/`
+as `index.html` and `<deck>.pdf`. A deck's og:image is its own
+`public/og-slides-<deck>-v<n>.png` when one exists (rendered by
+`scripts/generate-og-image.py`), else the site card. Every deck needs a card
+on `src/pages/slides/index.astro` and an entry in `sitemap.xml.ts`.
 `slides/introduction.md` contains the ten-slide Marp introduction and speaker
-notes. `slides/colors.css` is its theme. The closing CTA is the Community Town
+notes; `slides/green-kubernetes.md` presents the green.kubernetes controller,
+the redis-operator and doks Package Skills, and the catalog's shape facet. The closing CTA is the Community Town
 Hall on 18 September 2026, with its Luma registration QR code. Update this
 time-specific invitation deliberately before reusing the deck for later events.
 
-Run `pnpm slides:build` to regenerate the committed HTML and PDF in
-`public/slides/introduction/`. Marp CLI is pinned to 4.5.1, the npm latest stable
+Run `pnpm slides:build` to regenerate the committed HTML and PDFs under
+`public/slides/`. Marp CLI is pinned to 4.5.1, the npm latest stable
 release verified when this deck was added. The script embeds local fonts and
 the QR code. It needs Chrome for PDF generation; `CHROME_PATH` may select an
-executable. On an isolated build environment without browser sandbox support,
+executable (a Playwright Chromium under `~/.cache/ms-playwright/` works on
+arm64). On an isolated build environment without browser sandbox support,
 Marp also accepts `CHROME_NO_SANDBOX=1`. The normal site build only copies these
 artifacts and needs no browser. Inspect all slides after changing source or
 theme, verify the PDF has ten pages, and check registration and PDF links.
