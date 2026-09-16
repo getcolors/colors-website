@@ -522,6 +522,110 @@ export const k3s = {
     "The local stage checks and writes the SSH alias before remote convergence. The remote stage installs K3s and Flux and waits for the Git repository. `./green kubectl` uses SSH; port 6443 stays private. Delete removes the alias before destroying the guarded server.",
 };
 
+export const doksInstallCmd = "npx skills use getcolors/doks";
+
+export const doks = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/doks/",
+  repoUrl: "https://github.com/getcolors/doks",
+  heading: "DOKS: a managed Kubernetes cluster with its own registry, built with Colors",
+  lede: "DOKS is a Package Skill built with Colors. It provisions one managed Kubernetes cluster — DigitalOcean DOKS or Vultr VKE — through the shared compute library's `managed-kubernetes` kind, names it after the profile, optionally owns a DigitalOcean container registry integrated with the cluster, and hands the rendered kubeconfig to the deployments that run on it.",
+  runtimeNote:
+    "DOKS ships in **green** alone. It creates no machines: the cluster is a `colors-compute` managed-kubernetes resource, so the machine, cluster and SSH standards do not apply, and the only package-owned stage is the registry.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins the provider (`digitalocean` or `vultr`), region, Kubernetes version slug, node size and count, the optional registry tier, and the R2 or S3 state backend.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "The DigitalOcean token or Vultr API key and the R2 keys arrive through `COLORS_PAR_*`; the token travels only as an HTTP header or the tofu process environment, never in argv or a rendered file.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds the library's managed-kubernetes documents and the registry stage, then runs `create --dry-run` before any cluster, registry, or state bucket is contacted.",
+    },
+    {
+      title: "Provision and integrate",
+      body: "The library creates the cluster and writes an owner-only kubeconfig; a package-owned OpenTofu stage creates the registry, and the registry link makes DOKS inject an image-pull Secret into every namespace.",
+    },
+    {
+      title: "Check and hand off",
+      body: "`check` requires every node Ready and the integration present, `kubeconfig` re-materializes the credential from state, and `registry` writes a one-hour docker push config for image builds.",
+    },
+  ],
+  dagCaption: "DOKS — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "registry" },
+    { kind: "edge" },
+    { kind: "node", label: "registry-link" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build workflow runs `start`, `infrastructure`, `registry` and `registry-link` in order.",
+  dagNote:
+    "The cluster comes first, then the registry, then the binding between them. Delete reverses it — integration removed, cluster destroyed, registry destroyed, local credentials cleaned up — behind the committed `compute-prevent-destroy` guard, which refuses `delete --dry-run` too; DigitalOcean removes the worker Droplets and firewalls asynchronously over the following minutes.",
+};
+
+export const redisOperatorInstallCmd = "npx skills use getcolors/redis-operator";
+
+export const redisOperator = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://getcolors.github.io/redis-operator/",
+  repoUrl: "https://github.com/getcolors/redis-operator",
+  heading: "Redis Operator: a Green controller that heals a Redis Droplet, built with Colors",
+  lede: "Redis Operator is a Package Skill built with Colors. It installs a Green Kubernetes controller into an existing cluster — the first consumer runs on a DOKS cluster the DOKS package created — where each `RedisDeployment` custom resource provisions one Redis 7.2 Droplet on DigitalOcean by running the Redis package's workflow, heals confirmed Droplet loss, and carries backup rehearsal, recovery drill and controller restart verbs.",
+  runtimeNote:
+    "Redis Operator ships in **green** alone: the controller runs on `green.kubernetes`, which exists in no other colour. Redis does not run in the controller Pod — the Droplet, its R2 state and its backup sets are the Redis package's, driven from inside the cluster.",
+  steps: [
+    {
+      title: "Read desired state",
+      body: "Agent reads `colors.yml`. It pins the kube context, namespace, controller image digest, reconcile interval, and the Droplet, backup and state settings that become `spec.config` of the custom resource.",
+    },
+    {
+      title: "Resolve secrets",
+      body: "The five `COLORS_PAR_*` credentials are copied from the process environment into the `redis-credentials` Secret on stdin; nothing rendered under `.colors/` holds a secret, and the CR carries none.",
+    },
+    {
+      title: "Dry-run boundary",
+      body: "Builds the manifest list and the `RedisDeployment`, validated by this package and by the pinned Redis package's own validators, then runs `create --dry-run` before touching the cluster.",
+    },
+    {
+      title: "Install and converge",
+      body: "Applies the Namespace, Secret, CRD, RBAC, PVC and controller, waits for the rollout, applies the resource, and waits for `Ready` while the controller runs the Redis create workflow.",
+    },
+    {
+      title: "Prove the operator",
+      body: "`drill` deletes exactly the owned Droplet and waits for a replacement; `rehearse` suspends the resource and restores a backup set in the controller; `restart` proves the new controller pod reconciles the same Droplet.",
+    },
+  ],
+  dagCaption: "Redis Operator — CREATE / BUILD DAG",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "render" },
+    { kind: "edge" },
+    { kind: "node", label: "namespace" },
+    { kind: "edge" },
+    { kind: "node", label: "credentials" },
+    { kind: "edge" },
+    { kind: "node", label: "pull-secret" },
+    { kind: "edge" },
+    { kind: "node", label: "install" },
+    { kind: "edge" },
+    { kind: "node", label: "resource" },
+    { kind: "edge" },
+    { kind: "node", label: "ready" },
+  ] satisfies DagItem[],
+  dagSummary:
+    "The create/build workflow runs `start`, `render`, `namespace` and `credentials` in order. It continues with `pull-secret`, `install`, `resource` and `ready` in order.",
+  dagNote:
+    "Only a confirmed provider 404 counts as Droplet absence — authentication, provider and state-read errors are retried, never a licence to recreate. The live drill recovered service in 5 min 21 s with the resource UID unchanged; a restart re-downloads nothing because SSH keys and dependency caches live on the volume; a rehearsal suspends the controller at an acknowledged generation and resumes only when the outcome is certain. `compute-prevent-destroy` stays on while the controller converges; only an explicit `Destroy` deletion, unlocked for one run, lets the finalizer remove the Droplet, then the namespace, then the CRD.",
+};
+
 export const clickhouseInstallCmd = "npx skills use getcolors/clickhouse";
 
 export const clickhouse = {

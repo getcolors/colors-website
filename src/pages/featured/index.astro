@@ -25,6 +25,10 @@ import {
   k8sInstallCmd,
   k3s,
   k3sInstallCmd,
+  doks,
+  doksInstallCmd,
+  redisOperator,
+  redisOperatorInstallCmd,
   once,
   rama,
   ramaInstallCmd,
@@ -77,6 +81,8 @@ const description = "Executable infrastructure workflows built with Colors. Revi
 const featuredPackageSkills = [
   { label: "K8s", href: "#k8s" },
   { label: "K3s", href: "#k3s" },
+  { label: "DOKS", href: "#doks" },
+  { label: "Redis Operator", href: "#redis-operator" },
   { label: "Umami", href: "#umami" },
   { label: "Rybbit", href: "#rybbit" },
   { label: "PostHog", href: "#posthog" },
@@ -976,6 +982,90 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
         </div>
       </div>
 
+
+      <!-- DOKS: MANAGED KUBERNETES PACKAGE -->
+      <div class="sec" id="doks">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{doks.eyebrow}</div>
+          <SectionHeading id="doks" title={doks.heading} />
+          <p class="sec-lede sec-lede-wide">{doks.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={doksInstallCmd} id="featured-doks-install" />
+            <span class="install-note" set:html={html(doks.runtimeNote)} />
+            <ResourceLinks docsUrl={doks.docsUrl} repoUrl={doks.repoUrl} catalogUrl="/getcolors/doks" />
+          </div>
+
+          <div class="grid-5">
+            {doks.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{doks.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="DOKS create and build workflow diagram"
+            >
+              {doks.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{doks.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- REDIS OPERATOR: KUBERNETES CONTROLLER PACKAGE -->
+      <div class="sec sec-alt" id="redis-operator">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{redisOperator.eyebrow}</div>
+          <SectionHeading id="redis-operator" title={redisOperator.heading} />
+          <p class="sec-lede sec-lede-wide">{redisOperator.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={redisOperatorInstallCmd} id="featured-redis-operator-install" />
+            <span class="install-note" set:html={html(redisOperator.runtimeNote)} />
+            <ResourceLinks docsUrl={redisOperator.docsUrl} repoUrl={redisOperator.repoUrl} catalogUrl="/getcolors/redis-operator" />
+          </div>
+
+          <div class="grid-5">
+            {redisOperator.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{redisOperator.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="Redis Operator create and build workflow diagram"
+            >
+              {redisOperator.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{redisOperator.dagNote}</p>
+          </div>
+        </div>
+      </div>
 
       <!-- UMAMI: ANALYTICS PACKAGE -->
       <div class="sec" id="umami">

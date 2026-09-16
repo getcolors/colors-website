@@ -529,7 +529,8 @@ repository_recipes = {}
 # v2 on 2026-09-11 for the agent-network, clickstack, posthog and redis cards:
 # their recipes changed on 2026-09-04 and the cards were never regenerated.
 catalog_og_revisions = {
-    "owner-getcolors": 6,
+    # v7 on 2026-09-16: DOKS and Redis Operator join the source and skill counts.
+    "owner-getcolors": 7,
     "source-getcolors-skills": 2,
     "skill-getcolors-skills-neon-multi-node": 3,
     # v2 on 2026-09-11: the title now shrinks to fit instead of overflowing.

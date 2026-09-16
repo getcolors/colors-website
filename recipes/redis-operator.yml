@@ -1,0 +1,21 @@
+name: Redis Operator
+repository: getcolors/redis-operator
+summary: Install a Green Kubernetes controller into an existing cluster that provisions one Redis 7.2 Droplet on DigitalOcean from a RedisDeployment custom resource, heals confirmed Droplet loss, and ships backup rehearsal, recovery drill and controller restart verbs.
+keywords:
+  - Kubernetes operator
+  - controller
+  - custom resource
+  - CRD
+  - Redis
+  - DigitalOcean
+  - Droplet
+  - self-healing
+  - backup
+  - DOKS
+  - green.kubernetes
+  - operator pattern
+featured: /featured#redis-operator
+package-skills:
+  - name: package-redis-operator-green
+    path: skills/package-redis-operator-green/SKILL.md
+    runtime: green

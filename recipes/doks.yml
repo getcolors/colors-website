@@ -1,0 +1,21 @@
+name: DOKS
+repository: getcolors/doks
+summary: Operate one managed Kubernetes cluster on DigitalOcean DOKS or Vultr VKE, named after the profile, with an optional deployment-owned container registry integrated with the cluster and a kubeconfig handed to consumer deployments.
+keywords:
+  - Kubernetes
+  - DOKS
+  - VKE
+  - DigitalOcean
+  - Vultr
+  - managed Kubernetes
+  - container registry
+  - DOCR
+  - kubeconfig
+  - cluster
+  - platform
+  - colors-compute
+featured: /featured#doks
+package-skills:
+  - name: package-doks-green
+    path: skills/package-doks-green/SKILL.md
+    runtime: green

@@ -36,6 +36,10 @@
       "ref": "main",
       "sha": "57697e8e23808771505613bac1b3eb94aa11258c"
     },
+    "doks": {
+      "ref": "main",
+      "sha": "e5c0b1711a5614757a9f88c6507a6532ca3e47f6"
+    },
     "dotfiles": {
       "ref": "main",
       "sha": "0c9c08a18558beb34a78051f05fd4aa3e269a76f"
@@ -103,6 +107,10 @@
     "redis": {
       "ref": "main",
       "sha": "7ce215e9c4437812bc2426ff4e84c2f0e18c5000"
+    },
+    "redis-operator": {
+      "ref": "main",
+      "sha": "e29e84ec32bb563b7c68c0adbaab1e62e4f1eb0e"
     },
     "restate": {
       "ref": "main",
