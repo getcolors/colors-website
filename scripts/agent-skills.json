@@ -38,7 +38,7 @@
     },
     "doks": {
       "ref": "main",
-      "sha": "e5c0b1711a5614757a9f88c6507a6532ca3e47f6"
+      "sha": "7d7c99162f8186b5192e6acc8647c60f020d9d96"
     },
     "dotfiles": {
       "ref": "main",
@@ -110,7 +110,7 @@
     },
     "redis-operator": {
       "ref": "main",
-      "sha": "e29e84ec32bb563b7c68c0adbaab1e62e4f1eb0e"
+      "sha": "bf5fd4226f05f94d2f5752288a9bb65322f7dc5a"
     },
     "restate": {
       "ref": "main",

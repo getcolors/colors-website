@@ -1,7 +1,7 @@
 name: Redis Operator
 repository: getcolors/redis-operator
 shape: operator
-summary: Install a Green Kubernetes controller into an existing cluster that provisions one Redis 7.2 Droplet on DigitalOcean from a RedisDeployment custom resource, heals confirmed Droplet loss, and ships backup rehearsal, recovery drill and controller restart verbs.
+summary: Install a Kubernetes controller in Green, Red or Blue into an existing cluster that provisions one Redis 7.2 Droplet on DigitalOcean from a RedisDeployment custom resource, heals confirmed Droplet loss, and ships backup rehearsal, recovery drill and controller restart verbs.
 keywords:
   - Kubernetes operator
   - controller
@@ -14,6 +14,8 @@ keywords:
   - backup
   - DOKS
   - green.kubernetes
+  - red.kubernetes
+  - blue.kubernetes
   - operator pattern
 featured: /featured#redis-operator
 artifacts:
@@ -31,3 +33,9 @@ package-skills:
   - name: package-redis-operator-green
     path: skills/package-redis-operator-green/SKILL.md
     runtime: green
+  - name: package-redis-operator-red
+    path: skills/package-redis-operator-red/SKILL.md
+    runtime: red
+  - name: package-redis-operator-blue
+    path: skills/package-redis-operator-blue/SKILL.md
+    runtime: blue

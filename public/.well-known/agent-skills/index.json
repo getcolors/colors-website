@@ -254,11 +254,25 @@
       "digest": "sha256:ef5b0845b86ca9e0e0ee0a29eb9a3b3502a80e8d9d034f6cf879f708aa63dd69"
     },
     {
+      "name": "package-doks-blue",
+      "type": "archive",
+      "description": "Provision and operate one managed Kubernetes cluster (DigitalOcean DOKS or Vultr VKE) with an optional integrated DigitalOcean container registry using Blue.",
+      "url": "/.well-known/agent-skills/package-doks-blue-769e9e1230db0641cceb35bc4c2146e87d7cf3eadf8ba958edc3360f0c0b4785.tar.gz",
+      "digest": "sha256:769e9e1230db0641cceb35bc4c2146e87d7cf3eadf8ba958edc3360f0c0b4785"
+    },
+    {
       "name": "package-doks-green",
       "type": "archive",
       "description": "Provision and operate one managed Kubernetes cluster (DigitalOcean DOKS or Vultr VKE) with an optional integrated DigitalOcean container registry using Green.",
-      "url": "/.well-known/agent-skills/package-doks-green-bc6efbe7c8f56a98fc72e5d1a0cd7e088242ce488bd3545cb8e89dbfd05293f0.tar.gz",
-      "digest": "sha256:bc6efbe7c8f56a98fc72e5d1a0cd7e088242ce488bd3545cb8e89dbfd05293f0"
+      "url": "/.well-known/agent-skills/package-doks-green-b845bf8bc60f51aa09ce8e5788343a762b1540a0b5d43a398f5b89c924b7945d.tar.gz",
+      "digest": "sha256:b845bf8bc60f51aa09ce8e5788343a762b1540a0b5d43a398f5b89c924b7945d"
+    },
+    {
+      "name": "package-doks-red",
+      "type": "archive",
+      "description": "Provision and operate one managed Kubernetes cluster (DigitalOcean DOKS or Vultr VKE) with an optional integrated DigitalOcean container registry using Red.",
+      "url": "/.well-known/agent-skills/package-doks-red-03731fc373e98fb7d93ddfd6f7fa648cc2a4071478981be72bdae6b0ee5db49f.tar.gz",
+      "digest": "sha256:03731fc373e98fb7d93ddfd6f7fa648cc2a4071478981be72bdae6b0ee5db49f"
     },
     {
       "name": "package-dotfiles-green",
@@ -569,11 +583,25 @@
       "digest": "sha256:b3c84034d3902beb61aa5e0f5cd498dc5c37bc9a2884f5c7ebbc7eda3c816263"
     },
     {
+      "name": "package-redis-operator-blue",
+      "type": "archive",
+      "description": "Install and operate the RedisDeployment controller in an existing Kubernetes cluster with Blue; it provisions one Redis Droplet on DigitalOcean from a custom resource.",
+      "url": "/.well-known/agent-skills/package-redis-operator-blue-442116cac5afd66d83c5541794c6ed0d40a8516ecdd730ddafaf6d337999e3b9.tar.gz",
+      "digest": "sha256:442116cac5afd66d83c5541794c6ed0d40a8516ecdd730ddafaf6d337999e3b9"
+    },
+    {
       "name": "package-redis-operator-green",
       "type": "archive",
       "description": "Install and operate the RedisDeployment controller in an existing Kubernetes cluster with Green; it provisions one Redis Droplet on DigitalOcean from a custom resource.",
-      "url": "/.well-known/agent-skills/package-redis-operator-green-5b98e9f4ae0a595365d3b9ecf00057a7e46f9d9e80c2fffc23e5ec872efc0cd0.tar.gz",
-      "digest": "sha256:5b98e9f4ae0a595365d3b9ecf00057a7e46f9d9e80c2fffc23e5ec872efc0cd0"
+      "url": "/.well-known/agent-skills/package-redis-operator-green-3c642eb197f914e10883ea93223ead2e1fd20e7077c9050527a1361fc011a80a.tar.gz",
+      "digest": "sha256:3c642eb197f914e10883ea93223ead2e1fd20e7077c9050527a1361fc011a80a"
+    },
+    {
+      "name": "package-redis-operator-red",
+      "type": "archive",
+      "description": "Install and operate the RedisDeployment controller in an existing Kubernetes cluster with Red; it provisions one Redis Droplet on DigitalOcean from a custom resource.",
+      "url": "/.well-known/agent-skills/package-redis-operator-red-60125a8fc1fdb0c5b9bcd3e5b966dff6d46837042c2464f592a20e910f805115.tar.gz",
+      "digest": "sha256:60125a8fc1fdb0c5b9bcd3e5b966dff6d46837042c2464f592a20e910f805115"
     },
     {
       "name": "package-redis-red",

@@ -531,7 +531,7 @@ export const doks = {
   heading: "DOKS: a managed Kubernetes cluster with its own registry, built with Colors",
   lede: "DOKS is a Package Skill built with Colors. It provisions one managed Kubernetes cluster — DigitalOcean DOKS or Vultr VKE — through the shared compute library's `managed-kubernetes` kind, names it after the profile, optionally owns a DigitalOcean container registry integrated with the cluster, and hands the rendered kubeconfig to the deployments that run on it.",
   runtimeNote:
-    "DOKS ships in **green** alone. It creates no machines: the cluster is a `colors-compute` managed-kubernetes resource, so the machine, cluster and SSH standards do not apply, and the only package-owned stage is the registry.",
+    "DOKS ships in **green** (Clojure / Babashka), **red** (TypeScript / Bun) and **blue** (Python / uv). All three read the same `colors.yml`, use the same state keys and render byte-identical cluster and registry documents. Run one lifecycle operation per profile at a time. The cluster is a `colors-compute` managed-kubernetes resource; the package owns the registry stage.",
   steps: [
     {
       title: "Read desired state",
@@ -576,10 +576,10 @@ export const redisOperator = {
   eyebrow: "Package Skill",
   docsUrl: "https://getcolors.github.io/redis-operator/",
   repoUrl: "https://github.com/getcolors/redis-operator",
-  heading: "Redis Operator: a Green controller that heals a Redis Droplet, built with Colors",
-  lede: "Redis Operator is a Package Skill built with Colors. It installs a Green Kubernetes controller into an existing cluster — the first consumer runs on a DOKS cluster the DOKS package created — where each `RedisDeployment` custom resource provisions one Redis 7.2 Droplet on DigitalOcean by running the Redis package's workflow, heals confirmed Droplet loss, and carries backup rehearsal, recovery drill and controller restart verbs.",
+  heading: "Redis Operator: a controller that heals a Redis Droplet, built with Colors",
+  lede: "Redis Operator is a Package Skill built with Colors. It installs a Kubernetes controller in Green, Red or Blue into an existing cluster — the first consumer runs on a DOKS cluster the DOKS package created — where each `RedisDeployment` custom resource provisions one Redis 7.2 Droplet on DigitalOcean by running the Redis package's workflow, heals confirmed Droplet loss, and carries backup rehearsal, recovery drill and controller restart verbs.",
   runtimeNote:
-    "Redis Operator ships in **green** alone: the controller runs on `green.kubernetes`, which exists in no other colour. Redis does not run in the controller Pod — the Droplet, its R2 state and its backup sets are the Redis package's, driven from inside the cluster.",
+    "Redis Operator ships in **green** (Clojure / Babashka), **red** (TypeScript / Bun) and **blue** (Python / uv). Each controller uses its native Kubernetes SDK and Redis workflow. All three Package Skills read the same `colors.yml` and render byte-identical manifests; the pinned image digest selects the controller runtime. Redis runs on a separate Droplet, with R2 state and backup sets managed by the Redis package.",
   steps: [
     {
       title: "Read desired state",

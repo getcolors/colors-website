@@ -20,3 +20,9 @@ package-skills:
   - name: package-doks-green
     path: skills/package-doks-green/SKILL.md
     runtime: green
+  - name: package-doks-red
+    path: skills/package-doks-red/SKILL.md
+    runtime: red
+  - name: package-doks-blue
+    path: skills/package-doks-blue/SKILL.md
+    runtime: blue
