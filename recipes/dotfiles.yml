@@ -1,5 +1,6 @@
 name: Dotfiles
 repository: getcolors/dotfiles
+shape: local
 summary: Render, compare, and install a managed Ubuntu or macOS dotfiles profile in a local home directory.
 keywords:
   - dotfiles

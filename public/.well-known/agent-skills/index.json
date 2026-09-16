@@ -744,6 +744,13 @@
       "digest": "sha256:8bbeb434623b0adeaf66e15f7fb56a3e1458eb82776e3ca4dac03cc70b7037ad"
     },
     {
+      "name": "redis-operator-kubernetes",
+      "type": "archive",
+      "description": "A Kubernetes operator provisioning one Redis Droplet from a custom resource, verified live on DigitalOcean DOKS - `check` failing on a healthy resource with \"RedisDeployment is not Ready at its current generation: phase=Reconciling reason=Reconciling\", `kubectl patch ... failed (exit 1): The request is invalid: the server rejected our request due to an error in our request` from a status write moving the resourceVersion, `kubectl exec` into a restarting controller: \"Clojure tools not yet in expected location\" and \"java.io.EOFException: Unexpected end of ZLIB input stream\", `converge outcome=failed step=:redis/ansible exit=2` on a fresh Droplet then converged on retry, `DirectoryNotEmptyException: .../registry/push` after destroy, Droplets and firewalls outliving a deleted DOKS cluster, and a self-healing drill that recovers service in five minutes and no data. Use for a Green Kubernetes controller, the RedisDeployment CRD, or any operator on DOKS. Full symptom index in the body.",
+      "url": "/.well-known/agent-skills/redis-operator-kubernetes-9a719cae05ea6ba85e2c02bb9ed9b1df12ada4cfc5318fa77fae91392c590af8.tar.gz",
+      "digest": "sha256:9a719cae05ea6ba85e2c02bb9ed9b1df12ada4cfc5318fa77fae91392c590af8"
+    },
+    {
       "name": "redis-single-node",
       "type": "archive",
       "description": "What a single-node Redis 7 deployment needs beyond the docs, verified live on Vultr and AWS - a restored dump.rdb that loads ZERO keys because the instance started with appendonly yes and no appendonlydir/ (\"Creating AOF base file appendonly.aof.1.base.rdb on server start\"), redis-cli refusals (\"NOAUTH Authentication required.\", \"WRONGPASS\") that exit 0 so exit-code gates pass, a minutes-old host UNREACHABLE (kex_exchange_identification reset) after unattended-upgrades restarted sshd, Docker-published ports that bypass ufw, backups streamed with `redis-cli --rdb -`, backup sets that count only once a .complete marker reads back, and, on AWS, OpenTofu 1.12 \"Error: No state file was found\" failing a create, \"Permission denied\" reading the password because the AMI logs in as ubuntu, an S3 encryption rule planning \"1 to change\" forever, and \"managed storage credentials unavailable\" on delete. Use for self-hosted Redis on one machine with Docker Compose and S3-compatible backups. Full symptom index in the body.",

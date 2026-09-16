@@ -1,5 +1,6 @@
 name: DOKS
 repository: getcolors/doks
+shape: kubernetes
 summary: Operate one managed Kubernetes cluster on DigitalOcean DOKS or Vultr VKE, named after the profile, with an optional deployment-owned container registry integrated with the cluster and a kubeconfig handed to consumer deployments.
 keywords:
   - Kubernetes

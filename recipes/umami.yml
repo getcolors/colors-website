@@ -1,5 +1,6 @@
 name: Umami
 repository: getcolors/umami
+shape: single-node
 summary: Operate a single-node Umami web analytics service with PostgreSQL, Caddy TLS, and restore-verified backups to R2.
 keywords:
   - Umami

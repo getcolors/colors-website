@@ -1,5 +1,6 @@
 name: PostHog
 repository: getcolors/posthog
+shape: single-node
 summary: Operate a single-node PostHog product analytics suite on one cloud VM with PostgreSQL 17, ClickHouse with embedded Keeper, Redis 7.2, Kafka, Temporal, a Rust capture service, and Caddy.
 keywords:
   - PostHog

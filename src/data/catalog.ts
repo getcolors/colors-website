@@ -6,6 +6,28 @@ export { packageSkillDefinition };
 
 export type Runtime = "red" | "green" | "blue";
 export type RecipeType = "package" | "context";
+// The shape facet: what a Package Skill stands up. A cross-cutting filter over
+// Package Skills on /skills, never a third skill kind — an operator is still
+// installed as a Package Skill, and its Kubernetes artifacts are outputs the
+// skill renders, not skills of their own.
+export type Shape = "single-node" | "multi-node" | "kubernetes" | "operator" | "local";
+export const shapes: Shape[] = ["single-node", "multi-node", "kubernetes", "operator", "local"];
+export const shapeLabels: Record<Shape, string> = {
+  "single-node": "Single node",
+  "multi-node": "Multi-node",
+  kubernetes: "Kubernetes",
+  operator: "Operator",
+  local: "Local",
+};
+// Named files or rendered outputs worth surfacing on the source page — a CRD,
+// a controller image, a rendered manifest — each linked to the repository
+// when it is a tracked path.
+export type Artifact = {
+  name: string;
+  path?: string;
+  note?: string;
+  url?: string;
+};
 
 type RecipePackageSkill = {
   name: string;
@@ -26,6 +48,8 @@ export type Recipe = {
   keywords: string[];
   featured?: string;
   companion?: string;
+  shape?: Shape;
+  artifacts: Artifact[];
   branch: string;
   packageSkills: RecipePackageSkill[];
   contextSkills: RecipeContextSkill[];
@@ -61,6 +85,9 @@ export type PackageSkill = CatalogSkillShared & {
 export type ContextSkill = CatalogSkillShared & {
   kind: "context";
   companion?: string;
+  // Derived from the companion package's shape, never declared: a Context
+  // Skill is knowledge about one verified build of that package.
+  shape?: Shape;
 };
 
 export type CatalogSkill = PackageSkill | ContextSkill;
@@ -113,7 +140,7 @@ export type Catalog = {
 // Keep these revisions synchronized with scripts/generate-og-image.py.
 const catalogOgRevisions: Record<string, number> = {
   "owner-getcolors": 7,
-  "source-getcolors-skills": 2,
+  "source-getcolors-skills": 3,
   "skill-getcolors-skills-neon-multi-node": 3,
   "skill-getcolors-agent-network-doks-package-agent-network-doks-green": 3,
   "skill-getcolors-agent-network-package-agent-network-red": 3,
@@ -228,6 +255,8 @@ const readRecipes = (): Recipe[] => {
       const keywords = value.keywords;
       const featured = value.featured;
       const companion = value.companion;
+      const shape = value.shape;
+      const artifacts = value.artifacts;
       const branch = value.branch ?? "main";
       const packageEntries = value["package-skills"];
       const contextEntries = value["context-skills"];
@@ -251,6 +280,26 @@ const readRecipes = (): Recipe[] => {
         }
       }
       if (typeof branch !== "string" || !branch) fail(source, "branch must be a string");
+      if (shape !== undefined) {
+        if (type !== "package") fail(source, "shape is only valid on type package recipes");
+        if (typeof shape !== "string" || !shapes.includes(shape as Shape)) {
+          fail(source, `shape must be one of ${shapes.join(", ")}`);
+        }
+      }
+      if (artifacts !== undefined) {
+        if (type !== "package") fail(source, "artifacts is only valid on type package recipes");
+        if (!Array.isArray(artifacts) || artifacts.length === 0) fail(source, "artifacts must be a non-empty list");
+        (artifacts as unknown[]).forEach((entry: unknown, index: number) => {
+          if (!entry || typeof entry !== "object") fail(source, `artifacts[${index}] is invalid`);
+          const item = entry as Record<string, unknown>;
+          if (typeof item.name !== "string" || !item.name.trim()) fail(source, `artifacts[${index}].name is required`);
+          if (item.path !== undefined && (typeof item.path !== "string" || !/^[\w./-]+$/.test(item.path) || item.path.includes(".."))) {
+            fail(source, `artifacts[${index}].path must be a repository-relative path`);
+          }
+          if (item.note !== undefined && typeof item.note !== "string") fail(source, `artifacts[${index}].note must be a string`);
+          if (item.path === undefined && item.note === undefined) fail(source, `artifacts[${index}] needs a path or a note`);
+        });
+      }
       if (type === "package" && contextEntries !== undefined) {
         fail(source, "context-skills is only valid on type context recipes");
       }
@@ -268,6 +317,12 @@ const readRecipes = (): Recipe[] => {
       const recipeKeywords = keywords as string[];
       const recipeBranch = branch as string;
       const recipeEntries = entries as unknown[];
+      const recipeArtifacts: Artifact[] = ((artifacts as Record<string, unknown>[] | undefined) ?? []).map((item) => ({
+        name: item.name as string,
+        path: item.path as string | undefined,
+        note: item.note as string | undefined,
+        url: typeof item.path === "string" ? `https://github.com/${recipeRepository}/blob/${recipeBranch}/${item.path}` : undefined,
+      }));
 
       if (names.has(recipeName.toLowerCase())) fail(source, `duplicate name ${recipeName}`);
       names.add(recipeName.toLowerCase());
@@ -331,6 +386,8 @@ const readRecipes = (): Recipe[] => {
         keywords: recipeKeywords,
         featured: featured as string | undefined,
         companion: companion as string | undefined,
+        shape: shape as Shape | undefined,
+        artifacts: recipeArtifacts,
         branch: recipeBranch,
         packageSkills,
         contextSkills,
@@ -505,6 +562,14 @@ export const loadCatalog = () => {
     const bySkillRank = (a: CatalogSkillShared, b: CatalogSkillShared) =>
       b.installs - a.installs || a.name.localeCompare(b.name);
     const packageSkills = sources.flatMap((source) => source.packageSkills).sort(bySkillRank);
+    const shapeByRepository = new Map(
+      sources.filter((source) => source.type === "package" && source.shape).map((source) => [source.repository, source.shape as Shape]),
+    );
+    for (const source of sources) {
+      for (const skill of source.contextSkills) {
+        if (skill.companion) skill.shape = shapeByRepository.get(skill.companion);
+      }
+    }
     const contextSkills = sources.flatMap((source) => source.contextSkills).sort(bySkillRank);
 
     const byRepository = new Map<string, CatalogRepository>();

@@ -4,7 +4,7 @@ import ContextSkillList from "~/components/ContextSkillList.astro";
 import InstallBox from "~/components/InstallBox.astro";
 import PackageSkillList from "~/components/PackageSkillList.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
-import { catalogOgImage, formatInstalls, loadCatalog, type CatalogRepository } from "~/data/catalog";
+import { catalogOgImage, formatInstalls, loadCatalog, shapeLabels, type CatalogRepository } from "~/data/catalog";
 
 // Routes come from repositories, not recipes: several recipes may share one
 // repository (Context Skills all live in getcolors/skills), and this path
@@ -69,6 +69,12 @@ const showInstall = packageCount > 0 || soleContextSkill !== undefined;
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 19V9M12 19V4M19 19v-7M3 19h18"/></svg>
           <strong>{formatInstalls(repository.installs)}</strong> total installs
         </span>
+        {single?.shape && (
+          <span>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><path d="M7 11v3a2 2 0 0 0 2 2h4"/></svg>
+            <a href={`/skills?shape=${single.shape}`} title="Browse Package Skills of this shape"><strong>{shapeLabels[single.shape]}</strong></a> shape
+          </span>
+        )}
       </div>
       <div class="source-actions">
         {companionContextSkills.map((skill) => (
@@ -92,6 +98,21 @@ const showInstall = packageCount > 0 || soleContextSkill !== undefined;
     {showInstall && (
       <section class="installation" aria-label="Installation">
         <InstallBox {command} {prompt} />
+      </section>
+    )}
+    {single && single.artifacts.length > 0 && (
+      <section class="artifacts" aria-labelledby="artifacts-heading">
+        <h2 id="artifacts-heading">Artifacts</h2>
+        <p class="recipe-summary">What this Package Skill ships or renders beyond its launcher. Tracked files link to the repository; rendered outputs appear under <code>.colors/</code> after <code>build</code>.</p>
+        <ul class="artifact-list">
+          {single.artifacts.map((artifact) => (
+            <li>
+              {artifact.url ? <a href={artifact.url}><code>{artifact.path}</code></a> : null}
+              <strong>{artifact.name}</strong>
+              {artifact.note && <span class="artifact-note">{artifact.note}</span>}
+            </li>
+          ))}
+        </ul>
       </section>
     )}
     {single ? (
@@ -130,6 +151,12 @@ const showInstall = packageCount > 0 || soleContextSkill !== undefined;
   .recipe-block { margin-bottom: 48px; }
   .recipe-block h2 { margin: 0 0 10px; font-size: 24px; }
   .recipe-summary { margin: 0 0 20px; color: var(--muted); }
+  .artifacts { margin-bottom: 48px; }
+  .artifacts h2 { margin: 0 0 10px; font-size: 24px; }
+  .artifact-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .artifact-list li { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  .artifact-list code { font: 12px var(--mono); overflow-wrap: anywhere; }
+  .artifact-note { color: var(--muted); font-size: 14px; }
   @media (max-width: 700px) {
     .source-meta { align-items: flex-start; flex-direction: column; }
     .source-actions { margin-left: 0; }

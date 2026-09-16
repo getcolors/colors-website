@@ -1,5 +1,6 @@
 name: Temporal
 repository: getcolors/temporal
+shape: single-node
 summary: Operate a production-oriented Temporal server with PostgreSQL, durable workflow verification, TLS, backups, and restart recovery.
 keywords:
   - Temporal

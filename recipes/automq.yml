@@ -1,5 +1,6 @@
 name: AutoMQ
 repository: getcolors/automq
+shape: multi-node
 summary: Three-node AutoMQ with object storage, SASL_SSL, SCRAM and ACLs on Vultr, AWS, Google Cloud or OCI. OCI A1 brokers passed public TLS, authentication, storage and targeted failover checks.
 featured: /featured#automq
 keywords:

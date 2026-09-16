@@ -1,5 +1,6 @@
 name: Once
 repository: getcolors/once
+shape: single-node
 summary: Operate a personal PaaS on one VPS with Docker application hosting, DNS, outgoing mail, TLS, and GitHub deployments.
 keywords:
   - personal PaaS

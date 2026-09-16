@@ -1,5 +1,6 @@
 name: Agent Network K8s
 repository: getcolors/agent-network-k8s
+shape: kubernetes
 summary: Operate a NetBird Agent Network demo on Vultr Kubernetes Engine with a keyless, policy-gated LLM endpoint. Its two-pod application pairs a NetBird client in netstack/SOCKS5 mode with a network-isolated agent running headless Claude Code.
 featured: /featured#agent-network-k8s
 keywords:

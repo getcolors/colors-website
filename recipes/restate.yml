@@ -1,5 +1,6 @@
 name: Restate
 repository: getcolors/restate
+shape: single-node
 summary: Operate a single-node Restate durable execution service on one cloud VM with a TypeScript reference workflow.
 featured: /featured#restate
 keywords:

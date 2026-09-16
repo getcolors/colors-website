@@ -1,5 +1,6 @@
 name: Agent Network DOKS
 repository: getcolors/agent-network-doks
+shape: kubernetes
 summary: Operate a NetBird Agent Network demo on DigitalOcean Kubernetes with a keyless, policy-gated LLM endpoint. Its two-pod application pairs a NetBird client in netstack/SOCKS5 mode with a network-isolated agent running headless Claude Code.
 featured: /featured#agent-network-doks
 keywords:

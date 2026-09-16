@@ -1,5 +1,6 @@
 name: DBOS
 repository: getcolors/dbos
+shape: single-node
 summary: Operate a single-machine DBOS TypeScript durable-workflow service with private PostgreSQL, Cloudflare HTTPS, and R2 backups. Shared compute supports eight cloud providers.
 featured: /featured#dbos
 keywords:

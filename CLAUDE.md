@@ -230,6 +230,20 @@ skill kind, package or context alike, so the copy button always offers the
 same verb. On `/skills` Context Skills render as a separate section below the
 Package Skill cards, covered by the same search.
 
+Package recipes may declare a `shape` — one of `single-node`, `multi-node`,
+`kubernetes`, `operator`, `local` (`shapes` in `src/data/catalog.ts`) — which
+renders as a chip on the card, a filter row under the search box on `/skills`
+(also reachable as `/skills?shape=<shape>`), and a stat on the source page.
+It is a facet over Package Skills, never a third skill kind: an operator is
+still installed as a Package Skill. A Context Skill never declares a shape;
+`loadCatalog()` derives it from its `companion` package, so the same chips
+filter both sections on every tab. A package recipe may also list
+`artifacts` (`name` plus a repository-relative `path` and/or a `note`) for
+the files or rendered outputs worth surfacing beyond the launcher, such as a
+CRD, a controller image or a rendered manifest; the source page renders them
+as an "Artifacts" section with tracked paths linked to GitHub. Both fields
+are validated in `readRecipes()` and are only valid on `type: package`.
+
 The generated hierarchy is `/skills`, `/{owner}`,
 `/{owner}/{repository}`, and `/{owner}/{repository}/{skill}` for both skill
 kinds. **Several recipes may share one repository** — every Context Skill

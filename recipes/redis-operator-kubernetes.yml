@@ -1,0 +1,28 @@
+type: context
+name: Redis Operator Kubernetes
+repository: getcolors/skills
+summary: Verified traps and acceptance doctrine for a Green Kubernetes operator on DigitalOcean DOKS, distilled from a live RedisDeployment build - a check that reads Reconciling on a healthy resource, a resourceVersion patch the controller's own status writes reject, a probe exec'd into a controller still unpacking its toolchain, a first Ansible attempt that fails on a fresh Droplet and converges on retry, and a self-healing drill that restores service, not data.
+keywords:
+  - kubernetes operator
+  - redis
+  - doks
+  - digitalocean
+  - green.kubernetes
+  - RedisDeployment
+  - phase=Reconciling
+  - not Ready at its current generation
+  - the server rejected our request due to an error in our request
+  - resourceVersion
+  - Unexpected end of ZLIB input stream
+  - Clojure tools not yet in expected location
+  - converge outcome=failed step=:redis/ansible exit=2
+  - failures retained
+  - self-healing drill
+  - acknowledged suspension
+  - deletionPolicy Destroy
+  - DirectoryNotEmptyException
+  - k8s-public-access
+companion: getcolors/redis-operator
+context-skills:
+  - name: redis-operator-kubernetes
+    path: redis-operator-kubernetes/SKILL.md

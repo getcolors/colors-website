@@ -1,5 +1,6 @@
 name: Rama
 repository: getcolors/rama
+shape: single-node
 summary: Operate a private Rama distributed computing cluster with ZooKeeper, WireGuard, optional DNS, and mail.
 keywords:
   - Rama

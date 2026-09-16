@@ -1,5 +1,6 @@
 name: Rybbit
 repository: getcolors/rybbit
+shape: single-node
 summary: Operate a single-node Rybbit analytics service pairing PostgreSQL for metadata with ClickHouse for columnar events, behind Caddy TLS.
 keywords:
   - Rybbit

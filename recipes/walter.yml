@@ -1,5 +1,6 @@
 name: Walter
 repository: getcolors/walter
+shape: single-node
 summary: Operate a remote development machine with managed SSH access and a declared development environment. Stop and start its power through the provider API on OCI or Vultr.
 keywords:
   - Vultr

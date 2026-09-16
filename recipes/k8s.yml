@@ -1,5 +1,6 @@
 name: K8s
 repository: getcolors/k8s
+shape: kubernetes
 summary: Operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Flux, DNS, TLS, and acceptance checks.
 keywords:
   - Kubernetes

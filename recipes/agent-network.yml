@@ -1,5 +1,6 @@
 name: Agent Network
 repository: getcolors/agent-network
+shape: single-node
 summary: Operate a minimal NetBird Agent Network demo on Vultr or DigitalOcean with a keyless, policy-gated LLM endpoint and a network-isolated agent running headless Claude Code.
 featured: /featured#agent-network
 keywords:

@@ -1,5 +1,6 @@
 name: Airflow
 repository: getcolors/airflow
+shape: single-node
 summary: Operate a production Apache Airflow server with Postgres, backups, authenticated TLS, and GitHub-based DAG delivery.
 keywords:
   - Apache Airflow

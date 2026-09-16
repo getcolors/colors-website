@@ -1,5 +1,6 @@
 name: Neon Multi-Node
 repository: getcolors/neon-multi-node
+shape: multi-node
 summary: Operate self-hosted Neon on five AWS machines with separate compute and pageserver roles, three safekeepers, native PostgreSQL TLS, and managed S3 storage.
 featured: /featured#neon-multi-node
 keywords:
