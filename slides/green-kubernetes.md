@@ -71,11 +71,11 @@ Allow about ninety seconds. Walk the four mechanisms in order. Polling lists the
 
 | Callback | Returns |
 | :--- | :--- |
-| `validate` | Nothing for valid configuration, or a collection of errors |
-| `identity` | A stable value naming the backend and the profile |
-| `observe` | `exists?`, `matches?`, and `ready?` from a read-only look at the infrastructure |
-| `converge` | The outcome of the package's converge workflow |
-| `delete` | The outcome of the package's delete workflow, repeatable after partial cleanup |
+| `validate` | Errors for an invalid configuration |
+| `identity` | A stable name for the backend and the profile |
+| `observe` | `exists?`, `matches?`, `ready?` from a read-only look |
+| `converge` | The package's converge workflow outcome |
+| `delete` | The package's delete workflow outcome, repeatable |
 
 `converge` and `delete` call the same `green.workflow` graphs a launcher runs.
 
@@ -92,21 +92,15 @@ Allow about ninety seconds. Every callback receives the keywordized spec.config 
 <div class="two-col">
 <div class="card">
 <h3>The adapter</h3>
-<p>Imports the pinned <code>redis</code> package workflow.</p>
-<p>Only a confirmed provider 404 counts as absence. An authentication, provider, or state-read error is a retryable failure, never permission to recreate.</p>
+<p>Imports the pinned <code>redis</code> package workflow. Only a confirmed provider 404 counts as absence; an authentication, provider, or state-read error is retried, never recreated.</p>
 </div>
 <div class="card">
 <h3>The guards</h3>
-<p><code>compute-prevent-destroy</code> stays on while the controller converges.</p>
-<p>Only an explicit <code>deletionPolicy: Destroy</code> lifts it, under the same identity lock.</p>
+<p><code>compute-prevent-destroy</code> stays on while the controller converges. Only an explicit <code>deletionPolicy: Destroy</code> lifts it.</p>
 </div>
 </div>
 
-```sh
-./green build | create | check | rehearse | drill | restart | delete
-```
-
-<p class="small">Redis 7.2 runs on a DigitalOcean Droplet outside the cluster. The controller Pod runs the workflow.</p>
+<p class="small">Verbs: <code>build</code>, <code>create</code>, <code>check</code>, <code>rehearse</code>, <code>drill</code>, <code>restart</code>, <code>delete</code>. Redis 7.2 runs on a Droplet outside the cluster; the controller Pod runs the workflow.</p>
 
 <!--
 Allow about ninety seconds. redis-operator is two halves under one pin: the controller image, whose entry point is bb controller in-cluster, and the Package Skill that installs the controller into an existing cluster from a non-secret colors.yml, applies one RedisDeployment, and carries the operational verbs. The adapter reads owned compute state, asks the DigitalOcean API for that exact Droplet ID, and checks the recorded name. A confirmed HTTP 404 is the one absence proof, and it is relative to the token's team: a Droplet in another team also answers 404, so rotating the Secret to a token from a different team would make the operator recreate the Droplet there while the original keeps running. Rotate within one team. A healthy observation also checks region, size, image, the recorded public IP, and an authenticated PING over SSH. The verbs on this slide are the launcher's: check polls for Ready, rehearse restores a backup set into a scratch container under an acknowledged suspension, drill deletes the owned Droplet and waits for a replacement, restart rolls the controller, and delete patches Destroy and waits for the finalizer. Only the five COLORS_PAR credentials enter the Pod, from a Secret; startup refuses any other override.
@@ -141,20 +135,14 @@ Allow about one minute. The volume matters because remote state does not contain
 <div class="card">
 <h3>One managed cluster</h3>
 <p>DigitalOcean DOKS or Vultr VKE, named after the profile, through colors-compute's <code>managed-kubernetes</code> kind.</p>
-<p>State lives under <code>&lt;profile&gt;/compute/managed-kubernetes.tfstate</code>.</p>
 </div>
 <div class="card">
 <h3>One optional registry</h3>
-<p>Deployment-owned, named after the profile, integrated with the cluster.</p>
-<p>DOKS then places the pull Secret in every namespace.</p>
+<p>Deployment-owned, named after the profile, integrated with the cluster so DOKS places the pull Secret in every namespace.</p>
 </div>
 </div>
 
-```sh
-./green build | create | check | kubeconfig | registry | delete
-```
-
-<p class="small">A consumer deployment reads <code>.colors/&lt;profile&gt;/kubeconfig</code> by path. The doks package generates it for the owner alone, and a consumer never commits it.</p>
+<p class="small">Verbs: <code>build</code>, <code>create</code>, <code>check</code>, <code>kubeconfig</code>, <code>registry</code>, <code>delete</code>. A consumer deployment reads <code>.colors/&lt;profile&gt;/kubeconfig</code> by path and never commits it.</p>
 
 <!--
 Allow about one minute. doks creates no machines, so the Compute Provider Standard's machine API and the SSH standards do not apply; the library's managed-kubernetes kind owns the journal, the plan safety and the kubeconfig write. The registry is a package-owned OpenTofu stage with its own state key on the same backend, one digitalocean_container_registry resource with prevent_destroy bound to compute-prevent-destroy. Linking it to the cluster is one API call, and the result is that workloads pull from registry.digitalocean.com slash profile without any package-side credential rotation. The registry verb writes a one-hour docker push config that image.sh consumes. The kubeconfig handoff is by path: the redis-operator-doks deployment's envrc exports KUBECONFIG pointing at the doks deployment's rendered file, and kube-context in its colors.yml names the context. Delete removes the registry integration, the cluster, then the registry, and prints one line per stage. DigitalOcean removes the worker Droplets and the cluster firewalls asynchronously over the following minutes, so check fails from then on.
@@ -206,9 +194,9 @@ On 3 of 4 creates over two days, the first Ansible attempt on a fresh Droplet fa
 converge outcome=failed step=:redis/ansible exit=2
 ```
 
-The controller's retry converged about two minutes later with nothing changed. The cause is unknown.
+The controller's retry converged about two minutes later with nothing changed. The cause is unknown; the failure did not recur once retention existed.
 
-The first build discarded the play output by design, and the failure did not recur once retention existed. The next occurrence is readable with `kubectl exec` and `cat /data/work/<profile>/failures/<file>`.
+The next occurrence is readable with `kubectl exec` and `cat /data/work/<profile>/failures/<file>`.
 
 <p class="muted">A gate that fails a create on the first Failed pass is wrong. The create wait tolerates Failed because the controller retries.</p>
 
