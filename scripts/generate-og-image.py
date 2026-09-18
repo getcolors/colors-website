@@ -539,12 +539,12 @@ repository_recipes = {}
 # v2 on 2026-09-11 for the agent-network, clickstack, posthog and redis cards:
 # their recipes changed on 2026-09-04 and the cards were never regenerated.
 catalog_og_revisions = {
-    # v8: DOKS and Redis Operator now include all three runtimes.
-    "owner-getcolors": 8,
+    # v9 adds the Valkey source and Package Skill.
+    "owner-getcolors": 9,
     "source-getcolors-doks": 2,
     "source-getcolors-redis-operator": 2,
     "skill-getcolors-redis-operator-package-redis-operator-green": 2,
-    "source-getcolors-skills": 3, # v3 on 2026-09-16: redis-operator-kubernetes Context Skill added
+    "source-getcolors-skills": 4, # v4 adds the Valkey Context Skill
     "skill-getcolors-skills-neon-multi-node": 3,
     # v2 on 2026-09-11: the title now shrinks to fit instead of overflowing.
     "skill-getcolors-agent-network-doks-package-agent-network-doks-green": 3,

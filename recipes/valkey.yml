@@ -1,0 +1,24 @@
+name: Valkey
+repository: getcolors/valkey
+shape: single-node
+summary: Operate Valkey 9.1 on one machine with SSH tunnel access, authentication, and AOF persistence. Store verified RDB backups in an existing Cloudflare R2 bucket and rehearse restoration in a scratch container.
+keywords:
+  - Valkey
+  - Redis compatible
+  - key-value store
+  - cache
+  - AOF
+  - RDB backup
+  - Cloudflare R2
+  - Vultr
+  - SSH tunnel
+  - Docker Compose
+  - single node
+  - self-hosted
+package-skills:
+  - name: package-valkey-green
+    path: skills/package-valkey-green/SKILL.md
+    runtime: green
+artifacts:
+  - name: Docker Compose deployment
+    note: Build renders the Valkey service definition under .colors/<profile>/valkey-ansible/compose.yml.

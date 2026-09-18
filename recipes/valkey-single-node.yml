@@ -1,0 +1,26 @@
+type: context
+name: Valkey Single-Node
+repository: getcolors/skills
+summary: Verified Valkey 9.1 identity checks, authentication replies, AOF restore traps, R2 backup completion markers, and SSH audit failures from a single-node Vultr deployment. Distinguishes scratch recovery and graceful-restart checks from production recovery and crash durability.
+keywords:
+  - valkey
+  - redis_version:7.2.4
+  - valkey_version:9.1.2
+  - NOAUTH Authentication required
+  - WRONGPASS
+  - PONG
+  - DBSIZE
+  - dump.rdb
+  - appendonly
+  - valkey-monitor
+  - LIVE_AUDIT_COMPLETE
+  - completion marker
+  - StartedAt
+  - compute destruction is protected
+  - Cloudflare R2
+  - Vultr
+  - SSH audit
+companion: getcolors/valkey
+context-skills:
+  - name: valkey-single-node
+    path: valkey-single-node/SKILL.md
