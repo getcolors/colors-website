@@ -15,6 +15,8 @@ import {
   posthogInstallCmd,
   rybbit,
   rybbitInstallCmd,
+  valkey,
+  valkeyInstallCmd,
   umami,
   umamiInstallCmd,
   dbos,
@@ -83,6 +85,7 @@ const featuredPackageSkills = [
   { label: "K3s", href: "#k3s" },
   { label: "DOKS", href: "#doks" },
   { label: "Redis Operator", href: "#redis-operator" },
+  { label: "Valkey", href: "#valkey" },
   { label: "Umami", href: "#umami" },
   { label: "Rybbit", href: "#rybbit" },
   { label: "PostHog", href: "#posthog" },
@@ -1063,6 +1066,48 @@ const step = (i: number) => `Step ${String(i + 1).padStart(2, "0")}`;
               })}
             </div>
             <p class="dag-note">{redisOperator.dagNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- VALKEY: SINGLE-NODE DATABASE -->
+      <div class="sec sec-alt" id="valkey">
+        <div class="wrap">
+          <div class="eyebrow eyebrow-blue">{valkey.eyebrow}</div>
+          <SectionHeading id="valkey" title={valkey.heading} />
+          <p class="sec-lede sec-lede-wide">{valkey.lede}</p>
+
+          <div class="sec-install">
+            <InstallBox command={valkeyInstallCmd} id="featured-valkey-install" />
+            <span class="install-note" set:html={html(valkey.runtimeNote)} />
+            <ResourceLinks docsUrl={valkey.docsUrl} repoUrl={valkey.repoUrl} catalogUrl="/getcolors/valkey" />
+          </div>
+
+          <div class="grid-5">
+            {valkey.steps.map((s, i) => (
+              <div class="step">
+                <div class="eyebrow">{step(i)}</div>
+                <h4>{s.title}</h4>
+                <p set:html={html(s.body)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="dag-panel">
+            <div class="dag-caption">{valkey.dagCaption}</div>
+            <div
+              class="dag wide-dag"
+              tabindex="0"
+              aria-label="Valkey create and build workflow diagram"
+            >
+              {valkey.dag.map((item) => {
+                if (item.kind === "edge") return <div class="dag-edge"></div>;
+                return (
+                  <div class:list={["dag-node", item.dark && "dag-start"]}>{item.label}</div>
+                );
+              })}
+            </div>
+            <p class="dag-note">{valkey.dagNote}</p>
           </div>
         </div>
       </div>

@@ -690,6 +690,37 @@ export const clickhouse = {
     "The shared compute library provisions four hosts and their private network. WireGuard precedes parallel ClickHouse and Metabase configuration. Configured backups add a restore rehearsal before drift checks. Delete stops applications, removes DNS and managed storage, then destroys compute.",
 };
 
+export const valkeyInstallCmd = "npx skills add getcolors/valkey --skill package-valkey-green";
+
+export const valkey = {
+  eyebrow: "Package Skill",
+  docsUrl: "https://github.com/getcolors/valkey#readme",
+  repoUrl: "https://github.com/getcolors/valkey",
+  heading: "Valkey on one machine with verified snapshot backups",
+  lede: "Run Valkey 9.1.2 on one cloud machine with Docker Compose, authentication, append-only persistence, and RDB backups in an existing Cloudflare R2 bucket. Clients connect through an SSH tunnel to a loopback-only listener.",
+  runtimeNote: "Available in **green**, using Clojure and Babashka. Verified on Vultr. Every converge briefly restarts the service to check persistence.",
+  steps: [
+    { title: "Read desired state", body: "Read `colors.yml` for the pinned image, machine settings, backup schedule, and existing R2 bucket. Keep credentials outside desired state." },
+    { title: "Build and dry-run", body: "Render the deployment and inspect `create --dry-run` before live operations. These commands require no credentials and leave SSH files and remote state untouched." },
+    { title: "Provision and converge", body: "The pinned compute library provisions one machine. The package configures its SSH alias and deploys Valkey with host-generated authentication and AOF persistence." },
+    { title: "Check the service", body: "Verify Valkey identity, authentication replies, restart persistence, backup freshness, and the tunnel write/read round-trip. Confirm that the public database port refuses connections." },
+    { title: "Rehearse restoration", body: "Run `rehearse` separately to restore a checksum-verified snapshot in a scratch container with AOF disabled. Require the deployment's smoke key before recording recovery verification." },
+  ],
+  dagCaption: "Valkey create / build workflow",
+  dag: [
+    { kind: "node", label: "start", dark: true },
+    { kind: "edge" },
+    { kind: "node", label: "infrastructure" },
+    { kind: "edge" },
+    { kind: "node", label: "ssh-config" },
+    { kind: "edge" },
+    { kind: "node", label: "ansible" },
+    { kind: "edge" },
+    { kind: "node", label: "acceptance" },
+  ] satisfies DagItem[],
+  dagNote: "The workflow stops on a failed gate. Scratch restoration does not prove replacement-host recovery, and a graceful restart does not prove crash durability. Compute deletion is guarded; existing R2 buckets and backup sets survive it.",
+};
+
 export const umamiInstallCmd = "npx skills use getcolors/umami";
 
 export const umami = {

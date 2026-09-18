@@ -1,6 +1,7 @@
 name: Valkey
 repository: getcolors/valkey
 shape: single-node
+featured: /featured#valkey
 summary: Operate Valkey 9.1 on one machine with SSH tunnel access, authentication, and AOF persistence. Store verified RDB backups in an existing Cloudflare R2 bucket and rehearse restoration in a scratch container.
 keywords:
   - Valkey
