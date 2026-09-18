@@ -65,9 +65,9 @@ export const posts: Post[] = [
     isoDate: "2026-09-02T12:00:00Z",
     readTime: "3 min read",
     category: "Community",
-    runtime: "Town Hall \u00b7 Online \u00b7 18 Sep 2026",
+    runtime: "Town Hall \u00b7 Ended \u00b7 18 Sep 2026",
     summary:
-      "A one-hour virtual town hall for the people building and running Package Skills: where the SDK is after the rebrand, how the three colours fit together, an agent provisioning an analytics and application stack live, the proposals on the roadmap, and open Q&A with the maintainers. Free, registration on Luma.",
+      "The 18 September 2026 town hall has ended. Browse the presentation slides and original agenda covering the SDK, the three colours, a live provisioning demo, roadmap proposals and open Q&A.",
     image: "/images/cards/community-town-hall.jpg",
     tags: ["Community", "Town Hall", "Roadmap", "Package Skills", "Live Demo"],
   },

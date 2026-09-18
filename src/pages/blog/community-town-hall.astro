@@ -2,22 +2,19 @@
 import { Code } from "astro:components";
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
-import { postFor } from "~/data/blog";
 import { yamlTheme } from "~/data/yaml-theme";
 
 const title = "Colors Community Town Hall, 18 September — Colors";
-const description = "A one-hour online town hall for the people building and running Package Skills, from a single host to a Kubernetes cluster and from Vultr or Hetzner to AWS, Azure, or Google Cloud: the state of the SDK after the rebrand, how red, green and blue fit together, a live agent-driven provisioning demo, the roadmap proposals, and open Q&A with the maintainers. Friday 18 September 2026, 17:00 CEST. Free, registration on Luma.";
+const description = "The Colors Community Town Hall on 18 September 2026 has ended. View the presentation slides and original agenda: the SDK, the three colours, a live provisioning demo, roadmap proposals and open Q&A.";
 const path = "/blog/community-town-hall";
 
-const post = postFor(path);
 const image = "/og-community-town-hall-v2.png";
 const imageAlt =
   "Colors Community Town Hall, 18 September 2026: roadmap, architecture, a live provisioning " +
   "demo and open Q&A with the maintainers. Online, free, 17:00 CEST.";
 
-// The one registration link. Luma is where the video link is issued, so the
-// site never carries a meeting URL of its own.
-const registerUrl = "https://luma.com/ci9bek4c";
+// Original event listing, retained in the historical event metadata.
+const eventUrl = "https://luma.com/ci9bek4c";
 const calendarUrl = "https://luma.com/colors";
 
 const SITE_URL = Astro.site?.toString() ?? "https://www.getcolors.ai";
@@ -66,9 +63,9 @@ const agenda = [
 const eventYml = `profile: community-town-hall
 when: 2026-09-18T17:00:00+02:00
 duration: 1h
-where: online   # link issued on Luma
+where: online
+status: ended
 price: 0
-register: ${registerUrl}
 
 agenda:
 ${agenda.map((item) => `  - ${item.id}`).join("\n")}`;
@@ -91,24 +88,15 @@ const structuredData = {
   startDate,
   endDate,
   eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
-  eventStatus: "https://schema.org/EventScheduled",
   isAccessibleForFree: true,
   location: {
     "@type": "VirtualLocation",
-    url: registerUrl,
+    url: eventUrl,
   },
   organizer: {
     "@type": "Organization",
     name: "Colors",
     url: absolute("/"),
-  },
-  offers: {
-    "@type": "Offer",
-    url: registerUrl,
-    price: "0",
-    priceCurrency: "EUR",
-    availability: "https://schema.org/InStock",
-    validFrom: post.isoDate,
   },
 };
 ---
@@ -122,12 +110,12 @@ const structuredData = {
 
     <header class="event-hero">
       <div class="event-intro">
-        <p class="eyebrow section-label">Community town hall · online · free</p>
+        <p class="eyebrow section-label">Community town hall · event ended</p>
         <h1>One hour with the people who build Colors.</h1>
-        <p class="lede">From a single host to a Kubernetes cluster, and from Vultr or Hetzner to AWS, Azure, or Google Cloud. Where the SDK stands after the rebrand, how the three colours fit together, an agent provisioning a production stack in front of you, the proposals on the roadmap, and the maintainers taking your questions.</p>
+        <p class="lede">This event ended on 18 September 2026. The original agenda is preserved below, with presentation slides available to browse or download.</p>
         <div class="event-actions">
-          <a class="register" href={registerUrl} target="_blank" rel="noopener noreferrer">Register on Luma</a>
-          <span class="register-note">Free and open. Luma emails the video link to everyone registered before the session starts.</span>
+          <a class="event-link" href="/slides/introduction/">View the slides</a>
+          <span class="event-note">The event has ended. Registration is closed.</span>
         </div>
       </div>
       <div class="yml">
@@ -151,7 +139,7 @@ const structuredData = {
     </section>
 
     <article class="content-body">
-      <h2 id="agenda">Agenda</h2>
+      <h2 id="agenda">Original agenda</h2>
       <p class="section-note">In running order. Each key is an item in the block above.</p>
       <dl class="agenda">
         {agenda.map((item) => (
@@ -165,19 +153,18 @@ const structuredData = {
         ))}
       </dl>
 
-      <h2>Who it is for</h2>
+      <h2>Who it was for</h2>
       <ul class="audience">
         <li><strong>Platform and DevOps engineers</strong> who want a deployment model an agent can drive without a model ever touching a server.</li>
         <li><strong>Clojure, TypeScript and Python engineers</strong> building their own Package Skills, or porting one to another colour.</li>
         <li><strong>Contributors</strong> to packages, Context Skills and documentation, and anyone deciding whether to become one.</li>
       </ul>
 
-      <h2>Before you come</h2>
-      <p>The demo assumes nothing, but the questions are better when the vocabulary is shared. Ten minutes on <a href="/">what a Package Skill is</a>, a look through the <a href="/skills">Skills Catalog</a>, and the two most recent field reports, <a href="/blog/n8n-green-run">The Converge Passed in 614 Milliseconds</a> and <a href="/blog/automq-acceptance-gates">The Cluster Was Fine</a>, cover what the maintainers will take for granted.</p>
-      <p>Bring the deployment you could not get to converge. Edge cases are the most useful thing you can put in front of the people who wrote the gates.</p>
+      <h2>Further reading</h2>
+      <p>Explore <a href="/">what a Package Skill is</a>, browse the <a href="/skills">Skills Catalog</a>, or read the field reports <a href="/blog/n8n-green-run">The Converge Passed in 614 Milliseconds</a> and <a href="/blog/automq-acceptance-gates">The Cluster Was Fine</a>.</p>
 
-      <h2>Afterwards</h2>
-      <p>The recording and the slides will be posted on this page. Future sessions are announced on the <a href={calendarUrl} target="_blank" rel="noopener noreferrer">Colors calendar on Luma</a> and in <a href="https://discord.gg/3aQzzrrdFj" target="_blank" rel="noopener noreferrer">Discord</a>.</p>
+      <h2>Future sessions</h2>
+      <p>Future sessions are announced on the <a href={calendarUrl} target="_blank" rel="noopener noreferrer">Colors calendar on Luma</a> and in <a href="https://discord.gg/3aQzzrrdFj" target="_blank" rel="noopener noreferrer">Discord</a>.</p>
     </article>
   </div>
 </CatalogLayout>
@@ -217,7 +204,7 @@ const structuredData = {
     gap: 10px;
     align-items: flex-start;
   }
-  .register {
+  .event-link {
     display: inline-flex;
     align-items: center;
     min-height: 42px;
@@ -230,15 +217,15 @@ const structuredData = {
     text-decoration: none;
     transition: background-color 150ms ease;
   }
-  .register:hover {
+  .event-link:hover {
     background: oklch(45% 0.18 260);
     color: var(--on-dark);
   }
-  .register:focus-visible {
+  .event-link:focus-visible {
     outline: 2px solid var(--blue);
     outline-offset: 3px;
   }
-  .register-note {
+  .event-note {
     max-width: 40ch;
     font-size: 12.5px;
     line-height: 1.5;
@@ -423,6 +410,6 @@ const structuredData = {
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .register { transition: none; }
+    .event-link { transition: none; }
   }
 </style>

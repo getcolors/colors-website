@@ -337,18 +337,13 @@ against `Astro.site`, exactly as `SeoMeta` does. They previously hardcoded the
 production host as string literals, so a `SITE_URL=` preview build repointed
 `og:image` and `canonical` while the JSON-LD kept advertising production.
 
-## The announcement strip
+## Past events
 
-`SiteHeader.astro` renders a one-line strip above the nav on every page from
-the `announcement` export in `landing.ts` — added 2026-09-02 for the Community
-Town Hall on 2026-09-18. It is rendered at **build time** and hides itself once
-`announcement.until` has passed, so a deploy after the event shows nothing even
-if the entry is forgotten; that guard is a backstop, not the removal. After the
-event, delete the export and the block in `SiteHeader.astro` together, and turn
-`/blog/community-town-hall` into the home for the recording. The strip links to
-that article rather than to Luma so the page owns the registration link, the
-time-zone table and the Event structured data; the footer's Events link points
-at the Luma **calendar** (`luma.com/colors`), which outlives any one event.
+The Community Town Hall on 2026-09-18 has ended. Its announcement strip was
+removed from `SiteHeader.astro` and `landing.ts`. `/blog/community-town-hall`
+retains the original agenda and links to the presentation slides; registration
+is closed. Add a recording link when one is available. The footer's Events
+link points at the Luma calendar (`luma.com/colors`) for future sessions.
 
 ## Agent and crawler discovery
 

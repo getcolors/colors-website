@@ -72,21 +72,6 @@ export const nav = [
   { label: "Slides", href: "/slides" },
 ];
 
-// Site-wide announcement strip rendered by SiteHeader above the nav on every
-// page. Time-bound by construction: SiteHeader hides it once `until` has
-// passed, so a forgotten removal never advertises a finished event — but the
-// strip should still be deleted after the town hall, not left to expire.
-// The blog entry for the event (src/pages/blog/community-town-hall.astro) is
-// the permanent home for the recording and slides; the strip is not.
-export const announcement = {
-  date: "Fri 18 Sep · 17:00 CEST · online",
-  title: "Community Town Hall: the roadmap, the three colours, and a live provisioning demo",
-  href: "/blog/community-town-hall",
-  cta: "Agenda and registration",
-  /** RFC 3339 instant after which the strip is not rendered — the end of the session. */
-  until: "2026-09-18T16:00:00Z",
-};
-
 export const hero = {
   eyebrow: "An open-source workflow SDK for DevOps",
   headline: "Describe the infrastructure. Get the complete workflow.",
