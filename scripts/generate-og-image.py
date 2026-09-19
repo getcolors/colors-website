@@ -382,6 +382,11 @@ def recipes():
 
 
 catalog_recipes = recipes()
+# og-headless-is-the-feature-v2.png uses supplied artwork, fitted without
+# cropping onto a 1200x630 dark canvas. The blog thumbnail is the same artwork
+# fitted to 1200x675 at public/images/cards/headless-is-the-feature-v2.jpg.
+# These supplied assets replace the generated v1 text card.
+
 render_post_card(
     "og-green-kubernetes-controller-v1.png",
     "Green / Clojure / Kubernetes",

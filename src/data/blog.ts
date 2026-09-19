@@ -34,6 +34,18 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    title: "Headless is the feature",
+    slug: "/blog/headless-is-the-feature",
+    date: "September 19, 2026",
+    isoDate: "2026-09-19T12:00:00Z",
+    readTime: "8 min read",
+    category: "Architecture",
+    runtime: "PocketContext · DealContext · PocketBase",
+    summary: "An agent-operated application needs a schema and enforced business rules. PocketContext provides SQL reads and PocketBase writes, DealContext proves the idea with a CRM, and Colors can package deployment and recovery.",
+    image: "/images/cards/headless-is-the-feature-v2.jpg",
+    tags: ["PocketContext", "DealContext", "PocketBase", "SQL", "Agentic Applications", "Colors"],
+  },
+  {
     title: "Green Workflows, Reconciled by Kubernetes",
     slug: "/blog/green-kubernetes-controller",
     date: "September 15, 2026",

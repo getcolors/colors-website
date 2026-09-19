@@ -1,0 +1,75 @@
+<figure class="pc-architecture" aria-labelledby="pc-diagram-caption">
+  <div class="diagram-heading"><span>Application architecture</span><span class="status">Working proof of concept</span></div>
+  <div class="agent-node">
+    <span class="node-label">Your interface</span>
+    <strong>Coding agent</strong>
+    <p>Reads the schema. Interprets the request. Chooses the operation.</p>
+  </div>
+  <div class="paths">
+    <div class="path read-path">
+      <span class="connector" aria-hidden="true">↓</span>
+      <span class="path-label">Read with SQL</span>
+      <strong>PocketContext query endpoint</strong>
+      <p>Table and column permissions<br />Read-only connection · Query limits</p>
+      <span class="connector" aria-hidden="true">↓</span>
+    </div>
+    <div class="path write-path">
+      <span class="connector" aria-hidden="true">↓</span>
+      <span class="path-label">Write through the API</span>
+      <strong>PocketBase record operations</strong>
+      <p>Authentication · Validation<br />Business rules and hooks</p>
+      <span class="connector" aria-hidden="true">↓</span>
+    </div>
+  </div>
+  <div class="database-node">
+    <span class="node-label">One SQLite database</span>
+    <strong>DealContext schema</strong>
+    <p>People · Organizations · Deals · Pipelines · Stages · Activities · Notes</p>
+  </div>
+  <p class="admin-note">PocketBase's existing CRUD dashboard handles manual administration.</p>
+  <div class="deployment">
+    <div class="diagram-heading"><span>Deployment and recovery</span><span class="status planned">Proposed Colors package</span></div>
+    <div class="services">
+      <div><strong>Colors + ONCE</strong><span>Host and application</span></div>
+      <div><strong>Cloudflare DNS</strong><span>Application domain</span></div>
+      <div><strong>Resend</strong><span>Email delivery</span></div>
+      <div><strong>Litestream + S3</strong><span>Database replication</span></div>
+    </div>
+    <p class="restore">Recovery check: restore onto a replacement host and verify application data.</p>
+  </div>
+  <figcaption id="pc-diagram-caption">The agent queries context with SQL and changes records through PocketBase. The Colors deployment and recovery package is proposed. DealContext still needs server enforcement for some lifecycle rules.</figcaption>
+</figure>
+
+<style>
+  .pc-architecture { margin: 2.5rem 0 3.5rem; border: 1px solid #cbd8d0; border-radius: 14px; padding: 1.6rem; background: #f6f8f5; color: #202a25; }
+  .diagram-heading { display: flex; justify-content: space-between; align-items: center; gap: .8rem; flex-wrap: wrap; margin-bottom: 1.5rem; font: 500 .72rem "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .035em; }
+  .status { padding: .35rem .55rem; border-radius: 4px; background: #e1eee4; color: #205c35; font-size: .65rem; }
+  .agent-node, .database-node { text-align: center; border: 1px solid #9eb8a8; padding: 1.2rem 1rem; border-radius: 9px; background: white; }
+  .node-label { display: block; font: .72rem "IBM Plex Mono", monospace; color: #52665a; margin-bottom: .5rem; }
+  strong { display: block; font-size: 1.06rem; }
+  p { margin: .55rem 0 0; font-size: .86rem; line-height: 1.55; }
+  .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: center; }
+  .path { padding: 0 .4rem; }
+  .path-label { display: block; margin-bottom: .45rem; font: 500 .73rem "IBM Plex Mono", monospace; }
+  .read-path .path-label, .read-path .connector { color: #255fc0; }
+  .write-path .path-label, .write-path .connector { color: #247040; }
+  .connector { display: block; font-size: 1.7rem; line-height: 1.5; }
+  .admin-note { text-align: center; font-size: .78rem; color: #536158; margin: .9rem 0 1.6rem; }
+  .deployment { border-top: 1px dashed #a9b3bb; padding-top: 1.4rem; }
+  .planned { color: #455e7a; background: #e7edf4; }
+  .services { display: grid; grid-template-columns: repeat(2, 1fr); gap: .7rem; }
+  .services > div { background: #edf1f5; border: 1px dashed #a5b4c3; border-radius: 6px; padding: .8rem; }
+  .services strong { font-size: .85rem; }
+  .services span { display: block; font-size: .77rem; margin-top: .25rem; color: #4e6072; }
+  .restore { font-size: .8rem; margin-top: 1rem; }
+  figcaption { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid #d3ddd6; font-size: .76rem; line-height: 1.6; color: #536158; }
+  @media (max-width: 540px) {
+    .pc-architecture { padding: 1rem; }
+    .paths { gap: .5rem; }
+    .path strong { font-size: .86rem; }
+    .path p { font-size: .72rem; }
+    .path-label { font-size: .63rem; }
+    .diagram-heading { font-size: .65rem; }
+    .services { grid-template-columns: 1fr; }
+  }
+</style>

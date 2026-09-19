@@ -1,19 +1,21 @@
 ---
 import { marked } from "marked";
 import Breadcrumbs from "~/components/Breadcrumbs.astro";
-import GreenArchitecture from "~/components/GreenArchitecture.astro";
+import PocketContextArchitecture from "~/components/PocketContextArchitecture.astro";
 import CatalogLayout from "~/layouts/CatalogLayout.astro";
 import { postFor } from "~/data/blog";
-import article from "~/data/articles/green-kubernetes-controller.md?raw";
+import article from "~/data/articles/headless-is-the-feature.md?raw";
 
-const path = "/blog/green-kubernetes-controller";
+const path = "/blog/headless-is-the-feature";
 const post = postFor(path);
 const title = `${post.title} — Colors`;
 const description = post.summary;
-const image = "/og-green-kubernetes-controller-v1.png";
-const imageAlt = "Green Workflows, Reconciled by Kubernetes. A control loop for infrastructure workflows, with Redis service recovery tested on a live cluster.";
+const image = "/og-headless-is-the-feature-v2.png";
+const imageAlt = "Illustration comparing a conventional application frontend with agents accessing PocketContext through SQL reads and API operations.";
 const absolute = (value: string) => new URL(value, Astro.site).toString();
-const body = marked.parse(article.replace(/^# .+\r?\n/, ""), { async: false });
+const sections = article.replace(/^# .+\r?\n/, "").split("<!-- pocketcontext-architecture -->");
+if (sections.length !== 2) throw new Error("Expected one PocketContext architecture marker");
+const [beforeDiagram, afterDiagram] = sections.map(section => marked.parse(section, { async: false }));
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "TechArticle",
@@ -23,33 +25,49 @@ const structuredData = {
   image: absolute(image),
   datePublished: post.isoDate,
   dateModified: post.isoDate,
-  author: { "@type": "Organization", name: "Colors", url: absolute("/") },
+  author: { "@type": "Person", name: "Alberto Miorin", url: "https://www.linkedin.com/in/albertomiorin/" },
   publisher: { "@type": "Organization", name: "Colors", url: absolute("/") },
 };
 ---
 
 <CatalogLayout {title} {description} {path} {image} {imageAlt} type="article" active="blog">
   <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
-  <div class="wrap green-post">
-    <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Green and Kubernetes" }]} />
+  <div class="wrap headless-post">
+    <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Headless is the feature" }]} />
     <header>
-      <p class="eyebrow">Green · Kubernetes · Field report</p>
+      <p class="eyebrow">PocketContext · DealContext · Architecture</p>
       <h1>{post.title}</h1>
-      <p class="post-meta">{post.date} · {post.readTime} · Clojure / Babashka</p>
-      <p class="lede">A Clojure workflow can now run under a Kubernetes control loop. We used it to recreate a deleted Redis virtual machine—and checked exactly what recovered.</p>
+      <p class="post-meta">{post.date} · {post.readTime} · By Alberto Miorin</p>
+      <p class="lede">The coding agent is the interface. Put the work into the schema, business rules, and tests. PocketBase already has the CRUD dashboard.</p>
     </header>
-    <GreenArchitecture />
-    <article class="article-body" set:html={body} />
+    <figure class="intro-video">
+      <video controls playsinline preload="none" width="1280" height="720"
+        poster="/images/cards/headless-is-the-feature-v2.jpg"
+        aria-label="Conventional and headless agent architectures, a ten-second animation"
+        aria-describedby="headless-video-caption">
+        <source src="/videos/headless-is-the-feature.mp4" type="video/mp4" />
+        <a href="/videos/headless-is-the-feature.mp4">Download the architecture animation</a>.
+      </video>
+      <figcaption id="headless-video-caption">A ten-second illustration of conventional and agent-operated applications. The technical diagram below explains PocketContext's read and write paths.</figcaption>
+    </figure>
+    <article class="article-body">
+      <div set:html={beforeDiagram} />
+      <PocketContextArchitecture />
+      <div set:html={afterDiagram} />
+    </article>
   </div>
 </CatalogLayout>
 
 <style>
-  .green-post { padding-top: 2rem; padding-bottom: 5rem; }
+  .headless-post { padding-top: 2rem; padding-bottom: 5rem; }
   header { margin: 3.5rem 0 2.5rem; }
   .eyebrow { color: var(--green, #237a44); font: 500 .8rem "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .09em; }
   h1 { font-size: clamp(2.3rem, 6vw, 4rem); line-height: 1.08; letter-spacing: -.035em; max-width: 18ch; margin: 1rem 0; }
   .post-meta { font: .8rem "IBM Plex Mono", monospace; opacity: .65; }
   .lede { font-size: 1.3rem; line-height: 1.6; margin-top: 1.6rem; }
+  .intro-video { margin: 0 0 2.5rem; }
+  .intro-video video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #17191c; border-radius: 10px; }
+  .intro-video figcaption { margin-top: .75rem; font-size: .85rem; line-height: 1.6; color: var(--muted); }
   .article-body { font-size: 1.06rem; line-height: 1.8; overflow-wrap: break-word; }
   .article-body :global(h2) { margin: 2.8rem 0 1rem; font-size: 1.8rem; line-height: 1.25; letter-spacing: -.025em; }
   .article-body :global(h3) { margin: 2rem 0 .7rem; font-size: 1.3rem; line-height: 1.35; }
