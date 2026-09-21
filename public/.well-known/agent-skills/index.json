@@ -5,36 +5,36 @@
       "name": "agent-network-doks",
       "type": "archive",
       "description": "The DigitalOcean distance from the VKE-verified NetBird Agent Network on Kubernetes - what only a live DOKS converge surfaces. Use on these symptoms - pod IPs in 10.110.x and ClusterIPs in 10.111.x though every doc says DOKS pods default to 10.244.0.0/16, so trusted-proxy CIDRs rendered from that assumption are silently wrong; 'Error from server (NotFound) ... namespaces not found' from kubectl apply --dry-run=server on a multi-doc file whose first document creates that namespace; 'curl (22) ... 502' on the first management call right after rollout status says the restarted server is Ready; a SOCKS5 positive control probe failing minutes after the client pod rolled while the identical probe answers later; DOCR refusing a second registry (account-scoped, tier-limited, subscription account-global); reading a pushed image digest back through the DO API tags manifest_digest; HTML-escaped quotes in rendered YAML manifests; kube_config[0].raw_config vs a base64 kubeconfig string. Full symptom index in the body.",
-      "url": "/.well-known/agent-skills/agent-network-doks-117aa90c9046ce223bd6c94419fdc7ca49c320ab6c1e7095841db298f0ce44ec.tar.gz",
-      "digest": "sha256:117aa90c9046ce223bd6c94419fdc7ca49c320ab6c1e7095841db298f0ce44ec"
+      "url": "/.well-known/agent-skills/agent-network-doks-b3d4c685c7ca81f66ca1bddb2db7d7886f80ca2ebd65c2ff4923e7bc1c90e985.tar.gz",
+      "digest": "sha256:b3d4c685c7ca81f66ca1bddb2db7d7886f80ca2ebd65c2ff4923e7bc1c90e985"
     },
     {
       "name": "agent-network-kubernetes",
       "type": "archive",
       "description": "Everything a NetBird Agent Network on Kubernetes needs that the single-node build will not tell you — the two-pod netstack/SOCKS5 application (no TUN, no capabilities) whose isolation is NetworkPolicy probed from both sides, and the 0.77.1 client facts only a live VKE converge surfaces. Use on these symptoms - the client binds /var/run/netbird.sock or dials api.netbird.io forever whatever the flags say (service run silently ignores --daemon-addr and --log-file; use NB_* env); \"get current user\" requires cgo or $USER; no proxy peer in /api/peers though the proxy runs (it is an embedded peer - read the client's network map); the keyless endpoint dies after every reverse-proxy restart (its overlay address churns and stale registrations linger); server crashloop \"illegal base64 data at input byte 40\" or \"could not initialize geolocation service\"; lego checksum FAILED on arm64; an isolated pod that \"has an IPv6 default route\" on VKE. Full symptom index at the top of the body.",
-      "url": "/.well-known/agent-skills/agent-network-kubernetes-70e0c037d1312dc49839bdbf23e6313856ef5f34cf7edfe341857beb2f88a811.tar.gz",
-      "digest": "sha256:70e0c037d1312dc49839bdbf23e6313856ef5f34cf7edfe341857beb2f88a811"
+      "url": "/.well-known/agent-skills/agent-network-kubernetes-d696d989214d0ee4d55e9edd8dd5994f6e4e2e152ae8ba4f3096ae4da4600b80.tar.gz",
+      "digest": "sha256:d696d989214d0ee4d55e9edd8dd5994f6e4e2e152ae8ba4f3096ae4da4600b80"
     },
     {
       "name": "agent-network-single-node",
       "type": "archive",
       "description": "Everything a single-node NetBird Agent Network deployment needs that the docs and the quickstart installer will not tell you - the four-container gateway stack plus one network-isolated agent, the endpoint that is minted by POSTing the settings resource and not by connecting a provider, the reverse proxy whose per-name ACME is defective on 0.77.1 (\"no viable challenge type found\") and burns Let's Encrypt rate limits while failing, and the acceptance gates that prove an isolation claim instead of assuming it. Use this whenever the user mentions NetBird Agent Network, a keyless or identity-gated LLM endpoint, the netbird reverse proxy, or an AI agent that must not reach the internet - even if they do not say \"single-node\". Also use it on these symptoms - an endpoint hostname with HTTP 000 or no certificate, 422 \"is not a known catalog provider\", llm_policy.model_blocked or model_not_routable, or an isolated container escaping after a Docker restart. The full symptom index is at the top of the body.",
-      "url": "/.well-known/agent-skills/agent-network-single-node-0bb06ce051a143c16b4c7df6642ae26daa4553531906f576286a8d2f72a2c9a7.tar.gz",
-      "digest": "sha256:0bb06ce051a143c16b4c7df6642ae26daa4553531906f576286a8d2f72a2c9a7"
+      "url": "/.well-known/agent-skills/agent-network-single-node-9c363945f7a24048613fc181fc73af29fd2595477d0c41a2fae1095eb072004d.tar.gz",
+      "digest": "sha256:9c363945f7a24048613fc181fc73af29fd2595477d0c41a2fae1095eb072004d"
     },
     {
       "name": "automq-multi-node",
       "type": "archive",
       "description": "Diagnose multi-node AutoMQ deployments backed by object storage. Use for KRaft stuck in CandidateState or waiting for the high water mark, SCRAM-SHA-512 invalid credentials for every principal, missing KafkaServer JAAS entries, gates that pass only once, and bucket or SSH key ownership failures. Carries verified Vultr, AWS, Google Cloud and OCI context, including conditional-write, identity and VM allocation failures, listener and genesis contracts, and targeted failover acceptance gates.",
-      "url": "/.well-known/agent-skills/automq-multi-node-2ae0beb84d38a41c3eb80122cba1c2b8e4502d7edef0cc491880e00f6c1401c1.tar.gz",
-      "digest": "sha256:2ae0beb84d38a41c3eb80122cba1c2b8e4502d7edef0cc491880e00f6c1401c1"
+      "url": "/.well-known/agent-skills/automq-multi-node-db28a8f78c31bd48407092d847c02df1251e0a37b76be4b424029f02f7db5bee.tar.gz",
+      "digest": "sha256:db28a8f78c31bd48407092d847c02df1251e0a37b76be4b424029f02f7db5bee"
     },
     {
       "name": "clickhouse-replicated",
       "type": "archive",
       "description": "Replicated ClickHouse with embedded Keeper: SAXParseException Invalid token, status=232/ADDRESS_FAMILIES and empty err.log; PARTITION BY engine conflicts and systemd protocol failure; BACKUP_CREATED with random S3 keys or logical/physical count mismatches; live restore Keeper collisions; missing system.one grants or lazy query_log; peers ping while clusterAllReplicas never reaches 3. AWS additions cover small queries working while dbt/clickhouse_connect hangs with ReadTimeoutError or StreamFailureError over jumbo-MTU WireGuard, Ansible YAML errors at unexpanded scaffold conditionals, stale outage probes, replica-count gates broken by rehearsal tables, and managed S3 backend cleanup after compute retirement. Use for three-host Keeper clusters, native S3 backups, and restore rehearsals. Full symptom routing and dated evidence are in the body.",
-      "url": "/.well-known/agent-skills/clickhouse-replicated-67254edb83912991b7d31dc6e62c10b65ed1ba32358b3f4f0c2474d49f4c9a2d.tar.gz",
-      "digest": "sha256:67254edb83912991b7d31dc6e62c10b65ed1ba32358b3f4f0c2474d49f4c9a2d"
+      "url": "/.well-known/agent-skills/clickhouse-replicated-753831c78517b7a0640fe9435f179854cbf9bbf66d8e5b9e96fc402cd2acf7fe.tar.gz",
+      "digest": "sha256:753831c78517b7a0640fe9435f179854cbf9bbf66d8e5b9e96fc402cd2acf7fe"
     },
     {
       "name": "create-context-skill",
@@ -54,757 +54,771 @@
       "name": "langfuse-multi-node",
       "type": "archive",
       "description": "Everything a self-hosted Langfuse v4 on separate machines needs that the docs and the Compose quick start will not tell you - langfuse-web restart-looping on 'P3005 The database schema is not empty' against a brand-new Neon database, traces that never appear after a 207 from /api/public/ingestion ('Rejected N event(s) from the legacy /api/public/ingestion endpoint ... events_only mode'), GET /api/public/traces/<id> answering 404 while health is green, an empty traces table on a healthy ClickHouse, POST /api/public/media answering 201, ClickHouse failing to start with 'SAXParseException Invalid token' or 'PARTITION BY parameters should be specified directly inside engine', a BACKUP_CREATED that leaves randomly named objects in R2, 'Not enough privileges ... SHOW COLUMNS ON system.one', and SHOW timezone returning GMT. Use whenever the user runs Langfuse v4 on more than one host, puts its Postgres on Neon, or backs ClickHouse up to S3-compatible storage. Full symptom index at the top of the body.",
-      "url": "/.well-known/agent-skills/langfuse-multi-node-337f1ee470f9febe12049da9ab5e6355330874182794c2d04baaa7bc2e1e607a.tar.gz",
-      "digest": "sha256:337f1ee470f9febe12049da9ab5e6355330874182794c2d04baaa7bc2e1e607a"
+      "url": "/.well-known/agent-skills/langfuse-multi-node-bd7dbf9b9b260b47be4cca6d16a80a320465f90bbe07dc1512c50b3c75c85562.tar.gz",
+      "digest": "sha256:bd7dbf9b9b260b47be4cca6d16a80a320465f90bbe07dc1512c50b3c75c85562"
     },
     {
       "name": "n8n-single-node",
       "type": "archive",
       "description": "Self-hosted n8n 2.x traps the docs and every guide omit - n8n refusing to boot with \"Mismatching encryption keys\" that \"does not match the N8N_ENCRYPTION_KEY env var\" after one bad first boot, \"password authentication failed for user\" from a literal unrendered template string, /healthz returning 200 while every API call answers 503 \"Database is not ready!\", \"Workflow must be archived before it can be deleted\", \"To run the workflow manually, specify either a trigger to start from or a destination node\", pg_dump \"aborting because of server version mismatch\", and WEBHOOK_URL deprecated in favour of N8N_WEBHOOK_URL. AWS additions cover Cloudflare 9109 \"Invalid access token\" then 10502 \"Too many authentication failures\", a backup-scope gate printing RISK on every run, tofu planning an SSE rule update in-place on every apply, and BACKUP_CREDENTIAL_MODE=none without sudo. Use for self-hosted n8n on Postgres or Neon behind Cloudflare and Caddy, on Vultr or AWS. Full symptom index at the top of the body.",
-      "url": "/.well-known/agent-skills/n8n-single-node-10fdd36c71d16edc4b13429b10a3a33b1c48cb1919e01e53cc28757410e51b57.tar.gz",
-      "digest": "sha256:10fdd36c71d16edc4b13429b10a3a33b1c48cb1919e01e53cc28757410e51b57"
+      "url": "/.well-known/agent-skills/n8n-single-node-ef306d31b5e6012526ba0c36222e6efa8aebe2df505309bcf75b55ab3e6c4b1a.tar.gz",
+      "digest": "sha256:ef306d31b5e6012526ba0c36222e6efa8aebe2df505309bcf75b55ab3e6c4b1a"
     },
     {
       "name": "neon-multi-node",
       "type": "archive",
       "description": "Use when self-hosted Neon says \"server does not support SSL, but SSL was required\", compute_ctl logs \"unknown TLS key type\", a safekeeper outage rehearsal fails with \"FAIL AssertionError\", psql returns \"INSERT 0 1\" instead of the expected value, a timed-out quorum write appears after recovery, cleanup reports Ansible ENOENT, repeat delete reports migration after removing its backend, or three safekeepers and S3 are being mistaken for complete HA. Also use when changing Red/Blue runtimes on one profile, negative subprocess exits bypass failure gates, or Bun cold dependency resolution fails. Verified AWS multi-node TLS, SQL witness, WAL quorum, S3 recovery and lifecycle contracts.",
-      "url": "/.well-known/agent-skills/neon-multi-node-520afba04bee4fccb71539c2e6c8aa81dcfb9c6d625135fd143de9faff7cc0ad.tar.gz",
-      "digest": "sha256:520afba04bee4fccb71539c2e6c8aa81dcfb9c6d625135fd143de9faff7cc0ad"
+      "url": "/.well-known/agent-skills/neon-multi-node-c11f1aab61a569353f7b41bac8a76e2a482d238341dcfc66c6af02e564306a3c.tar.gz",
+      "digest": "sha256:c11f1aab61a569353f7b41bac8a76e2a482d238341dcfc66c6af02e564306a3c"
     },
     {
       "name": "neon-single-node",
       "type": "archive",
       "description": "Everything a single-node self-hosted Neon (serverless Postgres) deployment needs that the docs and the dev docker-compose will not tell you - compute_ctl dying with a bare \"Permission denied (os error 13)\" on a root-owned spec, \"File exists (os error 17)\" when a volume sits on pgdata, the stale /tmp/.s.PGSQL.55433.lock that crash-loops every restart until the container is recreated, the /checkpoint API answering \"compiled without testing APIs\" on release images, remote_consistent_lsn reading 0/0 right after any restart, and Cloudflare R2 remote storage that works only once rclone stops trying to create the bucket (AccessDenied 403 on writes a scoped token should allow, NotImplemented 501 from rcat). Use whenever the user self-hosts Neon - pageserver, safekeeper, storage broker, compute node - on one machine, wires Neon to S3-compatible or R2 storage, asks how durable a single Neon node really is, or hits any symptom above. Full symptom index at the top of the body.",
-      "url": "/.well-known/agent-skills/neon-single-node-65ffca1f4f2032e26124635b05de03acb8f9ef17743341e315173c848a19032e.tar.gz",
-      "digest": "sha256:65ffca1f4f2032e26124635b05de03acb8f9ef17743341e315173c848a19032e"
+      "url": "/.well-known/agent-skills/neon-single-node-7dfc1e90857b16a5042af5faa5506c5ae0ae16aad020eea44a6ac8640aa5c4e3.tar.gz",
+      "digest": "sha256:7dfc1e90857b16a5042af5faa5506c5ae0ae16aad020eea44a6ac8640aa5c4e3"
     },
     {
       "name": "package-agent-network-blue",
       "type": "archive",
       "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr or DigitalOcean from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
-      "url": "/.well-known/agent-skills/package-agent-network-blue-4dc56eba7ae6b8e255d0729fa93ff6eabb9a08d9810ee24b22af4d258b45072f.tar.gz",
-      "digest": "sha256:4dc56eba7ae6b8e255d0729fa93ff6eabb9a08d9810ee24b22af4d258b45072f"
+      "url": "/.well-known/agent-skills/package-agent-network-blue-35a38f2eaa59cfb158ebad4dd99e529bbe46014743f9c5ceb85d20e5fd785d0d.tar.gz",
+      "digest": "sha256:35a38f2eaa59cfb158ebad4dd99e529bbe46014743f9c5ceb85d20e5fd785d0d"
     },
     {
       "name": "package-agent-network-doks-blue",
       "type": "archive",
       "description": "Deploy, converge, inspect, or delete a NetBird Agent Network demo on DigitalOcean Kubernetes. Use for a keyless LLM gateway or an isolated AI agent on managed Kubernetes, with model allowlists, budget limits, and NetworkPolicy checks.",
-      "url": "/.well-known/agent-skills/package-agent-network-doks-blue-7f497b917d2f7287167d76c35e3780f0900a08d5ba5bccc9d34ffab76838dce8.tar.gz",
-      "digest": "sha256:7f497b917d2f7287167d76c35e3780f0900a08d5ba5bccc9d34ffab76838dce8"
+      "url": "/.well-known/agent-skills/package-agent-network-doks-blue-55380af939aeedbc1e1c1648ce97b5ba54da5012b65f8f9324613bec0a8a7f05.tar.gz",
+      "digest": "sha256:55380af939aeedbc1e1c1648ce97b5ba54da5012b65f8f9324613bec0a8a7f05"
     },
     {
       "name": "package-agent-network-doks-green",
       "type": "archive",
       "description": "Deploy, converge, inspect, or delete a NetBird Agent Network demo on DigitalOcean Kubernetes. Use for a keyless LLM gateway or an isolated AI agent on managed Kubernetes, with model allowlists, budget limits, and NetworkPolicy checks.",
-      "url": "/.well-known/agent-skills/package-agent-network-doks-green-a6f8d7a391c2600b0a526cef5cdeda3dbd48bf46d86347b024f28f1e43f18425.tar.gz",
-      "digest": "sha256:a6f8d7a391c2600b0a526cef5cdeda3dbd48bf46d86347b024f28f1e43f18425"
+      "url": "/.well-known/agent-skills/package-agent-network-doks-green-1f62536d8d6817a227b8a11078c096fb8f54a9d922e68d425524629cf79b7e13.tar.gz",
+      "digest": "sha256:1f62536d8d6817a227b8a11078c096fb8f54a9d922e68d425524629cf79b7e13"
     },
     {
       "name": "package-agent-network-doks-red",
       "type": "archive",
       "description": "Deploy, converge, inspect, or delete a NetBird Agent Network demo on DigitalOcean Kubernetes. Use for a keyless LLM gateway or an isolated AI agent on managed Kubernetes, with model allowlists, budget limits, and NetworkPolicy checks.",
-      "url": "/.well-known/agent-skills/package-agent-network-doks-red-934d1cec845be87fdcbd9a1f263559a749703d397bb85b75d9c11b7c77578358.tar.gz",
-      "digest": "sha256:934d1cec845be87fdcbd9a1f263559a749703d397bb85b75d9c11b7c77578358"
+      "url": "/.well-known/agent-skills/package-agent-network-doks-red-50f4556d2f58f9a2aa716931797f0dc25e1ac3a9226de7274ca16e5ad2756030.tar.gz",
+      "digest": "sha256:50f4556d2f58f9a2aa716931797f0dc25e1ac3a9226de7274ca16e5ad2756030"
     },
     {
       "name": "package-agent-network-green",
       "type": "archive",
       "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr or DigitalOcean from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
-      "url": "/.well-known/agent-skills/package-agent-network-green-d2edea845ee47aa1c5f524bf4642ff3d3b2c7a68103b3cfba55acf7ff1cd77d2.tar.gz",
-      "digest": "sha256:d2edea845ee47aa1c5f524bf4642ff3d3b2c7a68103b3cfba55acf7ff1cd77d2"
+      "url": "/.well-known/agent-skills/package-agent-network-green-ca3d1505e8ea30616698ec7f76c1051b2354d5fde13cb461ba467b4e03a7db96.tar.gz",
+      "digest": "sha256:ca3d1505e8ea30616698ec7f76c1051b2354d5fde13cb461ba467b4e03a7db96"
     },
     {
       "name": "package-agent-network-k8s-blue",
       "type": "archive",
       "description": "Deploy, converge, inspect, or delete a NetBird Agent Network demo on Vultr Kubernetes Engine. Use for a keyless LLM gateway or an isolated AI agent on managed Kubernetes, with model allowlists, budget limits, and NetworkPolicy checks.",
-      "url": "/.well-known/agent-skills/package-agent-network-k8s-blue-9dab3691bf6410ef6dd88852075317432bdc45d98c5ecf10062d4e80b3d335b4.tar.gz",
-      "digest": "sha256:9dab3691bf6410ef6dd88852075317432bdc45d98c5ecf10062d4e80b3d335b4"
+      "url": "/.well-known/agent-skills/package-agent-network-k8s-blue-34f1f216de968bb8446aa44bfcbdd24a8ac351186999049d1c30655fbb14dc9d.tar.gz",
+      "digest": "sha256:34f1f216de968bb8446aa44bfcbdd24a8ac351186999049d1c30655fbb14dc9d"
     },
     {
       "name": "package-agent-network-k8s-green",
       "type": "archive",
       "description": "Deploy, converge, inspect, or delete a NetBird Agent Network demo on Vultr Kubernetes Engine. Use for a keyless LLM gateway or an isolated AI agent on managed Kubernetes, with model allowlists, budget limits, and NetworkPolicy checks.",
-      "url": "/.well-known/agent-skills/package-agent-network-k8s-green-4c9fc24f47e0c862e836015cfe250a880f955f92086555ebca3ea678cd1f55f1.tar.gz",
-      "digest": "sha256:4c9fc24f47e0c862e836015cfe250a880f955f92086555ebca3ea678cd1f55f1"
+      "url": "/.well-known/agent-skills/package-agent-network-k8s-green-be14f86c302b6daaf44c0eb37a27e7739978ecef0ab9977a8e5a24218a9ae489.tar.gz",
+      "digest": "sha256:be14f86c302b6daaf44c0eb37a27e7739978ecef0ab9977a8e5a24218a9ae489"
     },
     {
       "name": "package-agent-network-k8s-red",
       "type": "archive",
       "description": "Deploy, converge, inspect, or delete a NetBird Agent Network demo on Vultr Kubernetes Engine. Use for a keyless LLM gateway or an isolated AI agent on managed Kubernetes, with model allowlists, budget limits, and NetworkPolicy checks.",
-      "url": "/.well-known/agent-skills/package-agent-network-k8s-red-fc2601c368ef49844a3f16569f417f514a1ffae24233c51228c18461f0327562.tar.gz",
-      "digest": "sha256:fc2601c368ef49844a3f16569f417f514a1ffae24233c51228c18461f0327562"
+      "url": "/.well-known/agent-skills/package-agent-network-k8s-red-c768f3ba41eb5343a40dc31c8ef418d677ca0ea38a640a8bc084f4ad42c8aa1b.tar.gz",
+      "digest": "sha256:c768f3ba41eb5343a40dc31c8ef418d677ca0ea38a640a8bc084f4ad42c8aa1b"
     },
     {
       "name": "package-agent-network-red",
       "type": "archive",
       "description": "Provision and manage a minimal, single-node NetBird Agent Network demo on Vultr or DigitalOcean from declarative desired state — a keyless, policy-gated LLM endpoint plus a network-isolated agent container running headless Claude Code. Use when asked to deploy, converge, inspect or delete a NetBird Agent Network, a keyless LLM gateway demo, or an isolated AI-agent sandbox with identity-based model access.",
-      "url": "/.well-known/agent-skills/package-agent-network-red-82567428a1f4f73b9fc66a20ed49b66b04d5d23a73053e056307b90b0b3fd00b.tar.gz",
-      "digest": "sha256:82567428a1f4f73b9fc66a20ed49b66b04d5d23a73053e056307b90b0b3fd00b"
+      "url": "/.well-known/agent-skills/package-agent-network-red-5bd4f8ca813c8c190e2265381739fd609e44e1cbdbead3dcba60df2c0cc8eecd.tar.gz",
+      "digest": "sha256:5bd4f8ca813c8c190e2265381739fd609e44e1cbdbead3dcba60df2c0cc8eecd"
     },
     {
       "name": "package-airflow-blue",
       "type": "archive",
       "description": "Creates and operates a single-node Apache Airflow server with Blue, OpenTofu and Ansible. Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
-      "url": "/.well-known/agent-skills/package-airflow-blue-c036ac7ce4e77d60d906e299adf6fd43a94c7c39dec99193d8dd4b8ac7de1755.tar.gz",
-      "digest": "sha256:c036ac7ce4e77d60d906e299adf6fd43a94c7c39dec99193d8dd4b8ac7de1755"
+      "url": "/.well-known/agent-skills/package-airflow-blue-a566b0cf33cdbc57f846b44912449dc6bb9d28d1348749a7630249af633daca4.tar.gz",
+      "digest": "sha256:a566b0cf33cdbc57f846b44912449dc6bb9d28d1348749a7630249af633daca4"
     },
     {
       "name": "package-airflow-green",
       "type": "archive",
       "description": "Creates and operates a single-node Apache Airflow server with Green, OpenTofu and Ansible. Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
-      "url": "/.well-known/agent-skills/package-airflow-green-8e780a3f7db357c1413d9c0bc7b9b5fd97ab5510501816e942d0535695d310b1.tar.gz",
-      "digest": "sha256:8e780a3f7db357c1413d9c0bc7b9b5fd97ab5510501816e942d0535695d310b1"
+      "url": "/.well-known/agent-skills/package-airflow-green-a7795da535eabad0547fe829aa5953deb858ef3f21c9926fb243e57b35e404bc.tar.gz",
+      "digest": "sha256:a7795da535eabad0547fe829aa5953deb858ef3f21c9926fb243e57b35e404bc"
     },
     {
       "name": "package-airflow-red",
       "type": "archive",
       "description": "Creates and operates a single-node Apache Airflow server with Red, OpenTofu and Ansible. Airflow under Docker with LocalExecutor, a host Postgres backed up to R2 with WAL-G, TLS and authentication through Caddy, and DAGs pushed from GitHub Actions over rsync. Use when initializing an airflow project, generating colors.yml, selecting a compute, DNS, SMTP or state provider, building or dry-running configuration, provisioning or destroying the server, or restoring the metadata database.",
-      "url": "/.well-known/agent-skills/package-airflow-red-5c8b88297ffc422d8c85a993a3eb242c893e1eb9bea65bd461a2b33308994654.tar.gz",
-      "digest": "sha256:5c8b88297ffc422d8c85a993a3eb242c893e1eb9bea65bd461a2b33308994654"
+      "url": "/.well-known/agent-skills/package-airflow-red-c684bcbc3db63213007de021a15de351b8286a992122ce4f56829b59f9a23110.tar.gz",
+      "digest": "sha256:c684bcbc3db63213007de021a15de351b8286a992122ce4f56829b59f9a23110"
     },
     {
       "name": "package-alice-green",
       "type": "archive",
       "description": "Provision one DigitalOcean Droplet, configure Transmission, manage a local SSH alias, and expose its UI only through an SSH tunnel.",
-      "url": "/.well-known/agent-skills/package-alice-green-1ec02937bc6a2ecea9b3b75754a1c67984a52ecf3f5af8e39b004cd9183c1351.tar.gz",
-      "digest": "sha256:1ec02937bc6a2ecea9b3b75754a1c67984a52ecf3f5af8e39b004cd9183c1351"
+      "url": "/.well-known/agent-skills/package-alice-green-31ad51c410e7ded415d9a42919b15fd0a967f0b2de13a6fa0c144e7146939b9e.tar.gz",
+      "digest": "sha256:31ad51c410e7ded415d9a42919b15fd0a967f0b2de13a6fa0c144e7146939b9e"
     },
     {
       "name": "package-automq-blue",
       "type": "archive",
       "description": "Provision a three-node AutoMQ cluster with Kafka-compatible brokers backed by Cloudflare R2, AWS S3, Google Cloud Storage, or OCI Object Storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
-      "url": "/.well-known/agent-skills/package-automq-blue-3e0f12e712d659bf7d5102e25f4cc203be87eff3f0b1920d40be21170e241af9.tar.gz",
-      "digest": "sha256:3e0f12e712d659bf7d5102e25f4cc203be87eff3f0b1920d40be21170e241af9"
+      "url": "/.well-known/agent-skills/package-automq-blue-8ad48cf85c0ef4367b2e96e7f9840b076530ceac5796318b359000250ff737d4.tar.gz",
+      "digest": "sha256:8ad48cf85c0ef4367b2e96e7f9840b076530ceac5796318b359000250ff737d4"
     },
     {
       "name": "package-automq-green",
       "type": "archive",
       "description": "Provision a three-node AutoMQ cluster with Kafka-compatible brokers backed by Cloudflare R2, AWS S3, Google Cloud Storage, or OCI Object Storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
-      "url": "/.well-known/agent-skills/package-automq-green-a92538bdaa3f9d23d45963af4337f5203a3b3d42070b4308e0f2a059d6533ae3.tar.gz",
-      "digest": "sha256:a92538bdaa3f9d23d45963af4337f5203a3b3d42070b4308e0f2a059d6533ae3"
+      "url": "/.well-known/agent-skills/package-automq-green-d574e990efc9e1f3d8970f5577501e5109c6d227f27f9a770a8b380db0a664f5.tar.gz",
+      "digest": "sha256:d574e990efc9e1f3d8970f5577501e5109c6d227f27f9a770a8b380db0a664f5"
     },
     {
       "name": "package-automq-red",
       "type": "archive",
       "description": "Provision a three-node AutoMQ cluster with Kafka-compatible brokers backed by Cloudflare R2, AWS S3, Google Cloud Storage, or OCI Object Storage, behind a public SASL_SSL endpoint with SCRAM authentication and ACL authorization.",
-      "url": "/.well-known/agent-skills/package-automq-red-e548254de83d8807f0321ec52f0da30cb82ca7584ea2845a20e002e74b33b28d.tar.gz",
-      "digest": "sha256:e548254de83d8807f0321ec52f0da30cb82ca7584ea2845a20e002e74b33b28d"
+      "url": "/.well-known/agent-skills/package-automq-red-1c0570d323b645a29c11af5c45f745b72dd0728950bcb4683d66ba06cef41153.tar.gz",
+      "digest": "sha256:1c0570d323b645a29c11af5c45f745b72dd0728950bcb4683d66ba06cef41153"
     },
     {
       "name": "package-clickhouse-blue",
       "type": "archive",
       "description": "Provision and operate a private replicated ClickHouse cluster, Metabase, WireGuard, Cloudflare DNS, and local dbt through colors-compute with Blue.",
-      "url": "/.well-known/agent-skills/package-clickhouse-blue-c0e8dae3d7b89ef10cbe38b396c79c943f339674ddd09a65d5ff8798a4deb415.tar.gz",
-      "digest": "sha256:c0e8dae3d7b89ef10cbe38b396c79c943f339674ddd09a65d5ff8798a4deb415"
+      "url": "/.well-known/agent-skills/package-clickhouse-blue-e1c6917799ce56fd0b50df602e626ed7d78f7659981e44fcf2106235a7fadbfe.tar.gz",
+      "digest": "sha256:e1c6917799ce56fd0b50df602e626ed7d78f7659981e44fcf2106235a7fadbfe"
     },
     {
       "name": "package-clickhouse-green",
       "type": "archive",
       "description": "Provision and operate a private replicated ClickHouse cluster, Metabase, WireGuard, Cloudflare DNS, and local dbt through colors-compute with Green.",
-      "url": "/.well-known/agent-skills/package-clickhouse-green-0bb14ca314b247ad97ea08b5e51f800a6a13f6f122b702c0e4dc2d1c1bd55775.tar.gz",
-      "digest": "sha256:0bb14ca314b247ad97ea08b5e51f800a6a13f6f122b702c0e4dc2d1c1bd55775"
+      "url": "/.well-known/agent-skills/package-clickhouse-green-d0916ceba3f9c6592f0b052ab7514eb3b424ec28089efd38df4e2fa25a2f334b.tar.gz",
+      "digest": "sha256:d0916ceba3f9c6592f0b052ab7514eb3b424ec28089efd38df4e2fa25a2f334b"
     },
     {
       "name": "package-clickhouse-red",
       "type": "archive",
       "description": "Provision and operate a private replicated ClickHouse cluster, Metabase, WireGuard, Cloudflare DNS, and local dbt through colors-compute with Red.",
-      "url": "/.well-known/agent-skills/package-clickhouse-red-bc718dbff4a68084507b621f17da58630dae281256aace254e10f69620863beb.tar.gz",
-      "digest": "sha256:bc718dbff4a68084507b621f17da58630dae281256aace254e10f69620863beb"
+      "url": "/.well-known/agent-skills/package-clickhouse-red-4dedc6e4e5b5764f5a50b6d55d9ff282bd55332c7b0c01cd5315d9a575431661.tar.gz",
+      "digest": "sha256:4dedc6e4e5b5764f5a50b6d55d9ff282bd55332c7b0c01cd5315d9a575431661"
     },
     {
       "name": "package-clickstack-blue",
       "type": "archive",
       "description": "Provisions ClickStack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — as a single-server observability stack on one VM through the shared colors-compute library.",
-      "url": "/.well-known/agent-skills/package-clickstack-blue-aa7378c7b20709cd588727acd4f681edb79b96d2cbe3a6d626c6aebd848b5588.tar.gz",
-      "digest": "sha256:aa7378c7b20709cd588727acd4f681edb79b96d2cbe3a6d626c6aebd848b5588"
+      "url": "/.well-known/agent-skills/package-clickstack-blue-bf63e0637f744c1b7c8d24f57172d72f94241d92340bf417521afaebaed9c5d2.tar.gz",
+      "digest": "sha256:bf63e0637f744c1b7c8d24f57172d72f94241d92340bf417521afaebaed9c5d2"
     },
     {
       "name": "package-clickstack-green",
       "type": "archive",
       "description": "Provisions ClickStack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — as a single-server observability stack on one VM through the shared colors-compute library.",
-      "url": "/.well-known/agent-skills/package-clickstack-green-99c8c22a1551b6e36dd9c6790fa8a73ccbb0ae44a36772a5cad8dfb9a741c5ca.tar.gz",
-      "digest": "sha256:99c8c22a1551b6e36dd9c6790fa8a73ccbb0ae44a36772a5cad8dfb9a741c5ca"
+      "url": "/.well-known/agent-skills/package-clickstack-green-82c1ac581e6c5adb08b4d1f02953cfca8e50a4b0473108e925ffbe7ff17eeee4.tar.gz",
+      "digest": "sha256:82c1ac581e6c5adb08b4d1f02953cfca8e50a4b0473108e925ffbe7ff17eeee4"
     },
     {
       "name": "package-clickstack-red",
       "type": "archive",
       "description": "Provisions ClickStack — ClickHouse, MongoDB, the HyperDX OpenTelemetry collector and UI — as a single-server observability stack on one VM through the shared colors-compute library.",
-      "url": "/.well-known/agent-skills/package-clickstack-red-25197f9fff3d3aed959997ced0fdcfa5cc671c3d52b97dd685bd05c834149c71.tar.gz",
-      "digest": "sha256:25197f9fff3d3aed959997ced0fdcfa5cc671c3d52b97dd685bd05c834149c71"
+      "url": "/.well-known/agent-skills/package-clickstack-red-0a08f661e93539ccf14c1d86ed10f68a7645d90211f1264ef06ca95a71e73cd3.tar.gz",
+      "digest": "sha256:0a08f661e93539ccf14c1d86ed10f68a7645d90211f1264ef06ca95a71e73cd3"
     },
     {
       "name": "package-dbos-blue",
       "type": "archive",
       "description": "Provisions a single-machine DBOS TypeScript durable-workflow service with colocated PostgreSQL using colors-compute. Use for build, dry-run, deployment, acceptance, recovery, upgrade, or authorized deletion.",
-      "url": "/.well-known/agent-skills/package-dbos-blue-fad56a890672e9ba0c3aa6307bb57bf5755c8d6f56a16c49c71ffb7a760fd1ab.tar.gz",
-      "digest": "sha256:fad56a890672e9ba0c3aa6307bb57bf5755c8d6f56a16c49c71ffb7a760fd1ab"
+      "url": "/.well-known/agent-skills/package-dbos-blue-2db5a0654325a6fb434d5b0dcb535a3fac36561924fd1804e500d0bb252137b3.tar.gz",
+      "digest": "sha256:2db5a0654325a6fb434d5b0dcb535a3fac36561924fd1804e500d0bb252137b3"
     },
     {
       "name": "package-dbos-green",
       "type": "archive",
       "description": "Provisions a single-machine DBOS TypeScript durable-workflow service with colocated PostgreSQL using colors-compute. Use for build, dry-run, deployment, acceptance, recovery, upgrade, or authorized deletion.",
-      "url": "/.well-known/agent-skills/package-dbos-green-b117f0a422b08b74ed5d87d223f85bcbef038be0eb36433504d0cabbe0d29f4b.tar.gz",
-      "digest": "sha256:b117f0a422b08b74ed5d87d223f85bcbef038be0eb36433504d0cabbe0d29f4b"
+      "url": "/.well-known/agent-skills/package-dbos-green-cce912c959a96fc86c5a540244ea8d927ab128e20f3a41d2d844e7fd770ba0fd.tar.gz",
+      "digest": "sha256:cce912c959a96fc86c5a540244ea8d927ab128e20f3a41d2d844e7fd770ba0fd"
     },
     {
       "name": "package-dbos-red",
       "type": "archive",
       "description": "Provisions a single-machine DBOS TypeScript durable-workflow service with colocated PostgreSQL using colors-compute. Use for build, dry-run, deployment, acceptance, recovery, upgrade, or authorized deletion.",
-      "url": "/.well-known/agent-skills/package-dbos-red-ef5b0845b86ca9e0e0ee0a29eb9a3b3502a80e8d9d034f6cf879f708aa63dd69.tar.gz",
-      "digest": "sha256:ef5b0845b86ca9e0e0ee0a29eb9a3b3502a80e8d9d034f6cf879f708aa63dd69"
+      "url": "/.well-known/agent-skills/package-dbos-red-4b880de436fc266186897917fe10f77f6f165ea96075b59bce60e76a86e6a2c8.tar.gz",
+      "digest": "sha256:4b880de436fc266186897917fe10f77f6f165ea96075b59bce60e76a86e6a2c8"
     },
     {
       "name": "package-doks-blue",
       "type": "archive",
       "description": "Provision and operate one managed Kubernetes cluster (DigitalOcean DOKS or Vultr VKE) with an optional integrated DigitalOcean container registry using Blue.",
-      "url": "/.well-known/agent-skills/package-doks-blue-769e9e1230db0641cceb35bc4c2146e87d7cf3eadf8ba958edc3360f0c0b4785.tar.gz",
-      "digest": "sha256:769e9e1230db0641cceb35bc4c2146e87d7cf3eadf8ba958edc3360f0c0b4785"
+      "url": "/.well-known/agent-skills/package-doks-blue-3cefb95b85e1196063c1c12dd8d144ab2e6e2bb55744deaa807f174c69412e1c.tar.gz",
+      "digest": "sha256:3cefb95b85e1196063c1c12dd8d144ab2e6e2bb55744deaa807f174c69412e1c"
     },
     {
       "name": "package-doks-green",
       "type": "archive",
       "description": "Provision and operate one managed Kubernetes cluster (DigitalOcean DOKS or Vultr VKE) with an optional integrated DigitalOcean container registry using Green.",
-      "url": "/.well-known/agent-skills/package-doks-green-b845bf8bc60f51aa09ce8e5788343a762b1540a0b5d43a398f5b89c924b7945d.tar.gz",
-      "digest": "sha256:b845bf8bc60f51aa09ce8e5788343a762b1540a0b5d43a398f5b89c924b7945d"
+      "url": "/.well-known/agent-skills/package-doks-green-d3d1df7711e137b3f89e63c789f5464a50731e6d766c320c79a83e785dcf75bc.tar.gz",
+      "digest": "sha256:d3d1df7711e137b3f89e63c789f5464a50731e6d766c320c79a83e785dcf75bc"
     },
     {
       "name": "package-doks-red",
       "type": "archive",
       "description": "Provision and operate one managed Kubernetes cluster (DigitalOcean DOKS or Vultr VKE) with an optional integrated DigitalOcean container registry using Red.",
-      "url": "/.well-known/agent-skills/package-doks-red-03731fc373e98fb7d93ddfd6f7fa648cc2a4071478981be72bdae6b0ee5db49f.tar.gz",
-      "digest": "sha256:03731fc373e98fb7d93ddfd6f7fa648cc2a4071478981be72bdae6b0ee5db49f"
+      "url": "/.well-known/agent-skills/package-doks-red-406f2eed80dbbdc8bc9bce1de796bf9fd27ae079664e0e9bf6f55065cc73f34c.tar.gz",
+      "digest": "sha256:406f2eed80dbbdc8bc9bce1de796bf9fd27ae079664e0e9bf6f55065cc73f34c"
     },
     {
       "name": "package-dotfiles-green",
       "type": "archive",
       "description": "Renders and installs the getcolors Ubuntu or macOS dotfiles profile with Green. Use when initializing a dotfiles deployment, editing colors.yml, building or dry-running a profile, or intentionally converging managed files into a local home directory.",
-      "url": "/.well-known/agent-skills/package-dotfiles-green-b54f5d7f0bcf441743187171e3841f7286fdf5e5cb56ebf7082da34d8c74381e.tar.gz",
-      "digest": "sha256:b54f5d7f0bcf441743187171e3841f7286fdf5e5cb56ebf7082da34d8c74381e"
+      "url": "/.well-known/agent-skills/package-dotfiles-green-0163751fc91b80fea77b0080101f9317bfd84018144c91eb2d330af2de6e62da.tar.gz",
+      "digest": "sha256:0163751fc91b80fea77b0080101f9317bfd84018144c91eb2d330af2de6e62da"
     },
     {
       "name": "package-github-dwh-blue",
       "type": "archive",
       "description": "Provision and operate a single-host GitHub organization warehouse with ClickHouse, dlt, dbt, PocketBase, systemd, Vultr, and Cloudflare.",
-      "url": "/.well-known/agent-skills/package-github-dwh-blue-6450d1278977cb9a5438a12cec8cfee6f2cba346ec46ae73b0fca69987434ccb.tar.gz",
-      "digest": "sha256:6450d1278977cb9a5438a12cec8cfee6f2cba346ec46ae73b0fca69987434ccb"
+      "url": "/.well-known/agent-skills/package-github-dwh-blue-8c822350dcc405c6434b0ac58d6d77473059b088076e8f207783871d45cbb52d.tar.gz",
+      "digest": "sha256:8c822350dcc405c6434b0ac58d6d77473059b088076e8f207783871d45cbb52d"
     },
     {
       "name": "package-k3s-blue",
       "type": "archive",
       "description": "Creates and operates a secure single-node K3s server using the shared compute library with Blue, OpenTofu, Ansible, Flux CD, and a public Git deployment repository. Use when initializing a K3s project, writing colors.yml, building or dry-running infrastructure, provisioning or destroying the server, configuring Flux, or invoking kubectl.",
-      "url": "/.well-known/agent-skills/package-k3s-blue-71e9f1ee6bc95654ce656fe95bbd4f35dbe9dc2ca681c50b47cec1fd02bdc57f.tar.gz",
-      "digest": "sha256:71e9f1ee6bc95654ce656fe95bbd4f35dbe9dc2ca681c50b47cec1fd02bdc57f"
+      "url": "/.well-known/agent-skills/package-k3s-blue-f9566e57c89f6f32f6f14a89709944b05ff9a1ceee3e41ec7026f211845dece5.tar.gz",
+      "digest": "sha256:f9566e57c89f6f32f6f14a89709944b05ff9a1ceee3e41ec7026f211845dece5"
     },
     {
       "name": "package-k3s-green",
       "type": "archive",
       "description": "Creates and operates a secure single-node K3s server using the shared compute library with Green, OpenTofu, Ansible, Flux CD, and a public Git deployment repository. Use when initializing a K3s project, writing colors.yml, building or dry-running infrastructure, provisioning or destroying the server, configuring Flux, or invoking kubectl.",
-      "url": "/.well-known/agent-skills/package-k3s-green-a75d9e8e2b49d69f9128fa7b4c2d803e0321d7e079c106f9e66cd8580016b205.tar.gz",
-      "digest": "sha256:a75d9e8e2b49d69f9128fa7b4c2d803e0321d7e079c106f9e66cd8580016b205"
+      "url": "/.well-known/agent-skills/package-k3s-green-8a91fd770555b5a883b12befadbb7b7c2ad202470451b674b51f78831bdc6cc4.tar.gz",
+      "digest": "sha256:8a91fd770555b5a883b12befadbb7b7c2ad202470451b674b51f78831bdc6cc4"
     },
     {
       "name": "package-k3s-red",
       "type": "archive",
       "description": "Creates and operates a secure single-node K3s server using the shared compute library with Red, OpenTofu, Ansible, Flux CD, and a public Git deployment repository. Use when initializing a K3s project, writing colors.yml, building or dry-running infrastructure, provisioning or destroying the server, configuring Flux, or invoking kubectl.",
-      "url": "/.well-known/agent-skills/package-k3s-red-caea2a7b9c5994443480e2b0d895b24d439c3136abf667183b0cb1d1300bac47.tar.gz",
-      "digest": "sha256:caea2a7b9c5994443480e2b0d895b24d439c3136abf667183b0cb1d1300bac47"
+      "url": "/.well-known/agent-skills/package-k3s-red-367897cf1d23dde3b5fc7fbec08351375045088bf2187b6ece10d1730c901717.tar.gz",
+      "digest": "sha256:367897cf1d23dde3b5fc7fbec08351375045088bf2187b6ece10d1730c901717"
     },
     {
       "name": "package-k8s-blue",
       "type": "archive",
       "description": "Build and operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Blue, Flannel, DigitalOcean CCM, Flux, ExternalDNS, cert-manager, and acceptance.",
-      "url": "/.well-known/agent-skills/package-k8s-blue-e75d146edbfb1a84ebe44b890e35bb92139a393a75fa23c285bc204ff74b245f.tar.gz",
-      "digest": "sha256:e75d146edbfb1a84ebe44b890e35bb92139a393a75fa23c285bc204ff74b245f"
+      "url": "/.well-known/agent-skills/package-k8s-blue-f912401cdab10716dc009acca191460555f9132520bb361978d0c57bc160b336.tar.gz",
+      "digest": "sha256:f912401cdab10716dc009acca191460555f9132520bb361978d0c57bc160b336"
     },
     {
       "name": "package-k8s-green",
       "type": "archive",
       "description": "Build and operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Green, Flannel, DigitalOcean CCM, Flux, ExternalDNS, cert-manager, and acceptance.",
-      "url": "/.well-known/agent-skills/package-k8s-green-3eeec18f16058b21e10f8cc9da3bc93d190ccf45d33cafe7f882f3a4603fa9b9.tar.gz",
-      "digest": "sha256:3eeec18f16058b21e10f8cc9da3bc93d190ccf45d33cafe7f882f3a4603fa9b9"
+      "url": "/.well-known/agent-skills/package-k8s-green-5e916fea71fbe6f99471bfa7ea8c378294a060a3231752094791398695424ccb.tar.gz",
+      "digest": "sha256:5e916fea71fbe6f99471bfa7ea8c378294a060a3231752094791398695424ccb"
     },
     {
       "name": "package-k8s-red",
       "type": "archive",
       "description": "Build and operate a two-node kubeadm Kubernetes cluster on DigitalOcean with Red, Flannel, DigitalOcean CCM, Flux, ExternalDNS, cert-manager, and acceptance.",
-      "url": "/.well-known/agent-skills/package-k8s-red-312128ac1dbaea9c139614bdf5881e672571063e5715d5351a5d20742104959c.tar.gz",
-      "digest": "sha256:312128ac1dbaea9c139614bdf5881e672571063e5715d5351a5d20742104959c"
+      "url": "/.well-known/agent-skills/package-k8s-red-04d5e7660d46ce0bb61e8d6385434ded0042e39e5c7622982897b23865530919.tar.gz",
+      "digest": "sha256:04d5e7660d46ce0bb61e8d6385434ded0042e39e5c7622982897b23865530919"
     },
     {
       "name": "package-langfuse-blue",
       "type": "archive",
       "description": "Provision and manage self-hosted Langfuse v4 on six AWS or Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with Keeper, and the application host (langfuse-web, langfuse-worker, Caddy) behind a Cloudflare-proxied name, with AWS S3 or Cloudflare R2 for events, media, Neon layers and WAL, and backups — using OpenTofu and Ansible. Use when asked to deploy, converge, rehearse recovery for, inspect or tear down self-hosted Langfuse, to run Langfuse on separate machines rather than one Docker Compose host, or to work on a colors.yml for a Langfuse deployment.",
-      "url": "/.well-known/agent-skills/package-langfuse-blue-9aaa9286386158421e0217c4bc554ede973d0f011b28c4443fa8b0b32717624d.tar.gz",
-      "digest": "sha256:9aaa9286386158421e0217c4bc554ede973d0f011b28c4443fa8b0b32717624d"
+      "url": "/.well-known/agent-skills/package-langfuse-blue-96ba843000d80f4da19b8c54262f4cf754c5833b42c9200540b95a6ecb09d926.tar.gz",
+      "digest": "sha256:96ba843000d80f4da19b8c54262f4cf754c5833b42c9200540b95a6ecb09d926"
     },
     {
       "name": "package-langfuse-green",
       "type": "archive",
       "description": "Provision and manage self-hosted Langfuse v4 on six AWS or Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with Keeper, and the application host (langfuse-web, langfuse-worker, Caddy) behind a Cloudflare-proxied name, with AWS S3 or Cloudflare R2 for events, media, Neon layers and WAL, and backups — using OpenTofu and Ansible. Use when asked to deploy, converge, rehearse recovery for, inspect or tear down self-hosted Langfuse, to run Langfuse on separate machines rather than one Docker Compose host, or to work on a colors.yml for a Langfuse deployment.",
-      "url": "/.well-known/agent-skills/package-langfuse-green-be7e01340ebd6115f3cbf4467ba9bcdf7fd8eda37d0e0db057e01a0df324edf3.tar.gz",
-      "digest": "sha256:be7e01340ebd6115f3cbf4467ba9bcdf7fd8eda37d0e0db057e01a0df324edf3"
+      "url": "/.well-known/agent-skills/package-langfuse-green-70b3d084772baa9e0fc20030f74648aee90d0e1253d1574a124801bff627e7ba.tar.gz",
+      "digest": "sha256:70b3d084772baa9e0fc20030f74648aee90d0e1253d1574a124801bff627e7ba"
     },
     {
       "name": "package-langfuse-red",
       "type": "archive",
       "description": "Provision and manage self-hosted Langfuse v4 on six AWS or Vultr machines in one VPC — a self-hosted Neon storage tier for Postgres, a Redis host, three ClickHouse replicas with Keeper, and the application host (langfuse-web, langfuse-worker, Caddy) behind a Cloudflare-proxied name, with AWS S3 or Cloudflare R2 for events, media, Neon layers and WAL, and backups — using OpenTofu and Ansible. Use when asked to deploy, converge, rehearse recovery for, inspect or tear down self-hosted Langfuse, to run Langfuse on separate machines rather than one Docker Compose host, or to work on a colors.yml for a Langfuse deployment.",
-      "url": "/.well-known/agent-skills/package-langfuse-red-b6ea5fee627bae9f2d93ad49f70f6b5a6bc1680e6c5d2a12fbb8a508994b6f60.tar.gz",
-      "digest": "sha256:b6ea5fee627bae9f2d93ad49f70f6b5a6bc1680e6c5d2a12fbb8a508994b6f60"
+      "url": "/.well-known/agent-skills/package-langfuse-red-c51b25c49b5954d2e8d86bd61bb5ddfb017d36e4863598a4061ba5bb01b08b7d.tar.gz",
+      "digest": "sha256:c51b25c49b5954d2e8d86bd61bb5ddfb017d36e4863598a4061ba5bb01b08b7d"
     },
     {
       "name": "package-mysql-agy-blue",
       "type": "archive",
       "description": "A 3-node MySQL Group Replication high-availability cluster with continuous point-in-time recovery to Cloudflare R2.",
-      "url": "/.well-known/agent-skills/package-mysql-agy-blue-283ac02579d94d0778080aee9cda68cb730a960e69a52d939a7e47c6b5a75aa1.tar.gz",
-      "digest": "sha256:283ac02579d94d0778080aee9cda68cb730a960e69a52d939a7e47c6b5a75aa1"
+      "url": "/.well-known/agent-skills/package-mysql-agy-blue-c48600dcba64ffd6c64d3094f30b29ae05934cc6ddd3b0534adb4a302c81b9b1.tar.gz",
+      "digest": "sha256:c48600dcba64ffd6c64d3094f30b29ae05934cc6ddd3b0534adb4a302c81b9b1"
     },
     {
       "name": "package-mysql-agy-green",
       "type": "archive",
       "description": "A 3-node MySQL Group Replication high-availability cluster with continuous point-in-time recovery to Cloudflare R2.",
-      "url": "/.well-known/agent-skills/package-mysql-agy-green-58052391b795c0c7564faad47e6d23132454811aa5f14290d572995ad01e94c4.tar.gz",
-      "digest": "sha256:58052391b795c0c7564faad47e6d23132454811aa5f14290d572995ad01e94c4"
+      "url": "/.well-known/agent-skills/package-mysql-agy-green-7266ab4130d66ec72f8ad5b8a1e56bf3651d5faac284710613dba08650ec71ba.tar.gz",
+      "digest": "sha256:7266ab4130d66ec72f8ad5b8a1e56bf3651d5faac284710613dba08650ec71ba"
     },
     {
       "name": "package-mysql-agy-red",
       "type": "archive",
       "description": "A 3-node MySQL Group Replication high-availability cluster with continuous point-in-time recovery to Cloudflare R2.",
-      "url": "/.well-known/agent-skills/package-mysql-agy-red-ff4e939e64e54d70ae511fdd636761194b3899cbc5802c00befaeb7b48bf3990.tar.gz",
-      "digest": "sha256:ff4e939e64e54d70ae511fdd636761194b3899cbc5802c00befaeb7b48bf3990"
+      "url": "/.well-known/agent-skills/package-mysql-agy-red-10e8f7436d5fc3e42d32eb0410274c132cab2c15c80ad1130fe39e6aa971480a.tar.gz",
+      "digest": "sha256:10e8f7436d5fc3e42d32eb0410274c132cab2c15c80ad1130fe39e6aa971480a"
     },
     {
       "name": "package-mysql-ha-blue",
       "type": "archive",
       "description": "Build and operate a three-member MySQL Group Replication cluster with Blue — automatic failover onto a reserved IP, daily snapshots and continuous binary-log archiving to Cloudflare R2, and a scheduled verified restore.",
-      "url": "/.well-known/agent-skills/package-mysql-ha-blue-6b947db87a4205f6fd8e655c2b6dc7a621fa948344a5bc76bf77c7c867c00630.tar.gz",
-      "digest": "sha256:6b947db87a4205f6fd8e655c2b6dc7a621fa948344a5bc76bf77c7c867c00630"
+      "url": "/.well-known/agent-skills/package-mysql-ha-blue-3d127e632d228735dbc752336426211fefc8cf26c6168214db733408d5121296.tar.gz",
+      "digest": "sha256:3d127e632d228735dbc752336426211fefc8cf26c6168214db733408d5121296"
     },
     {
       "name": "package-mysql-ha-green",
       "type": "archive",
       "description": "Build and operate a three-member MySQL Group Replication cluster with Green — automatic failover onto a reserved IP, daily snapshots and continuous binary-log archiving to Cloudflare R2, and a scheduled verified restore.",
-      "url": "/.well-known/agent-skills/package-mysql-ha-green-fa941bb6f9da7ba7b15b6748ee09ac7bf06d95332fe71d37e45bcbcbdbef1d50.tar.gz",
-      "digest": "sha256:fa941bb6f9da7ba7b15b6748ee09ac7bf06d95332fe71d37e45bcbcbdbef1d50"
+      "url": "/.well-known/agent-skills/package-mysql-ha-green-403547deda4ab60c385a590d707a996a437be0bc0e9ee9f731518410ce5c64ac.tar.gz",
+      "digest": "sha256:403547deda4ab60c385a590d707a996a437be0bc0e9ee9f731518410ce5c64ac"
     },
     {
       "name": "package-mysql-ha-red",
       "type": "archive",
       "description": "Build and operate a three-member MySQL Group Replication cluster with Red — automatic failover onto a reserved IP, daily snapshots and continuous binary-log archiving to Cloudflare R2, and a scheduled verified restore.",
-      "url": "/.well-known/agent-skills/package-mysql-ha-red-e9747838fb85b60a7a94076f1b545f08d68aad984316832b34a626add7845594.tar.gz",
-      "digest": "sha256:e9747838fb85b60a7a94076f1b545f08d68aad984316832b34a626add7845594"
+      "url": "/.well-known/agent-skills/package-mysql-ha-red-d738da974b58a4f5abdd7693abb398e648b64c8548459c96adfc6b7fff10a2f3.tar.gz",
+      "digest": "sha256:d738da974b58a4f5abdd7693abb398e648b64c8548459c96adfc6b7fff10a2f3"
     },
     {
       "name": "package-n8n-blue",
       "type": "archive",
       "description": "Provision and manage a self-hosted n8n workflow automation instance on one Vultr instance or one AWS EC2 instance, backed by a colocated self-hosted Neon (storage/compute-separated Postgres with layers and WAL in Cloudflare R2 or Amazon S3), behind Caddy TLS with an external task runner, using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted n8n, to run n8n on Postgres rather than SQLite, to put n8n's database on object storage, or to work on a colors.yml for an n8n deployment.",
-      "url": "/.well-known/agent-skills/package-n8n-blue-58f775fb53e2429975a6c4f1244cadd82c9bda2fc291475bbaee23e9c8203f04.tar.gz",
-      "digest": "sha256:58f775fb53e2429975a6c4f1244cadd82c9bda2fc291475bbaee23e9c8203f04"
+      "url": "/.well-known/agent-skills/package-n8n-blue-13c3c21956cda2e092b00f12b03e68c25b4d34b19647d0fc144b7ccef4fe7c33.tar.gz",
+      "digest": "sha256:13c3c21956cda2e092b00f12b03e68c25b4d34b19647d0fc144b7ccef4fe7c33"
     },
     {
       "name": "package-n8n-green",
       "type": "archive",
       "description": "Provision and manage a self-hosted n8n workflow automation instance on one Vultr instance or one AWS EC2 instance, backed by a colocated self-hosted Neon (storage/compute-separated Postgres with layers and WAL in Cloudflare R2 or Amazon S3), behind Caddy TLS with an external task runner, using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted n8n, to run n8n on Postgres rather than SQLite, to put n8n's database on object storage, or to work on a colors.yml for an n8n deployment.",
-      "url": "/.well-known/agent-skills/package-n8n-green-b7f87706a14954af84b38fbde0a2d46da8422b1d759d84d327c6a7f036d5587d.tar.gz",
-      "digest": "sha256:b7f87706a14954af84b38fbde0a2d46da8422b1d759d84d327c6a7f036d5587d"
+      "url": "/.well-known/agent-skills/package-n8n-green-8dc663ae9588f0537c26856e62504623de2985ec502c7b07cc3ec7b5be779ff7.tar.gz",
+      "digest": "sha256:8dc663ae9588f0537c26856e62504623de2985ec502c7b07cc3ec7b5be779ff7"
     },
     {
       "name": "package-n8n-red",
       "type": "archive",
       "description": "Provision and manage a self-hosted n8n workflow automation instance on one Vultr instance or one AWS EC2 instance, backed by a colocated self-hosted Neon (storage/compute-separated Postgres with layers and WAL in Cloudflare R2 or Amazon S3), behind Caddy TLS with an external task runner, using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted n8n, to run n8n on Postgres rather than SQLite, to put n8n's database on object storage, or to work on a colors.yml for an n8n deployment.",
-      "url": "/.well-known/agent-skills/package-n8n-red-b91ea357d6d8c621cfc07f9e9bb13d42b215a3778f3957b7bff816de4ac3dc37.tar.gz",
-      "digest": "sha256:b91ea357d6d8c621cfc07f9e9bb13d42b215a3778f3957b7bff816de4ac3dc37"
+      "url": "/.well-known/agent-skills/package-n8n-red-4300bded2fe0c05c7ad794330bb5f7c752eadf6bd71aa2655c333f2804588b0b.tar.gz",
+      "digest": "sha256:4300bded2fe0c05c7ad794330bb5f7c752eadf6bd71aa2655c333f2804588b0b"
     },
     {
       "name": "package-neon-blue",
       "type": "archive",
       "description": "Provision and manage self-hosted Neon serverless Postgres on one Vultr instance — the storage broker, the pageserver, a safekeeper, and a compute node, with Cloudflare R2 as the remote storage for layers and WAL — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted Neon, to run storage/compute-separated Postgres with S3-durable data, or to work on a colors.yml for a neon deployment.",
-      "url": "/.well-known/agent-skills/package-neon-blue-46c4e8112064512873828dcd901f5935e0ccee7db211ebb438cf648f14d5afcf.tar.gz",
-      "digest": "sha256:46c4e8112064512873828dcd901f5935e0ccee7db211ebb438cf648f14d5afcf"
+      "url": "/.well-known/agent-skills/package-neon-blue-dc44a3955aa2a5d18871527df0888e9f00fb52af9731659a2f073a89a8d05e73.tar.gz",
+      "digest": "sha256:dc44a3955aa2a5d18871527df0888e9f00fb52af9731659a2f073a89a8d05e73"
     },
     {
       "name": "package-neon-green",
       "type": "archive",
       "description": "Provision and manage self-hosted Neon serverless Postgres on one Vultr instance — the storage broker, the pageserver, a safekeeper, and a compute node, with Cloudflare R2 as the remote storage for layers and WAL — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted Neon, to run storage/compute-separated Postgres with S3-durable data, or to work on a colors.yml for a neon deployment.",
-      "url": "/.well-known/agent-skills/package-neon-green-a9e4a699074163ffab3476640cc6a0b29fe58d1482d8fafcdf9a53a627a5a47b.tar.gz",
-      "digest": "sha256:a9e4a699074163ffab3476640cc6a0b29fe58d1482d8fafcdf9a53a627a5a47b"
+      "url": "/.well-known/agent-skills/package-neon-green-52dc55762abda93790ab7074fc2717dae36a7b2108d53e92f0e7cf84f77b4200.tar.gz",
+      "digest": "sha256:52dc55762abda93790ab7074fc2717dae36a7b2108d53e92f0e7cf84f77b4200"
     },
     {
       "name": "package-neon-multi-node-blue",
       "type": "archive",
       "description": "Deploy and operate self-hosted Neon Postgres 17 across separate compute and pageserver machines plus three safekeepers, using Colors Blue and colors-compute, managed AWS S3 storage and state, Cloudflare DNS, and native PostgreSQL TLS. Use for neon-multi-node colors.yml deployments, convergence, recovery rehearsals, inspection, and guarded teardown.",
-      "url": "/.well-known/agent-skills/package-neon-multi-node-blue-4f3247c20ad5362a715efd21e3ef6d0d0b46333c693b8e487a67e8f7758c193f.tar.gz",
-      "digest": "sha256:4f3247c20ad5362a715efd21e3ef6d0d0b46333c693b8e487a67e8f7758c193f"
+      "url": "/.well-known/agent-skills/package-neon-multi-node-blue-93a1d8924b05509d10f818cf500362f5cdf82c9bab9676a379ae298574cb9fe5.tar.gz",
+      "digest": "sha256:93a1d8924b05509d10f818cf500362f5cdf82c9bab9676a379ae298574cb9fe5"
     },
     {
       "name": "package-neon-multi-node-green",
       "type": "archive",
       "description": "Deploy and operate self-hosted Neon Postgres 17 across separate compute and pageserver machines plus three safekeepers, using Colors Green and colors-compute, managed AWS S3 storage and state, Cloudflare DNS, and native PostgreSQL TLS. Use for neon-multi-node colors.yml deployments, convergence, recovery rehearsals, inspection, and guarded teardown.",
-      "url": "/.well-known/agent-skills/package-neon-multi-node-green-e13c717b9a26aca6275b14c5075e1142e0aaf23bd1ab744b57b081bca557b559.tar.gz",
-      "digest": "sha256:e13c717b9a26aca6275b14c5075e1142e0aaf23bd1ab744b57b081bca557b559"
+      "url": "/.well-known/agent-skills/package-neon-multi-node-green-181f276fa4f9a282ee9ef87d471d6afdbefcb2425b2e67829c85218608f936c8.tar.gz",
+      "digest": "sha256:181f276fa4f9a282ee9ef87d471d6afdbefcb2425b2e67829c85218608f936c8"
     },
     {
       "name": "package-neon-multi-node-red",
       "type": "archive",
       "description": "Deploy and operate self-hosted Neon Postgres 17 across separate compute and pageserver machines plus three safekeepers, using Colors Red and colors-compute, managed AWS S3 storage and state, Cloudflare DNS, and native PostgreSQL TLS. Use for neon-multi-node colors.yml deployments, convergence, recovery rehearsals, inspection, and guarded teardown.",
-      "url": "/.well-known/agent-skills/package-neon-multi-node-red-d2cfd0b219ee6b95d925392e982fc1ccf69156790159b39e1e0c5a5a14c91907.tar.gz",
-      "digest": "sha256:d2cfd0b219ee6b95d925392e982fc1ccf69156790159b39e1e0c5a5a14c91907"
+      "url": "/.well-known/agent-skills/package-neon-multi-node-red-13d201df86cf42a242be30bd15ee792160a23f00bbe903d7b8ba6b0f25476b30.tar.gz",
+      "digest": "sha256:13d201df86cf42a242be30bd15ee792160a23f00bbe903d7b8ba6b0f25476b30"
     },
     {
       "name": "package-neon-red",
       "type": "archive",
       "description": "Provision and manage self-hosted Neon serverless Postgres on one Vultr instance — the storage broker, the pageserver, a safekeeper, and a compute node, with Cloudflare R2 as the remote storage for layers and WAL — using OpenTofu and Ansible. Use when asked to deploy, converge, inspect or tear down self-hosted Neon, to run storage/compute-separated Postgres with S3-durable data, or to work on a colors.yml for a neon deployment.",
-      "url": "/.well-known/agent-skills/package-neon-red-48db03b8d11c824dbb1148a2ca70945b2788a014d8c45277d3c51453252b6be5.tar.gz",
-      "digest": "sha256:48db03b8d11c824dbb1148a2ca70945b2788a014d8c45277d3c51453252b6be5"
+      "url": "/.well-known/agent-skills/package-neon-red-ceea912af06df9a11db40dde50e9079b02673035c2c18d4163c5b9721fa9a50d.tar.gz",
+      "digest": "sha256:ceea912af06df9a11db40dde50e9079b02673035c2c18d4163c5b9721fa9a50d"
     },
     {
       "name": "package-netbird-blue",
       "type": "archive",
       "description": "Provision and manage a self-hosted NetBird control plane with Authentik as its identity provider on a single Vultr instance, from declarative desired state. Use when asked to deploy, converge, inspect, back up, restore or delete a NetBird zero-trust network, a self-hosted WireGuard control plane, or a NetBird instance with SSO/MFA.",
-      "url": "/.well-known/agent-skills/package-netbird-blue-dcaaa04be249121b39b0ff1dde48f98c7d1ac8fd5291be097b12c2f457fe0519.tar.gz",
-      "digest": "sha256:dcaaa04be249121b39b0ff1dde48f98c7d1ac8fd5291be097b12c2f457fe0519"
+      "url": "/.well-known/agent-skills/package-netbird-blue-8e9c04f970fc03e55a040f130bcb87c3a0069705e8138481e37adefaa4842d32.tar.gz",
+      "digest": "sha256:8e9c04f970fc03e55a040f130bcb87c3a0069705e8138481e37adefaa4842d32"
     },
     {
       "name": "package-netbird-green",
       "type": "archive",
       "description": "Provision and manage a self-hosted NetBird control plane with Authentik as its identity provider on a single Vultr instance, from declarative desired state. Use when asked to deploy, converge, inspect, back up, restore or delete a NetBird zero-trust network, a self-hosted WireGuard control plane, or a NetBird instance with SSO/MFA.",
-      "url": "/.well-known/agent-skills/package-netbird-green-85e91d830f228ac336436a3f31aa540552bd843bb67836dd87fed970aa7dedd5.tar.gz",
-      "digest": "sha256:85e91d830f228ac336436a3f31aa540552bd843bb67836dd87fed970aa7dedd5"
+      "url": "/.well-known/agent-skills/package-netbird-green-80528271e6ef2cd464dc60544685c3f10575498563630d870f71174ba7e9a49a.tar.gz",
+      "digest": "sha256:80528271e6ef2cd464dc60544685c3f10575498563630d870f71174ba7e9a49a"
     },
     {
       "name": "package-netbird-red",
       "type": "archive",
       "description": "Provision and manage a self-hosted NetBird control plane with Authentik as its identity provider on a single Vultr instance, from declarative desired state. Use when asked to deploy, converge, inspect, back up, restore or delete a NetBird zero-trust network, a self-hosted WireGuard control plane, or a NetBird instance with SSO/MFA.",
-      "url": "/.well-known/agent-skills/package-netbird-red-65c07312ed571eec65e4ebe0da808f29281bd231806306ef24c9a61250d75226.tar.gz",
-      "digest": "sha256:65c07312ed571eec65e4ebe0da808f29281bd231806306ef24c9a61250d75226"
+      "url": "/.well-known/agent-skills/package-netbird-red-7e18df98c9913c329ea7543f11a018b1fae0c5411f15d7bdab72e79aceb9c414.tar.gz",
+      "digest": "sha256:7e18df98c9913c329ea7543f11a018b1fae0c5411f15d7bdab72e79aceb9c414"
     },
     {
       "name": "package-once-blue",
       "type": "archive",
       "description": "Create and operate single-server Basecamp ONCE deployments with Blue. Use for colors.yml configuration, builds, dry-runs, provisioning, deletion and status reports.",
-      "url": "/.well-known/agent-skills/package-once-blue-f9db9f195fc48388bafb977807ace87178476dc802bda06da59433da33eead20.tar.gz",
-      "digest": "sha256:f9db9f195fc48388bafb977807ace87178476dc802bda06da59433da33eead20"
+      "url": "/.well-known/agent-skills/package-once-blue-b978f2464df51e6c3e8deac0505eefa7a88d598c4a328338dc980bb426db2ab1.tar.gz",
+      "digest": "sha256:b978f2464df51e6c3e8deac0505eefa7a88d598c4a328338dc980bb426db2ab1"
     },
     {
       "name": "package-once-green",
       "type": "archive",
       "description": "Create and operate single-server Basecamp ONCE deployments with Green. Use for colors.yml configuration, builds, dry-runs, provisioning, deletion and status reports.",
-      "url": "/.well-known/agent-skills/package-once-green-7dfe4101cfb524d240d5750485c232a3afb18351f5f888f49eeaed2b7f23fd14.tar.gz",
-      "digest": "sha256:7dfe4101cfb524d240d5750485c232a3afb18351f5f888f49eeaed2b7f23fd14"
+      "url": "/.well-known/agent-skills/package-once-green-cb35cbc6384021d22517b4624571a014372d41525150ced05ca014ef083ebe34.tar.gz",
+      "digest": "sha256:cb35cbc6384021d22517b4624571a014372d41525150ced05ca014ef083ebe34"
     },
     {
       "name": "package-once-red",
       "type": "archive",
       "description": "Create and operate single-server Basecamp ONCE deployments with Red. Use for colors.yml configuration, builds, dry-runs, provisioning, deletion and status reports.",
-      "url": "/.well-known/agent-skills/package-once-red-0a05fce1259956053225830d853fdc431843b102aceea37275e7db23c8960946.tar.gz",
-      "digest": "sha256:0a05fce1259956053225830d853fdc431843b102aceea37275e7db23c8960946"
+      "url": "/.well-known/agent-skills/package-once-red-d456148be6f1970020d88b277cc42e33aca9a912c634863a3ac20ddcf3f62011.tar.gz",
+      "digest": "sha256:d456148be6f1970020d88b277cc42e33aca9a912c634863a3ac20ddcf3f62011"
     },
     {
       "name": "package-postgres-agy-blue",
       "type": "archive",
       "description": "Build and operate a three-node PostgreSQL 17 failover cluster with Patroni, colocated etcd v3, HAProxy client routing, Cloudflare DNS, pgBackRest backups to Cloudflare R2, heartbeat streaming, and verified restore check.",
-      "url": "/.well-known/agent-skills/package-postgres-agy-blue-7a7b471eed2c0b9015282a88a4047dc372c776193800ace36e9df9b85a3c2e41.tar.gz",
-      "digest": "sha256:7a7b471eed2c0b9015282a88a4047dc372c776193800ace36e9df9b85a3c2e41"
+      "url": "/.well-known/agent-skills/package-postgres-agy-blue-8084136e46e57e37c791ada7e4edcfcb1f74ab2237dcca62af33e8b2578443d1.tar.gz",
+      "digest": "sha256:8084136e46e57e37c791ada7e4edcfcb1f74ab2237dcca62af33e8b2578443d1"
     },
     {
       "name": "package-postgres-agy-green",
       "type": "archive",
       "description": "Build and operate a three-node PostgreSQL 17 failover cluster with Patroni, colocated etcd v3, HAProxy client routing, Cloudflare DNS, pgBackRest backups to Cloudflare R2, heartbeat streaming, and verified restore check.",
-      "url": "/.well-known/agent-skills/package-postgres-agy-green-7b9621924902ce2ed8f0f761c90777478d8bf6ff3a3429da6a3862cde77fce39.tar.gz",
-      "digest": "sha256:7b9621924902ce2ed8f0f761c90777478d8bf6ff3a3429da6a3862cde77fce39"
+      "url": "/.well-known/agent-skills/package-postgres-agy-green-143911785f82691f09ed717ec7658ea517648f0bcc18c2674183fab626d7690e.tar.gz",
+      "digest": "sha256:143911785f82691f09ed717ec7658ea517648f0bcc18c2674183fab626d7690e"
     },
     {
       "name": "package-postgres-agy-red",
       "type": "archive",
       "description": "Build and operate a three-node PostgreSQL 17 failover cluster with Patroni, colocated etcd v3, HAProxy client routing, Cloudflare DNS, pgBackRest backups to Cloudflare R2, heartbeat streaming, and verified restore check.",
-      "url": "/.well-known/agent-skills/package-postgres-agy-red-054ec581c43b3c867cd46967f78927c6be0354024911d5e570a369b0c953d0c7.tar.gz",
-      "digest": "sha256:054ec581c43b3c867cd46967f78927c6be0354024911d5e570a369b0c953d0c7"
+      "url": "/.well-known/agent-skills/package-postgres-agy-red-420546b3f862ea0ca7d60a7e60aac23856c852a12d14ca4790ffc45755f33fff.tar.gz",
+      "digest": "sha256:420546b3f862ea0ca7d60a7e60aac23856c852a12d14ca4790ffc45755f33fff"
     },
     {
       "name": "package-postgres-ha-blue",
       "type": "archive",
       "description": "Provision and operate a three-node PostgreSQL failover cluster with Patroni, etcd, HAProxy, Cloudflare DNS, and pgBackRest point-in-time recovery to Cloudflare R2, using Blue.",
-      "url": "/.well-known/agent-skills/package-postgres-ha-blue-579839352315133abc7deaea7df86e04ec8e4f0b915adb90b2e9ca745524db42.tar.gz",
-      "digest": "sha256:579839352315133abc7deaea7df86e04ec8e4f0b915adb90b2e9ca745524db42"
+      "url": "/.well-known/agent-skills/package-postgres-ha-blue-67b78076310c851a0a57933868cd6271222ca2b87203e6127ba3a7a97eaff37f.tar.gz",
+      "digest": "sha256:67b78076310c851a0a57933868cd6271222ca2b87203e6127ba3a7a97eaff37f"
     },
     {
       "name": "package-postgres-ha-green",
       "type": "archive",
       "description": "Provision and operate a three-node PostgreSQL failover cluster with Patroni, etcd, HAProxy, Cloudflare DNS, and pgBackRest point-in-time recovery to Cloudflare R2, using Green.",
-      "url": "/.well-known/agent-skills/package-postgres-ha-green-0e39001a5ae9f0b7f7d9beb5078f3d5e4410ecf917755bd7ea854f0c4959763f.tar.gz",
-      "digest": "sha256:0e39001a5ae9f0b7f7d9beb5078f3d5e4410ecf917755bd7ea854f0c4959763f"
+      "url": "/.well-known/agent-skills/package-postgres-ha-green-53deafdf3c3df66ac888fa78ccc4e931554178813c884cfadc070c25bae90713.tar.gz",
+      "digest": "sha256:53deafdf3c3df66ac888fa78ccc4e931554178813c884cfadc070c25bae90713"
     },
     {
       "name": "package-postgres-ha-red",
       "type": "archive",
       "description": "Provision and operate a three-node PostgreSQL failover cluster with Patroni, etcd, HAProxy, Cloudflare DNS, and pgBackRest point-in-time recovery to Cloudflare R2, using Red.",
-      "url": "/.well-known/agent-skills/package-postgres-ha-red-7520aecb06efd7b23b20794d53b1b534f7d133b59fa73bb6b2c5944b77477f27.tar.gz",
-      "digest": "sha256:7520aecb06efd7b23b20794d53b1b534f7d133b59fa73bb6b2c5944b77477f27"
+      "url": "/.well-known/agent-skills/package-postgres-ha-red-27646d245e6d874461bde3af674757199668af2bbb03816208c61d061d81fff4.tar.gz",
+      "digest": "sha256:27646d245e6d874461bde3af674757199668af2bbb03816208c61d061d81fff4"
     },
     {
       "name": "package-posthog-blue",
       "type": "archive",
       "description": "Provisions and operates a single-node PostHog product analytics suite with PostgreSQL 17, ClickHouse, Redis 7.2, and Caddy on one VM through the shared colors-compute library.",
-      "url": "/.well-known/agent-skills/package-posthog-blue-80fb1bab2c5b425cf3789a8657b09600c0d5b77969b834790dca6cf23d861eb8.tar.gz",
-      "digest": "sha256:80fb1bab2c5b425cf3789a8657b09600c0d5b77969b834790dca6cf23d861eb8"
+      "url": "/.well-known/agent-skills/package-posthog-blue-a229eb04d48c203b12d30102870afc7511f7db9cefb27ad4b79de581e24a5463.tar.gz",
+      "digest": "sha256:a229eb04d48c203b12d30102870afc7511f7db9cefb27ad4b79de581e24a5463"
     },
     {
       "name": "package-posthog-green",
       "type": "archive",
       "description": "Provisions and operates a single-node PostHog product analytics suite with PostgreSQL 17, ClickHouse, Redis 7.2, and Caddy on one VM through the shared colors-compute library.",
-      "url": "/.well-known/agent-skills/package-posthog-green-deac8091190da346c53577afab6398da4d8183910da9547d9dcd9961560ec4fa.tar.gz",
-      "digest": "sha256:deac8091190da346c53577afab6398da4d8183910da9547d9dcd9961560ec4fa"
+      "url": "/.well-known/agent-skills/package-posthog-green-92c4301ab22bbb2e0508c8dc75aaf89810756dd6b7329db865de3a61decf861c.tar.gz",
+      "digest": "sha256:92c4301ab22bbb2e0508c8dc75aaf89810756dd6b7329db865de3a61decf861c"
     },
     {
       "name": "package-posthog-red",
       "type": "archive",
       "description": "Provisions and operates a single-node PostHog product analytics suite with PostgreSQL 17, ClickHouse, Redis 7.2, and Caddy on one VM through the shared colors-compute library.",
-      "url": "/.well-known/agent-skills/package-posthog-red-a5c183942f80b220e05eb11ba89eaf862d7dacddd01be4f6eb41946b10783580.tar.gz",
-      "digest": "sha256:a5c183942f80b220e05eb11ba89eaf862d7dacddd01be4f6eb41946b10783580"
+      "url": "/.well-known/agent-skills/package-posthog-red-5f5dacd3972e8acedea32d3b0a470c3d950bd4efd9ad41a4f4410f33d7ae272a.tar.gz",
+      "digest": "sha256:5f5dacd3972e8acedea32d3b0a470c3d950bd4efd9ad41a4f4410f33d7ae272a"
     },
     {
       "name": "package-rama-green",
       "type": "archive",
       "description": "Provision and operate a private single-node Rama cluster on DigitalOcean using Green.",
-      "url": "/.well-known/agent-skills/package-rama-green-01704d4be6fe7ebde9a5eafc2582f6658ad798a055a63f187572e08a71648ade.tar.gz",
-      "digest": "sha256:01704d4be6fe7ebde9a5eafc2582f6658ad798a055a63f187572e08a71648ade"
+      "url": "/.well-known/agent-skills/package-rama-green-7b73c8796488ce5bbaadcf7c052e00b3c62a5b03b5951ddf40b1167d487ad4cf.tar.gz",
+      "digest": "sha256:7b73c8796488ce5bbaadcf7c052e00b3c62a5b03b5951ddf40b1167d487ad4cf"
     },
     {
       "name": "package-redis-blue",
       "type": "archive",
       "description": "Provision and manage one Redis 7.2 server on one Vultr instance, DigitalOcean droplet or AWS EC2 instance, published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 or a deployment-owned S3 bucket that a rehearsal verb restores and reads back, using OpenTofu and Ansible. Use when asked to deploy, converge, back up, rehearse recovery for, inspect or tear down a single-node Redis, or to work on a colors.yml for a redis deployment.",
-      "url": "/.well-known/agent-skills/package-redis-blue-d0c65024091a634655bfdedb01b8cf48ab73e77111884004209b85df495063eb.tar.gz",
-      "digest": "sha256:d0c65024091a634655bfdedb01b8cf48ab73e77111884004209b85df495063eb"
+      "url": "/.well-known/agent-skills/package-redis-blue-5c23989dcad8d4ecea6519a04c121acee3949cba829720d4570f8670a45d23ee.tar.gz",
+      "digest": "sha256:5c23989dcad8d4ecea6519a04c121acee3949cba829720d4570f8670a45d23ee"
     },
     {
       "name": "package-redis-green",
       "type": "archive",
       "description": "Provision and manage one Redis 7.2 server on one Vultr instance, DigitalOcean droplet or AWS EC2 instance, published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 or a deployment-owned S3 bucket that a rehearsal verb restores and reads back, using OpenTofu and Ansible. Use when asked to deploy, converge, back up, rehearse recovery for, inspect or tear down a single-node Redis, or to work on a colors.yml for a redis deployment.",
-      "url": "/.well-known/agent-skills/package-redis-green-b3c84034d3902beb61aa5e0f5cd498dc5c37bc9a2884f5c7ebbc7eda3c816263.tar.gz",
-      "digest": "sha256:b3c84034d3902beb61aa5e0f5cd498dc5c37bc9a2884f5c7ebbc7eda3c816263"
+      "url": "/.well-known/agent-skills/package-redis-green-bdc9a818ffaa5306b644ba979454e094579c931444600f896cf7ef9588b65e38.tar.gz",
+      "digest": "sha256:bdc9a818ffaa5306b644ba979454e094579c931444600f896cf7ef9588b65e38"
     },
     {
       "name": "package-redis-operator-blue",
       "type": "archive",
       "description": "Install and operate the RedisDeployment controller in an existing Kubernetes cluster with Blue; it provisions one Redis Droplet on DigitalOcean from a custom resource.",
-      "url": "/.well-known/agent-skills/package-redis-operator-blue-442116cac5afd66d83c5541794c6ed0d40a8516ecdd730ddafaf6d337999e3b9.tar.gz",
-      "digest": "sha256:442116cac5afd66d83c5541794c6ed0d40a8516ecdd730ddafaf6d337999e3b9"
+      "url": "/.well-known/agent-skills/package-redis-operator-blue-c26ec8d91b9f3053d351ac64cd2a362ae51ce4fc2f6056922c5f07c2346798b9.tar.gz",
+      "digest": "sha256:c26ec8d91b9f3053d351ac64cd2a362ae51ce4fc2f6056922c5f07c2346798b9"
     },
     {
       "name": "package-redis-operator-green",
       "type": "archive",
       "description": "Install and operate the RedisDeployment controller in an existing Kubernetes cluster with Green; it provisions one Redis Droplet on DigitalOcean from a custom resource.",
-      "url": "/.well-known/agent-skills/package-redis-operator-green-3c642eb197f914e10883ea93223ead2e1fd20e7077c9050527a1361fc011a80a.tar.gz",
-      "digest": "sha256:3c642eb197f914e10883ea93223ead2e1fd20e7077c9050527a1361fc011a80a"
+      "url": "/.well-known/agent-skills/package-redis-operator-green-f0f314d0868996104375d48269a6899324e302f43f13033777136ec0efc35d64.tar.gz",
+      "digest": "sha256:f0f314d0868996104375d48269a6899324e302f43f13033777136ec0efc35d64"
     },
     {
       "name": "package-redis-operator-red",
       "type": "archive",
       "description": "Install and operate the RedisDeployment controller in an existing Kubernetes cluster with Red; it provisions one Redis Droplet on DigitalOcean from a custom resource.",
-      "url": "/.well-known/agent-skills/package-redis-operator-red-60125a8fc1fdb0c5b9bcd3e5b966dff6d46837042c2464f592a20e910f805115.tar.gz",
-      "digest": "sha256:60125a8fc1fdb0c5b9bcd3e5b966dff6d46837042c2464f592a20e910f805115"
+      "url": "/.well-known/agent-skills/package-redis-operator-red-2dbc14917630ee07af0c4c5653e09ef567b5f52194b794cd88a7521592ca6e0d.tar.gz",
+      "digest": "sha256:2dbc14917630ee07af0c4c5653e09ef567b5f52194b794cd88a7521592ca6e0d"
     },
     {
       "name": "package-redis-red",
       "type": "archive",
       "description": "Provision and manage one Redis 7.2 server on one Vultr instance, DigitalOcean droplet or AWS EC2 instance, published on loopback only, reached over an SSH tunnel, with an append-only file for persistence and RDB backup sets in Cloudflare R2 or a deployment-owned S3 bucket that a rehearsal verb restores and reads back, using OpenTofu and Ansible. Use when asked to deploy, converge, back up, rehearse recovery for, inspect or tear down a single-node Redis, or to work on a colors.yml for a redis deployment.",
-      "url": "/.well-known/agent-skills/package-redis-red-e8a0a7a0b6d8503f0a064784137be687c7c51424b4348bec83bcd38f7419155b.tar.gz",
-      "digest": "sha256:e8a0a7a0b6d8503f0a064784137be687c7c51424b4348bec83bcd38f7419155b"
+      "url": "/.well-known/agent-skills/package-redis-red-bccb69af172c44c0bb5ffff916e8fda893c6ec3a92982e7f3d2e13b997b0c487.tar.gz",
+      "digest": "sha256:bccb69af172c44c0bb5ffff916e8fda893c6ec3a92982e7f3d2e13b997b0c487"
     },
     {
       "name": "package-restate-blue",
       "type": "archive",
       "description": "Provisions and operates production-oriented single-node Restate with a durable TypeScript reference workflow on one VM through colors-compute.",
-      "url": "/.well-known/agent-skills/package-restate-blue-18f4e947da0150045b82d46173fc6ecce9f0d4f82af5439b74ce8f55f278cbff.tar.gz",
-      "digest": "sha256:18f4e947da0150045b82d46173fc6ecce9f0d4f82af5439b74ce8f55f278cbff"
+      "url": "/.well-known/agent-skills/package-restate-blue-1af0b94a8b32a58e5464dc87b1b95477afda4bcdc403425fa4f475eabee37950.tar.gz",
+      "digest": "sha256:1af0b94a8b32a58e5464dc87b1b95477afda4bcdc403425fa4f475eabee37950"
     },
     {
       "name": "package-restate-green",
       "type": "archive",
       "description": "Provisions and operates production-oriented single-node Restate with a durable TypeScript reference workflow on one VM through colors-compute.",
-      "url": "/.well-known/agent-skills/package-restate-green-a903a4782d2a6513308372dcbf7b82221bd1c07a49aa6ffc11eb4a9a42c0c442.tar.gz",
-      "digest": "sha256:a903a4782d2a6513308372dcbf7b82221bd1c07a49aa6ffc11eb4a9a42c0c442"
+      "url": "/.well-known/agent-skills/package-restate-green-302bebeb60070efa9a2117170c80acbd38ae365c033252012f654b96fa1d3452.tar.gz",
+      "digest": "sha256:302bebeb60070efa9a2117170c80acbd38ae365c033252012f654b96fa1d3452"
     },
     {
       "name": "package-restate-red",
       "type": "archive",
       "description": "Provisions and operates production-oriented single-node Restate with a durable TypeScript reference workflow on one VM through colors-compute.",
-      "url": "/.well-known/agent-skills/package-restate-red-e54aacf001a9713e14bbe218f0fc16d7374a1bb3d11bb449a66a23261bebef71.tar.gz",
-      "digest": "sha256:e54aacf001a9713e14bbe218f0fc16d7374a1bb3d11bb449a66a23261bebef71"
+      "url": "/.well-known/agent-skills/package-restate-red-41f9e4d80ecd98f68ba7b44f0f8ef95dbf08cedfa8fe9f595a375df0359e7108.tar.gz",
+      "digest": "sha256:41f9e4d80ecd98f68ba7b44f0f8ef95dbf08cedfa8fe9f595a375df0359e7108"
     },
     {
       "name": "package-rybbit-blue",
       "type": "archive",
       "description": "Provisions and operates a production-oriented single-node Rybbit analytics service with PostgreSQL, ClickHouse, Redis and Caddy on one VM through the shared colors-compute library.",
-      "url": "/.well-known/agent-skills/package-rybbit-blue-94a56def8a227a2d2c225f5e735778c6ea862d05acb273dfbb37bf16d64dbf6c.tar.gz",
-      "digest": "sha256:94a56def8a227a2d2c225f5e735778c6ea862d05acb273dfbb37bf16d64dbf6c"
+      "url": "/.well-known/agent-skills/package-rybbit-blue-6777720135fea995613bb71d057a4d988d365e0abaacb96f50f22ef7c8c43df2.tar.gz",
+      "digest": "sha256:6777720135fea995613bb71d057a4d988d365e0abaacb96f50f22ef7c8c43df2"
     },
     {
       "name": "package-rybbit-green",
       "type": "archive",
       "description": "Provisions and operates a production-oriented single-node Rybbit analytics service with PostgreSQL, ClickHouse, Redis and Caddy on one VM through the shared colors-compute library.",
-      "url": "/.well-known/agent-skills/package-rybbit-green-ddc8f4faef47864897ac30bd35229c8d6e97e1799c6763b228c5714504c26ff2.tar.gz",
-      "digest": "sha256:ddc8f4faef47864897ac30bd35229c8d6e97e1799c6763b228c5714504c26ff2"
+      "url": "/.well-known/agent-skills/package-rybbit-green-09aa80220298052c29c315ba1e951229160e14e28e3ca15bd4a815c522f91249.tar.gz",
+      "digest": "sha256:09aa80220298052c29c315ba1e951229160e14e28e3ca15bd4a815c522f91249"
     },
     {
       "name": "package-rybbit-red",
       "type": "archive",
       "description": "Provisions and operates a production-oriented single-node Rybbit analytics service with PostgreSQL, ClickHouse, Redis and Caddy on one VM through the shared colors-compute library.",
-      "url": "/.well-known/agent-skills/package-rybbit-red-ec346fb405ea39af40b006d6d46d4c86aa319424c4ae85bbbe0e83a3f09dd75d.tar.gz",
-      "digest": "sha256:ec346fb405ea39af40b006d6d46d4c86aa319424c4ae85bbbe0e83a3f09dd75d"
+      "url": "/.well-known/agent-skills/package-rybbit-red-9d92c3266e0a78254816caae7bb760c475e8cf7d06e23e0486c83ef4c7c7fbc8.tar.gz",
+      "digest": "sha256:9d92c3266e0a78254816caae7bb760c475e8cf7d06e23e0486c83ef4c7c7fbc8"
     },
     {
       "name": "package-signoz-blue",
       "type": "archive",
       "description": "Provision and manage a single-node SigNoz observability stack on one VM through colors-compute — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — with OpenTofu, Ansible and Cloudflare DNS. Use when asked to deploy, converge, inspect or tear down self-hosted SigNoz, to send OpenTelemetry traces, logs or metrics to a private backend, or to work on a colors.yml for a signoz deployment.",
-      "url": "/.well-known/agent-skills/package-signoz-blue-f44c422fa6d9f7ee0e5847a6170f21cbd6a2c5c200312482de6cbc5384d5c518.tar.gz",
-      "digest": "sha256:f44c422fa6d9f7ee0e5847a6170f21cbd6a2c5c200312482de6cbc5384d5c518"
+      "url": "/.well-known/agent-skills/package-signoz-blue-1921aa366217e3d485380731a77fda1c331a2fd7915057b891acea692a0e2242.tar.gz",
+      "digest": "sha256:1921aa366217e3d485380731a77fda1c331a2fd7915057b891acea692a0e2242"
     },
     {
       "name": "package-signoz-green",
       "type": "archive",
       "description": "Provision and manage a single-node SigNoz observability stack on one VM through colors-compute — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — with OpenTofu, Ansible and Cloudflare DNS. Use when asked to deploy, converge, inspect or tear down self-hosted SigNoz, to send OpenTelemetry traces, logs or metrics to a private backend, or to work on a colors.yml for a signoz deployment.",
-      "url": "/.well-known/agent-skills/package-signoz-green-b4f4dea257243d8c49edaa2597648b3c6782759d7db6ff6555b92a48e4ca2625.tar.gz",
-      "digest": "sha256:b4f4dea257243d8c49edaa2597648b3c6782759d7db6ff6555b92a48e4ca2625"
+      "url": "/.well-known/agent-skills/package-signoz-green-2895cec664419f6279663849dfa1d69b9ac94fd3361b8d3ecce1de18d0630472.tar.gz",
+      "digest": "sha256:2895cec664419f6279663849dfa1d69b9ac94fd3361b8d3ecce1de18d0630472"
     },
     {
       "name": "package-signoz-red",
       "type": "archive",
       "description": "Provision and manage a single-node SigNoz observability stack on one VM through colors-compute — ClickHouse, ClickHouse Keeper, a Postgres metastore, the SigNoz application, the signoz-otel-collector ingester and Caddy — with OpenTofu, Ansible and Cloudflare DNS. Use when asked to deploy, converge, inspect or tear down self-hosted SigNoz, to send OpenTelemetry traces, logs or metrics to a private backend, or to work on a colors.yml for a signoz deployment.",
-      "url": "/.well-known/agent-skills/package-signoz-red-f3c0a8eb796ba92e62f183ead9f2f60164c1cef02106a0834a02f2c79c761697.tar.gz",
-      "digest": "sha256:f3c0a8eb796ba92e62f183ead9f2f60164c1cef02106a0834a02f2c79c761697"
+      "url": "/.well-known/agent-skills/package-signoz-red-fcdb41831807fdfd8b6db11b641194aa21d5543d40682c692d630c6ff01eb498.tar.gz",
+      "digest": "sha256:fcdb41831807fdfd8b6db11b641194aa21d5543d40682c692d630c6ff01eb498"
     },
     {
       "name": "package-temporal-blue",
       "type": "archive",
       "description": "Provision and operate a production-oriented single-machine Temporal deployment through colors-compute using Blue.",
-      "url": "/.well-known/agent-skills/package-temporal-blue-28143ff91ae80414e3a06fa7b1ce75e55f8e29212d9ecc74fa308c26b90944bd.tar.gz",
-      "digest": "sha256:28143ff91ae80414e3a06fa7b1ce75e55f8e29212d9ecc74fa308c26b90944bd"
+      "url": "/.well-known/agent-skills/package-temporal-blue-f4e8943bf9ca68c09ee6ff7aa3083ab78a2aaf1fd4790e65ad682930da0f49aa.tar.gz",
+      "digest": "sha256:f4e8943bf9ca68c09ee6ff7aa3083ab78a2aaf1fd4790e65ad682930da0f49aa"
     },
     {
       "name": "package-temporal-green",
       "type": "archive",
       "description": "Provision and operate a production-oriented single-machine Temporal deployment through colors-compute using Green.",
-      "url": "/.well-known/agent-skills/package-temporal-green-9da40b6600e7d84c6b415a5dd1148dbdbb49abf3ddd470d792b5ccd651ad5fd0.tar.gz",
-      "digest": "sha256:9da40b6600e7d84c6b415a5dd1148dbdbb49abf3ddd470d792b5ccd651ad5fd0"
+      "url": "/.well-known/agent-skills/package-temporal-green-ce1dfd1eb051ea9b02e6e86f5280ffdb1c3b2c5d7a7dc0984cd8e1b4272ebdee.tar.gz",
+      "digest": "sha256:ce1dfd1eb051ea9b02e6e86f5280ffdb1c3b2c5d7a7dc0984cd8e1b4272ebdee"
     },
     {
       "name": "package-temporal-red",
       "type": "archive",
       "description": "Provision and operate a production-oriented single-machine Temporal deployment through colors-compute using Red.",
-      "url": "/.well-known/agent-skills/package-temporal-red-bb8e0ce2db2ab9c2c5caa3ed186de21387db363c167af2a9794580ad30a35033.tar.gz",
-      "digest": "sha256:bb8e0ce2db2ab9c2c5caa3ed186de21387db363c167af2a9794580ad30a35033"
+      "url": "/.well-known/agent-skills/package-temporal-red-fdcbf9bef117247e8a67b2cd5382806993a42e3fa3eb852696bdcade545f464b.tar.gz",
+      "digest": "sha256:fdcbf9bef117247e8a67b2cd5382806993a42e3fa3eb852696bdcade545f464b"
     },
     {
       "name": "package-umami-blue",
       "type": "archive",
       "description": "Provisions and operates production-oriented single-node Umami web analytics with PostgreSQL and Caddy on one VM through colors-compute.",
-      "url": "/.well-known/agent-skills/package-umami-blue-c97c499da8098c0110bc836402977cc8db377afcfb61aef12f2c472465e6fa9b.tar.gz",
-      "digest": "sha256:c97c499da8098c0110bc836402977cc8db377afcfb61aef12f2c472465e6fa9b"
+      "url": "/.well-known/agent-skills/package-umami-blue-bb589e2d7510f26e00b8220018d741414656a4bb0af36c9033cbd6405c670a9c.tar.gz",
+      "digest": "sha256:bb589e2d7510f26e00b8220018d741414656a4bb0af36c9033cbd6405c670a9c"
     },
     {
       "name": "package-umami-green",
       "type": "archive",
       "description": "Provisions and operates production-oriented single-node Umami web analytics with PostgreSQL and Caddy on one VM through colors-compute.",
-      "url": "/.well-known/agent-skills/package-umami-green-dd36ed4f1413d8cdd77609d0c7446afddd4568126f1cb7d73b395e0850795a32.tar.gz",
-      "digest": "sha256:dd36ed4f1413d8cdd77609d0c7446afddd4568126f1cb7d73b395e0850795a32"
+      "url": "/.well-known/agent-skills/package-umami-green-1bc1675f4a94ea0c8f731fb277e8cf6a117d16d86cf6172d4633d58076295017.tar.gz",
+      "digest": "sha256:1bc1675f4a94ea0c8f731fb277e8cf6a117d16d86cf6172d4633d58076295017"
     },
     {
       "name": "package-umami-red",
       "type": "archive",
       "description": "Provisions and operates production-oriented single-node Umami web analytics with PostgreSQL and Caddy on one VM through colors-compute.",
-      "url": "/.well-known/agent-skills/package-umami-red-dab5632da39873feed5c464f5dcddebb3b6be3338d87d746a727d9e0e25ab365.tar.gz",
-      "digest": "sha256:dab5632da39873feed5c464f5dcddebb3b6be3338d87d746a727d9e0e25ab365"
+      "url": "/.well-known/agent-skills/package-umami-red-2325bb0cc4a96957bf1cd9645b2d10fb8b5cef741a7484fd89eda5c105b7cde3.tar.gz",
+      "digest": "sha256:2325bb0cc4a96957bf1cd9645b2d10fb8b5cef741a7484fd89eda5c105b7cde3"
+    },
+    {
+      "name": "package-valkey-green",
+      "type": "archive",
+      "description": "Deploy and manage a single-node Valkey service from colors.yml using the green launcher, with SSH tunnel access, authentication, AOF persistence, verified snapshot backups in an existing Cloudflare R2 bucket, and a scratch restore rehearsal. Use for Valkey build, converge, inspect, backup, recovery rehearsal, or authorized teardown. This is not a clustered or highly available deployment.",
+      "url": "/.well-known/agent-skills/package-valkey-green-2229bb865f1c0615a93dae7dd2c5082f61f3720eed372789c9e29819ffb14066.tar.gz",
+      "digest": "sha256:2229bb865f1c0615a93dae7dd2c5082f61f3720eed372789c9e29819ffb14066"
     },
     {
       "name": "package-vaultwarden-blue",
       "type": "archive",
       "description": "Provisions a Basecamp ONCE server and deploys Vaultwarden with Litestream replication to Cloudflare R2. Use when building, dry-running, creating, recovering, or deleting a Vaultwarden deployment managed by Colors.",
-      "url": "/.well-known/agent-skills/package-vaultwarden-blue-5fc77645572b8e10bbb0f79b7757cd41e89a5d3f442d1f1ad23eca1d22f308e6.tar.gz",
-      "digest": "sha256:5fc77645572b8e10bbb0f79b7757cd41e89a5d3f442d1f1ad23eca1d22f308e6"
+      "url": "/.well-known/agent-skills/package-vaultwarden-blue-9ee872c749ca663cbd467e14839ba96972149e8235f1362fe8ad36aa16f55ec6.tar.gz",
+      "digest": "sha256:9ee872c749ca663cbd467e14839ba96972149e8235f1362fe8ad36aa16f55ec6"
     },
     {
       "name": "package-vaultwarden-green",
       "type": "archive",
       "description": "Provisions a Basecamp ONCE server and deploys Vaultwarden with Litestream replication to Cloudflare R2. Use when building, dry-running, creating, recovering, or deleting a Vaultwarden deployment managed by Colors.",
-      "url": "/.well-known/agent-skills/package-vaultwarden-green-5122fcde72fe6f18767439a87b72bf460c8323a991196e068a72206e826414f1.tar.gz",
-      "digest": "sha256:5122fcde72fe6f18767439a87b72bf460c8323a991196e068a72206e826414f1"
+      "url": "/.well-known/agent-skills/package-vaultwarden-green-5827971b953297bb1018452ef7861f789137d2757a4e64526c59264f1837f559.tar.gz",
+      "digest": "sha256:5827971b953297bb1018452ef7861f789137d2757a4e64526c59264f1837f559"
     },
     {
       "name": "package-vaultwarden-red",
       "type": "archive",
       "description": "Provisions a Basecamp ONCE server and deploys Vaultwarden with Litestream replication to Cloudflare R2. Use when building, dry-running, creating, recovering, or deleting a Vaultwarden deployment managed by Colors.",
-      "url": "/.well-known/agent-skills/package-vaultwarden-red-bd41cd33c41b02866e49c64270981978e20eee62fe82822e69450b6c301354e7.tar.gz",
-      "digest": "sha256:bd41cd33c41b02866e49c64270981978e20eee62fe82822e69450b6c301354e7"
+      "url": "/.well-known/agent-skills/package-vaultwarden-red-894a77e5d8cf85a105deccb17f2a6691581e587c31c2e7aa928c97d5fb7cd127.tar.gz",
+      "digest": "sha256:894a77e5d8cf85a105deccb17f2a6691581e587c31c2e7aa928c97d5fb7cd127"
     },
     {
       "name": "package-walter-green",
       "type": "archive",
       "description": "Creates and operates a remote development machine with Green, OpenTofu and Ansible, powers it off and on, and focuses Nix or asdf convergence across every login. Use when initializing a walter project, generating colors.yml, selecting providers, building or provisioning the machine, stopping or starting it, or converging declared Nix packages and asdf runtimes.",
-      "url": "/.well-known/agent-skills/package-walter-green-60956ae44621bfe45f27fd065e39f54d944d8f01336ea49c415c226d4290c2f2.tar.gz",
-      "digest": "sha256:60956ae44621bfe45f27fd065e39f54d944d8f01336ea49c415c226d4290c2f2"
+      "url": "/.well-known/agent-skills/package-walter-green-0428a451257eb8759768e0b46686f967daf9bad8b998961156e9e05e02942d56.tar.gz",
+      "digest": "sha256:0428a451257eb8759768e0b46686f967daf9bad8b998961156e9e05e02942d56"
     },
     {
       "name": "package-wavehouse-blue",
       "type": "archive",
       "description": "Provisions a public WaveHouse analytics demo — ClickHouse, the WaveHouse gateway, and the live GitHub stats dashboard — on one Vultr instance with Blue.",
-      "url": "/.well-known/agent-skills/package-wavehouse-blue-3fc92f1ff1d4618c7747030222571c59fe84dbb590dec806abe335872ea129d5.tar.gz",
-      "digest": "sha256:3fc92f1ff1d4618c7747030222571c59fe84dbb590dec806abe335872ea129d5"
+      "url": "/.well-known/agent-skills/package-wavehouse-blue-ba12dc166e9852d8072c1fa5d64d0ce1e6572e1ad5041968f1f7ae050e7b97ae.tar.gz",
+      "digest": "sha256:ba12dc166e9852d8072c1fa5d64d0ce1e6572e1ad5041968f1f7ae050e7b97ae"
     },
     {
       "name": "package-wavehouse-green",
       "type": "archive",
       "description": "Provisions a public WaveHouse analytics demo — ClickHouse, the WaveHouse gateway, and the live GitHub stats dashboard — on one Vultr instance.",
-      "url": "/.well-known/agent-skills/package-wavehouse-green-172fc2228247317147b89e8cdafe464e8213c9cfbbc68a0ee1985b9104093a33.tar.gz",
-      "digest": "sha256:172fc2228247317147b89e8cdafe464e8213c9cfbbc68a0ee1985b9104093a33"
+      "url": "/.well-known/agent-skills/package-wavehouse-green-b0b97ba797a37179c5d1fb22bfe10bdb7bfc1cacfeedc3d2013cc4dc5781be6f.tar.gz",
+      "digest": "sha256:b0b97ba797a37179c5d1fb22bfe10bdb7bfc1cacfeedc3d2013cc4dc5781be6f"
     },
     {
       "name": "package-wavehouse-red",
       "type": "archive",
       "description": "Provisions a public WaveHouse analytics demo — ClickHouse, the WaveHouse gateway, and the live GitHub stats dashboard — on one Vultr instance with Red.",
-      "url": "/.well-known/agent-skills/package-wavehouse-red-8d52c38d51d55e6c9065212567e9adeb973002145301483680bdebdde7d810cb.tar.gz",
-      "digest": "sha256:8d52c38d51d55e6c9065212567e9adeb973002145301483680bdebdde7d810cb"
+      "url": "/.well-known/agent-skills/package-wavehouse-red-b01766a210c7bc0fc45264f9cb615813001631b611e9223ad1609cbe89a1c6ff.tar.gz",
+      "digest": "sha256:b01766a210c7bc0fc45264f9cb615813001631b611e9223ad1609cbe89a1c6ff"
     },
     {
       "name": "posthog-single-node",
       "type": "archive",
       "description": "Everything needed to stand up a working self-hosted single-node PostHog on one server - the ten-container topology, the ClickHouse Keeper/macros/named-collections configuration PostHog's migrations require, the capture and plugin-server ingestion chain, the converge ordering, and a catalogue of ~30 failures that each look like success. Use this whenever the user mentions self-hosting, deploying, provisioning, upgrading, or debugging PostHog, or is working on a PostHog docker-compose, Ansible playbook, ClickHouse schema, migrate_clickhouse run, or event-ingestion problem - even if they do not say \"single-node\" and even if they think their problem is small. Also use it when someone reports that PostHog accepts events but stores none, that a container \"runs\" but serves nothing, or that Celery will not start.",
-      "url": "/.well-known/agent-skills/posthog-single-node-8bbeb434623b0adeaf66e15f7fb56a3e1458eb82776e3ca4dac03cc70b7037ad.tar.gz",
-      "digest": "sha256:8bbeb434623b0adeaf66e15f7fb56a3e1458eb82776e3ca4dac03cc70b7037ad"
+      "url": "/.well-known/agent-skills/posthog-single-node-f42a70db60898be2152c8553d41ab189f086c1a73c90031103a70a76cddcfb3c.tar.gz",
+      "digest": "sha256:f42a70db60898be2152c8553d41ab189f086c1a73c90031103a70a76cddcfb3c"
     },
     {
       "name": "redis-operator-kubernetes",
       "type": "archive",
       "description": "A Kubernetes operator provisioning one Redis Droplet from a custom resource, verified live on DigitalOcean DOKS - `check` failing on a healthy resource with \"RedisDeployment is not Ready at its current generation: phase=Reconciling reason=Reconciling\", `kubectl patch ... failed (exit 1): The request is invalid: the server rejected our request due to an error in our request` from a status write moving the resourceVersion, `kubectl exec` into a restarting controller: \"Clojure tools not yet in expected location\" and \"java.io.EOFException: Unexpected end of ZLIB input stream\", `converge outcome=failed step=:redis/ansible exit=2` on a fresh Droplet then converged on retry, `DirectoryNotEmptyException: .../registry/push` after destroy, Droplets and firewalls outliving a deleted DOKS cluster, and a self-healing drill that recovers service in five minutes and no data. Use for a Green Kubernetes controller, the RedisDeployment CRD, or any operator on DOKS. Full symptom index in the body.",
-      "url": "/.well-known/agent-skills/redis-operator-kubernetes-9a719cae05ea6ba85e2c02bb9ed9b1df12ada4cfc5318fa77fae91392c590af8.tar.gz",
-      "digest": "sha256:9a719cae05ea6ba85e2c02bb9ed9b1df12ada4cfc5318fa77fae91392c590af8"
+      "url": "/.well-known/agent-skills/redis-operator-kubernetes-aa500797d24568e58c7c94d1ad5ba92390897d0e8daa73b44e48a48da60c2f55.tar.gz",
+      "digest": "sha256:aa500797d24568e58c7c94d1ad5ba92390897d0e8daa73b44e48a48da60c2f55"
     },
     {
       "name": "redis-single-node",
       "type": "archive",
       "description": "What a single-node Redis 7 deployment needs beyond the docs, verified live on Vultr and AWS - a restored dump.rdb that loads ZERO keys because the instance started with appendonly yes and no appendonlydir/ (\"Creating AOF base file appendonly.aof.1.base.rdb on server start\"), redis-cli refusals (\"NOAUTH Authentication required.\", \"WRONGPASS\") that exit 0 so exit-code gates pass, a minutes-old host UNREACHABLE (kex_exchange_identification reset) after unattended-upgrades restarted sshd, Docker-published ports that bypass ufw, backups streamed with `redis-cli --rdb -`, backup sets that count only once a .complete marker reads back, and, on AWS, OpenTofu 1.12 \"Error: No state file was found\" failing a create, \"Permission denied\" reading the password because the AMI logs in as ubuntu, an S3 encryption rule planning \"1 to change\" forever, and \"managed storage credentials unavailable\" on delete. Use for self-hosted Redis on one machine with Docker Compose and S3-compatible backups. Full symptom index in the body.",
-      "url": "/.well-known/agent-skills/redis-single-node-93c5b26386a426b98cc558fd151d3ba16799dfc869f5b815eef748dfa8c5bcd7.tar.gz",
-      "digest": "sha256:93c5b26386a426b98cc558fd151d3ba16799dfc869f5b815eef748dfa8c5bcd7"
+      "url": "/.well-known/agent-skills/redis-single-node-90756718853d290cbb466a8ebcafa29afed9493cea21bb681c3ab520554add25.tar.gz",
+      "digest": "sha256:90756718853d290cbb466a8ebcafa29afed9493cea21bb681c3ab520554add25"
     },
     {
       "name": "rybbit-single-node",
       "type": "archive",
       "description": "Everything needed to run a self-hosted single-node Rybbit analytics stack you can actually trust - the six-container topology, the provider-independent seam that lets one converge run on DigitalOcean or Vultr or anything else with an SSH port, ClickHouse backups that restore instead of merely existing, and verification that catches a stack which looks healthy and stores nothing. Use this whenever the user mentions self-hosting, deploying, provisioning, sizing, migrating, backing up, restoring, or debugging Rybbit, or is working on a Rybbit docker-compose, Caddy reverse proxy, ClickHouse or PostgreSQL backup, or event-ingestion problem - even if they do not say \"single-node\". Also use it on these symptoms - Rybbit returns success but records no events, a Caddyfile or config edit had no effect, analytics show the CDN's address instead of the visitor's, or signup cannot be disabled. The full symptom index is at the top of the body.",
-      "url": "/.well-known/agent-skills/rybbit-single-node-3c560fb23c1f34c179fa7cb9802b3a156ade586464a0a5bd461d3fd3cb80faf6.tar.gz",
-      "digest": "sha256:3c560fb23c1f34c179fa7cb9802b3a156ade586464a0a5bd461d3fd3cb80faf6"
+      "url": "/.well-known/agent-skills/rybbit-single-node-822be890805f07d25a7a17249c067a69819e0bf6a7276e4e6c0cc9b0818a82f7.tar.gz",
+      "digest": "sha256:822be890805f07d25a7a17249c067a69819e0bf6a7276e4e6c0cc9b0818a82f7"
     },
     {
       "name": "submit-context-skill",
       "type": "skill-md",
       "description": "Submit an existing Colors Context Skill to the getcolors.ai catalog by validating it against the Context Skill Standard, adding a type context recipe, and opening a pull request.",
-      "url": "/.well-known/agent-skills/submit-context-skill-00e950b431ca2f9f669d2d76e281201e65e140db1d1da999cef2fb972f7b21a8/SKILL.md",
-      "digest": "sha256:00e950b431ca2f9f669d2d76e281201e65e140db1d1da999cef2fb972f7b21a8"
+      "url": "/.well-known/agent-skills/submit-context-skill-fce513d525516aa551ae6ee5c56bae61e38ffdcd2a95e13ccf7d56e67138e2d2/SKILL.md",
+      "digest": "sha256:fce513d525516aa551ae6ee5c56bae61e38ffdcd2a95e13ccf7d56e67138e2d2"
     },
     {
       "name": "submit-package-skill",
       "type": "skill-md",
       "description": "Submit an existing Colors Package Skill to the getcolors.ai Package Skills Catalog by validating it, adding a catalog recipe, and opening a pull request.",
-      "url": "/.well-known/agent-skills/submit-package-skill-20548b41aedf6da56c1e478c22685a56ab9e45fa5ec1cccfa826190b55a350b1/SKILL.md",
-      "digest": "sha256:20548b41aedf6da56c1e478c22685a56ab9e45fa5ec1cccfa826190b55a350b1"
+      "url": "/.well-known/agent-skills/submit-package-skill-5c1bb7f8e0e0bfd20a9640a87c86fd20d60fc746b2f790c9f66c743d9bad4567/SKILL.md",
+      "digest": "sha256:5c1bb7f8e0e0bfd20a9640a87c86fd20d60fc746b2f790c9f66c743d9bad4567"
+    },
+    {
+      "name": "valkey-single-node",
+      "type": "archive",
+      "description": "Use when Valkey reports redis_version:7.2.4 beside valkey_version:9.1.2, NOAUTH or WRONGPASS exits zero, a restored dump.rdb answers PONG but DBSIZE is zero, an SSH audit exits successfully after only its first command or monitor, an R2 backup has no trustworthy completion marker, or a second converge appears to recreate a single-node Valkey service. Distilled from a verified Valkey 9.1.2 Vultr deployment with loopback-only access, R2 backups and scratch recovery. Includes the exact AOF restore trap, proof boundaries, and offline-only retention failure findings.",
+      "url": "/.well-known/agent-skills/valkey-single-node-dbf5cec8bf93c28709dc0465ab78133eaa6f162be9132a36d9de44250ecba494.tar.gz",
+      "digest": "sha256:dbf5cec8bf93c28709dc0465ab78133eaa6f162be9132a36d9de44250ecba494"
     }
   ]
 }
